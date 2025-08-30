@@ -2,81 +2,138 @@
 
 namespace Database\Seeders;
 
-use App\Models\Apicultor;
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\PermissionRegistrar;
 use Spatie\Permission\Models\Permission;
-use Faker\Factory as Faker;
+use Spatie\Permission\Models\Role;
+use App\Models\User;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
-    public function run(): void{
-        $user = User::create([
-            'name' => 'Adimer Paul Chambi Ajata',
-            'username' => 'admin',
-            'role' => 'Administrador',
-            'avatar' => 'default.png',
-            'email' => 'adimer101@gmail.com',
-            'email_verified_at' => now(),
-            'password' => bcrypt('admin123Admin'),
-        ]);
-        $permisos = [
-            'Dashboard',
-            'Produccion primaria',
-            'Recoleccion',
-            'Procesamiento',
-            'Almacenamiento',
-            'Despacho',
-            'Usuarios',
-            'Reportes',
-            'Configuracion',
-            'Soporte',
+    public function run(): void
+    {
+        // 0) Limpiar cache de Spatie
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
+
+        $guard = config('auth.defaults.guard', 'web'); // 'web' | 'sanctum' | 'api'
+
+        // 1) Usuario admin inicial
+        $admin = User::firstOrCreate(
+            ['username' => 'admin'],
+            [
+                'name' => 'Administrador DIO',
+                'email' => 'admin@dio.gob.bo',
+                'password' => Hash::make('Admin123!*'),
+                'avatar' => 'default.png',
+                'role' => 'Administrador',
+                'email_verified_at' => now(),
+            ]
+        );
+
+        // 2) Permisos (con guard_name)
+        $permissions = [
+            'cases.create','cases.view','cases.view_sensitive','cases.update','cases.delete','cases.restore',
+            'cases.assign','cases.transfer','cases.escalate','cases.close','cases.reopen','cases.add_note','cases.link_cud',
+            'documents.upload','documents.view','documents.download','documents.delete','documents.templates_manage',
+            'timeline.view','timeline.add_event','timeline.revert_event',
+            'kpis.view','kpis.export','kpis.configure',
+            'reports.view','reports.export','reports.schedule',
+            'users.view','users.create','users.update','users.delete','users.reset_password',
+            'roles.view','roles.create','roles.update','roles.delete','roles.assign',
+            'integrations.justicia_libre.read','integrations.justicia_libre.link','integrations.justicia_libre.unlink','integrations.justicia_libre.sync',
+            'security.audit_logs_view','security.audit_logs_export','security.pii_mask',
+            'security.backup_run','security.backup_restore',
+            'config.catalogs_manage','config.numbering_manage','config.mail_templates_manage',
+            'training.content_manage','training.attendance_register','training.issue_certificates',
+            'support.ticket_create','support.ticket_manage',
         ];
-        foreach ($permisos as $permiso) {
-            Permission::create(['name' => $permiso]);
-        }
-        $user->givePermissionTo(Permission::all());
-        $sqlPach = database_path('seeders/apicultores_202508150628.sql');
-        if (File::exists($sqlPach)) {
-            $sql = File::get($sqlPach);
-            DB::unprepared($sql);
-            $this->command->info('Apicultores imported successfully.');
-        } else {
-            $this->command->error('SQL file not found: ' . $sqlPach);
+
+        foreach ($permissions as $p) {
+            Permission::firstOrCreate(['name' => $p, 'guard_name' => $guard]);
         }
 
-//        $faker = Faker::create('es_ES');
-//
-//        $estados = ['Activo', 'Mantenimiento', 'Inactivo'];
-//        $departamentos = ['La Paz', 'Cochabamba', 'Santa Cruz', 'Oruro', 'Potosí', 'Chuquisaca', 'Tarija', 'Beni', 'Pando'];
-//        $municipios = ['El Alto','La Paz','Warnes','Montero','Quillacollo','Sacaba','Cochabamba','Yacuiba','Riberalta','Trinidad'];
-//        $asociaciones = ['Asoc. Flor de Miel', 'Coop. La Abejita', 'Asoc. Valle Dulce', 'Apis del Sur', 'Miel del Norte'];
-//
-//        for ($i = 0; $i < 100; $i++) {
-//            Apicultor::create([
-//                // 'codigo' => auto en el modelo
-//                'nombre' => $faker->name(),
-//                'ci' => (string)$faker->numberBetween(1000000, 12000000),
-//                'telefono' => $faker->optional()->phoneNumber(),
-//                'email' => $faker->optional(0.6)->safeEmail(),
-//                'departamento' => $faker->randomElement($departamentos),
-//                'municipio' => $faker->randomElement($municipios),
-//                'asociacion' => $faker->optional()->randomElement($asociaciones),
-//                'estado' => $faker->randomElement($estados),
-//                'apiarios' => $faker->numberBetween(0, 40),
-//                'ultima_inspeccion' => $faker->optional()->dateTimeBetween('-8 months', 'now')?->format('Y-m-d'),
-//                // Bolivia aprox. lat -22 a -9, lng -69 a -63 (muy aprox)
-//                'lat' => $faker->optional()->randomFloat(7, -22.0, -9.0),
-//                'lng' => $faker->optional()->randomFloat(7, -69.0, -63.0),
-//                'observaciones' => $faker->optional()->sentence(8),
-//            ]);
-//        }
+        // 3) Roles (con guard_name) + mapeo
+        $roles = [
+            'Operador DIO' => [
+                'cases.create','cases.view','cases.update','cases.assign','cases.add_note','cases.link_cud',
+                'documents.upload','documents.view','documents.download',
+                'timeline.view','timeline.add_event',
+                'reports.view',
+                'support.ticket_create',
+            ],
+            'Analista DIO' => [
+                'cases.view','cases.view_sensitive','cases.update','cases.escalate','cases.close','cases.reopen','cases.add_note',
+                'documents.upload','documents.view','documents.download','documents.delete',
+                'timeline.view','timeline.add_event',
+                'kpis.view','reports.view','reports.export',
+                'support.ticket_create',
+            ],
+            'Supervisor DIO' => [
+                'cases.view','cases.view_sensitive','cases.update','cases.assign','cases.transfer','cases.escalate','cases.close','cases.reopen',
+                'documents.upload','documents.view','documents.download','documents.delete',
+                'timeline.view','timeline.add_event','timeline.revert_event',
+                'kpis.view','kpis.export',
+                'reports.view','reports.export',
+                'support.ticket_manage',
+            ],
+            'Administrador DIO' => [
+                'cases.*','documents.*','timeline.*','kpis.*','reports.*',
+                'users.*','roles.*','config.*','support.ticket_manage',
+            ],
+            'TI GAMO' => [
+                'integrations.justicia_libre.*',
+                'security.audit_logs_view','security.audit_logs_export','security.pii_mask',
+                'security.backup_run','security.backup_restore',
+                'kpis.view','reports.view','reports.export',
+            ],
+            'Auditor' => [
+                'cases.view','cases.view_sensitive',
+                'documents.view','documents.download',
+                'timeline.view',
+                'kpis.view',
+                'reports.view','reports.export',
+                'security.audit_logs_view',
+            ],
+            'Invitado' => [
+                'kpis.view','reports.view',
+            ],
+        ];
 
+        // Permisos del guard actual
+        $all = Permission::where('guard_name', $guard)->pluck('name')->all();
+
+        // Expandir comodines tipo 'cases.*'
+        $expand = function(array $list) use ($all) {
+            $grant = [];
+            foreach ($list as $item) {
+                if (str_ends_with($item, '.*')) {
+                    $prefix = rtrim($item, '.*');
+                    foreach ($all as $p) {
+                        if (str_starts_with($p, $prefix.'.')) $grant[] = $p;
+                    }
+                } else {
+                    $grant[] = $item;
+                }
+            }
+            return array_values(array_unique($grant));
+        };
+
+        foreach ($roles as $roleName => $permList) {
+            $role = Role::firstOrCreate(['name' => $roleName, 'guard_name' => $guard]);
+            $role->syncPermissions($expand($permList));
+        }
+
+        // 4) Asignar rol Admin al usuario inicial
+        $adminRole = Role::where(['name' => 'Administrador DIO', 'guard_name' => $guard])->first();
+        if ($adminRole) {
+            $admin->syncRoles([$adminRole]);
+        }
+
+        // 5) (Opcional) Conceder TODOS los permisos directo al admin también
+        $admin->givePermissionTo($all);
+
+        // 6) Volver a cachear
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
     }
 }

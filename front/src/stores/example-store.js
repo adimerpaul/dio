@@ -4,7 +4,7 @@ export const useCounterStore = defineStore('counter', {
   state: () => ({
     counter: 0,
     user: {},
-    isLogged: localStorage.getItem('tokenEBA') ? true : false,
+    isLogged: !!!localStorage.getItem('TokenDio'),
     permissions: [],
   }),
 
