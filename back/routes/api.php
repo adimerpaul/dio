@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CasoController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DocumentoController;
 use App\Http\Controllers\FotografiaController;
 use App\Http\Controllers\InformeController;
@@ -79,6 +80,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/casos-linea-tiempo', [\App\Http\Controllers\CasoTimelineController::class, 'index']);
 
     Route::get('/kpis', [KpiController::class, 'index']);
+
+    Route::get('/audits', [\App\Http\Controllers\AuditController::class, 'index']);
+    Route::get('/audits/{audit}', [\App\Http\Controllers\AuditController::class, 'show']);
+
+    Route::get('/dashboard', [DashboardController::class, 'index']);
 
 });
 Route::get('/casos/{caso}/pdf', [CasoController::class, 'pdf']);

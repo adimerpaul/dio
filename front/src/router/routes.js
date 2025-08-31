@@ -9,8 +9,8 @@ const routes = [
       { path: '/casos/nuevo', component: () => import('pages/casos/CasoNuevo.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
       { path: '/casos/:id', component: () => import('pages/casos/CasoShow.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
       { path: '/lineas-tiempo', component: () => import('pages/lineastiempo/LineasTiempo.vue'), meta: { requiresAuth: true, perm: 'Lineas de Tiempo' } },
-      // kpis
       { path: '/kpis', component: () => import('pages/kpis/Kpis.vue'), meta: { requiresAuth: true, perm: 'Kpis' } },
+      { path: '/auditorias', component: () => import('pages/auditorias/Auditorias.vue'), meta: { requiresAuth: true, perm: 'Auditorias' } },
     ]
   },
   { path: '/login', component: () => import('layouts/Login.vue') },
