@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CasoController;
+use App\Http\Controllers\DocumentoController;
 use App\Http\Controllers\InformeController;
 use App\Http\Controllers\ProblematicaController;
 use App\Http\Controllers\SesionPsicologicaController;
@@ -60,6 +61,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/informes/{informe}',    [InformeController::class, 'destroy']);
 
 
+// Por caso
+    Route::get ('/casos/{caso}/documentos', [DocumentoController::class, 'index']);
+    Route::post('/casos/{caso}/documentos', [DocumentoController::class, 'store']);
+
+// Por id
+    Route::get   ('/documentos/{documento}',         [DocumentoController::class, 'show']);
+    Route::put   ('/documentos/{documento}',         [DocumentoController::class, 'update']);
+    Route::delete('/documentos/{documento}',         [DocumentoController::class, 'destroy']);
+
 
 });
 Route::get('/casos/{caso}/pdf', [CasoController::class, 'pdf']);
@@ -67,3 +77,6 @@ Route::get('problematicas/{problematica}/pdf', [ProblematicaController::class, '
 Route::get('/sesiones-psicologicas/{sesion}/pdf', [SesionPsicologicaController::class, 'pdf']);
 // PDF (puede ir fuera del middleware si lo prefieres público)
 Route::get('/informes/{informe}/pdf',   [InformeController::class, 'pdf']);
+
+Route::get   ('/documentos/{documento}/download',[DocumentoController::class, 'download']);
+Route::get   ('/documentos/{documento}/view',    [DocumentoController::class, 'view']);
