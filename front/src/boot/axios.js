@@ -42,9 +42,20 @@ export default boot(({ app, router }) => {
       return lower.charAt(0).toUpperCase() + lower.slice(1)
     },
     color(role) {
+      // if (role === 'Administrador Dio') return 'red'
+      // if (role === 'Operador DIO') return 'orange'
+      // if (role === 'Analista DIO') return 'blue'
+      // if (role === 'Supervisor DIO') return 'green'
+      // if (role === 'TI GAMO') return 'purple'
+      // if (role === 'Auditor') return 'red'
+      // 1 Admin
+      // 2 Asistente
+      // 3 Psicologo
+      // 4 Abogados
       if (role === 'Administrador') return 'red'
-      if (role === 'Docente') return 'green'
-      if (role === 'Estudiante') return 'blue'
+      if (role === 'Asistente') return 'orange'
+      if (role === 'Psicologo') return 'blue'
+      if (role === 'Abogado') return 'green'
       return 'grey'
     },
     colorAgencia(agencia) {
