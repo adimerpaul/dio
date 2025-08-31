@@ -81,6 +81,14 @@ export default boot(({ app, router }) => {
       useCounterStore().user = {}
       router.push('/login')
     })
+  }else{
+    useCounterStore().isLogged = false
+    useCounterStore().user = {}
+    useCounterStore().permissions = []
+    localStorage.removeItem('user')
+    if (router.currentRoute.value.path !== '/login') {
+      router.push('/login')
+    }
   }
   app.config.globalProperties.$api = api
   // ^ ^ ^ this will allow you to use this.$api (for Vue Options API form)
