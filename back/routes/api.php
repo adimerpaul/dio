@@ -4,6 +4,7 @@ use App\Http\Controllers\CasoController;
 use App\Http\Controllers\DocumentoController;
 use App\Http\Controllers\FotografiaController;
 use App\Http\Controllers\InformeController;
+use App\Http\Controllers\KpiController;
 use App\Http\Controllers\ProblematicaController;
 use App\Http\Controllers\SesionPsicologicaController;
 use Illuminate\Http\Request;
@@ -76,6 +77,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/fotografias/{fotografia}', [FotografiaController::class,'destroy']);
 
     Route::get('/casos-linea-tiempo', [\App\Http\Controllers\CasoTimelineController::class, 'index']);
+
+    Route::get('/kpis', [KpiController::class, 'index']);
 
 });
 Route::get('/casos/{caso}/pdf', [CasoController::class, 'pdf']);
