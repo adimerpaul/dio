@@ -1,321 +1,119 @@
 <template>
-  <q-page class="q-pa-md">
+  <q-page class="q-pa-md bg-grey-2">
+
+    <!-- Header -->
     <div class="row items-center q-mb-md">
       <div class="col">
-        <div class="text-h6 text-weight-bold">Nuevo Caso</div>
-        <div class="text-caption text-grey-7">Registro de denuncia (SLIM)</div>
+        <div class="text-h6 text-weight-bold">Caso #{{ caso?.id || '...' }}</div>
+        <div class="text-caption text-grey-7">Detalle y gestión integral</div>
       </div>
-      <div class="col-auto">
-        <q-btn flat color="primary" icon="history" label="Limpiar" @click="resetForm" class="q-mr-sm"/>
-        <q-btn color="primary" icon="save" label="Guardar" :loading="loading" @click="save"/>
+      <div class="col-auto row q-gutter-sm">
+        <q-btn flat color="secondary" icon="print" label="Imprimir PDF" @click="printPdf" />
+        <q-btn flat color="primary" icon="refresh" @click="fetchCaso" :loading="loading"/>
       </div>
     </div>
 
-    <q-form @submit.prevent="save">
+    <!-- Tabs -->
+    <q-card flat bordered class="q-mb-md">
+      <q-tabs v-model="tab" class="text-primary" dense align="left"
+              active-color="primary" indicator-color="primary" outside-arrows mobile-arrows>
+        <q-tab name="info"         label="1 INFORMACIÓN GENERAL"   icon="dashboard"/>
+        <q-tab name="problematica" label="2 PROBLEMÁTICA"          icon="report_problem"/>
+        <q-tab name="psico"        label="3 SESIONES PSICOLÓGICO"  icon="psychology"/>
+        <q-tab name="legal"        label="4 INFORMES LEGAL"        icon="gavel"/>
+        <q-tab name="apoyo"        label="5 APOYO INTEGRAL"        icon="diversity_1"/>
+        <q-tab name="docs"         label="6 DOCUMENTOS GENERAL"    icon="folder"/>
+        <q-tab name="fotos"        label="7 FOTOGRAFÍAS"           icon="photo_library"/>
+      </q-tabs>
+    </q-card>
 
-      <!-- Denunciante -->
-      <q-card flat bordered class="q-mb-md">
-        <q-card-section class="text-subtitle1 text-weight-medium">1) Datos del Denunciante</q-card-section>
-        <q-separator/>
-        <q-card-section>
-          <div class="row q-col-gutter-md">
-            <div class="col-12 col-md-6">
-              <q-input v-model="f.denunciante_nombre_completo" dense outlined label="Nombre completo *" :rules="[req]"/>
-            </div>
+    <q-tab-panels v-model="tab" animated keep-alive>
+      <!-- 1) Información General -->
+      <q-tab-panel name="info">
+        <InfoGeneral :case-id="caseId"/>
+      </q-tab-panel>
 
-            <div class="col-6 col-md-3">
-              <q-select v-model="f.denunciante_documento" dense outlined label="Documento" :options="documentos"/>
-            </div>
-            <div class="col-6 col-md-3">
-              <q-input v-model="f.denunciante_nro" dense outlined label="Nro documento"/>
-            </div>
+      <!-- 2) Problemática -->
+      <q-tab-panel name="problematica">
+        <Problematica :case-id="caseId"/>
+      </q-tab-panel>
 
-            <div class="col-6 col-md-3">
-              <q-select v-model="f.denunciante_sexo" dense outlined label="Sexo" :options="sexos"/>
-            </div>
-            <div class="col-6 col-md-3">
-              <q-select v-model="f.denunciante_estado_civil" dense outlined label="Estado civil" :options="estadosCiviles"/>
-            </div>
+      <!-- 3) Sesiones Psicológico -->
+      <q-tab-panel name="psico">
+        <SesionesPsicologico :case-id="caseId"/>
+      </q-tab-panel>
 
-            <div class="col-6 col-md-3">
-              <q-input v-model="f.denunciante_residencia" dense outlined label="Residencia"/>
-            </div>
-            <div class="col-6 col-md-3">
-              <q-select v-model="f.denunciante_idioma" dense outlined label="Idioma" :options="idiomas"/>
-            </div>
+      <!-- 4) Informes Legal -->
+      <q-tab-panel name="legal">
+        <InformesLegal :case-id="caseId"/>
+      </q-tab-panel>
 
-            <!-- fecha nacimiento + edad -->
-            <div class="col-6 col-md-3">
-              <q-input v-model="f.denunciante_fecha_nacimiento" type="date" dense outlined label="Fecha de nacimiento"
-                       @input="f.denunciante_edad = calcEdad(f.denunciante_fecha_nacimiento)"/>
-            </div>
-            <div class="col-6 col-md-3">
-              <q-input v-model.number="f.denunciante_edad" dense outlined label="Edad" type="number" :readonly="true"/>
-            </div>
+      <!-- 5) Apoyo Integral -->
+      <q-tab-panel name="apoyo">
+        <ApoyoIntegral :case-id="caseId"/>
+      </q-tab-panel>
 
-            <div class="col-6 col-md-3">
-              <q-toggle v-model="f.denunciante_trabaja" label="Trabaja"/>
-            </div>
-            <div class="col-6 col-md-3">
-              <q-input v-model="f.denunciante_ocupacion" dense outlined label="Ocupación"/>
-            </div>
-            <div class="col-12">
-              <q-input v-model="f.denunciante_domicilio_actual" dense outlined label="Domicilio actual"/>
-            </div>
+      <!-- 6) Documentos General -->
+      <q-tab-panel name="docs">
+        <DocumentosGeneral :case-id="caseId"/>
+      </q-tab-panel>
 
-            <div class="col-12">
-              <div class="text-caption text-grey-7 q-mb-xs">Ubicación (denunciante)</div>
-              <MapPicker v-model="denunciantePos" :center="oruroCenter"/>
-            </div>
-          </div>
-        </q-card-section>
-      </q-card>
-
-      <!-- Grupo Familiar (igual que tenías) -->
-      <q-card flat bordered class="q-mb-md">
-        <q-card-section class="text-subtitle1 text-weight-medium">2) Grupo Familiar</q-card-section>
-        <q-separator/>
-        <q-card-section>
-          <div class="row q-col-gutter-md">
-            <div class="col-12 col-md-6"><q-input v-model="f.familiar1_nombre_completo" dense outlined label="Familiar 1: Nombres y apellidos"/></div>
-            <div class="col-6 col-md-2"><q-input v-model.number="f.familiar1_edad" dense outlined type="number" label="Edad"/></div>
-            <div class="col-6 col-md-2"><q-input v-model="f.familiar1_parentesco" dense outlined label="Parentesco"/></div>
-            <div class="col-12 col-md-2"><q-input v-model="f.familiar1_celular" dense outlined label="Celular"/></div>
-          </div>
-          <div class="row q-col-gutter-md">
-            <div class="col-12 col-md-6"><q-input v-model="f.familiar2_nombre_completo" dense outlined label="Familiar 2: Nombres y apellidos"/></div>
-            <div class="col-6 col-md-2"><q-input v-model.number="f.familiar2_edad" dense outlined type="number" label="Edad"/></div>
-            <div class="col-6 col-md-2"><q-input v-model="f.familiar2_parentesco" dense outlined label="Parentesco"/></div>
-            <div class="col-12 col-md-2"><q-input v-model="f.familiar2_celular" dense outlined label="Celular"/></div>
-          </div>
-          <div class="row q-col-gutter-md">
-            <div class="col-12 col-md-6"><q-input v-model="f.familiar3_nombre_completo" dense outlined label="Familiar 3: Nombres y apellidos"/></div>
-            <div class="col-6 col-md-2"><q-input v-model.number="f.familiar3_edad" dense outlined type="number" label="Edad"/></div>
-            <div class="col-6 col-md-2"><q-input v-model="f.familiar3_parentesco" dense outlined label="Parentesco"/></div>
-            <div class="col-12 col-md-2"><q-input v-model="f.familiar3_celular" dense outlined label="Celular"/></div>
-          </div>
-          <div class="row q-col-gutter-md">
-            <div class="col-12 col-md-6"><q-input v-model="f.familiar4_nombre_completo" dense outlined label="Familiar 4: Nombres y apellidos"/></div>
-            <div class="col-6 col-md-2"><q-input v-model.number="f.familiar4_edad" dense outlined type="number" label="Edad"/></div>
-            <div class="col-6 col-md-2"><q-input v-model="f.familiar4_parentesco" dense outlined label="Parentesco"/></div>
-            <div class="col-12 col-md-2"><q-input v-model="f.familiar4_celular" dense outlined label="Celular"/></div>
-          </div>
-          <div class="row q-col-gutter-md">
-            <div class="col-12 col-md-6"><q-input v-model="f.familiar5_nombre_completo" dense outlined label="Familiar 5: Nombres y apellidos"/></div>
-            <div class="col-6 col-md-2"><q-input v-model.number="f.familiar5_edad" dense outlined type="number" label="Edad"/></div>
-            <div class="col-6 col-md-2"><q-input v-model="f.familiar5_parentesco" dense outlined label="Parentesco"/></div>
-            <div class="col-12 col-md-2"><q-input v-model="f.familiar5_celular" dense outlined label="Celular"/></div>
-          </div>
-        </q-card-section>
-      </q-card>
-
-      <!-- Denunciado -->
-      <q-card flat bordered class="q-mb-md">
-        <q-card-section class="text-subtitle1 text-weight-medium">3) Datos del Denunciado</q-card-section>
-        <q-separator/>
-        <q-card-section>
-          <div class="row q-col-gutter-md">
-            <div class="col-12 col-md-6"><q-input v-model="f.denunciado_nombre_completo" dense outlined label="Nombre completo"/></div>
-            <div class="col-6 col-md-3"><q-input v-model="f.denunciado_documento" dense outlined label="Documento"/></div>
-            <div class="col-6 col-md-3"><q-input v-model="f.denunciado_nro" dense outlined label="Nro documento"/></div>
-
-            <div class="col-6 col-md-3"><q-input v-model="f.denunciado_sexo" dense outlined label="Sexo"/></div>
-            <div class="col-6 col-md-3"><q-input v-model="f.denunciado_residencia" dense outlined label="Residencia"/></div>
-
-            <!-- fecha nacimiento + edad -->
-            <div class="col-6 col-md-3">
-              <q-input v-model="f.denunciado_fecha_nacimiento" type="date" dense outlined label="Fecha de nacimiento"
-                       @input="f.denunciado_edad = calcEdad(f.denunciado_fecha_nacimiento)"/>
-            </div>
-            <div class="col-6 col-md-3">
-              <q-input v-model.number="f.denunciado_edad" dense outlined label="Edad" type="number" :readonly="true"/>
-            </div>
-
-            <div class="col-12">
-              <q-input v-model="f.denunciado_domicilio_actual" dense outlined label="Domicilio actual"/>
-            </div>
-
-            <div class="col-12">
-              <div class="text-caption text-grey-7 q-mb-xs">Ubicación (denunciado)</div>
-              <MapPicker v-model="denunciadoPos" :center="oruroCenter"/>
-            </div>
-          </div>
-        </q-card-section>
-      </q-card>
-
-      <!-- Hechos y Tipología -->
-      <q-card flat bordered class="q-mb-md">
-        <q-card-section class="text-subtitle1 text-weight-medium">4) Hechos y Tipología</q-card-section>
-        <q-separator/>
-        <q-card-section>
-          <div class="row q-col-gutter-md">
-            <div class="col-12 col-md-3"><q-input v-model="f.caso_numero" dense outlined label="Nro de caso"/></div>
-            <div class="col-12 col-md-3"><q-input v-model="f.caso_fecha_hecho" dense outlined label="Fecha del hecho" type="date"/></div>
-            <div class="col-12 col-md-6"><q-input v-model="f.caso_lugar_hecho" dense outlined label="Lugar del hecho"/></div>
-            <div class="col-12 col-md-4"><q-input v-model="f.caso_tipologia" dense outlined label="Tipología"/></div>
-            <div class="col-12 col-md-4"><q-input v-model="f.caso_modalidad" dense outlined label="Modalidad"/></div>
-            <div class="col-12">
-              <q-input v-model="f.caso_descripcion" type="textarea" autogrow outlined dense label="Descripción del hecho"/>
-            </div>
-          </div>
-        </q-card-section>
-      </q-card>
-
-      <!-- Violencias -->
-      <q-card flat bordered class="q-mb-md">
-        <q-card-section class="text-subtitle1 text-weight-medium">5) Tipos de violencia</q-card-section>
-        <q-separator/>
-        <q-card-section>
-          <div class="row q-col-gutter-md">
-            <div class="col-6 col-md-3"><q-toggle v-model="f.violencia_fisica" label="Física"/></div>
-            <div class="col-6 col-md-3"><q-toggle v-model="f.violencia_psicologica" label="Psicológica"/></div>
-            <div class="col-6 col-md-3"><q-toggle v-model="f.violencia_sexual" label="Sexual"/></div>
-            <div class="col-6 col-md-3"><q-toggle v-model="f.violencia_economica" label="Económica/Patrimonial"/></div>
-          </div>
-        </q-card-section>
-      </q-card>
-
-      <!-- Seguimiento -->
-      <q-card flat bordered class="q-mb-lg">
-        <q-card-section class="text-subtitle1 text-weight-medium">6) Seguimiento</q-card-section>
-        <q-separator/>
-        <q-card-section>
-          <div class="row q-col-gutter-md">
-            <div class="col-12 col-md-4"><q-input v-model="f.seguimiento_area" dense outlined label="Área"/></div>
-            <div class="col-12 col-md-4"><q-input v-model="f.seguimiento_area_social" dense outlined label="Área social (responsable)"/></div>
-            <div class="col-12 col-md-4"><q-input v-model="f.seguimiento_area_legal" dense outlined label="Área legal (responsable)"/></div>
-          </div>
-        </q-card-section>
-      </q-card>
-
-      <div class="q-mt-md text-right">
-        <q-btn flat color="primary" icon="history" label="Limpiar" @click="resetForm" class="q-mr-sm"/>
-        <q-btn color="primary" icon="save" label="Guardar" :loading="loading" @click="save"/>
-      </div>
-    </q-form>
+      <!-- 7) Fotografías -->
+      <q-tab-panel name="fotos">
+        <Fotografias :case-id="caseId"/>
+      </q-tab-panel>
+    </q-tab-panels>
   </q-page>
 </template>
 
 <script>
-import MapPicker from 'components/MapPicker.vue'
+// Componentes de tabs
+import InfoGeneral       from './tabs/InfoGeneral.vue'
+import Problematica      from './tabs/Problematica.vue'
+import SesionesPsicologico from './tabs/SesionesPsicologico.vue'
+import InformesLegal     from './tabs/InformesLegal.vue'
+import ApoyoIntegral     from './tabs/ApoyoIntegral.vue'
+import DocumentosGeneral from './tabs/DocumentosGeneral.vue'
+import Fotografias       from './tabs/Fotografias.vue'
 
 export default {
-  name: 'CasoNuevo',
-  components: { MapPicker },
+  name: 'CasoDetalle',
+  components: {
+    InfoGeneral, Problematica, SesionesPsicologico, InformesLegal, ApoyoIntegral, DocumentosGeneral, Fotografias
+  },
   data () {
     return {
       loading: false,
-      documentos: ['Carnet de identidad', 'Pasaporte', 'Libreta de servicio militar', 'Libreta de conducir'],
-      sexos: ['Masculino', 'Femenino', 'Otro'],
-      estadosCiviles: ['Soltero/a', 'Casado/a', 'Divorciado/a', 'Viudo/a', 'Unión libre'],
-      idiomas: ['Español', 'Quechua', 'Aymara', 'Guaraní', 'Otro'],
-      oruroCenter: [-17.9667, -67.1167],
-      f: {
-        // Denunciante
-        denunciante_nombre_completo: '',
-        denunciante_documento: '',
-        denunciante_nro: '',
-        denunciante_sexo: '',
-        denunciante_residencia: '',
-        denunciante_estado_civil: '',
-        denunciante_idioma: '',
-        denunciante_fecha_nacimiento: '',
-        denunciante_edad: null,
-        denunciante_trabaja: false,
-        denunciante_ocupacion: '',
-        denunciante_domicilio_actual: '',
-        latitud: null,
-        longitud: null,
-        // Familiares
-        familiar1_nombre_completo: '', familiar1_edad: null, familiar1_parentesco: '', familiar1_celular: '',
-        familiar2_nombre_completo: '', familiar2_edad: null, familiar2_parentesco: '', familiar2_celular: '',
-        familiar3_nombre_completo: '', familiar3_edad: null, familiar3_parentesco: '', familiar3_celular: '',
-        familiar4_nombre_completo: '', familiar4_edad: null, familiar4_parentesco: '', familiar4_celular: '',
-        familiar5_nombre_completo: '', familiar5_edad: null, familiar5_parentesco: '', familiar5_celular: '',
-        // Denunciado
-        denunciado_nombre_completo: '',
-        denunciado_documento: '',
-        denunciado_nro: '',
-        denunciado_sexo: '',
-        denunciado_residencia: '',
-        denunciado_fecha_nacimiento: '',
-        denunciado_edad: null,
-        denunciado_domicilio_actual: '',
-        denunciado_latitud: null,
-        denunciado_longitud: null,
-        // Caso
-        caso_numero: '',
-        caso_fecha_hecho: '',
-        caso_lugar_hecho: '',
-        caso_tipologia: '',
-        caso_modalidad: '',
-        caso_descripcion: '',
-        // Violencias
-        violencia_fisica: false,
-        violencia_psicologica: false,
-        violencia_sexual: false,
-        violencia_economica: false,
-        // Seguimiento
-        seguimiento_area: '',
-        seguimiento_area_social: '',
-        seguimiento_area_legal: ''
-      }
+      tab: 'info',
+      caso: null
     }
   },
   computed: {
-    denunciantePos: {
-      get () { return { latitud: this.f.latitud, longitud: this.f.longitud } },
-      set (v) { this.f.latitud = v.latitud; this.f.longitud = v.longitud }
-    },
-    denunciadoPos: {
-      get () { return { latitud: this.f.denunciado_latitud, longitud: this.f.denunciado_longitud } },
-      set (v) { this.f.denunciado_latitud = v.latitud; this.f.denunciado_longitud = v.longitud }
-    }
+    caseId () { return this.$route.params.id }
+  },
+  created () {
+    this.fetchCaso()
   },
   methods: {
-    req (v) { return !!v || 'Requerido' },
-    calcEdad (fecha) {
-      if (!fecha) return null
-      const hoy = new Date()
-      const fn  = new Date(fecha)
-      let edad = hoy.getFullYear() - fn.getFullYear()
-      const m = hoy.getMonth() - fn.getMonth()
-      if (m < 0 || (m === 0 && hoy.getDate() < fn.getDate())) edad--
-      return edad >= 0 && edad < 150 ? edad : null
-    },
-    resetForm () {
-      const bools = ['denunciante_trabaja','violencia_fisica','violencia_psicologica','violencia_sexual','violencia_economica']
-      Object.keys(this.f).forEach(k => {
-        if (bools.includes(k)) this.f[k] = false
-        else if (k.includes('lat') || k.includes('long')) this.f[k] = null
-        else this.f[k] = ''
-      })
-      this.f.denunciante_edad = null
-      this.f.denunciado_edad = null
-    },
-    async save () {
-      if (!this.f.denunciante_nombre_completo) {
-        this.$alert.error('El nombre del denunciante es obligatorio')
-        return
-      }
-      // asegurar edades si el usuario cambió fechas y no salió del input
-      this.f.denunciante_edad = this.calcEdad(this.f.denunciante_fecha_nacimiento)
-      this.f.denunciado_edad  = this.calcEdad(this.f.denunciado_fecha_nacimiento)
-
+    async fetchCaso () {
       this.loading = true
       try {
-        const res = await this.$axios.post('/casos', this.f)
-        const created = res.data
-        this.$alert.success('Caso creado')
-        // redirigir al show
-        if (created && created.id) this.$router.push(`/casos/${created.id}`)
-        else this.resetForm()
+        const res = await this.$axios.get(`/casos/${this.caseId}`)
+        this.caso = res.data
       } catch (e) {
-        this.$alert.error(e?.response?.data?.message || 'No se pudo crear el caso')
+        this.$alert.error(e?.response?.data?.message || 'No se pudo cargar el caso')
       } finally {
         this.loading = false
       }
+    },
+    printPdf () {
+      // placeholder — luego conectas tu endpoint/cliente PDF
+      this.$alert.info('Generando PDF… (próximamente)')
     }
   }
 }
 </script>
+
+<style scoped>
+.bg-grey-2 { min-height: 100%; }
+</style>
