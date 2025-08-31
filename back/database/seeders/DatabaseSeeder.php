@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
                 'email' => 'admin@dio.gob.bo',
                 'password' => Hash::make('Admin123!*'),
                 'avatar' => 'default.png',
-                'role' => 'Administrador Dio',
+                'role' => 'Administrador',
                 'email_verified_at' => now(),
             ]
         );
