@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CasoController;
 use App\Http\Controllers\ProblematicaController;
+use App\Http\Controllers\SesionPsicologicaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -38,7 +39,20 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('problematicas/{problematica}', [ProblematicaController::class, 'show']);
     Route::put('problematicas/{problematica}', [ProblematicaController::class, 'update']);
     Route::delete('problematicas/{problematica}', [ProblematicaController::class, 'destroy']);
+
+    // listado + creación anidados al caso
+    Route::get ('/casos/{caso}/sesiones-psicologicas', [SesionPsicologicaController::class, 'index']);
+    Route::post('/casos/{caso}/sesiones-psicologicas', [SesionPsicologicaController::class, 'store']);
+
+// crud por id
+    Route::get   ('/sesiones-psicologicas/{sesion}', [SesionPsicologicaController::class, 'show']);
+    Route::put   ('/sesiones-psicologicas/{sesion}', [SesionPsicologicaController::class, 'update']);
+    Route::delete('/sesiones-psicologicas/{sesion}', [SesionPsicologicaController::class, 'destroy']);
+
+// pdf
+
 });
 Route::get('/casos/{caso}/pdf', [CasoController::class, 'pdf']);
 Route::get('problematicas/{problematica}/pdf', [ProblematicaController::class, 'pdf']);
+Route::get('/sesiones-psicologicas/{sesion}/pdf', [SesionPsicologicaController::class, 'pdf']);
 
