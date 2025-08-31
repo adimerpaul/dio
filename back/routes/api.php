@@ -74,6 +74,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get ('/casos/{caso}/fotografias', [FotografiaController::class,'index']);
     Route::post('/casos/{caso}/fotografias', [FotografiaController::class,'store']);
     Route::delete('/fotografias/{fotografia}', [FotografiaController::class,'destroy']);
+
+    Route::get('/casos-linea-tiempo', [\App\Http\Controllers\CasoTimelineController::class, 'index']);
+
 });
 Route::get('/casos/{caso}/pdf', [CasoController::class, 'pdf']);
 Route::get('problematicas/{problematica}/pdf', [ProblematicaController::class, 'pdf']);
