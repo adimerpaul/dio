@@ -135,7 +135,7 @@ function hasAnyPerm (perms = []) {
 const linksList = [
   { title: 'Dashboard',        icon: 'analytics',       link: '/',               canPerm: 'Dashboard' },
   { title: 'Usuarios',         icon: 'people',          link: '/usuarios',       canPerm: 'Usuarios' },
-  // casos
+  { title: 'Nuevo Caso',      icon: 'add_circle',     link: '/casos/nuevo',   canPerm: 'Casos' },
   { title: 'Casos',            icon: 'folder_shared',   link: '/casos',          canPerm: 'Casos' },
   { title: 'Documentos',       icon: 'description',     link: '/documentos',     canPerm: 'Documentos' },
   { title: 'Líneas de Tiempo', icon: 'timeline',        link: '/lineas-tiempo',  canPerm: 'Lineas de Tiempo' },
