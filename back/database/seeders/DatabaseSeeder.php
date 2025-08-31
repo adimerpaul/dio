@@ -40,5 +40,8 @@ class DatabaseSeeder extends Seeder
 //        $admin->assignPermisos
 
         $admin->syncPermissions($permisos);
+        $this->call([
+                CasoSeeder::class,
+        ]);
     }
 }
