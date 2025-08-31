@@ -108,7 +108,12 @@ export default {
     },
     printPdf () {
       // placeholder — luego conectas tu endpoint/cliente PDF
-      this.$alert.info('Generando PDF… (próximamente)')
+      // <q-btn flat color="primary" icon="print" label="Imprimir"
+      //  :to="`/casos/${$route.params.id}/pdf`" target="_blank"/>
+
+      const url = this.$axios.defaults.baseURL + `/casos/${this.caseId}/pdf`
+      window.open(url, '_blank')
+
     }
   }
 }

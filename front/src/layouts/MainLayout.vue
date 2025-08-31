@@ -137,7 +137,7 @@ const linksList = [
   { title: 'Usuarios',         icon: 'people',          link: '/usuarios',       canPerm: 'Usuarios' },
   { title: 'Nuevo Caso',      icon: 'add_circle',     link: '/casos/nuevo',   canPerm: 'Casos' },
   { title: 'Casos',            icon: 'folder_shared',   link: '/casos',          canPerm: 'Casos' },
-  { title: 'Documentos',       icon: 'description',     link: '/documentos',     canPerm: 'Documentos' },
+  // { title: 'Documentos',       icon: 'description',     link: '/documentos',     canPerm: 'Documentos' },
   { title: 'Líneas de Tiempo', icon: 'timeline',        link: '/lineas-tiempo',  canPerm: 'Lineas de Tiempo' },
   { title: 'KPIs',             icon: 'query_stats',     link: '/kpis',           canPerm: 'KPIs' },
   { title: 'Auditorías',       icon: 'shield',          link: '/auditorias',     canPerm: 'Auditorias' },
