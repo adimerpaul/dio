@@ -23,4 +23,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/users/{user}/permissions', [App\Http\Controllers\UserController::class, 'getPermissions']);
     Route::put('/users/{user}/permissions', [App\Http\Controllers\UserController::class, 'syncPermissions']);
 
+
+    Route::get('/casos', [App\Http\Controllers\CasoController::class, 'index']);
+
+
 });

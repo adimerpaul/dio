@@ -75,5 +75,15 @@ class CasoSeeder extends Seeder
             'seguimiento_area_social'        => 'LIC. DORIS PORTILLO Z.',
             'seguimiento_area_legal'         => 'ABG. CAMILO SORIA GUTIÉRREZ',
         ]);
+        Caso::withoutEvents(function () {
+            $total = 10000;
+            $chunk = 500; // baja a 500 por iteración
+            $loops = (int) ceil($total / $chunk);
+
+            for ($i = 0; $i < $loops; $i++) {
+                $size = ($i === $loops - 1) ? ($total - $i * $chunk) : $chunk;
+                Caso::factory()->count($size)->create();
+            }
+        });
     }
 }
