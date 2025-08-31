@@ -107,4 +107,12 @@ class Caso extends Model implements AuditableContract
         'updated_at',
         'deleted_at',
     ];
+    protected $casts = [
+//        'caso_fecha_hecho'      => 'date',
+        'denunciante_trabaja'   => 'boolean',
+        'violencia_fisica'      => 'boolean',
+        'violencia_psicologica' => 'boolean',
+        'violencia_sexual'      => 'boolean',
+        'violencia_economica'   => 'boolean',
+    ];
 }

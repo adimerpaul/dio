@@ -27,6 +27,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/casos', [CasoController::class, 'index']);
     Route::post('/casos', [CasoController::class, 'store']);
+    Route::get('/casos/{caso}', [App\Http\Controllers\CasoController::class, 'show']);
+    Route::put('/casos/{caso}', [App\Http\Controllers\CasoController::class, 'update']);
 
 
 

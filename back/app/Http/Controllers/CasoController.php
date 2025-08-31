@@ -153,4 +153,94 @@ class CasoController extends Controller
             'caso'    => $caso,
         ], 201);
     }
+    public function show(Caso $caso)
+    {
+        // si ocultaste campos en $hidden, se respetan
+        return response()->json($caso);
+    }
+
+    public function update(Request $request, Caso $caso)
+    {
+        // Validación ligera (ajusta a tus reglas reales)
+        $data = $request->validate([
+            // Denunciante
+            'denunciante_nombre_completo' => ['nullable','string','max:255'],
+            'denunciante_documento'       => ['nullable','string','max:255'],
+            'denunciante_nro'             => ['nullable','string','max:255'],
+            'denunciante_sexo'            => ['nullable','string','max:255'],
+            'denunciante_residencia'      => ['nullable','string','max:255'],
+            'denunciante_estado_civil'    => ['nullable','string','max:255'],
+            'denunciante_idioma'          => ['nullable','string','max:255'],
+            'denunciante_trabaja'         => ['nullable','boolean'],
+            'denunciante_ocupacion'       => ['nullable','string','max:255'],
+            'denunciante_domicilio_actual'=> ['nullable','string','max:500'],
+            'latitud'                     => ['nullable','numeric'],
+            'longitud'                    => ['nullable','numeric'],
+
+            // Familiares
+            'familiar1_nombre_completo'   => ['nullable','string','max:255'],
+            'familiar1_edad'              => ['nullable','integer'],
+            'familiar1_parentesco'        => ['nullable','string','max:255'],
+            'familiar1_celular'           => ['nullable','string','max:255'],
+            'familiar2_nombre_completo'   => ['nullable','string','max:255'],
+            'familiar2_edad'              => ['nullable','integer'],
+            'familiar2_parentesco'        => ['nullable','string','max:255'],
+            'familiar2_celular'           => ['nullable','string','max:255'],
+            'familiar3_nombre_completo'   => ['nullable','string','max:255'],
+            'familiar3_edad'              => ['nullable','integer'],
+            'familiar3_parentesco'        => ['nullable','string','max:255'],
+            'familiar3_celular'           => ['nullable','string','max:255'],
+            'familiar4_nombre_completo'   => ['nullable','string','max:255'],
+            'familiar4_edad'              => ['nullable','integer'],
+            'familiar4_parentesco'        => ['nullable','string','max:255'],
+            'familiar4_celular'           => ['nullable','string','max:255'],
+            'familiar5_nombre_completo'   => ['nullable','string','max:255'],
+            'familiar5_edad'              => ['nullable','integer'],
+            'familiar5_parentesco'        => ['nullable','string','max:255'],
+            'familiar5_celular'           => ['nullable','string','max:255'],
+
+            // Denunciado
+            'denunciado_nombre_completo'  => ['nullable','string','max:255'],
+            'denunciado_documento'        => ['nullable','string','max:255'],
+            'denunciado_nro'              => ['nullable','string','max:255'],
+            'denunciado_sexo'             => ['nullable','string','max:255'],
+            'denunciado_residencia'       => ['nullable','string','max:255'],
+            'denunciado_domicilio_actual' => ['nullable','string','max:500'],
+            'denunciado_latitud'          => ['nullable','numeric'],
+            'denunciado_longitud'         => ['nullable','numeric'],
+
+            // Caso
+            'caso_numero'                 => ['nullable','string','max:255'],
+            'caso_fecha_hecho'            => ['nullable','date'],
+            'caso_lugar_hecho'            => ['nullable','string','max:500'],
+            'caso_tipologia'              => ['nullable','string','max:255'],
+            'caso_modalidad'              => ['nullable','string','max:255'],
+            'caso_descripcion'            => ['nullable','string','max:2000'],
+
+            // Violencias
+            'violencia_fisica'            => ['nullable','boolean'],
+            'violencia_psicologica'       => ['nullable','boolean'],
+            'violencia_sexual'            => ['nullable','boolean'],
+            'violencia_economica'         => ['nullable','boolean'],
+
+            // Seguimiento
+            'seguimiento_area'            => ['nullable','string','max:255'],
+            'seguimiento_area_social'     => ['nullable','string','max:255'],
+            'seguimiento_area_legal'      => ['nullable','string','max:255'],
+        ]);
+
+        // Tip: si vienen "on"/"off" desde un form, castear:
+        foreach (['denunciante_trabaja','violencia_fisica','violencia_psicologica','violencia_sexual','violencia_economica'] as $b) {
+            if ($request->has($b)) {
+                $data[$b] = filter_var($request->input($b), FILTER_VALIDATE_BOOLEAN);
+            }
+        }
+
+        $caso->update($data);
+
+        return response()->json([
+            'message' => 'Caso actualizado',
+            'data'    => $caso->fresh()
+        ]);
+    }
 }
