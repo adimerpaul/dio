@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CasoController;
+use App\Http\Controllers\InformeController;
 use App\Http\Controllers\ProblematicaController;
 use App\Http\Controllers\SesionPsicologicaController;
 use Illuminate\Http\Request;
@@ -49,10 +50,20 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put   ('/sesiones-psicologicas/{sesion}', [SesionPsicologicaController::class, 'update']);
     Route::delete('/sesiones-psicologicas/{sesion}', [SesionPsicologicaController::class, 'destroy']);
 
-// pdf
+    // Anidadas al caso
+    Route::get ('/casos/{caso}/informes',  [InformeController::class, 'index']);
+    Route::post('/casos/{caso}/informes',  [InformeController::class, 'store']);
+
+// CRUD por id
+    Route::get   ('/informes/{informe}',    [InformeController::class, 'show']);
+    Route::put   ('/informes/{informe}',    [InformeController::class, 'update']);
+    Route::delete('/informes/{informe}',    [InformeController::class, 'destroy']);
+
+
 
 });
 Route::get('/casos/{caso}/pdf', [CasoController::class, 'pdf']);
 Route::get('problematicas/{problematica}/pdf', [ProblematicaController::class, 'pdf']);
 Route::get('/sesiones-psicologicas/{sesion}/pdf', [SesionPsicologicaController::class, 'pdf']);
-
+// PDF (puede ir fuera del middleware si lo prefieres público)
+Route::get('/informes/{informe}/pdf',   [InformeController::class, 'pdf']);
