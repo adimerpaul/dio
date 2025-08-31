@@ -4,9 +4,25 @@ namespace App\Http\Controllers;
 
 use App\Models\Caso;
 use Illuminate\Http\Request;
-
+use Barryvdh\DomPDF\Facade\Pdf;
 class CasoController extends Controller
 {
+    public function pdf(Request $request, Caso $caso)
+    {
+        // Opciones extra para mejor render
+        $pdf = Pdf::loadView('casos.pdf', [
+            'caso' => $caso,
+        ])->setPaper('A4', 'portrait');
+
+        // Para acentos: usar DejaVu Sans
+        $pdf->getDomPDF()->getOptions()->set('defaultFont', 'DejaVu Sans');
+
+        // ?download=1 para descargar, 0 para ver en el navegador
+        $download = (int) $request->query('download', 0) === 1;
+
+        $filename = 'SLIM_Caso_'.$caso->id.'.pdf';
+        return $download ? $pdf->download($filename) : $pdf->stream($filename);
+    }
     /**
      * GET /casos?q=texto&page=1&per_page=10
      * Devuelve paginado con filtro por texto libre.

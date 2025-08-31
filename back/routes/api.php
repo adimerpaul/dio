@@ -24,12 +24,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/users/{user}/permissions', [App\Http\Controllers\UserController::class, 'getPermissions']);
     Route::put('/users/{user}/permissions', [App\Http\Controllers\UserController::class, 'syncPermissions']);
 
-
     Route::get('/casos', [CasoController::class, 'index']);
     Route::post('/casos', [CasoController::class, 'store']);
-    Route::get('/casos/{caso}', [App\Http\Controllers\CasoController::class, 'show']);
-    Route::put('/casos/{caso}', [App\Http\Controllers\CasoController::class, 'update']);
-
-
-
+    Route::get('/casos/{caso}', [CasoController::class, 'show']);
+    Route::put('/casos/{caso}', [CasoController::class, 'update']);
 });
+Route::get('/casos/{caso}/pdf', [CasoController::class, 'pdf']);
