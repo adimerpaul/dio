@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CasoController;
 use App\Http\Controllers\DocumentoController;
+use App\Http\Controllers\FotografiaController;
 use App\Http\Controllers\InformeController;
 use App\Http\Controllers\ProblematicaController;
 use App\Http\Controllers\SesionPsicologicaController;
@@ -70,7 +71,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put   ('/documentos/{documento}',         [DocumentoController::class, 'update']);
     Route::delete('/documentos/{documento}',         [DocumentoController::class, 'destroy']);
 
-
+    Route::get ('/casos/{caso}/fotografias', [FotografiaController::class,'index']);
+    Route::post('/casos/{caso}/fotografias', [FotografiaController::class,'store']);
+    Route::delete('/fotografias/{fotografia}', [FotografiaController::class,'destroy']);
 });
 Route::get('/casos/{caso}/pdf', [CasoController::class, 'pdf']);
 Route::get('problematicas/{problematica}/pdf', [ProblematicaController::class, 'pdf']);
