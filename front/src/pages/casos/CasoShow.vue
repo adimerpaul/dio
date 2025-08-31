@@ -22,31 +22,46 @@
             <div class="col-12 col-md-6">
               <q-input v-model="f.denunciante_nombre_completo" dense outlined label="Nombre completo *" :rules="[req]"/>
             </div>
-            <div class="col-6 col-md-3">
-<!--              <q-input v-model="f.denunciante_documento" dense outlined label="Documento"/> q-select docuemntos-->
-              <q-select v-model="f.denunciante_documento" dense outlined label="Documento" :options="documentos"/>
-            </div>
-            <div class="col-6 col-md-3"><q-input v-model="f.denunciante_nro" dense outlined label="Nro documento"/></div>
 
             <div class="col-6 col-md-3">
-<!--              <q-input v-model="f.denunciante_sexo" dense outlined label="Sexo"/>-->
+              <q-select v-model="f.denunciante_documento" dense outlined label="Documento" :options="documentos"/>
+            </div>
+            <div class="col-6 col-md-3">
+              <q-input v-model="f.denunciante_nro" dense outlined label="Nro documento"/>
+            </div>
+
+            <div class="col-6 col-md-3">
               <q-select v-model="f.denunciante_sexo" dense outlined label="Sexo" :options="sexos"/>
             </div>
             <div class="col-6 col-md-3">
-<!--              <q-input v-model="f.denunciante_estado_civil" dense outlined label="Estado civil"/>-->
               <q-select v-model="f.denunciante_estado_civil" dense outlined label="Estado civil" :options="estadosCiviles"/>
             </div>
-            <div class="col-6 col-md-3"><q-input v-model="f.denunciante_residencia" dense outlined label="Residencia"/></div>
+
             <div class="col-6 col-md-3">
-<!--              <q-input v-model="f.denunciante_idioma" dense outlined label="Idioma"/>-->
+              <q-input v-model="f.denunciante_residencia" dense outlined label="Residencia"/>
+            </div>
+            <div class="col-6 col-md-3">
               <q-select v-model="f.denunciante_idioma" dense outlined label="Idioma" :options="idiomas"/>
             </div>
 
-            <div class="col-6 col-md-3"><q-toggle v-model="f.denunciante_trabaja" label="Trabaja"/></div>
+            <!-- fecha nacimiento + edad -->
+            <div class="col-6 col-md-3">
+              <q-input v-model="f.denunciante_fecha_nacimiento" type="date" dense outlined label="Fecha de nacimiento"
+                       @input="f.denunciante_edad = calcEdad(f.denunciante_fecha_nacimiento)"/>
+            </div>
+            <div class="col-6 col-md-3">
+              <q-input v-model.number="f.denunciante_edad" dense outlined label="Edad" type="number" :readonly="true"/>
+            </div>
+
+            <div class="col-6 col-md-3">
+              <q-toggle v-model="f.denunciante_trabaja" label="Trabaja"/>
+            </div>
             <div class="col-6 col-md-3">
               <q-input v-model="f.denunciante_ocupacion" dense outlined label="Ocupación"/>
             </div>
-            <div class="col-12"><q-input v-model="f.denunciante_domicilio_actual" dense outlined label="Domicilio actual"/></div>
+            <div class="col-12">
+              <q-input v-model="f.denunciante_domicilio_actual" dense outlined label="Domicilio actual"/>
+            </div>
 
             <div class="col-12">
               <div class="text-caption text-grey-7 q-mb-xs">Ubicación (denunciante)</div>
@@ -56,7 +71,7 @@
         </q-card-section>
       </q-card>
 
-      <!-- Familiar simple -->
+      <!-- Grupo Familiar (igual que tenías) -->
       <q-card flat bordered class="q-mb-md">
         <q-card-section class="text-subtitle1 text-weight-medium">2) Grupo Familiar</q-card-section>
         <q-separator/>
@@ -103,9 +118,22 @@
             <div class="col-12 col-md-6"><q-input v-model="f.denunciado_nombre_completo" dense outlined label="Nombre completo"/></div>
             <div class="col-6 col-md-3"><q-input v-model="f.denunciado_documento" dense outlined label="Documento"/></div>
             <div class="col-6 col-md-3"><q-input v-model="f.denunciado_nro" dense outlined label="Nro documento"/></div>
+
             <div class="col-6 col-md-3"><q-input v-model="f.denunciado_sexo" dense outlined label="Sexo"/></div>
             <div class="col-6 col-md-3"><q-input v-model="f.denunciado_residencia" dense outlined label="Residencia"/></div>
-            <div class="col-12"><q-input v-model="f.denunciado_domicilio_actual" dense outlined label="Domicilio actual"/></div>
+
+            <!-- fecha nacimiento + edad -->
+            <div class="col-6 col-md-3">
+              <q-input v-model="f.denunciado_fecha_nacimiento" type="date" dense outlined label="Fecha de nacimiento"
+                       @input="f.denunciado_edad = calcEdad(f.denunciado_fecha_nacimiento)"/>
+            </div>
+            <div class="col-6 col-md-3">
+              <q-input v-model.number="f.denunciado_edad" dense outlined label="Edad" type="number" :readonly="true"/>
+            </div>
+
+            <div class="col-12">
+              <q-input v-model="f.denunciado_domicilio_actual" dense outlined label="Domicilio actual"/>
+            </div>
 
             <div class="col-12">
               <div class="text-caption text-grey-7 q-mb-xs">Ubicación (denunciado)</div>
@@ -126,7 +154,9 @@
             <div class="col-12 col-md-6"><q-input v-model="f.caso_lugar_hecho" dense outlined label="Lugar del hecho"/></div>
             <div class="col-12 col-md-4"><q-input v-model="f.caso_tipologia" dense outlined label="Tipología"/></div>
             <div class="col-12 col-md-4"><q-input v-model="f.caso_modalidad" dense outlined label="Modalidad"/></div>
-            <div class="col-12"><q-input v-model="f.caso_descripcion" type="textarea" autogrow outlined dense label="Descripción del hecho"/></div>
+            <div class="col-12">
+              <q-input v-model="f.caso_descripcion" type="textarea" autogrow outlined dense label="Descripción del hecho"/>
+            </div>
           </div>
         </q-card-section>
       </q-card>
@@ -189,42 +219,27 @@ export default {
         denunciante_residencia: '',
         denunciante_estado_civil: '',
         denunciante_idioma: '',
+        denunciante_fecha_nacimiento: '',
+        denunciante_edad: null,
         denunciante_trabaja: false,
         denunciante_ocupacion: '',
         denunciante_domicilio_actual: '',
         latitud: null,
         longitud: null,
-        // Familiar 1
-        familiar1_nombre_completo: '',
-        familiar1_edad: null,
-        familiar1_parentesco: '',
-        familiar1_celular: '',
-        // Familiar 2
-        familiar2_nombre_completo: '',
-        familiar2_edad: null,
-        familiar2_parentesco: '',
-        familiar2_celular: '',
-        // Familiar 3
-        familiar3_nombre_completo: '',
-        familiar3_edad: null,
-        familiar3_parentesco: '',
-        familiar3_celular: '',
-        // Familiar 4
-        familiar4_nombre_completo: '',
-        familiar4_edad: null,
-        familiar4_parentesco: '',
-        familiar4_celular: '',
-        // Familiar 5
-        familiar5_nombre_completo: '',
-        familiar5_edad: null,
-        familiar5_parentesco: '',
-        familiar5_celular: '',
+        // Familiares
+        familiar1_nombre_completo: '', familiar1_edad: null, familiar1_parentesco: '', familiar1_celular: '',
+        familiar2_nombre_completo: '', familiar2_edad: null, familiar2_parentesco: '', familiar2_celular: '',
+        familiar3_nombre_completo: '', familiar3_edad: null, familiar3_parentesco: '', familiar3_celular: '',
+        familiar4_nombre_completo: '', familiar4_edad: null, familiar4_parentesco: '', familiar4_celular: '',
+        familiar5_nombre_completo: '', familiar5_edad: null, familiar5_parentesco: '', familiar5_celular: '',
         // Denunciado
         denunciado_nombre_completo: '',
         denunciado_documento: '',
         denunciado_nro: '',
         denunciado_sexo: '',
         denunciado_residencia: '',
+        denunciado_fecha_nacimiento: '',
+        denunciado_edad: null,
         denunciado_domicilio_actual: '',
         denunciado_latitud: null,
         denunciado_longitud: null,
@@ -248,7 +263,6 @@ export default {
     }
   },
   computed: {
-    // v-model para los mapas (Vue2 usa value/input, aquí lo simulamos con objetos)
     denunciantePos: {
       get () { return { latitud: this.f.latitud, longitud: this.f.longitud } },
       set (v) { this.f.latitud = v.latitud; this.f.longitud = v.longitud }
@@ -260,6 +274,15 @@ export default {
   },
   methods: {
     req (v) { return !!v || 'Requerido' },
+    calcEdad (fecha) {
+      if (!fecha) return null
+      const hoy = new Date()
+      const fn  = new Date(fecha)
+      let edad = hoy.getFullYear() - fn.getFullYear()
+      const m = hoy.getMonth() - fn.getMonth()
+      if (m < 0 || (m === 0 && hoy.getDate() < fn.getDate())) edad--
+      return edad >= 0 && edad < 150 ? edad : null
+    },
     resetForm () {
       const bools = ['denunciante_trabaja','violencia_fisica','violencia_psicologica','violencia_sexual','violencia_economica']
       Object.keys(this.f).forEach(k => {
@@ -267,17 +290,26 @@ export default {
         else if (k.includes('lat') || k.includes('long')) this.f[k] = null
         else this.f[k] = ''
       })
+      this.f.denunciante_edad = null
+      this.f.denunciado_edad = null
     },
     async save () {
       if (!this.f.denunciante_nombre_completo) {
         this.$alert.error('El nombre del denunciante es obligatorio')
         return
       }
+      // asegurar edades si el usuario cambió fechas y no salió del input
+      this.f.denunciante_edad = this.calcEdad(this.f.denunciante_fecha_nacimiento)
+      this.f.denunciado_edad  = this.calcEdad(this.f.denunciado_fecha_nacimiento)
+
       this.loading = true
       try {
-        await this.$axios.post('/casos', this.f)
+        const res = await this.$axios.post('/casos', this.f)
+        const created = res.data
         this.$alert.success('Caso creado')
-        this.resetForm()
+        // redirigir al show
+        if (created && created.id) this.$router.push(`/casos/${created.id}`)
+        else this.resetForm()
       } catch (e) {
         this.$alert.error(e?.response?.data?.message || 'No se pudo crear el caso')
       } finally {

@@ -1,38 +1,72 @@
 <template>
-  <q-page class="q-pa-md">
-    <div class="row items-center q-mb-md">
+  <q-page class="q-pa-md bg-grey-2">
+
+    <!-- Barra superior fija -->
+    <div class="toolbar q-pa-sm bg-white row items-center q-gutter-sm shadow-1">
       <div class="col">
         <div class="text-h6 text-weight-bold">Nuevo Caso</div>
         <div class="text-caption text-grey-7">Registro de denuncia (SLIM)</div>
       </div>
-      <div class="col-auto">
-        <q-btn flat color="primary" icon="history" label="Limpiar" @click="resetForm" class="q-mr-sm"/>
+      <div class="col-auto row q-gutter-sm">
+        <q-btn flat color="primary" icon="history" label="Limpiar" @click="resetForm"/>
         <q-btn color="primary" icon="save" label="Guardar" :loading="loading" @click="save"/>
       </div>
     </div>
 
-    <q-form @submit.prevent="save">
+    <q-form class="q-mt-lg" @submit.prevent="save">
 
       <!-- Denunciante -->
-      <q-card flat bordered class="q-mb-md">
-        <q-card-section class="text-subtitle1 text-weight-medium">1) Datos del Denunciante</q-card-section>
+      <q-card flat bordered class="section-card">
+        <q-card-section class="row items-center">
+          <q-icon name="assignment_ind" class="q-mr-sm"/>
+          <div class="text-subtitle1 text-weight-medium">1) Datos del Denunciante</div>
+          <q-space/>
+          <q-badge color="blue-2" text-color="blue-10" outline>Obligatorio *</q-badge>
+        </q-card-section>
         <q-separator/>
+
         <q-card-section>
           <div class="row q-col-gutter-md">
             <div class="col-12 col-md-6">
-              <q-input v-model="f.denunciante_nombre_completo" dense outlined label="Nombre completo *" :rules="[req]"/>
+              <q-input v-model="f.denunciante_nombre_completo" dense outlined clearable
+                       label="Nombre completo *" :rules="[req]" hint="Tal como figura en el documento"/>
             </div>
-            <div class="col-6 col-md-3"><q-input v-model="f.denunciante_documento" dense outlined label="Documento"/></div>
-            <div class="col-6 col-md-3"><q-input v-model="f.denunciante_nro" dense outlined label="Nro documento"/></div>
 
-            <div class="col-6 col-md-3"><q-input v-model="f.denunciante_sexo" dense outlined label="Sexo"/></div>
-            <div class="col-6 col-md-3"><q-input v-model="f.denunciante_estado_civil" dense outlined label="Estado civil"/></div>
-            <div class="col-6 col-md-3"><q-input v-model="f.denunciante_residencia" dense outlined label="Residencia"/></div>
-            <div class="col-6 col-md-3"><q-input v-model="f.denunciante_idioma" dense outlined label="Idioma"/></div>
+            <div class="col-6 col-md-3">
+              <q-select v-model="f.denunciante_documento" dense outlined emit-value map-options clearable
+                        :options="documentos" label="Documento"/>
+            </div>
+            <div class="col-6 col-md-3">
+              <q-input v-model="f.denunciante_nro" dense outlined clearable label="Nro documento" />
+            </div>
 
-            <div class="col-6 col-md-3"><q-toggle v-model="f.denunciante_trabaja" label="Trabaja"/></div>
-            <div class="col-6 col-md-3"><q-input v-model="f.denunciante_ocupacion" dense outlined label="Ocupación"/></div>
-            <div class="col-12"><q-input v-model="f.denunciante_domicilio_actual" dense outlined label="Domicilio actual"/></div>
+            <div class="col-6 col-md-3">
+              <q-select v-model="f.denunciante_sexo" dense outlined emit-value map-options clearable
+                        :options="sexos" label="Sexo"/>
+            </div>
+            <div class="col-6 col-md-3">
+              <q-select v-model="f.denunciante_estado_civil" dense outlined emit-value map-options clearable
+                        :options="estadosCiviles" label="Estado civil"/>
+            </div>
+            <div class="col-6 col-md-3">
+              <q-input v-model="f.denunciante_residencia" dense outlined clearable label="Residencia"/>
+            </div>
+            <div class="col-6 col-md-3">
+              <q-select v-model="f.denunciante_idioma" dense outlined emit-value map-options clearable
+                        :options="idiomas" label="Idioma"/>
+            </div>
+
+            <div class="col-6 col-md-3">
+              <q-toggle v-model="f.denunciante_trabaja" label="Trabaja" />
+            </div>
+            <div class="col-6 col-md-3">
+              <q-input v-model="f.denunciante_ocupacion" dense outlined clearable label="Ocupación"/>
+            </div>
+
+            <div class="col-12">
+              <q-input v-model="f.denunciante_domicilio_actual" dense outlined clearable
+                       label="Domicilio actual" />
+            </div>
 
             <div class="col-12">
               <div class="text-caption text-grey-7 q-mb-xs">Ubicación (denunciante)</div>
@@ -42,32 +76,97 @@
         </q-card-section>
       </q-card>
 
-      <!-- Familiar simple -->
-      <q-card flat bordered class="q-mb-md">
-        <q-card-section class="text-subtitle1 text-weight-medium">2) Grupo Familiar</q-card-section>
-        <q-separator/>
-        <q-card-section>
-          <div class="row q-col-gutter-md">
-            <div class="col-12 col-md-6"><q-input v-model="f.familiar1_nombre_completo" dense outlined label="Familiar 1: Nombres y apellidos"/></div>
-            <div class="col-6 col-md-2"><q-input v-model.number="f.familiar1_edad" dense outlined type="number" label="Edad"/></div>
-            <div class="col-6 col-md-2"><q-input v-model="f.familiar1_parentesco" dense outlined label="Parentesco"/></div>
-            <div class="col-12 col-md-2"><q-input v-model="f.familiar1_celular" dense outlined label="Celular"/></div>
-          </div>
-        </q-card-section>
+      <!-- Grupo Familiar (en acordeón para no saturar) -->
+      <q-card flat bordered class="section-card">
+        <q-expansion-item icon="diversity_3" dense-toggle expand-separator
+                          label="2) Grupo Familiar" header-class="text-subtitle1">
+          <q-card>
+            <q-card-section>
+              <div class="row q-col-gutter-md">
+                <div class="col-12 col-md-6">
+                  <q-input v-model="f.familiar1_nombre_completo" dense outlined clearable label="Familiar 1: Nombres y apellidos"/>
+                </div>
+                <div class="col-6 col-md-2">
+                  <q-input v-model.number="f.familiar1_edad" dense outlined type="number" label="Edad" />
+                </div>
+                <div class="col-6 col-md-2">
+                  <q-input v-model="f.familiar1_parentesco" dense outlined clearable label="Parentesco"/>
+                </div>
+                <div class="col-12 col-md-2">
+                  <q-input v-model="f.familiar1_celular" dense outlined clearable label="Celular"/>
+                </div>
+              </div>
+
+              <q-separator spaced/>
+
+              <div class="row q-col-gutter-md">
+                <div class="col-12 col-md-6"><q-input v-model="f.familiar2_nombre_completo" dense outlined clearable label="Familiar 2: Nombres y apellidos"/></div>
+                <div class="col-6 col-md-2"><q-input v-model.number="f.familiar2_edad" dense outlined type="number" label="Edad"/></div>
+                <div class="col-6 col-md-2"><q-input v-model="f.familiar2_parentesco" dense outlined clearable label="Parentesco"/></div>
+                <div class="col-12 col-md-2"><q-input v-model="f.familiar2_celular" dense outlined clearable label="Celular"/></div>
+              </div>
+
+              <q-separator spaced/>
+
+              <div class="row q-col-gutter-md">
+                <div class="col-12 col-md-6"><q-input v-model="f.familiar3_nombre_completo" dense outlined clearable label="Familiar 3: Nombres y apellidos"/></div>
+                <div class="col-6 col-md-2"><q-input v-model.number="f.familiar3_edad" dense outlined type="number" label="Edad"/></div>
+                <div class="col-6 col-md-2"><q-input v-model="f.familiar3_parentesco" dense outlined clearable label="Parentesco"/></div>
+                <div class="col-12 col-md-2"><q-input v-model="f.familiar3_celular" dense outlined clearable label="Celular"/></div>
+              </div>
+
+              <q-separator spaced/>
+
+              <div class="row q-col-gutter-md">
+                <div class="col-12 col-md-6"><q-input v-model="f.familiar4_nombre_completo" dense outlined clearable label="Familiar 4: Nombres y apellidos"/></div>
+                <div class="col-6 col-md-2"><q-input v-model.number="f.familiar4_edad" dense outlined type="number" label="Edad"/></div>
+                <div class="col-6 col-md-2"><q-input v-model="f.familiar4_parentesco" dense outlined clearable label="Parentesco"/></div>
+                <div class="col-12 col-md-2"><q-input v-model="f.familiar4_celular" dense outlined clearable label="Celular"/></div>
+              </div>
+
+              <q-separator spaced/>
+
+              <div class="row q-col-gutter-md">
+                <div class="col-12 col-md-6"><q-input v-model="f.familiar5_nombre_completo" dense outlined clearable label="Familiar 5: Nombres y apellidos"/></div>
+                <div class="col-6 col-md-2"><q-input v-model.number="f.familiar5_edad" dense outlined type="number" label="Edad"/></div>
+                <div class="col-6 col-md-2"><q-input v-model="f.familiar5_parentesco" dense outlined clearable label="Parentesco"/></div>
+                <div class="col-12 col-md-2"><q-input v-model="f.familiar5_celular" dense outlined clearable label="Celular"/></div>
+              </div>
+            </q-card-section>
+          </q-card>
+        </q-expansion-item>
       </q-card>
 
       <!-- Denunciado -->
-      <q-card flat bordered class="q-mb-md">
-        <q-card-section class="text-subtitle1 text-weight-medium">3) Datos del Denunciado</q-card-section>
+      <q-card flat bordered class="section-card">
+        <q-card-section class="row items-center">
+          <q-icon name="person_pin_circle" class="q-mr-sm"/>
+          <div class="text-subtitle1 text-weight-medium">3) Datos del Denunciado</div>
+        </q-card-section>
         <q-separator/>
+
         <q-card-section>
           <div class="row q-col-gutter-md">
-            <div class="col-12 col-md-6"><q-input v-model="f.denunciado_nombre_completo" dense outlined label="Nombre completo"/></div>
-            <div class="col-6 col-md-3"><q-input v-model="f.denunciado_documento" dense outlined label="Documento"/></div>
-            <div class="col-6 col-md-3"><q-input v-model="f.denunciado_nro" dense outlined label="Nro documento"/></div>
-            <div class="col-6 col-md-3"><q-input v-model="f.denunciado_sexo" dense outlined label="Sexo"/></div>
-            <div class="col-6 col-md-3"><q-input v-model="f.denunciado_residencia" dense outlined label="Residencia"/></div>
-            <div class="col-12"><q-input v-model="f.denunciado_domicilio_actual" dense outlined label="Domicilio actual"/></div>
+            <div class="col-12 col-md-6">
+              <q-input v-model="f.denunciado_nombre_completo" dense outlined clearable label="Nombre completo"/>
+            </div>
+            <div class="col-6 col-md-3">
+              <q-input v-model="f.denunciado_documento" dense outlined clearable label="Documento"/>
+            </div>
+            <div class="col-6 col-md-3">
+              <q-input v-model="f.denunciado_nro" dense outlined clearable label="Nro documento"/>
+            </div>
+
+            <div class="col-6 col-md-3">
+              <q-input v-model="f.denunciado_sexo" dense outlined clearable label="Sexo"/>
+            </div>
+            <div class="col-6 col-md-3">
+              <q-input v-model="f.denunciado_residencia" dense outlined clearable label="Residencia"/>
+            </div>
+
+            <div class="col-12">
+              <q-input v-model="f.denunciado_domicilio_actual" dense outlined clearable label="Domicilio actual"/>
+            </div>
 
             <div class="col-12">
               <div class="text-caption text-grey-7 q-mb-xs">Ubicación (denunciado)</div>
@@ -78,25 +177,47 @@
       </q-card>
 
       <!-- Hechos y Tipología -->
-      <q-card flat bordered class="q-mb-md">
-        <q-card-section class="text-subtitle1 text-weight-medium">4) Hechos y Tipología</q-card-section>
+      <q-card flat bordered class="section-card">
+        <q-card-section class="row items-center">
+          <q-icon name="gavel" class="q-mr-sm"/>
+          <div class="text-subtitle1 text-weight-medium">4) Hechos y Tipología</div>
+        </q-card-section>
         <q-separator/>
+
         <q-card-section>
           <div class="row q-col-gutter-md">
-            <div class="col-12 col-md-3"><q-input v-model="f.caso_numero" dense outlined label="Nro de caso"/></div>
-            <div class="col-12 col-md-3"><q-input v-model="f.caso_fecha_hecho" dense outlined label="Fecha del hecho" type="date"/></div>
-            <div class="col-12 col-md-6"><q-input v-model="f.caso_lugar_hecho" dense outlined label="Lugar del hecho"/></div>
-            <div class="col-12 col-md-4"><q-input v-model="f.caso_tipologia" dense outlined label="Tipología"/></div>
-            <div class="col-12 col-md-4"><q-input v-model="f.caso_modalidad" dense outlined label="Modalidad"/></div>
-            <div class="col-12"><q-input v-model="f.caso_descripcion" type="textarea" autogrow outlined dense label="Descripción del hecho"/></div>
+            <div class="col-12 col-md-3">
+              <q-input v-model="f.caso_numero" dense outlined clearable label="Nro de caso"/>
+            </div>
+            <div class="col-12 col-md-3">
+              <q-input v-model="f.caso_fecha_hecho" type="date" dense outlined label="Fecha del hecho"/>
+            </div>
+            <div class="col-12 col-md-6">
+              <q-input v-model="f.caso_lugar_hecho" dense outlined clearable label="Lugar del hecho"/>
+            </div>
+
+            <div class="col-12 col-md-4">
+              <q-input v-model="f.caso_tipologia" dense outlined clearable label="Tipología"/>
+            </div>
+            <div class="col-12 col-md-4">
+              <q-input v-model="f.caso_modalidad" dense outlined clearable label="Modalidad"/>
+            </div>
+            <div class="col-12">
+              <q-input v-model="f.caso_descripcion" type="textarea" autogrow outlined dense clearable
+                       label="Descripción del hecho" counter maxlength="1000"/>
+            </div>
           </div>
         </q-card-section>
       </q-card>
 
       <!-- Violencias -->
-      <q-card flat bordered class="q-mb-md">
-        <q-card-section class="text-subtitle1 text-weight-medium">5) Tipos de violencia</q-card-section>
+      <q-card flat bordered class="section-card">
+        <q-card-section class="row items-center">
+          <q-icon name="warning_amber" class="q-mr-sm"/>
+          <div class="text-subtitle1 text-weight-medium">5) Tipos de violencia</div>
+        </q-card-section>
         <q-separator/>
+
         <q-card-section>
           <div class="row q-col-gutter-md">
             <div class="col-6 col-md-3"><q-toggle v-model="f.violencia_fisica" label="Física"/></div>
@@ -108,19 +229,24 @@
       </q-card>
 
       <!-- Seguimiento -->
-      <q-card flat bordered class="q-mb-lg">
-        <q-card-section class="text-subtitle1 text-weight-medium">6) Seguimiento</q-card-section>
+      <q-card flat bordered class="section-card q-mb-xl">
+        <q-card-section class="row items-center">
+          <q-icon name="task_alt" class="q-mr-sm"/>
+          <div class="text-subtitle1 text-weight-medium">6) Seguimiento</div>
+        </q-card-section>
         <q-separator/>
+
         <q-card-section>
           <div class="row q-col-gutter-md">
-            <div class="col-12 col-md-4"><q-input v-model="f.seguimiento_area" dense outlined label="Área"/></div>
-            <div class="col-12 col-md-4"><q-input v-model="f.seguimiento_area_social" dense outlined label="Área social (responsable)"/></div>
-            <div class="col-12 col-md-4"><q-input v-model="f.seguimiento_area_legal" dense outlined label="Área legal (responsable)"/></div>
+            <div class="col-12 col-md-4"><q-input v-model="f.seguimiento_area" dense outlined clearable label="Área"/></div>
+            <div class="col-12 col-md-4"><q-input v-model="f.seguimiento_area_social" dense outlined clearable label="Área social (responsable)"/></div>
+            <div class="col-12 col-md-4"><q-input v-model="f.seguimiento_area_legal" dense outlined clearable label="Área legal (responsable)"/></div>
           </div>
         </q-card-section>
       </q-card>
 
-      <div class="q-mt-md text-right">
+      <!-- Acciones bottom -->
+      <div class="text-right q-mb-lg">
         <q-btn flat color="primary" icon="history" label="Limpiar" @click="resetForm" class="q-mr-sm"/>
         <q-btn color="primary" icon="save" label="Guardar" :loading="loading" @click="save"/>
       </div>
@@ -137,6 +263,31 @@ export default {
   data () {
     return {
       loading: false,
+      documentos: [
+        { label: 'Carnet de identidad', value: 'Carnet de identidad' },
+        { label: 'Pasaporte', value: 'Pasaporte' },
+        { label: 'Libreta de servicio militar', value: 'Libreta de servicio militar' },
+        { label: 'Libreta de conducir', value: 'Libreta de conducir' }
+      ],
+      sexos: [
+        { label: 'Masculino', value: 'Masculino' },
+        { label: 'Femenino', value: 'Femenino' },
+        { label: 'Otro', value: 'Otro' }
+      ],
+      estadosCiviles: [
+        { label: 'Soltero/a', value: 'Soltero/a' },
+        { label: 'Casado/a', value: 'Casado/a' },
+        { label: 'Divorciado/a', value: 'Divorciado/a' },
+        { label: 'Viudo/a', value: 'Viudo/a' },
+        { label: 'Unión libre', value: 'Unión libre' }
+      ],
+      idiomas: [
+        { label: 'Español', value: 'Español' },
+        { label: 'Quechua', value: 'Quechua' },
+        { label: 'Aymara', value: 'Aymara' },
+        { label: 'Guaraní', value: 'Guaraní' },
+        { label: 'Otro', value: 'Otro' }
+      ],
       oruroCenter: [-17.9667, -67.1167],
       f: {
         // Denunciante
@@ -152,11 +303,12 @@ export default {
         denunciante_domicilio_actual: '',
         latitud: null,
         longitud: null,
-        // Familiar 1
-        familiar1_nombre_completo: '',
-        familiar1_edad: null,
-        familiar1_parentesco: '',
-        familiar1_celular: '',
+        // Familiares
+        familiar1_nombre_completo: '', familiar1_edad: null, familiar1_parentesco: '', familiar1_celular: '',
+        familiar2_nombre_completo: '', familiar2_edad: null, familiar2_parentesco: '', familiar2_celular: '',
+        familiar3_nombre_completo: '', familiar3_edad: null, familiar3_parentesco: '', familiar3_celular: '',
+        familiar4_nombre_completo: '', familiar4_edad: null, familiar4_parentesco: '', familiar4_celular: '',
+        familiar5_nombre_completo: '', familiar5_edad: null, familiar5_parentesco: '', familiar5_celular: '',
         // Denunciado
         denunciado_nombre_completo: '',
         denunciado_documento: '',
@@ -186,7 +338,6 @@ export default {
     }
   },
   computed: {
-    // v-model para los mapas (Vue2 usa value/input, aquí lo simulamos con objetos)
     denunciantePos: {
       get () { return { latitud: this.f.latitud, longitud: this.f.longitud } },
       set (v) { this.f.latitud = v.latitud; this.f.longitud = v.longitud }
@@ -205,6 +356,7 @@ export default {
         else if (k.includes('lat') || k.includes('long')) this.f[k] = null
         else this.f[k] = ''
       })
+      this.$q.notify({ type: 'info', message: 'Formulario reiniciado' })
     },
     async save () {
       if (!this.f.denunciante_nombre_completo) {
@@ -213,8 +365,10 @@ export default {
       }
       this.loading = true
       try {
-        await this.$axios.post('/casos', this.f)
+        const res = await this.$axios.post('/casos', this.f)
         this.$alert.success('Caso creado')
+        // Si quieres redirigir al show, descomenta:
+        // this.$router.push(`/casos/${res.data.id}`)
         this.resetForm()
       } catch (e) {
         this.$alert.error(e?.response?.data?.message || 'No se pudo crear el caso')
@@ -225,3 +379,19 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.bg-grey-2 { min-height: 100%; }
+.toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  border-radius: 12px;
+}
+.section-card {
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  background: #fff;
+}
+</style>

@@ -44,7 +44,7 @@
       </tr>
       </thead>
       <tbody v-if="!loading && casos.length">
-      <tr v-for="(c, idx) in casos" :key="c.id">
+      <tr v-for="(c, idx) in casos" :key="c.id" @click="$router.push('/casos/' + c.id)" class="cursor-pointer">
         <td>{{ rowIndex(idx) }}</td>
         <td class="text-no-wrap">{{ c.caso_numero || '—' }}</td>
         <td class="text-no-wrap">{{ $filters.date(c.caso_fecha_hecho) }}</td>
