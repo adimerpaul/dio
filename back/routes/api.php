@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CasoController;
+use App\Http\Controllers\ProblematicaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -28,5 +29,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/casos', [CasoController::class, 'store']);
     Route::get('/casos/{caso}', [CasoController::class, 'show']);
     Route::put('/casos/{caso}', [CasoController::class, 'update']);
+
+    // por caso
+    Route::get('casos/{caso}/problematicas', [ProblematicaController::class, 'index']);
+    Route::post('casos/{caso}/problematicas', [ProblematicaController::class, 'store']);
+
+    // individuales
+    Route::get('problematicas/{problematica}', [ProblematicaController::class, 'show']);
+    Route::put('problematicas/{problematica}', [ProblematicaController::class, 'update']);
+    Route::delete('problematicas/{problematica}', [ProblematicaController::class, 'destroy']);
 });
 Route::get('/casos/{caso}/pdf', [CasoController::class, 'pdf']);
+Route::get('problematicas/{problematica}/pdf', [ProblematicaController::class, 'pdf']);
+

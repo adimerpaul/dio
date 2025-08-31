@@ -115,4 +115,6 @@ class Caso extends Model implements AuditableContract
         'violencia_sexual'      => 'boolean',
         'violencia_economica'   => 'boolean',
     ];
+    public function problematicas(){ return $this->hasMany(Problematica::class); }
+
 }
