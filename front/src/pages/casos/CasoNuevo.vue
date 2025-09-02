@@ -198,14 +198,42 @@
               <q-input v-model="f.denunciado_nombre_completo" dense outlined clearable label="Nombre completo"/>
             </div>
             <div class="col-6 col-md-3">
-              <q-input v-model="f.denunciado_documento" dense outlined clearable label="Documento"/>
+<!--              <q-input v-model="f.denunciado_documento" dense outlined clearable label="Documento"/>-->
+              <q-select v-model="f.denunciado_documento" dense outlined emit-value map-options clearable
+                        :options="documentos" label="Documento"/>
             </div>
             <div class="col-6 col-md-3">
               <q-input v-model="f.denunciado_nro" dense outlined clearable label="Nro documento"/>
             </div>
 
             <div class="col-6 col-md-3">
-              <q-input v-model="f.denunciado_sexo" dense outlined clearable label="Sexo"/>
+<!--              <q-input v-model="f.denunciado_sexo" dense outlined clearable label="Sexo"/>-->
+              <q-select v-model="f.denunciado_sexo" dense outlined emit-value map-options clearable
+                        :options="sexos" label="Sexo"/>
+            </div>
+            <div class="col-6 col-md-3">
+              <q-input v-model="f.denunciado_lugar_nacimiento" dense outlined clearable label="Lugar de nacimiento"/>
+            </div>
+            <div class="col-6 col-md-3">
+              <q-input v-model="f.denunciado_fecha_nacimiento" type="date" dense outlined label="Fecha de nacimiento" @update:model-value="(v) => {
+                if (v) {
+                  const birthDate = new Date(v)
+                  const ageDifMs = Date.now() - birthDate.getTime()
+                  const ageDate = new Date(ageDifMs)
+                  this.f.denunciado_edad = Math.abs(ageDate.getUTCFullYear() - 1970)
+                } else {
+                  this.f.denunciado_edad = ''
+                }
+              }"/>
+            </div>
+            <div class="col-6 col-md-3">
+              <q-input v-model.number="f.denunciado_edad" dense outlined type="number" label="Edad"/>
+            </div>
+            <div class="col-6 col-md-3">
+              <q-input v-model="f.denunciado_telefono" dense outlined clearable label="Teléfono/Celular"/>
+            </div>
+            <div class="col-6 col-md-3">
+              <q-input v-model="f.denunciado_grado" dense outlined clearable label="Grado de instrucción"/>
             </div>
             <div class="col-6 col-md-3">
               <q-input v-model="f.denunciado_residencia" dense outlined clearable label="Residencia"/>
@@ -285,7 +313,7 @@
 
         <q-card-section>
           <div class="row q-col-gutter-md">
-            <div class="col-12 col-md-4"><q-input v-model="f.seguimiento_area" dense outlined clearable label="Área"/></div>
+            <div class="col-12 col-md-4"><q-input v-model="f.seguimiento_area" dense outlined clearable label="Área (Responsable)"/></div>
             <div class="col-12 col-md-4"><q-input v-model="f.seguimiento_area_social" dense outlined clearable label="Área social (responsable)"/></div>
             <div class="col-12 col-md-4"><q-input v-model="f.seguimiento_area_legal" dense outlined clearable label="Área legal (responsable)"/></div>
           </div>
@@ -329,7 +357,7 @@ export default {
         { label: 'Unión libre', value: 'Unión libre' }
       ],
       idiomas: [
-        { label: 'Español', value: 'Español' },
+        { label: 'Catellano', value: 'Catellano' },
         { label: 'Quechua', value: 'Quechua' },
         { label: 'Aymara', value: 'Aymara' },
         { label: 'Guaraní', value: 'Guaraní' },
@@ -375,6 +403,11 @@ export default {
         denunciado_domicilio_actual: '',
         denunciado_latitud: null,
         denunciado_longitud: null,
+        denunciado_lugar_nacimiento: '',
+        denunciado_fecha_nacimiento: '',
+        denunciado_edad: '',
+        denunciado_telefono: '',
+        denunciado_grado: '',
         // Caso
         caso_numero: '',
         caso_fecha_hecho: '',

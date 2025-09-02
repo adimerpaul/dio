@@ -65,6 +65,7 @@ class Caso extends Model implements AuditableContract
         'denunciado_lugar_nacimiento',
         'denunciado_fecha_nacimiento',
         'denunciado_edad',
+        'denunciado_telefono',
         'denunciado_residencia',
         'denunciado_estado_civil',
         'denunciado_relacion',
@@ -130,9 +131,9 @@ class Caso extends Model implements AuditableContract
             );
 
             // Denunciado
-            $model->denunciado_nombre_completo = trim(
-                "{$model->denunciado_nombres} {$model->denunciado_paterno} {$model->denunciado_materno}"
-            );
+//            $model->denunciado_nombre_completo = trim(
+//                "{$model->denunciado_nombres} {$model->denunciado_paterno} {$model->denunciado_materno}"
+//            );
         });
     }
 }

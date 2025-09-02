@@ -144,13 +144,42 @@
             <q-input v-model="form.denunciado_nombre_completo" :readonly="!editing" dense outlined clearable label="Nombre completo"/>
           </div>
           <div class="col-6 col-md-3">
-            <q-input v-model="form.denunciado_documento" :readonly="!editing" dense outlined clearable label="Documento"/>
+<!--            <q-input v-model="form.denunciado_documento" :readonly="!editing" dense outlined clearable label="Documento"/>-->
+            <q-select v-model="form.denunciado_documento" dense outlined :readonly="!editing"
+                      emit-value
+                      map-options
+                      :options="documentos"
+                      label="Documento"/>
           </div>
           <div class="col-6 col-md-3">
             <q-input v-model="form.denunciado_nro" :readonly="!editing" dense outlined clearable label="Nro documento"/>
           </div>
 
           <div class="col-6 col-md-3"><q-input v-model="form.denunciado_sexo" :readonly="!editing" dense outlined clearable label="Sexo"/></div>
+          <div class="col-6 col-md-3">
+            <q-input v-model="form.denunciado_lugar_nacimiento" dense outlined clearable label="Lugar de nacimiento"/>
+          </div>
+          <div class="col-6 col-md-3">
+            <q-input v-model="form.denunciado_fecha_nacimiento" type="date" dense outlined label="Fecha de nacimiento" @update:model-value="(v) => {
+                if (v) {
+                  const birthDate = new Date(v)
+                  const ageDifMs = Date.now() - birthDate.getTime()
+                  const ageDate = new Date(ageDifMs)
+                  this.form.denunciado_edad = Math.abs(ageDate.getUTCFullYear() - 1970)
+                } else {
+                  this.form.denunciado_edad = ''
+                }
+              }"/>
+          </div>
+          <div class="col-6 col-md-3">
+            <q-input v-model.number="form.denunciado_edad" dense outlined type="number" label="Edad"/>
+          </div>
+          <div class="col-6 col-md-3">
+            <q-input v-model="form.denunciado_telefono" dense outlined clearable label="Teléfono/Celular"/>
+          </div>
+          <div class="col-6 col-md-3">
+            <q-input v-model="form.denunciado_grado" dense outlined clearable label="Grado de instrucción"/>
+          </div>
           <div class="col-6 col-md-3"><q-input v-model="form.denunciado_residencia" :readonly="!editing" dense outlined clearable label="Residencia"/></div>
 
           <div class="col-12">
@@ -176,6 +205,24 @@ export default {
   props: { caseId: { type: [String, Number], required: true } },
   data () {
     return {
+      documentos: [
+        { label: 'Carnet de identidad', value: 'Carnet de identidad' },
+        { label: 'Pasaporte', value: 'Pasaporte' },
+        { label: 'Libreta de servicio militar', value: 'Libreta de servicio militar' },
+        { label: 'Libreta de conducir', value: 'Libreta de conducir' }
+      ],
+      sexos: [
+        { label: 'Masculino', value: 'Masculino' },
+        { label: 'Femenino', value: 'Femenino' },
+        { label: 'Otro', value: 'Otro' }
+      ],
+      estadosCiviles: [
+        { label: 'Soltero/a', value: 'Soltero/a' },
+        { label: 'Casado/a', value: 'Casado/a' },
+        { label: 'Divorciado/a', value: 'Divorciado/a' },
+        { label: 'Viudo/a', value: 'Viudo/a' },
+        { label: 'Unión libre', value: 'Unión libre' }
+      ],
       loading: false,
       editing: false,
       form: {},

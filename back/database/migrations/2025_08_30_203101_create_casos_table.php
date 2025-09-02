@@ -60,7 +60,8 @@ return new class extends Migration
             $table->string('denunciado_sexo', 15)->nullable();
             $table->string('denunciado_lugar_nacimiento', 120)->nullable();
             $table->date('denunciado_fecha_nacimiento')->nullable();
-            $table->tinyInteger('denunciado_edad')->nullable();
+            $table->string('denunciado_edad')->nullable();
+            $table->string('denunciado_telefono')->nullable();
             $table->string('denunciado_residencia', 120)->nullable();
             $table->string('denunciado_estado_civil', 40)->nullable();
             $table->string('denunciado_relacion', 60)->nullable();
