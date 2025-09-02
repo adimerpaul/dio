@@ -314,7 +314,7 @@ export default {
       f: {
         // Denunciante
         area: 'SLIM',
-        zonas: 'CENTRAL',
+        zona: 'CENTRAL',
         denunciante_nombre_completo: '',
         denunciante_nombres: '',
         denunciante_paterno: '',
@@ -395,7 +395,7 @@ export default {
         const res = await this.$axios.post('/casos', this.f)
         this.$alert.success('Caso creado')
         // Si quieres redirigir al show, descomenta:
-        // this.$router.push(`/casos/${res.data.id}`)
+        this.$router.push(`/casos/${res.data.caso.id}`)
         this.resetForm()
       } catch (e) {
         this.$alert.error(e?.response?.data?.message || 'No se pudo crear el caso')
