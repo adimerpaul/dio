@@ -55,6 +55,31 @@
             </div>
 
             <div class="col-6 col-md-3">
+              <q-input v-model="f.denunciante_lugar_nacimiento" dense outlined clearable label="Lugar de nacimiento"/>
+            </div>
+            <div class="col-6 col-md-3">
+              <q-input v-model="f.denunciante_fecha_nacimiento" type="date" dense outlined label="Fecha de nacimiento" @update:model-value="(v) => {
+                if (v) {
+                  const birthDate = new Date(v)
+                  const ageDifMs = Date.now() - birthDate.getTime()
+                  const ageDate = new Date(ageDifMs)
+                  this.f.denunciante_edad = Math.abs(ageDate.getUTCFullYear() - 1970)
+                } else {
+                  this.f.denunciante_edad = ''
+                }
+              }"/>
+            </div>
+            <div class="col-6 col-md-3">
+              <q-input v-model.number="f.denunciante_edad" dense outlined type="number" label="Edad"/>
+            </div>
+            <div class="col-6 col-md-3">
+              <q-input v-model="f.denunciante_telefono" dense outlined clearable label="Teléfono/Celular"/>
+            </div>
+            <div class="col-6 col-md-3">
+              <q-input v-model="f.denunciante_grado" dense outlined clearable label="Grado de instrucción"/>
+            </div>
+
+            <div class="col-6 col-md-3">
               <q-select v-model="f.denunciante_documento" dense outlined emit-value map-options clearable
                         :options="documentos" label="Documento"/>
             </div>
@@ -319,6 +344,11 @@ export default {
         denunciante_nombres: '',
         denunciante_paterno: '',
         denunciante_materno: '',
+        denunciante_lugar_nacimiento: '',
+        denunciante_fecha_nacimiento: '',
+        denunciante_edad: '',
+        denunciante_telefono: '',
+        denunciante_grado: '',
         denunciante_documento: '',
         denunciante_nro: '',
         denunciante_sexo: '',

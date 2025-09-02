@@ -75,6 +75,32 @@
                      label="Apellido materno"/>
           </div>
           <div class="col-6 col-md-3">
+            <q-input v-model="form.denunciante_lugar_nacimiento" dense outlined clearable label="Lugar de nacimiento" :readonly="!editing"/>
+          </div>
+          <div class="col-6 col-md-3">
+            <q-input v-model="form.denunciante_fecha_nacimiento" type="date" dense outlined label="Fecha de nacimiento" @update:model-value="(v) => {
+                if (v) {
+                  const birthDate = new Date(v)
+                  const ageDifMs = Date.now() - birthDate.getTime()
+                  const ageDate = new Date(ageDifMs)
+                  this.form.denunciante_edad = Math.abs(ageDate.getUTCFullYear() - 1970)
+                } else {
+                  this.form.denunciante_edad = ''
+                }
+              }"
+                     :readonly="!editing"
+            />
+          </div>
+          <div class="col-6 col-md-3">
+            <q-input v-model.number="form.denunciante_edad" dense outlined type="number" label="Edad" :readonly="!editing"/>
+          </div>
+          <div class="col-6 col-md-3">
+            <q-input v-model="form.denunciante_telefono" dense outlined clearable label="Teléfono/Celular" :readonly="!editing"/>
+          </div>
+          <div class="col-6 col-md-3">
+            <q-input v-model="form.denunciante_grado" dense outlined clearable label="Grado de instrucción" :readonly="!editing"/>
+          </div>
+          <div class="col-6 col-md-3">
             <q-input v-model="form.denunciante_documento" :readonly="!editing" dense outlined clearable label="Documento"/>
           </div>
           <div class="col-6 col-md-3">
