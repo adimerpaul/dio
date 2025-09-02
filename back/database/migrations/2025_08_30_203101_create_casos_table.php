@@ -23,7 +23,8 @@ return new class extends Migration
             $table->string('denunciante_sexo', 15)->nullable();        // MASCULINO/FEMENINO/OTRO
             $table->string('denunciante_lugar_nacimiento', 120)->nullable();
             $table->date('denunciante_fecha_nacimiento')->nullable();
-            $table->tinyInteger('denunciante_edad')->nullable();
+            $table->string('denunciante_edad')->nullable();
+            $table->string('denunciante_telefono')->nullable();
             $table->string('denunciante_residencia', 120)->nullable();
             $table->string('denunciante_estado_civil', 40)->nullable();
             $table->string('denunciante_relacion', 60)->nullable();

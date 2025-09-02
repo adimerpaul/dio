@@ -31,6 +31,7 @@ class Caso extends Model implements AuditableContract
         'denunciante_lugar_nacimiento',
         'denunciante_fecha_nacimiento',
         'denunciante_edad',
+        'denunciante_telefono',
         'denunciante_residencia',
         'denunciante_estado_civil',
         'denunciante_relacion',
