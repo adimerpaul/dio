@@ -49,8 +49,30 @@
       <q-separator/>
       <q-card-section>
         <div class="row q-col-gutter-md">
-          <div class="col-12 col-md-6">
-            <q-input v-model="form.denunciante_nombre_completo" :readonly="!editing" dense outlined clearable label="Nombre completo"/>
+<!--          <div class="col-12 col-md-6">-->
+<!--            <q-input v-model="form.denunciante_nombre_completo" :readonly="!editing" dense outlined clearable label="Nombre completo"/>-->
+<!--          </div>-->
+          <div class="col-12 col-md-2">
+            <q-select v-model="form.area" dense outlined :readonly="!editing"
+                      :options="$areas"
+                      label="Área *" :rules="[req]"/>
+          </div>
+          <div class="col-12 col-md-2">
+            <q-select v-model="form.zona" dense outlined :readonly="!editing"
+                      :options="$zonas"
+                      label="Zona *" :rules="[req]"/>
+          </div>
+          <div class="col-12 col-md-2">
+            <q-input v-model="form.denunciante_nombres" dense outlined clearable :readonly="!editing"
+                     label="Nombres *" :rules="[req]"/>
+          </div>
+          <div class="col-12 col-md-2">
+            <q-input v-model="form.denunciante_paterno" dense outlined clearable :readonly="!editing"
+                     label="Apellido paterno"/>
+          </div>
+          <div class="col-12 col-md-2">
+            <q-input v-model="form.denunciante_materno" dense outlined clearable :readonly="!editing"
+                     label="Apellido materno"/>
           </div>
           <div class="col-6 col-md-3">
             <q-input v-model="form.denunciante_documento" :readonly="!editing" dense outlined clearable label="Documento"/>
@@ -149,6 +171,7 @@ export default {
     this.fetch()
   },
   methods: {
+    req (v) { return !!v || 'Requerido' },
     async fetch () {
       this.loading = true
       try {
