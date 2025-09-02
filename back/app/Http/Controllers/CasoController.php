@@ -166,12 +166,21 @@ class CasoController extends Controller
             'seguimiento_area_legal'       => ['nullable','string','max:255'],
         ]);
 
+        $numero_casos = $this->numeroCaso();
+        $data['caso_numero'] = $numero_casos;
+
         $caso = Caso::create($data);
 
         return response()->json([
             'message' => 'Caso creado con éxito',
             'caso'    => $caso,
         ], 201);
+    }
+    function numeroCaso(){
+        $year = date('Y');
+        $count = Caso::whereYear('created_at', $year)->count() + 1;
+        $numero = str_pad($count, 3, '0', STR_PAD_LEFT) . '/' . substr($year, -2);
+        return $numero;
     }
     public function show(Caso $caso)
     {

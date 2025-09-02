@@ -261,9 +261,9 @@
 
         <q-card-section>
           <div class="row q-col-gutter-md">
-            <div class="col-12 col-md-3">
-              <q-input v-model="f.caso_numero" dense outlined clearable label="Nro de caso"/>
-            </div>
+<!--            <div class="col-12 col-md-3">-->
+<!--              <q-input v-model="f.caso_numero" dense outlined clearable label="Nro de caso"/>-->
+<!--            </div>-->
             <div class="col-12 col-md-3">
               <q-input v-model="f.caso_fecha_hecho" type="date" dense outlined label="Fecha del hecho"/>
             </div>

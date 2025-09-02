@@ -17,7 +17,7 @@
       <q-card-section>
         <div class="row q-col-gutter-md">
           <div class="col-12 col-md-3">
-            <q-input v-model="form.caso_numero" :readonly="!editing" dense outlined clearable label="Nro de caso"/>
+            <q-input v-model="form.caso_numero" :readonly="true" dense outlined clearable label="Nro de caso"/>
           </div>
           <div class="col-12 col-md-3">
             <q-input v-model="form.caso_fecha_hecho" :readonly="!editing" type="date" dense outlined label="Fecha del hecho"/>
