@@ -17,6 +17,8 @@ class CasoFactory extends Factory
         // Helpers
         $siNo = fn() => $this->faker->boolean(60) ? 'SI' : 'NO';  // <-- usa esto si tus columnas son VARCHAR
         $bool = fn() => $this->faker->boolean();                  // <-- usa este si migraste a TINYINT(1)/BOOLEAN
+        $areas = ['DNA', 'SLIM', 'SLAM', 'UMAGUIS', 'PROCENI'];
+        $zonas = ['CENTRAL', 'NORTE', 'SUR', 'ESTE', 'OESTE'];
 
         // Familiares: a veces vacíos
         $fam = [];
@@ -30,6 +32,8 @@ class CasoFactory extends Factory
 
         return array_merge([
             // ===== DENUNCIANTE =====
+            'area'                         => $this->faker->randomElement($areas),
+            'zona'                         => $this->faker->randomElement($zonas),
             'denunciante_nombre_completo'  => $this->faker->name(),
             'denunciante_nombres'          => $this->faker->firstName().' '.$this->faker->firstName(),
             'denunciante_paterno'          => $this->faker->lastName(),

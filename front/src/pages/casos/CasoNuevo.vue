@@ -5,7 +5,7 @@
     <div class="toolbar q-pa-sm bg-white row items-center q-gutter-sm shadow-1">
       <div class="col">
         <div class="text-h6 text-weight-bold">Nuevo Caso</div>
-        <div class="text-caption text-grey-7">Registro de denuncia (SLIM)</div>
+        <div class="text-caption text-grey-7">Registro de denuncia</div>
       </div>
       <div class="col-auto row q-gutter-sm">
         <q-btn flat color="primary" icon="history" label="Limpiar" @click="resetForm"/>
@@ -27,9 +27,31 @@
 
         <q-card-section>
           <div class="row q-col-gutter-md">
-            <div class="col-12 col-md-6">
-              <q-input v-model="f.denunciante_nombre_completo" dense outlined clearable
-                       label="Nombre completo *" :rules="[req]" hint="Tal como figura en el documento"/>
+<!--            <div class="col-12 col-md-6">-->
+<!--              <q-input v-model="f.denunciante_nombre_completo" dense outlined clearable-->
+<!--                       label="Nombre completo *" :rules="[req]" hint="Tal como figura en el documento"/>-->
+<!--            </div>-->
+            <div class="col-12 col-md-2">
+              <q-select v-model="f.area" dense outlined
+                        :options="$areas"
+                        label="Área *" :rules="[req]"/>
+            </div>
+            <div class="col-12 col-md-2">
+              <q-select v-model="f.zona" dense outlined
+                        :options="$zonas"
+                        label="Zona *" :rules="[req]"/>
+            </div>
+            <div class="col-12 col-md-2">
+              <q-input v-model="f.denunciante_nombres" dense outlined clearable
+                       label="Nombres *" :rules="[req]"/>
+            </div>
+            <div class="col-12 col-md-2">
+              <q-input v-model="f.denunciante_paterno" dense outlined clearable
+                       label="Apellido paterno"/>
+            </div>
+            <div class="col-12 col-md-2">
+              <q-input v-model="f.denunciante_materno" dense outlined clearable
+                       label="Apellido materno"/>
             </div>
 
             <div class="col-6 col-md-3">
@@ -291,7 +313,12 @@ export default {
       oruroCenter: [-17.9667, -67.1167],
       f: {
         // Denunciante
+        area: 'SLIM',
+        zonas: 'CENTRAL',
         denunciante_nombre_completo: '',
+        denunciante_nombres: '',
+        denunciante_paterno: '',
+        denunciante_materno: '',
         denunciante_documento: '',
         denunciante_nro: '',
         denunciante_sexo: '',
@@ -359,10 +386,10 @@ export default {
       this.$q.notify({ type: 'info', message: 'Formulario reiniciado' })
     },
     async save () {
-      if (!this.f.denunciante_nombre_completo) {
-        this.$alert.error('El nombre del denunciante es obligatorio')
-        return
-      }
+      // if (!this.f.denunciante_nombre_completo) {
+      //   this.$alert.error('El nombre del denunciante es obligatorio')
+      //   return
+      // }
       this.loading = true
       try {
         const res = await this.$axios.post('/casos', this.f)

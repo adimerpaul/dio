@@ -21,6 +21,13 @@ export default boot(({ app, router }) => {
   app.config.globalProperties.$store = useCounterStore()
   app.config.globalProperties.$url = import.meta.env.VITE_API_BACK
   app.config.globalProperties.$version = import.meta.env.VITE_VERSION
+
+  // $areas = ['DNA', 'SLIM', 'SLAM', 'UMAGUIS', 'PROCENI'];
+  // $zonas = ['CENTRAL', 'NORTE', 'SUR', 'ESTE', 'OESTE'];
+  app.config.globalProperties.$areas = ['DNA', 'SLIM', 'SLAM', 'UMAGUIS', 'PROCENI']
+  app.config.globalProperties.$zonas = ['CENTRAL', 'NORTE', 'SUR', 'ESTE', 'OESTE']
+
+
   app.config.globalProperties.$filters = {
     dateDmYHis (value) {
       const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Set', 'Oct', 'Nov', 'Dic']

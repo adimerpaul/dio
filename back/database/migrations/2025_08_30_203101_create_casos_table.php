@@ -12,7 +12,9 @@ return new class extends Migration
             $table->id();
 
             // ===== Denunciante =====
-            $table->string('denunciante_nombre_completo', 120);
+            $table->string('area', 80)->nullable();
+            $table->string('zona', 80)->nullable();
+            $table->string('denunciante_nombre_completo', 120)->nullable();
             $table->string('denunciante_nombres', 120)->nullable();
             $table->string('denunciante_paterno', 80)->nullable();
             $table->string('denunciante_materno', 80)->nullable();

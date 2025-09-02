@@ -18,6 +18,8 @@ class Caso extends Model implements AuditableContract
      * Campos asignables masivamente.
      */
     protected $fillable = [
+        'area',
+        'zona',
         // Denunciante
         'denunciante_nombre_completo',
         'denunciante_nombres',
@@ -116,5 +118,20 @@ class Caso extends Model implements AuditableContract
         'violencia_economica'   => 'boolean',
     ];
     public function problematicas(){ return $this->hasMany(Problematica::class); }
+    protected static function boot()
+    {
+        parent::boot();
 
+        static::saving(function ($model) {
+            // Denunciante
+            $model->denunciante_nombre_completo = trim(
+                "{$model->denunciante_nombres} {$model->denunciante_paterno} {$model->denunciante_materno}"
+            );
+
+            // Denunciado
+            $model->denunciado_nombre_completo = trim(
+                "{$model->denunciado_nombres} {$model->denunciado_paterno} {$model->denunciado_materno}"
+            );
+        });
+    }
 }

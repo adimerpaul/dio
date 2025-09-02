@@ -83,7 +83,9 @@ class CasoController extends Controller
         // Validación básica (ajusta a gusto)
         $data = $request->validate([
             // Denunciante
-            'denunciante_nombre_completo'  => ['required','string','max:255'],
+//            'denunciante_nombre_completo'  => ['required','string','max:255'],
+            'area'          => ['nullable','string','max:255'],
+            'zona'          => ['nullable','string','max:255'],
             'denunciante_nombres'          => ['nullable','string','max:255'],
             'denunciante_paterno'          => ['nullable','string','max:255'],
             'denunciante_materno'          => ['nullable','string','max:255'],
