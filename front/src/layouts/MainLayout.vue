@@ -86,6 +86,7 @@
           <q-item
             clickable :to="link.link" exact dense
             class="menu-item" active-class="menu-active" v-close-popup
+            v-if="!link.childrens || !link.childrens.length"
           >
             <q-item-section avatar>
               <q-icon :name="link.icon" class="text-white"/>
@@ -94,6 +95,28 @@
               <q-item-label class="text-white">{{ link.title }}</q-item-label>
             </q-item-section>
           </q-item>
+          <q-expansion-item
+            v-else
+            :label="link.title" :icon="link.icon"
+            expand-separator dense
+            active-class="menu-active"
+          >
+            <q-list>
+              <q-item
+                v-for="sublink in link.childrens" :key="sublink.title"
+                clickable :to="sublink.link" exact dense
+                active-class="menu-active" v-close-popup
+                :header-inset-level="2"
+              >
+                <q-item-section avatar>
+                  <q-icon :name="sublink.icon" class="text-white"/>
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label class="text-white">{{ sublink.title }}</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-expansion-item>
         </template>
 
         <q-separator color="white" class="q-mt-md" />
@@ -135,7 +158,12 @@ function hasAnyPerm (perms = []) {
 const linksList = [
   { title: 'Dashboard',        icon: 'analytics',       link: '/',               canPerm: 'Dashboard' },
   { title: 'Usuarios',         icon: 'people',          link: '/usuarios',       canPerm: 'Usuarios' },
-  { title: 'Nuevo Caso',      icon: 'add_circle',     link: '/casos/nuevo',   canPerm: 'Casos' },
+  { title: 'Nuevo Caso',      icon: 'add_circle',     link: '/casos/nuevo',   canPerm: 'Casos',
+    childrens: [
+      { title: 'Denuncia Fisica', icon: '',      link: '/casos/nuevofisica', canPerm: 'Casos' },
+      { title: 'Apoyo Integral', icon: '', link: '/casos/nuevointegral', canPerm: 'Casos' },
+    ]
+  },
   { title: 'Casos',            icon: 'folder_shared',   link: '/casos',          canPerm: 'Casos' },
   // { title: 'Documentos',       icon: 'description',     link: '/documentos',     canPerm: 'Documentos' },
   { title: 'Líneas de Tiempo', icon: 'timeline',        link: '/lineas-tiempo',  canPerm: 'Lineas de Tiempo' },

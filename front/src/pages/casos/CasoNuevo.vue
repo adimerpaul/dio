@@ -31,6 +31,11 @@
 <!--              <q-input v-model="f.denunciante_nombre_completo" dense outlined clearable-->
 <!--                       label="Nombre completo *" :rules="[req]" hint="Tal como figura en el documento"/>-->
 <!--            </div>-->
+            <div class="col-12 col-md-2" v-if="showNumeroApoyoIntegral">
+<!--              numero_apoyo_integral iput-->
+              <q-input v-model="f.numero_apoyo_integral" dense outlined clearable
+                       label="Nro. Apoyo Integral *" :rules="[req]" hint="Número de apoyo integral asignado"/>
+            </div>
             <div class="col-12 col-md-2">
               <q-select v-model="f.area" dense outlined
                         :options="$areas"
@@ -267,6 +272,9 @@
             <div class="col-12 col-md-3">
               <q-input v-model="f.caso_fecha_hecho" type="date" dense outlined label="Fecha del hecho"/>
             </div>
+            <div class="col-6 col-md-3">
+              <q-input v-model="f.denunciante_relacion" dense outlined clearable label="Relación con el denunciante"/>
+            </div>
             <div class="col-12 col-md-6">
               <q-input v-model="f.caso_lugar_hecho" dense outlined clearable label="Lugar del hecho"/>
             </div>
@@ -279,7 +287,7 @@
             </div>
             <div class="col-12">
               <q-input v-model="f.caso_descripcion" type="textarea" autogrow outlined dense clearable
-                       label="Descripción del hecho" counter maxlength="1000"/>
+                       label="Descripción del hecho" counter maxlength="3000"/>
             </div>
           </div>
         </q-card-section>
@@ -313,7 +321,7 @@
 
         <q-card-section>
           <div class="row q-col-gutter-md">
-            <div class="col-12 col-md-4"><q-input v-model="f.seguimiento_area" dense outlined clearable label="Área (Responsable)"/></div>
+            <div class="col-12 col-md-4"><q-input v-model="f.seguimiento_area" dense outlined clearable label="Área psicologica (responsable)"/></div>
             <div class="col-12 col-md-4"><q-input v-model="f.seguimiento_area_social" dense outlined clearable label="Área social (responsable)"/></div>
             <div class="col-12 col-md-4"><q-input v-model="f.seguimiento_area_legal" dense outlined clearable label="Área legal (responsable)"/></div>
           </div>
@@ -335,6 +343,9 @@ import MapPicker from 'components/MapPicker.vue'
 export default {
   name: 'CasoNuevo',
   components: { MapPicker },
+  props: {
+    showNumeroApoyoIntegral: { type: Boolean, default: false }
+  },
   data () {
     return {
       loading: false,
@@ -342,7 +353,7 @@ export default {
         { label: 'Carnet de identidad', value: 'Carnet de identidad' },
         { label: 'Pasaporte', value: 'Pasaporte' },
         { label: 'Libreta de servicio militar', value: 'Libreta de servicio militar' },
-        { label: 'Libreta de conducir', value: 'Libreta de conducir' }
+        { label: 'Licencia de conducir', value: 'Licencia de conducir' }
       ],
       sexos: [
         { label: 'Masculino', value: 'Masculino' },
@@ -354,7 +365,7 @@ export default {
         { label: 'Casado/a', value: 'Casado/a' },
         { label: 'Divorciado/a', value: 'Divorciado/a' },
         { label: 'Viudo/a', value: 'Viudo/a' },
-        { label: 'Unión libre', value: 'Unión libre' }
+        { label: 'Concubinato', value: 'Concubinato' }
       ],
       idiomas: [
         { label: 'Catellano', value: 'Catellano' },
@@ -365,7 +376,7 @@ export default {
       ],
       oruroCenter: [-17.9667, -67.1167],
       f: {
-        // Denunciante
+        numero_apoyo_integral: '',
         area: 'SLIM',
         zona: 'CENTRAL',
         denunciante_nombre_completo: '',
@@ -382,6 +393,7 @@ export default {
         denunciante_sexo: '',
         denunciante_residencia: '',
         denunciante_estado_civil: '',
+        denunciante_relacion: '',
         denunciante_idioma: '',
         denunciante_trabaja: false,
         denunciante_ocupacion: '',

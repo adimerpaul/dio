@@ -18,6 +18,7 @@ class Caso extends Model implements AuditableContract
      * Campos asignables masivamente.
      */
     protected $fillable = [
+        'numero_apoyo_integral',
         'area',
         'zona',
         // Denunciante
