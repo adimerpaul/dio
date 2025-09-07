@@ -102,6 +102,13 @@ class Caso extends Model implements AuditableContract
         'seguimiento_area',
         'seguimiento_area_social',
         'seguimiento_area_legal',
+
+        'documento_fotocopia_carnet_denunciante',
+        'documento_fotocopia_carnet_denunciado',
+        'documento_placas_fotograficas_domicilio_denunciante',
+        'documento_croquis_direccion_denunciado',
+        'documento_placas_fotograficas_domicilio_denunciado',
+        'documento_ciudadania_digital',
     ];
 
     /**

@@ -97,6 +97,13 @@ return new class extends Migration
             $table->string('seguimiento_area_social', 120)->nullable();
             $table->string('seguimiento_area_legal', 120)->nullable();
 
+            $table->string('documento_fotocopia_carnet_denunciante', 10)->nullable();
+            $table->string('documento_fotocopia_carnet_denunciado', 10)->nullable();
+            $table->string('documento_placas_fotograficas_domicilio_denunciante', 10)->nullable();
+            $table->string('documento_croquis_direccion_denunciado', 10)->nullable();
+            $table->string('documento_placas_fotograficas_domicilio_denunciado', 10)->nullable();
+            $table->string('documento_ciudadania_digital', 10)->nullable();
+
             $table->timestamps();
             $table->softDeletes();
         });

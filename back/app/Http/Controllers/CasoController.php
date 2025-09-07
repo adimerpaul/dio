@@ -167,9 +167,9 @@ class CasoController extends Controller
         ]);
 
         $numero_casos = $this->numeroCaso();
-        $data['caso_numero'] = $numero_casos;
+        $request['caso_numero'] = $numero_casos;
 
-        $caso = Caso::create($data);
+        $caso = Caso::create($request->all());
 
         return response()->json([
             'message' => 'Caso creado con éxito',
@@ -295,7 +295,7 @@ class CasoController extends Controller
             }
         }
 
-        $caso->update($data);
+        $caso->update($request->all());
 
         return response()->json([
             'message' => 'Caso actualizado',
