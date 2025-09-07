@@ -192,6 +192,28 @@
           </div>
         </div>
       </q-card-section>
+          <q-card-section>
+            <div class="row q-col-gutter-md">
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="form.documento_fotocopia_carnet_denunciante" label="Fotocopia CI denunciante" :false-value="'0'" :true-value="'1'"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="form.documento_fotocopia_carnet_denunciado" label="Fotocopia CI denunciado" :false-value="'0'" :true-value="'1'"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="form.documento_placas_fotograficas_domicilio_denunciante" label="Placas fotográficas domicilio denunciante" :false-value="'0'" :true-value="'1'"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="form.documento_croquis_direccion_denunciado" label="Croquis dirección denunciado" :false-value="'0'" :true-value="'1'"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="form.documento_placas_fotograficas_domicilio_denunciado" label="Placas fotográficas domicilio denunciado" :false-value="'0'" :true-value="'1'"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="form.documento_ciudadania_digital" label="Ciudadanía digital" :false-value="'0'" :true-value="'1'"/>
+              </div>
+            </div>
+          </q-card-section>
     </q-card>
   </div>
 </template>

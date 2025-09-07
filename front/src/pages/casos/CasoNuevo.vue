@@ -328,6 +328,38 @@
         </q-card-section>
       </q-card>
 
+      <!-- Documentos -->
+      <q-card flat bordered class="section-card q-mb-xl">
+        <q-card-section class="row items-center">
+          <q-icon name="task_alt" class="q-mr-sm"/>
+          <div class="text-subtitle1 text-weight-medium">6) Check documento adjuntos</div>
+        </q-card-section>
+        <q-separator/>
+
+        <q-card-section>
+          <div class="row q-col-gutter-md">
+            <div class="col-12 col-md-2">
+              <q-checkbox v-model="f.documento_fotocopia_carnet_denunciante" label="Fotocopia CI denunciante"/>
+            </div>
+            <div class="col-12 col-md-2">
+              <q-checkbox v-model="f.documento_fotocopia_carnet_denunciado" label="Fotocopia CI denunciado"/>
+            </div>
+            <div class="col-12 col-md-2">
+              <q-checkbox v-model="f.documento_placas_fotograficas_domicilio_denunciante" label="Placas fotográficas domicilio denunciante"/>
+            </div>
+            <div class="col-12 col-md-2">
+              <q-checkbox v-model="f.documento_croquis_direccion_denunciado" label="Croquis dirección denunciado"/>
+            </div>
+            <div class="col-12 col-md-2">
+              <q-checkbox v-model="f.documento_placas_fotograficas_domicilio_denunciado" label="Placas fotográficas domicilio denunciado"/>
+            </div>
+            <div class="col-12 col-md-2">
+              <q-checkbox v-model="f.documento_ciudadania_digital" label="Ciudadanía digital"/>
+            </div>
+          </div>
+        </q-card-section>
+      </q-card>
+
       <!-- Acciones bottom -->
       <div class="text-right q-mb-lg">
         <q-btn flat color="primary" icon="history" label="Limpiar" @click="resetForm" class="q-mr-sm"/>
@@ -435,7 +467,14 @@ export default {
         // Seguimiento
         seguimiento_area: '',
         seguimiento_area_social: '',
-        seguimiento_area_legal: ''
+        seguimiento_area_legal: '',
+        // Documentos (almacenar nombres de archivos subidos)
+        documento_fotocopia_carnet_denunciante: false,
+        documento_fotocopia_carnet_denunciado: false,
+        documento_placas_fotograficas_domicilio_denunciante: false,
+        documento_croquis_direccion_denunciado: false,
+        documento_placas_fotograficas_domicilio_denunciado: false,
+        documento_ciudadania_digital: false,
       }
     }
   },
