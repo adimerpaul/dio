@@ -115,14 +115,23 @@
               <q-input v-model="f.denunciante_ocupacion" dense outlined clearable label="Ocupación"/>
             </div>
 
-            <div class="col-12">
+            <div class="col-10">
               <q-input v-model="f.denunciante_domicilio_actual" dense outlined clearable
                        label="Domicilio actual" />
+            </div>
+            <div class="col-2">
+              <q-btn label="Buscar" @click="$refs.denMap?.geocodeAndFly(f.denunciante_domicilio_actual)" />
             </div>
 
             <div class="col-12">
               <div class="text-caption text-grey-7 q-mb-xs">Ubicación (denunciante)</div>
-              <MapPicker v-model="denunciantePos" :center="oruroCenter"/>
+              <MapPicker
+                v-model="denunciantePos"
+                :center="oruroCenter"
+                :address="f.denunciante_domicilio_actual"
+                country="bo"
+                ref="denMap"
+              />
             </div>
           </div>
         </q-card-section>
@@ -244,13 +253,20 @@
               <q-input v-model="f.denunciado_residencia" dense outlined clearable label="Residencia"/>
             </div>
 
-            <div class="col-12">
+            <div class="col-10">
               <q-input v-model="f.denunciado_domicilio_actual" dense outlined clearable label="Domicilio actual"/>
+            </div>
+            <div class="col-2">
+              <q-btn label="Buscar" @click="$refs.denunMap?.geocodeAndFly(f.denunciado_domicilio_actual)" />
             </div>
 
             <div class="col-12">
               <div class="text-caption text-grey-7 q-mb-xs">Ubicación (denunciado)</div>
-              <MapPicker v-model="denunciadoPos" :center="oruroCenter"/>
+              <MapPicker v-model="denunciadoPos" :center="oruroCenter"
+                          :address="f.denunciado_domicilio_actual"
+                          country="bo"
+                         ref="denunMap"
+              />
             </div>
           </div>
         </q-card-section>

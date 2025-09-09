@@ -1,93 +1,107 @@
 <template>
   <div class="map-wrapper">
-    <div class="row items-center q-col-gutter-sm q-mb-sm">
-      <div class="col-6 col-md-3">
-        <q-input v-model.number="localValue.latitud" dense outlined label="Latitud" style="max-width: 160px" />
+    <div class="row">
+      <div class="col-12 col-md-4">
+        <div class="row items-center q-col-gutter-sm q-mb-sm">
+          <!--      <div class="col-12 col-md-6">-->
+          <!--        <q-input v-model="addr" dense outlined placeholder="Buscar dirección (ej: Calle Bolívar, Oruro)"/>-->
+          <!--      </div>-->
+          <!--      <div class="col-6 col-md-3">-->
+          <!--        <q-btn dense no-caps color="primary" label="Buscar" @click="searchAddress" icon="search" style="width:100%"/>-->
+          <!--      </div>-->
+          <div class="col-12 col-md-6">
+            <q-input v-model.number="localValue.latitud" dense outlined label="Latitud" style="max-width: 160px" />
+          </div>
+          <div class="col-12 col-md-6">
+            <q-input v-model.number="localValue.longitud" dense outlined label="Longitud" style="max-width: 160px" />
+          </div>
+          <div class="col-12 col-md-6">
+            <q-btn dense no-caps color="primary" label="Ir" @click="flyToLatLng" icon="place" style="width: 140px" />
+          </div>
+          <div class="col-12 col-md-6">
+            <q-btn dense no-caps color="secondary" label="Mi ubicación" @click="locateMe" icon="my_location" style="width: 140px" />
+          </div>
+        </div>
       </div>
-      <div class="col-6 col-md-3">
-        <q-input v-model.number="localValue.longitud" dense outlined label="Longitud" style="max-width: 160px" />
-      </div>
-      <div class="col-6 col-md-3">
-        <q-btn dense no-caps color="primary" label="Ir" @click="flyToLatLng" icon="place" style="width: 100%" />
-      </div>
-      <div class="col-6 col-md-3">
-        <q-btn dense no-caps color="secondary" label="Mi ubicación" @click="locateMe" icon="my_location" style="width: 100%" />
+      <div class="col-12 col-md-8">
+        <l-map
+          style="height: 350px"
+          v-model:zoom="zoom"
+          :center="mapCenter"
+          :use-global-leaflet="false"
+          :options="{ attributionControl: false }"
+          @click="onMapClick"
+          ref="mapRef"
+        >
+          <!-- Control de capas -->
+          <l-control-layers position="topright" />
+
+          <!-- OpenStreetMap -->
+          <l-tile-layer
+            layer-type="base"
+            name="OpenStreetMap"
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution="&copy; OpenStreetMap contributors"
+            :subdomains="['a','b','c']"
+            :max-zoom="19"
+            :visible="false"
+          />
+
+          <!-- Google Calle (por defecto) -->
+          <l-tile-layer
+            layer-type="base"
+            name="Google Calle"
+            url="https://mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}"
+            attribution="Map data &copy; Google"
+            :max-zoom="21"
+            :visible="true"
+          />
+
+          <!-- Google Satélite -->
+          <l-tile-layer
+            layer-type="base"
+            name="Google Satélite"
+            url="https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
+            attribution="Map data &copy; Google"
+            :max-zoom="21"
+            :visible="false"
+          />
+
+          <!-- Google Híbrido -->
+          <l-tile-layer
+            layer-type="base"
+            name="Google Híbrido"
+            url="https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}"
+            attribution="Map data &copy; Google"
+            :max-zoom="21"
+            :visible="false"
+          />
+
+          <!-- Marcador -->
+          <l-marker
+            v-if="hasLatLng"
+            :lat-lng="[Number(localValue.latitud), Number(localValue.longitud)]"
+            :draggable="true"
+            @moveend="onDragEnd"
+          >
+            <l-popup>
+              <div>Lat: {{ toFix(localValue.latitud) }}<br/>Lng: {{ toFix(localValue.longitud) }}</div>
+            </l-popup>
+          </l-marker>
+        </l-map>
       </div>
     </div>
-
-    <l-map
-      style="height: 350px"
-      v-model:zoom="zoom"
-      :center="mapCenter"
-      :use-global-leaflet="false"
-      :options="{ attributionControl: false }"
-      @click="onMapClick"
-      ref="mapRef"
-    >
-      <!-- Control de capas -->
-      <l-control-layers position="topright" />
-
-      <!-- OpenStreetMap -->
-      <l-tile-layer
-        layer-type="base"
-        name="OpenStreetMap"
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        attribution="&copy; OpenStreetMap contributors"
-        :subdomains="['a','b','c']"
-        :max-zoom="19"
-        :visible="false"
-      />
-
-      <!-- Google Calle (por defecto) -->
-      <l-tile-layer
-        layer-type="base"
-        name="Google Calle"
-        url="https://mt1.google.com/vt/lyrs=r&x={x}&y={y}&z={z}"
-        attribution="Map data &copy; Google"
-        :max-zoom="21"
-        :visible="true"
-      />
-
-      <!-- Google Satélite -->
-      <l-tile-layer
-        layer-type="base"
-        name="Google Satélite"
-        url="https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}"
-        attribution="Map data &copy; Google"
-        :max-zoom="21"
-        :visible="false"
-      />
-
-      <!-- Google Híbrido -->
-      <l-tile-layer
-        layer-type="base"
-        name="Google Híbrido"
-        url="https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}"
-        attribution="Map data &copy; Google"
-        :max-zoom="21"
-        :visible="false"
-      />
-
-      <!-- Marcador -->
-      <l-marker
-        v-if="hasLatLng"
-        :lat-lng="[Number(localValue.latitud), Number(localValue.longitud)]"
-        :draggable="true"
-        @moveend="onDragEnd"
-      >
-        <l-popup>
-          <div>Lat: {{ toFix(localValue.latitud) }}<br/>Lng: {{ toFix(localValue.longitud) }}</div>
-        </l-popup>
-      </l-marker>
-    </l-map>
   </div>
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { onMounted, computed, ref, watch } from 'vue'
 import { LMap, LTileLayer, LMarker, LPopup, LControlLayers } from '@vue-leaflet/vue-leaflet'
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
+import 'leaflet-control-geocoder/dist/Control.Geocoder.css'
+import 'leaflet-control-geocoder'
+const addr = ref('')
 
 // Fix iconos Vite
 import markerIcon2xUrl from 'leaflet/dist/images/marker-icon-2x.png'
@@ -98,14 +112,112 @@ L.Icon.Default.mergeOptions({
   iconUrl: markerIconUrl,
   shadowUrl: markerShadowUrl
 })
+onMounted(() => {
+  const map = mapRef.value?.leafletObject
+  if (!map) return
+  // Crea el control (usa Nominatim por defecto)
+  const geocoderControl = L.Control.geocoder({
+    position: 'topleft',
+    defaultMarkGeocode: false
+  })
+    .on('markgeocode', (e) => {
+      const center = e.geocode.center
+      // Actualiza tu v-model
+      localValue.value.latitud = Number(center.lat.toFixed(7))
+      localValue.value.longitud = Number(center.lng.toFixed(7))
+      map.flyTo(center, Math.max(zoom.value, 16))
+    })
+    .addTo(map)
+})
+async function searchAddress () {
+  const q = (addr.value || '').trim()
+  if (!q) return
+  try {
+    // Nominatim requiere un UA o email de contacto en “User-Agent” o “email” param
+    const url = new URL('https://nominatim.openstreetmap.org/search')
+    url.searchParams.set('q', q)
+    url.searchParams.set('format', 'json')
+    url.searchParams.set('addressdetails', '1')
+    url.searchParams.set('limit', '5')      // puedes listar opciones si quieres
+    url.searchParams.set('countrycodes', 'bo') // opcional, sesga a Bolivia
+
+    const res = await fetch(url.toString(), {
+      headers: { 'Accept': 'application/json' }
+      // Si quieres cumplir la política estricta, añade un “User-Agent” identificando tu app/tienda
+      // headers: { 'Accept': 'application/json', 'User-Agent': 'TuApp/1.0 (tu-email@dominio.com)' }
+    })
+    const data = await res.json()
+    if (!Array.isArray(data) || data.length === 0) {
+      // aquí puedes hacer this.$q.notify si el componente padre usa Quasar notify
+      return
+    }
+    const best = data[0]
+    const lat = Number(best.lat)
+    const lon = Number(best.lon)
+    localValue.value.latitud = Number(lat.toFixed(7))
+    localValue.value.longitud = Number(lon.toFixed(7))
+    const leaflet = mapRef.value?.leafletObject
+    leaflet && leaflet.flyTo([lat, lon], 17)
+  } catch (e) {
+    console.error(e)
+  }
+}
 
 const props = defineProps({
-  // Retrocompatible: si te pasan {lat, lng} también lo toma
   modelValue: { type: Object, default: () => ({ latitud: null, longitud: null }) },
   center: { type: Array, default: () => [-16.5, -68.15] },
-  zoomInit: { type: Number, default: 13 }
+  zoomInit: { type: Number, default: 13 },
+  address: { type: String, default: '' },          // <--- NUEVO
+  country: { type: String, default: 'bo' },        // <--- opcional: sesgar búsqueda por país
+  minAddressLen: { type: Number, default: 6 },     // <--- evitar geocodificar textos muy cortos
+  debounceMs: { type: Number, default: 600 }       // <--- para no pegarle a la API por cada tecla
 })
-const emit = defineEmits(['update:modelValue'])
+
+const emit = defineEmits(['update:modelValue','geocode:ok','geocode:error'])
+defineExpose({
+  geocodeAndFly,
+  flyToLatLng,
+  locateMe
+})
+
+async function geocodeAndFly(q) {
+  const query = (q || '').trim()
+  if (!query) return
+  try {
+    const url = new URL('https://nominatim.openstreetmap.org/search')
+    url.searchParams.set('q', query)
+    url.searchParams.set('format', 'json')
+    url.searchParams.set('addressdetails', '1')
+    if (props.country) url.searchParams.set('countrycodes', props.country)
+    url.searchParams.set('limit', '1')
+
+    const res = await fetch(url.toString(), { headers: { 'Accept': 'application/json' } })
+    const data = await res.json()
+    if (!Array.isArray(data) || data.length === 0) {
+      emit('geocode:error', { query, reason: 'no-results' })
+      return
+    }
+
+    const best = data[0]
+    const lat = Number(best.lat)
+    const lon = Number(best.lon)
+
+    // Actualiza el v-model (latitud/longitud) del padre
+    localValue.value.latitud = Number(lat.toFixed(7))
+    localValue.value.longitud = Number(lon.toFixed(7))
+    emit('update:modelValue', normalizeOut(localValue.value))
+
+    // Vuela el mapa
+    const leaflet = mapRef.value?.leafletObject
+    leaflet && leaflet.flyTo([lat, lon], Math.max(zoom.value, 16))
+
+    emit('geocode:ok', { query, lat, lon, raw: best })
+  } catch (e) {
+    console.error(e)
+    emit('geocode:error', { query, reason: 'exception', error: String(e) })
+  }
+}
+
 
 /**
  * Estado interno siempre en {latitud, longitud}.
@@ -122,6 +234,19 @@ const normalizeOut = (v) => ({
   lat: v.latitud ?? null,
   lng: v.longitud ?? null
 })
+
+let addressTimer = null
+// watch(
+//   () => props.address,
+//   (next) => {
+//     if (!next || next.trim().length < props.minAddressLen) return
+//     clearTimeout(addressTimer)
+//     addressTimer = setTimeout(() => {
+//       geocodeAndFly(next)
+//     }, props.debounceMs)
+//   },
+//   { immediate: false }
+// )
 
 const localValue = ref(normalizeIn(props.modelValue))
 
