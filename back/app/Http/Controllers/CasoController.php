@@ -33,22 +33,22 @@ class CasoController extends Controller
         $perPage  = (int) $request->get('per_page', 10);
         $perPage  = max(5, min($perPage, 100)); // entre 5 y 100
 
-        $columns = [
-            'id',
-            'caso_numero',
-            'caso_fecha_hecho',
-            'caso_tipologia',
-            'caso_zona',
-            'caso_direccion',
-            'caso_descripcion',
-            'denunciante_nombre_completo',
-            'denunciante_nro',
-            'denunciado_nombre_completo',
-            'denunciado_nro',
-            'created_at'
-        ];
+//        $columns = [
+//            'id',
+//            'caso_numero',
+//            'caso_fecha_hecho',
+//            'caso_tipologia',
+//            'caso_zona',
+//            'caso_direccion',
+//            'caso_descripcion',
+//            'denunciante_nombre_completo',
+//            'denunciante_nro',
+//            'denunciado_nombre_completo',
+//            'denunciado_nro',
+//            'created_at'
+//        ];
 
-        $query = Caso::select($columns)->orderByDesc('created_at');
+        $query = Caso::orderByDesc('created_at');
 
         if ($q !== '') {
             $query->where(function ($s) use ($q) {
@@ -64,6 +64,17 @@ class CasoController extends Controller
                     ->orWhere('denunciado_nro', 'like', $like);
             });
         }
+        $user = $request->user();
+        if($user->role == 'Psicologa'){
+            $query->where('psicologica_user_id', $user->id);
+        }
+        if($user->role == 'Social'){
+            $query->where('trabajo_social_user_id', $user->id);
+        }
+        if($user->role == 'Legal'){
+            $query->where('legal_user_id', $user->id);
+        }
+        $query->with(['psicologica_user:id,name','trabajo_social_user:id,name','legal_user:id,name','user:id,name']);
 
         $paginated = $query->paginate($perPage)->appends($request->query());
 
