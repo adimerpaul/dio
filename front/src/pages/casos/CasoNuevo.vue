@@ -36,16 +36,16 @@
               <q-input v-model="f.numero_apoyo_integral" dense outlined clearable
                        label="Nro. Apoyo Integral *" :rules="[req]" hint="Número de apoyo integral asignado"/>
             </div>
-            <div class="col-12 col-md-2">
-              <q-select v-model="f.area" dense outlined
-                        :options="$areas"
-                        label="Área *" :rules="[req]"/>
-            </div>
-            <div class="col-12 col-md-2">
-              <q-select v-model="f.zona" dense outlined
-                        :options="$zonas"
-                        label="Zona *" :rules="[req]"/>
-            </div>
+<!--            <div class="col-12 col-md-2">-->
+<!--              <q-select v-model="f.area" dense outlined-->
+<!--                        :options="$areas"-->
+<!--                        label="Área *" :rules="[req]"/>-->
+<!--            </div>-->
+<!--            <div class="col-12 col-md-2">-->
+<!--              <q-select v-model="f.zona" dense outlined-->
+<!--                        :options="$zonas"-->
+<!--                        label="Zona *" :rules="[req]"/>-->
+<!--            </div>-->
             <div class="col-12 col-md-2">
               <q-input v-model="f.denunciante_nombres" dense outlined clearable
                        label="Nombres *" :rules="[req]"/>

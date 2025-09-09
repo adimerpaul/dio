@@ -11,7 +11,15 @@
 
         <div class="row items-center q-gutter-sm">
           <div class="text-subtitle1 text-weight-medium" style="line-height:.95">
-            Panel DIO · GAMO
+            Panel DIO · GAMO <br>
+<!--            q-chip area zona-->
+            <q-chip v-if="$store.user?.area" color="grey-3" text-color="black" size="10px" dense>
+              {{ $store.user?.area }}
+            </q-chip>
+            <q-chip v-if="$store.user?.zona" color="grey-3" text-color="black" size="10px" dense>
+              {{ $store.user?.zona }}
+            </q-chip>
+
           </div>
         </div>
 

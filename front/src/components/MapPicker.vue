@@ -10,15 +10,15 @@
           <!--        <q-btn dense no-caps color="primary" label="Buscar" @click="searchAddress" icon="search" style="width:100%"/>-->
           <!--      </div>-->
           <div class="col-12 col-md-6">
-            <q-input v-model.number="localValue.latitud" dense outlined label="Latitud" style="max-width: 160px" />
+            <q-input v-model.number="localValue.latitud" dense outlined label="Latitud" />
           </div>
           <div class="col-12 col-md-6">
-            <q-input v-model.number="localValue.longitud" dense outlined label="Longitud" style="max-width: 160px" />
+            <q-input v-model.number="localValue.longitud" dense outlined label="Longitud" />
           </div>
-          <div class="col-12 col-md-6">
+          <div class="col-6 col-md-6">
             <q-btn dense no-caps color="primary" label="Ir" @click="flyToLatLng" icon="place" style="width: 140px" />
           </div>
-          <div class="col-12 col-md-6">
+          <div class="col-6 col-md-6">
             <q-btn dense no-caps color="secondary" label="Mi ubicación" @click="locateMe" icon="my_location" style="width: 140px" />
           </div>
         </div>

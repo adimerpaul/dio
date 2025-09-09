@@ -98,6 +98,9 @@
             <q-input v-model="user.username" label="Usuario" dense outlined :rules="[v => !!v || 'Campo requerido']"/>
             <q-input v-model="user.password" label="Contraseña" dense outlined :rules="[v => !!v || 'Campo requerido']" v-if="!user.id"/>
             <q-select v-model="user.role" label="Rol" dense outlined :options="roles" :rules="[v => !!v || 'Campo requerido']"/>
+            <q-input v-model="user.correo" label="Correo" dense outlined hint=""/>
+            <q-select v-model="user.area" label="Área" dense outlined :options="$areas" :rules="[v => !!v || 'Campo requerido']"/>
+            <q-select v-model="user.zona" label="Zona" dense outlined :options="$zonas" :rules="[v => !!v || 'Campo requerido']"/>
             <div class="text-right">
               <q-btn color="negative" label="Cancelar" @click="userDialog = false" no-caps :loading="loading"/>
               <q-btn color="primary" label="Guardar" type="submit" no-caps :loading="loading" class="q-ml-sm"/>
@@ -183,13 +186,16 @@ export default {
       loading: false,
       actionUser: '',
       filter: '',
-      roles: ['Administrador', 'Asistente', 'Psicologo', 'Abogado'],
+      roles: ['Administrador', 'Asistente', 'Psicologo', 'Abogado','Social'],
       columns: [
         { name: 'actions', label: 'Acciones', align: 'center' },
         { name: 'name', label: 'Nombre', align: 'left', field: 'name' },
         { name: 'username', label: 'Usuario', align: 'left', field: 'username' },
         { name: 'avatar', label: 'Avatar', align: 'left', field: (row) => row.avatar },
         { name: 'role', label: 'Rol', align: 'left', field: 'role' },
+        { name: 'area', label: 'Área', align: 'left', field: 'area' },
+        { name: 'zona', label: 'Zona', align: 'left', field: 'zona' },
+        { name: 'correo', label: 'Correo', align: 'left', field: 'correo' },
         {
           name: 'permissions', label: 'Permisos', align: 'left',
           field: row => (row.permissions || []).map(p => p.name).join(', ')
@@ -214,7 +220,7 @@ export default {
       } finally { this.loading = false }
     },
     userNew() {
-      this.user = { name: '', username: '', password: '', role: 'Operador', avatar: 'default.png' }
+      this.user = { name: '', username: '', password: '', role: 'Asistente', avatar: 'default.png', area: 'DNA', zona: 'CENTRAL', correo: '' }
       this.actionUser = 'Nuevo'
       this.userDialog = true
     },
