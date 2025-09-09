@@ -84,8 +84,8 @@ class CasoController extends Controller
         $data = $request->validate([
             // Denunciante
 //            'denunciante_nombre_completo'  => ['required','string','max:255'],
-            'area'          => ['nullable','string','max:255'],
-            'zona'          => ['nullable','string','max:255'],
+//            'area'          => ['nullable','string','max:255'],
+//            'zona'          => ['nullable','string','max:255'],
             'denunciante_nombres'          => ['nullable','string','max:255'],
             'denunciante_paterno'          => ['nullable','string','max:255'],
             'denunciante_materno'          => ['nullable','string','max:255'],
@@ -161,9 +161,9 @@ class CasoController extends Controller
             'violencia_economica'          => ['nullable','boolean'],
 
             // Seguimiento
-            'seguimiento_area'             => ['nullable','string','max:255'],
-            'seguimiento_area_social'      => ['nullable','string','max:255'],
-            'seguimiento_area_legal'       => ['nullable','string','max:255'],
+//            'seguimiento_area'             => ['nullable','string','max:255'],
+//            'seguimiento_area_social'      => ['nullable','string','max:255'],
+//            'seguimiento_area_legal'       => ['nullable','string','max:255'],
         ]);
 
         $numero_casos = $this->numeroCaso();
@@ -199,9 +199,9 @@ class CasoController extends Controller
         // Validación ligera (ajusta a tus reglas reales)
         $data = $request->validate([
             // Denunciante
-            'area'          => ['nullable','string','max:255'],
-            'zona'          => ['nullable','string','max:255'],
-            'denunciante_nombres'          => ['nullable','string','max:255'],
+//            'area'          => ['nullable','string','max:255'],
+//            'zona'          => ['nullable','string','max:255'],
+            'denunciante_nombres'          => ['string','max:255'],
             'denunciante_paterno'          => ['nullable','string','max:255'],
             'denunciante_materno'          => ['nullable','string','max:255'],
             'denunciante_documento'        => ['nullable','string','max:100'],
@@ -289,9 +289,9 @@ class CasoController extends Controller
             'violencia_economica'         => ['nullable','boolean'],
 
             // Seguimiento
-            'seguimiento_area'            => ['nullable','string','max:255'],
-            'seguimiento_area_social'     => ['nullable','string','max:255'],
-            'seguimiento_area_legal'      => ['nullable','string','max:255'],
+//            'seguimiento_area'            => ['nullable','string','max:255'],
+//            'seguimiento_area_social'     => ['nullable','string','max:255'],
+//            'seguimiento_area_legal'      => ['nullable','string','max:255'],
         ]);
 
         // Tip: si vienen "on"/"off" desde un form, castear:
