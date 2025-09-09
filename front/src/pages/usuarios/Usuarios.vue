@@ -98,7 +98,8 @@
             <q-input v-model="user.username" label="Usuario" dense outlined :rules="[v => !!v || 'Campo requerido']"/>
             <q-input v-model="user.password" label="Contraseña" dense outlined :rules="[v => !!v || 'Campo requerido']" v-if="!user.id"/>
             <q-select v-model="user.role" label="Rol" dense outlined :options="roles" :rules="[v => !!v || 'Campo requerido']"/>
-            <q-input v-model="user.correo" label="Correo" dense outlined hint=""/>
+            <q-input v-model="user.email" label="Email" dense outlined hint=""/>
+            <q-input v-model="user.celular" label="Celular" dense outlined hint=""/>
             <q-select v-model="user.area" label="Área" dense outlined :options="$areas" :rules="[v => !!v || 'Campo requerido']"/>
             <q-select v-model="user.zona" label="Zona" dense outlined :options="$zonas" :rules="[v => !!v || 'Campo requerido']"/>
             <div class="text-right">
@@ -195,7 +196,8 @@ export default {
         { name: 'role', label: 'Rol', align: 'left', field: 'role' },
         { name: 'area', label: 'Área', align: 'left', field: 'area' },
         { name: 'zona', label: 'Zona', align: 'left', field: 'zona' },
-        { name: 'correo', label: 'Correo', align: 'left', field: 'correo' },
+        { name: 'email', label: 'Email', align: 'left', field: 'email' },
+        { name: 'celular', label: 'Celular', align: 'left', field: 'celular' },
         {
           name: 'permissions', label: 'Permisos', align: 'left',
           field: row => (row.permissions || []).map(p => p.name).join(', ')
@@ -220,7 +222,7 @@ export default {
       } finally { this.loading = false }
     },
     userNew() {
-      this.user = { name: '', username: '', password: '', role: 'Asistente', avatar: 'default.png', area: 'DNA', zona: 'CENTRAL', correo: '' }
+      this.user = { name: '', username: '', password: '', role: 'Asistente', avatar: 'default.png', area: 'DNA', zona: 'CENTRAL', email: '', celular: '' }
       this.actionUser = 'Nuevo'
       this.userDialog = true
     },

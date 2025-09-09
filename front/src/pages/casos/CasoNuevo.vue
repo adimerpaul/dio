@@ -337,9 +337,24 @@
 
         <q-card-section>
           <div class="row q-col-gutter-md">
-            <div class="col-12 col-md-4"><q-input v-model="f.seguimiento_area" dense outlined clearable label="Área psicologica (responsable)"/></div>
-            <div class="col-12 col-md-4"><q-input v-model="f.seguimiento_area_social" dense outlined clearable label="Área social (responsable)"/></div>
-            <div class="col-12 col-md-4"><q-input v-model="f.seguimiento_area_legal" dense outlined clearable label="Área legal (responsable)"/></div>
+<!--            <div class="col-12 col-md-4"><q-input v-model="f.seguimiento_area" dense outlined clearable label="Área psicologica (responsable)"/></div>-->
+<!--            <div class="col-12 col-md-4"><q-input v-model="f.seguimiento_area_social" dense outlined clearable label="Área social (responsable)"/></div>-->
+<!--            <div class="col-12 col-md-4"><q-input v-model="f.seguimiento_area_legal" dense outlined clearable label="Área legal (responsable)"/></div>-->
+            <div class="col-12 col-md-4">
+              <q-select v-model="f.psicologica_user_id" dense outlined emit-value map-options clearable
+                        :options="psicologos.map(u => ({ label: u.username, value: u.id }))"
+                        label="Área psicologica (responsable)"/>
+            </div>
+            <div class="col-12 col-md-4">
+              <q-select v-model="f.trabajo_social_user_id" dense outlined emit-value map-options clearable
+                        :options="sociales.map(u => ({ label: u.username, value: u.id }))"
+                        label="Área social (responsable)"/>
+            </div>
+            <div class="col-12 col-md-4">
+              <q-select v-model="f.legal_user_id" dense outlined emit-value map-options clearable
+                        :options="abogados.map(u => ({ label: u.username, value: u.id }))"
+                        label="Área legal (responsable)"/>
+            </div>
           </div>
         </q-card-section>
       </q-card>
@@ -396,6 +411,9 @@ export default {
   },
   data () {
     return {
+      psicologos: [],
+      abogados: [],
+      sociales: [],
       loading: false,
       documentos: [
         { label: 'Carnet de identidad', value: 'Carnet de identidad' },
@@ -481,9 +499,9 @@ export default {
         violencia_sexual: false,
         violencia_economica: false,
         // Seguimiento
-        seguimiento_area: '',
-        seguimiento_area_social: '',
-        seguimiento_area_legal: '',
+        psicologica_user_id: '',
+        trabajo_social_user_id: '',
+        legal_user_id: '',
         // Documentos (almacenar nombres de archivos subidos)
         documento_fotocopia_carnet_denunciante: false,
         documento_fotocopia_carnet_denunciado: false,
@@ -493,6 +511,15 @@ export default {
         documento_ciudadania_digital: false,
       }
     }
+  },
+  mounted() {
+    this.$axios.get('/usuariosRole').then(res => {
+      this.psicologos = res.data.psicologos
+      this.abogados = res.data.abogados
+      this.sociales = res.data.sociales
+    }).catch(() => {
+      this.$alert.error('No se pudo cargar los usuarios por rol')
+    })
   },
   computed: {
     denunciantePos: {
