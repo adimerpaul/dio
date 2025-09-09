@@ -47,7 +47,7 @@
       <tr v-for="(c, idx) in casos" :key="c.id" @click="$router.push('/casos/' + c.id)" class="cursor-pointer">
         <td>{{ rowIndex(idx) }}</td>
         <td class="text-no-wrap">{{ c.caso_numero || '—' }}</td>
-        <td class="text-no-wrap">{{ $filters.date(c.caso_fecha_hecho) }}</td>
+        <td class="text-no-wrap">{{ $filters.date(c.fecha_apertura_caso) }}</td>
         <td>
           <div class="text-weight-medium">{{ c.denunciante_nombre_completo }}</div>
           <div class="text-caption text-grey-7" v-if="c.denunciante_nro">CI: {{ c.denunciante_nro }}</div>
@@ -57,7 +57,7 @@
           <div class="text-caption text-grey-7" v-if="c.denunciado_nro">CI: {{ c.denunciado_nro }}</div>
         </td>
         <td>{{ c.caso_tipologia || '—' }}</td>
-        <td>{{ c.caso_zona || '—' }}</td>
+        <td>{{ c.zona || '—' }}</td>
         <td>
           <div class="ellipsis-2-lines" :title="c.caso_descripcion">
             {{ c.caso_descripcion || '—' }}

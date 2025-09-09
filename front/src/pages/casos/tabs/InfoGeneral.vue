@@ -34,7 +34,7 @@
           </div>
           <div class="col-12">
             <q-input v-model="form.caso_descripcion" :readonly="!editing" type="textarea" autogrow outlined dense clearable
-                     label="Descripción del hecho" counter maxlength="1000"/>
+                     label="Descripción del hecho" counter maxlength="3000"/>
           </div>
         </div>
       </q-card-section>

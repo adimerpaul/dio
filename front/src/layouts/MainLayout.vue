@@ -36,6 +36,9 @@
                 </q-avatar>
                 <div class="text-left" style="line-height:1">
                   <div class="ellipsis" style="max-width:140px;">{{ $store.user?.username }}</div>
+                  <q-chip v-if="$store.user?.role" color="grey-3" text-color="black" size="10px" dense>
+                    {{ $store.user?.role }}
+                  </q-chip>
                 </div>
               </div>
             </template>

@@ -37,7 +37,10 @@ export default boot(({ app, router }) => {
     },
     date: (value) => {
       if (!value) return ''
-      return new Date(value).toLocaleDateString()
+      const dia = moment(String(value)).format('DD')
+      const meses = moment(String(value)).format('MM')
+      const anio = moment(String(value)).format('YYYY')
+      return dia + '/' + meses + '/' + anio
     },
     time: (value) => {
       if (!value) return ''
