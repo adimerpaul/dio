@@ -104,6 +104,12 @@ return new class extends Migration
             $table->string('documento_placas_fotograficas_domicilio_denunciado', 10)->nullable();
             $table->string('documento_ciudadania_digital', 10)->nullable();
 
+            $table->date('fecha_apertura_caso')->nullable();
+            $table->date('fecha_derivacion_psicologica')->nullable();
+            $table->date('fecha_informe_area_psicologica')->nullable();
+            $table->date('fecha_informe_trabajo_social')->nullable();
+            $table->date('fecha_derivacion_area_legal')->nullable();
+
             $table->timestamps();
             $table->softDeletes();
         });

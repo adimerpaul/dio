@@ -109,6 +109,12 @@ class Caso extends Model implements AuditableContract
         'documento_croquis_direccion_denunciado',
         'documento_placas_fotograficas_domicilio_denunciado',
         'documento_ciudadania_digital',
+
+        'fecha_apertura_caso',
+        'fecha_derivacion_psicologica',
+        'fecha_informe_area_psicologica',
+        'fecha_informe_trabajo_social',
+        'fecha_derivacion_area_legal',
     ];
 
     /**
