@@ -547,6 +547,15 @@ export default {
       //   this.$alert.error('El nombre del denunciante es obligatorio')
       //   return
       // }
+      // pedir nombre
+      if (this.showNumeroApoyoIntegral && !this.f.numero_apoyo_integral) {
+        this.$alert.error('El número de apoyo integral es obligatorio')
+        return
+      }
+      if (!this.f.denunciante_nombres) {
+        this.$alert.error('El/Los nombre(s) del denunciante es obligatorio')
+        return
+      }
       this.loading = true
       try {
         const res = await this.$axios.post('/casos', this.f)

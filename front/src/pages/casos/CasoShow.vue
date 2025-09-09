@@ -18,15 +18,16 @@
       <q-tabs v-model="tab" class="text-primary" dense align="left"
               active-color="primary" indicator-color="primary" outside-arrows mobile-arrows>
         <q-tab name="info"         label="1 Información General"   icon="dashboard"       no-caps/>
-        <q-tab name="hoja"         label="2 Hoja de Ruta"          icon="report_problem"  no-caps/>
-        <q-tab name="psico"        label="3 Área Psicológico"  icon="psychology"      no-caps/>
-        <q-tab name="legal"        label="4 Área Legal"        icon="gavel"           no-caps/>
-        <q-tab name="social"       label="5 Área Social"           icon="people"          no-caps/>
-        <q-tab name="apoyo"        label="6 Apoyo Integral"        icon="diversity_1"     no-caps/>
+        <q-tab name="hoja"         label="2 Hoja de Ruta"          icon="report_problem"  no-caps v-if="role === 'Administrador' || role === 'Asistente'"/>
+        <q-tab name="psico"        label="3 Área Psicológico"      icon="psychology"      no-caps v-if="role === 'Administrador' || role === 'Psicologo'"/>
+        <q-tab name="legal"        label="4 Área Legal"            icon="gavel"           no-caps v-if="role === 'Administrador' || role === 'Abogado'"/>
+        <q-tab name="social"       label="5 Área Social"           icon="people"          no-caps v-if="role === 'Administrador' || role === 'Social'"/>
+        <q-tab name="apoyo"        label="6 Apoyo Integral"        icon="diversity_1"     no-caps v-if="role === 'Administrador' || role === 'Social'"/>
         <q-tab name="docs"         label="7 Documentos General"    icon="folder"          no-caps/>
         <q-tab name="fotos"        label="8 Fotografías"           icon="photo_library"   no-caps/>
       </q-tabs>
     </q-card>
+<!--    <pre>{{role}}</pre>-->
 
     <q-tab-panels v-model="tab" animated keep-alive>
       <!-- 1) Información General -->
@@ -96,7 +97,8 @@ export default {
     }
   },
   computed: {
-    caseId () { return this.$route.params.id }
+    caseId () { return this.$route.params.id },
+    role () { return this.$store.user?.role || '' },
   },
   created () {
     this.fetchCaso()

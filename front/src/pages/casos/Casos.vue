@@ -40,7 +40,7 @@
         <th>Denunciado</th>
         <th>Tipología</th>
         <th>Zona</th>
-        <th>Descripción</th>
+        <th>Tipo</th>
       </tr>
       </thead>
       <tbody v-if="!loading && casos.length">
@@ -59,9 +59,13 @@
         <td>{{ c.caso_tipologia || '—' }}</td>
         <td>{{ c.zona || '—' }}</td>
         <td>
-          <div class="ellipsis-2-lines" :title="c.caso_descripcion">
-            {{ c.caso_descripcion || '—' }}
-          </div>
+          <q-badge
+            :color="c.numero_apoyo_integral ? 'green' : 'grey-5'"
+            :text-color="c.numero_apoyo_integral ? 'white' : 'black'"
+            :label="c.numero_apoyo_integral ? 'Apoyo Integral' : 'Regular'"
+            rounded
+            dense
+          />
         </td>
       </tr>
       </tbody>
