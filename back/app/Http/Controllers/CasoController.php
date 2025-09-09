@@ -169,6 +169,11 @@ class CasoController extends Controller
         $numero_casos = $this->numeroCaso();
         $request['caso_numero'] = $numero_casos;
         $request['fecha_apertura_caso'] = date('Y-m-d');
+        $user = $request->user();
+        $request['user_id'] = $user->id;
+        $request['area'] = $user->area;
+        $request['zona'] = $user->zona;
+
 
         $caso = Caso::create($request->all());
 

@@ -18,9 +18,65 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Administrador DIO',
                 'email' => 'admin@dio.gob.bo',
-                'password' => Hash::make('Admin123!*'),
+                'password' => Hash::make('admin123Admin'),
                 'avatar' => 'default.png',
                 'role' => 'Administrador',
+                'area' => 'DNA',
+                'zona' => 'CENTRAL',
+                'email_verified_at' => now(),
+            ]
+        );
+//        roles: ['Administrador', 'Asistente', 'Psicologo', 'Abogado','Social'],
+        $asistente = User::firstOrCreate(
+            ['username' => 'asistente'],
+            [
+                'name' => 'Asistente DIO',
+                'email' => 'asistente@dio.gob.bo',
+                'password' => Hash::make('123456'),
+                'avatar' => 'default.png',
+                'role' => 'Asistente',
+                'area' => 'DNA',
+                'zona' => 'CENTRAL',
+                'email_verified_at' => now(),
+            ]
+        );
+
+        $psicologo = User::firstOrCreate(
+            ['username' => 'psicologo'],
+            [
+                'name' => 'Psicologo DIO',
+                'email' => 'psocologo@dio.gob.bo',
+                'password' => Hash::make('123456'),
+                'avatar' => 'default.png',
+                'role' => 'Psicologo',
+                'area' => 'DNA',
+                'zona' => 'CENTRAL',
+                'email_verified_at' => now(),
+            ]
+        );
+        $abogado = User::firstOrCreate(
+            ['username' => 'abogado'],
+            [
+                'name' => 'Abogado DIO',
+                'email' => 'abogado@dio.gob.bo',
+                'password' => Hash::make('123456'),
+                'avatar' => 'default.png',
+                'role' => 'Abogado',
+                'area' => 'DNA',
+                'zona' => 'CENTRAL',
+                'email_verified_at' => now(),
+            ]
+        );
+        $social = User::firstOrCreate(
+            ['username' => 'social'],
+            [
+                'name' => 'Trabajador Social DIO',
+                'email' => 'social@dio.go.bo',
+                'password' => Hash::make('123456'),
+                'avatar' => 'default.png',
+                'role' => 'Social',
+                'area' => 'DNA',
+                'zona' => 'CENTRAL',
                 'email_verified_at' => now(),
             ]
         );
@@ -40,6 +96,10 @@ class DatabaseSeeder extends Seeder
 //        $admin->assignPermisos
 
         $admin->syncPermissions($permisos);
+        $asistente->syncPermissions(['Dashboard', 'Casos', 'Documentos', 'Lineas de Tiempo']);
+        $psicologo->syncPermissions(['Dashboard', 'Casos', 'Documentos', 'Lineas de Tiempo', 'KPIs']);
+        $abogado->syncPermissions(['Dashboard', 'Casos', 'Documentos', 'Lineas de Tiempo', 'KPIs']);
+        $social->syncPermissions(['Dashboard', 'Casos', 'Documentos', 'Lineas de Tiempo', 'KPIs']);
 //        $this->call([
 //                CasoSeeder::class,
 //        ]);

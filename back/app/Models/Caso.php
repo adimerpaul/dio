@@ -99,9 +99,10 @@ class Caso extends Model implements AuditableContract
         'violencia_economica',
 
         // Seguimiento
-        'seguimiento_area',
-        'seguimiento_area_social',
-        'seguimiento_area_legal',
+        'psicologica_user_id',
+        'trabajo_social_user_id',
+        'legal_user_id',
+        'user_id',
 
         'documento_fotocopia_carnet_denunciante',
         'documento_fotocopia_carnet_denunciado',

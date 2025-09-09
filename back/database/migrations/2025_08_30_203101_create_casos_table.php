@@ -93,9 +93,14 @@ return new class extends Migration
             $table->string('violencia_sexual', 10)->nullable();
             $table->string('violencia_economica', 10)->nullable();
 
-            $table->string('seguimiento_area', 80)->nullable();
-            $table->string('seguimiento_area_social', 120)->nullable();
-            $table->string('seguimiento_area_legal', 120)->nullable();
+            $table->unsignedBigInteger('psicologica_user_id')->nullable();
+            $table->foreign('psicologica_user_id')->references('id')->on('users');
+            $table->unsignedBigInteger('trabajo_social_user_id')->nullable();
+            $table->foreign('trabajo_social_user_id')->references('id')->on('users');
+            $table->unsignedBigInteger('legal_user_id')->nullable();
+            $table->foreign('legal_user_id')->references('id')->on('users');
+
+
 
             $table->string('documento_fotocopia_carnet_denunciante', 10)->nullable();
             $table->string('documento_fotocopia_carnet_denunciado', 10)->nullable();
@@ -109,6 +114,9 @@ return new class extends Migration
             $table->date('fecha_informe_area_psicologica')->nullable();
             $table->date('fecha_informe_trabajo_social')->nullable();
             $table->date('fecha_derivacion_area_legal')->nullable();
+
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users');
 
             $table->timestamps();
             $table->softDeletes();

@@ -26,7 +26,9 @@ class User extends Authenticatable implements Auditable
         'password',
         'username',
         'role',
-        'avatar'
+        'avatar',
+//        $table->string('area', 80)->nullable();
+//$table->string('zona', 80)->nullable();
     ];
 
     /**
