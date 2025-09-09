@@ -17,13 +17,14 @@
     <q-card flat bordered class="q-mb-md">
       <q-tabs v-model="tab" class="text-primary" dense align="left"
               active-color="primary" indicator-color="primary" outside-arrows mobile-arrows>
-        <q-tab name="info"         label="1 INFORMACIÓN GENERAL"   icon="dashboard"/>
-        <q-tab name="problematica" label="2 PROBLEMÁTICA"          icon="report_problem"/>
-        <q-tab name="psico"        label="3 SESIONES PSICOLÓGICO"  icon="psychology"/>
-        <q-tab name="legal"        label="4 INFORMES LEGAL"        icon="gavel"/>
-        <q-tab name="apoyo"        label="5 APOYO INTEGRAL"        icon="diversity_1"/>
-        <q-tab name="docs"         label="6 DOCUMENTOS GENERAL"    icon="folder"/>
-        <q-tab name="fotos"        label="7 FOTOGRAFÍAS"           icon="photo_library"/>
+        <q-tab name="info"         label="1 Información General"   icon="dashboard"       no-caps/>
+        <q-tab name="hoja"         label="2 Hoja de Ruta"          icon="report_problem"  no-caps/>
+        <q-tab name="psico"        label="3 Área Psicológico"  icon="psychology"      no-caps/>
+        <q-tab name="legal"        label="4 Área Legal"        icon="gavel"           no-caps/>
+        <q-tab name="social"       label="5 Área Social"           icon="people"          no-caps/>
+        <q-tab name="apoyo"        label="6 Apoyo Integral"        icon="diversity_1"     no-caps/>
+        <q-tab name="docs"         label="7 Documentos General"    icon="folder"          no-caps/>
+        <q-tab name="fotos"        label="8 Fotografías"           icon="photo_library"   no-caps/>
       </q-tabs>
     </q-card>
 
@@ -36,6 +37,10 @@
       <!-- 2) Problemática -->
       <q-tab-panel name="problematica">
         <Problematica :case-id="caseId"/>
+      </q-tab-panel>
+
+      <q-tab-panel name="hoja">
+        <HojaRuta :case-id="caseId"/>
       </q-tab-panel>
 
       <!-- 3) Sesiones Psicológico -->
@@ -75,10 +80,12 @@ import InformesLegal     from './tabs/InformesLegal.vue'
 import ApoyoIntegral     from './tabs/ApoyoIntegral.vue'
 import DocumentosGeneral from './tabs/DocumentosGeneral.vue'
 import Fotografias       from './tabs/Fotografias.vue'
+import HojaRuta from "pages/casos/tabs/HojaRuta.vue";
 
 export default {
   name: 'CasoDetalle',
   components: {
+    HojaRuta,
     InfoGeneral, Problematica, SesionesPsicologico, InformesLegal, ApoyoIntegral, DocumentosGeneral, Fotografias
   },
   data () {
