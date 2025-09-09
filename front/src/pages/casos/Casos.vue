@@ -86,6 +86,9 @@
       </tr>
       </tbody>
     </q-markup-table>
+<!--    <pre>-->
+<!--      {{ casos }}-->
+<!--    </pre>-->
 
     <div class="row items-center justify-between q-mt-md">
       <div class="text-caption text-grey-7">

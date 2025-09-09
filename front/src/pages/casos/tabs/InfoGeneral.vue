@@ -5,10 +5,12 @@
         <div class="text-subtitle1 text-weight-medium">Información General</div>
       </div>
       <div class="col-auto row q-gutter-sm">
-        <q-btn v-if="!editing" color="primary" icon="edit" label="Editar" @click="startEdit" :loading="loading"/>
-        <template v-else>
-          <q-btn flat color="negative" icon="close" label="Cancelar" @click="cancelEdit" :loading="loading"/>
-          <q-btn color="primary" icon="save" label="Guardar" @click="save" :loading="loading"/>
+        <template v-if="role === 'Administrador' || role === 'Asistente'">
+          <q-btn v-if="!editing" color="primary" icon="edit" label="Editar" @click="startEdit" :loading="loading"/>
+          <template v-else>
+            <q-btn flat color="negative" icon="close" label="Cancelar" @click="cancelEdit" :loading="loading"/>
+            <q-btn color="primary" icon="save" label="Guardar" @click="save" :loading="loading"/>
+          </template>
         </template>
       </div>
     </div>
@@ -260,7 +262,8 @@ export default {
     denunciadoPos: {
       get () { return { latitud: this.form.denunciado_latitud, longitud: this.form.denunciado_longitud } },
       set (v) { this.form.denunciado_latitud = v.latitud; this.form.denunciado_longitud = v.longitud }
-    }
+    },
+    role () { return this.$store.user?.role || '' },
   },
   created () {
     this.fetch()
