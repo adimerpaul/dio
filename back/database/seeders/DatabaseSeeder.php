@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
                 'area' => 'DNA',
                 'zona' => 'CENTRAL',
                 'email_verified_at' => now(),
+                'celular' => '72461667',
             ]
         );
 //        roles: ['Administrador', 'Asistente', 'Psicologo', 'Abogado','Social'],
@@ -38,6 +39,7 @@ class DatabaseSeeder extends Seeder
                 'area' => 'DNA',
                 'zona' => 'CENTRAL',
                 'email_verified_at' => now(),
+                'celular' => '72461667',
             ]
         );
 
@@ -52,6 +54,7 @@ class DatabaseSeeder extends Seeder
                 'area' => 'DNA',
                 'zona' => 'CENTRAL',
                 'email_verified_at' => now(),
+                'celular' => '72461667',
             ]
         );
         $abogado = User::firstOrCreate(
@@ -65,6 +68,7 @@ class DatabaseSeeder extends Seeder
                 'area' => 'DNA',
                 'zona' => 'CENTRAL',
                 'email_verified_at' => now(),
+                'celular' => '72461667',
             ]
         );
         $social = User::firstOrCreate(
@@ -78,6 +82,7 @@ class DatabaseSeeder extends Seeder
                 'area' => 'DNA',
                 'zona' => 'CENTRAL',
                 'email_verified_at' => now(),
+                'celular' => '72461667',
             ]
         );
         $permisos = [

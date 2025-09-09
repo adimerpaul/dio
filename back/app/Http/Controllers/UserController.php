@@ -9,6 +9,25 @@ use Intervention\Image\Drivers\Gd\Driver;
 use Spatie\Permission\Models\Permission;
 
 class UserController extends Controller{
+//    function psicologos(){
+//        return User::where('role', 'Psicologo')->get();
+//    }
+//    function abogados(){
+//        return User::where('role', 'Abogado')->get();
+//    }
+//    function sociales(){
+//        return User::where('role', 'Social')->get();
+//    }
+    function usuariosRole(){
+        $psicologos = User::where('role', 'Psicologo')->get();
+        $abogados = User::where('role', 'Abogado')->get();
+        $sociales = User::where('role', 'Social')->get();
+        return response()->json([
+            'psicologos' => $psicologos,
+            'abogados' => $abogados,
+            'sociales' => $sociales,
+        ]);
+    }
     public function updateAvatar(Request $request, $userId)
     {
         $user = User::find($userId);
