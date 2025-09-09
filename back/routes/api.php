@@ -90,6 +90,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 });
 Route::get('/casos/{caso}/pdf', [CasoController::class, 'pdf']);
+Route::get('/casos/{caso}/pdf/hoja-ruta', [CasoController::class, 'pdfHojaRuta']);
 Route::get('problematicas/{problematica}/pdf', [ProblematicaController::class, 'pdf']);
 Route::get('/sesiones-psicologicas/{sesion}/pdf', [SesionPsicologicaController::class, 'pdf']);
 // PDF (puede ir fuera del middleware si lo prefieres público)

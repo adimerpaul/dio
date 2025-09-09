@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 class CasoController extends Controller
 {
+    function pdfHojaRuta(Request $request, Caso $caso){
+        return view('casos.pdfHojaRuta', compact('caso'));
+    }
     public function pdf(Request $request, Caso $caso)
     {
         // Opciones extra para mejor render

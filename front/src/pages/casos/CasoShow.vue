@@ -8,7 +8,27 @@
         <div class="text-caption text-grey-7">Detalle y gestión integral</div>
       </div>
       <div class="col-auto row q-gutter-sm">
-        <q-btn flat color="secondary" icon="print" label="Imprimir PDF" @click="printPdf" />
+<!--        <q-btn flat color="secondary" icon="print" label="Imprimir PDF" @click="printPdf" />-->
+        <q-btn-dropdown flat color="secondary" icon="print" label="Imprimir PDF">
+          <q-list>
+            <q-item clickable @click="printPdf">
+              <q-item-section>Ficha del Caso</q-item-section>
+            </q-item>
+            <q-separator/>
+            <q-item clickable @click="printPdfHojaRuta">
+              <q-item-section>Hoja de Ruta</q-item-section>
+            </q-item>
+<!--            <q-item clickable :to="`/casos/${$route.params.id}/pdf/informes-legal`" target="_blank">-->
+<!--              <q-item-section>Informes Legal</q-item-section>-->
+<!--            </q-item>-->
+<!--            <q-item clickable :to="`/casos/${$route.params.id}/pdf/sesiones-psicologico`" target="_blank">-->
+<!--              <q-item-section>Sesiones Psicológico</q-item-section>-->
+<!--            </q-item>-->
+<!--            <q-item clickable :to="`/casos/${$route.params.id}/pdf/apoyo-integral`" target="_blank">-->
+<!--              <q-item-section>Apoyo Integral</q-item-section>-->
+<!--            </q-item>-->
+          </q-list>
+        </q-btn-dropdown>
         <q-btn flat color="primary" icon="refresh" @click="fetchCaso" :loading="loading"/>
       </div>
     </div>
@@ -116,13 +136,12 @@ export default {
       }
     },
     printPdf () {
-      // placeholder — luego conectas tu endpoint/cliente PDF
-      // <q-btn flat color="primary" icon="print" label="Imprimir"
-      //  :to="`/casos/${$route.params.id}/pdf`" target="_blank"/>
-
       const url = this.$axios.defaults.baseURL + `/casos/${this.caseId}/pdf`
       window.open(url, '_blank')
-
+    },
+    printPdfHojaRuta() {
+      const url = this.$axios.defaults.baseURL + `/casos/${this.caseId}/pdf/hoja-ruta`
+      window.open(url, '_blank')
     }
   }
 }
