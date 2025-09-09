@@ -65,7 +65,7 @@ class CasoController extends Controller
             });
         }
         $user = $request->user();
-        if($user->role == 'Psicologa'){
+        if($user->role == 'Psicologo'){
             $query->where('psicologica_user_id', $user->id);
         }
         if($user->role == 'Social'){
