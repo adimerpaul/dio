@@ -74,7 +74,7 @@ class CasoController extends Controller
         if($user->role == 'Social'){
             $query->where('trabajo_social_user_id', $user->id);
         }
-        if($user->role == 'Legal'){
+        if($user->role == 'Abogado'){
             $query->where('legal_user_id', $user->id);
         }
         $query->with(['psicologica_user:id,name','trabajo_social_user:id,name','legal_user:id,name','user:id,name']);
