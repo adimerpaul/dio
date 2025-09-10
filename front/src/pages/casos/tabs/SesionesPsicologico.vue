@@ -176,6 +176,7 @@ export default {
       plantilla: null,
       plantillasOptions: [
         { label:'Consentimiento informado', value:'consentimiento'},
+        { label:'Informe Psicológico (formato DIO)', value:'informe_dio' },
         { label:'Acta de sesión (DIO)', value:'acta' },
         { label:'Informe breve (psicológico)', value:'informe' },
         { label:'Constancia de asistencia', value:'constancia' },
@@ -218,21 +219,129 @@ export default {
     openView(it){ this.mode='view'; this.form={...it}; this.dialog=true },
     openEdit(it){ this.mode='edit'; this.form={...it}; this.dialog=true },
 
-    applyTemplate(val){
-      if(this.mode==='view') return
+    applyTemplate(val) {
+      if (this.mode === 'view') return
+
+      const c = this.caso || {}
+
+      // ===== Denunciante =====
+      const denunciante = {
+        nombres: c.denunciante_nombres || c.denunciante_nombre_completo || '',
+        apellidos: [c.denunciante_paterno, c.denunciante_materno].filter(Boolean).join(' '),
+        edad: c.denunciante_edad || '',
+        fecha_nacimiento: c.denunciante_fecha_nacimiento || '',
+        lugar_nacimiento: c.denunciante_lugar_nacimiento || '',
+        grado: c.denunciante_grado || '',
+        ocupacion: c.denunciante_ocupacion_exacto || c.denunciante_ocupacion || '',
+        domicilio: c.denunciante_domicilio_actual || c.denunciante_residencia || '',
+        documento: c.denunciante_documento || 'Carnet de identidad',
+        nro: c.denunciante_nro || '',
+        telefono: c.denunciante_telefono || c.denunciante_movil || c.denunciante_fijo || '',
+        estado_civil: c.denunciante_estado_civil || '',
+      }
+
+      // ===== Familiares (1..5) =====
+      const familiares = []
+      for (let i = 1; i <= 5; i++) {
+        const nombre = c[`familiar${i}_nombre_completo`]
+        const edad   = c[`familiar${i}_edad`]
+        const parent = c[`familiar${i}_parentesco`]
+        const cel    = c[`familiar${i}_celular`]
+        if (nombre || edad || parent || cel) {
+          familiares.push({
+            nombre: nombre || '',
+            edad: edad || '',
+            estado_civil: '',        // No está en el modelo; lo dejamos vacío
+            parentesco: parent || '',
+            ocupacion: '',           // Tampoco está; puedes agregarlo si luego lo guardas
+          })
+        }
+      }
+
+      // ===== Número de caso (preferir campo del modelo) =====
+      const yyyy = (this.form.fecha || this.today()).slice(0, 4)
+      const numeroCaso = c.caso_numero && String(c.caso_numero).trim() !== ''
+        ? String(c.caso_numero)
+        : `${String(this.caseId).padStart(2, '0')}/${yyyy}`
+
+      // ===== Nombres de responsables (si viene con relaciones) =====
+      const abogadoNombre =
+        (c.legal_user?.name || c.legal_user?.username) || ''   // requiere ->with('legal_user')
+      const psicologoNombre =
+        (c.psicologica_user?.name || c.psicologica_user?.username) || (this.$store?.state?.user?.name) || ''
+
+      // ===== Semillas de contenido =====
+      // Motivo: breve, editable
+      const motivo = c.caso_tipologia || c.caso_modalidad
+        ? `Evaluación psicológica en el marco de presunta(s) ${[
+          c.caso_tipologia, c.caso_modalidad,
+        ].filter(Boolean).join(' / ')}.`
+        : 'Evaluación psicológica para determinar los efectos emocionales y psicológicos en la evaluada.'
+
+      // Antecedentes: usa fecha, lugar y descripción del caso
+      const antecedentes = (() => {
+        const f = c.caso_fecha_hecho ? `el ${c.caso_fecha_hecho}` : 'en fecha no precisada'
+        const lugar = [c.caso_lugar_hecho, c.caso_zona, c.caso_direccion].filter(Boolean).join(', ')
+        const lugarTxt = lugar ? `, en ${lugar}` : ''
+        const relato = c.caso_descripcion ? ` ${c.caso_descripcion}` : ''
+        return `Según la apertura del caso, el hecho habría ocurrido ${f}${lugarTxt}.${relato}`
+      })()
+
+      // Técnicas: base + si hay violencias marcadas
+      const tecnicas = [
+        'Entrevista clínica y observación conductual',
+        'Aplicación de instrumentos psicométricos según pertinencia (Goldberg, IES-R, Rosenberg)',
+      ].join('; ') + '.'
+
+      // Conclusiones: base + lectura simple según flags de violencia
+      const flags = [
+        c.violencia_fisica ? 'violencia física' : null,
+        c.violencia_psicologica ? 'violencia psicológica' : null,
+        c.violencia_sexual ? 'violencia sexual' : null,
+        c.violencia_economica ? 'violencia económica/patrimonial' : null,
+      ].filter(Boolean)
+      const conclViol = flags.length ? ` Se consideran indicadores asociados a ${flags.join(', ')}.` : ''
+      const conclusiones =
+        'Se evidencian reacciones emocionales congruentes con el evento referido, con impacto en el equilibrio afectivo y la autoestima.' +
+        conclViol +
+        ' No se evidencian signos de psicosis. Se sugiere seguimiento clínico y contención.'
+
+      // Recomendaciones: base editable
+      const recomendaciones = [
+        'Intervención psicológica: terapia focalizada en manejo de ansiedad/estrés y fortalecimiento de recursos personales.',
+        'Orientación/asesoramiento legal para evitar revictimización y garantizar medidas de protección, si corresponde.',
+      ].join(' ')
+
+      // ===== Base común para todas las plantillas =====
       const base = {
         casoId: this.caseId,
         fecha: this.form.fecha || this.today(),
         titulo: this.form.titulo || 'Sesión psicológica',
         lugar: this.form.lugar || '',
-        tipo:  this.form.tipo  || 'Individual',
-        nombre: this.caso.denunciante_nombre_completo,
-        documento: this.caso.denunciante_nro,
+        tipo: this.form.tipo || 'Individual',
+        nombre: c.denunciante_nombre_completo,
+        documento: c.denunciante_nro,
+
+        // extras (informe DIO)
+        numeroCaso,
+        abogadoNombre,
+        psicologoNombre,
+        denunciante,
+        familiares,
+
+        // contenido inicial
+        motivo,
+        antecedentes,
+        tecnicas,
+        conclusiones,
+        recomendaciones,
       }
-      if(val==='acta')       this.form.contenido_html = SesionHtml.acta(base)
-      else if(val==='informe')   this.form.contenido_html = SesionHtml.informe(base)
-      else if(val==='constancia') this.form.contenido_html = SesionHtml.constancia(base)
-      else if(val==='consentimiento') this.form.contenido_html = SesionHtml.consentimiento(base)
+
+      if (val === 'acta')               this.form.contenido_html = SesionHtml.acta(base)
+      else if (val === 'informe')       this.form.contenido_html = SesionHtml.informe(base)
+      else if (val === 'constancia')    this.form.contenido_html = SesionHtml.constancia(base)
+      else if (val === 'consentimiento')this.form.contenido_html = SesionHtml.consentimiento(base)
+      else if (val === 'informe_dio')   this.form.contenido_html = SesionHtml.informe_dio(base) // NUEVO
     },
 
     async save(){

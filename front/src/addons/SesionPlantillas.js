@@ -148,5 +148,158 @@ export const SesionHtml = {
   </tr>
 </table>
 `
-  }
+  },
+  // Plantilla formal tipo DIO — Informe Psicológico
+// Espera:
+// {
+//   numeroCaso, casoId, fecha, abogadoNombre, psicologoNombre,
+//   denunciante: { nombres, apellidos, edad, fecha_nacimiento, lugar_nacimiento, grado, ocupacion, domicilio, documento, nro, telefono, estado_civil },
+//   familiares: [{ nombre, edad, estado_civil, parentesco, ocupacion }, ...],
+//   motivo, antecedentes, tecnicas, conclusiones, recomendaciones
+// }
+  informe_dio({
+                numeroCaso,
+                casoId,
+                fecha,
+                abogadoNombre,
+                psicologoNombre,
+                denunciante = {},
+                familiares = [],
+                motivo = '',
+                antecedentes = '',
+                tecnicas = '',
+                conclusiones = '',
+                recomendaciones = ''
+              }) {
+    const d = (v, fallback = '—') => (v == null || v === '' ? fallback : v)
+
+    const familiaresRows = (familiares && familiares.length
+        ? familiares
+        : [{ nombre:'', edad:'', estado_civil:'', parentesco:'', ocupacion:'' }]
+    ).map(f => `
+    <tr>
+      <td>${d(f.nombre)}</td>
+      <td style="text-align:center">${d(f.edad)}</td>
+      <td style="text-align:center">${d(f.estado_civil)}</td>
+      <td style="text-align:center">${d(f.parentesco)}</td>
+      <td style="text-align:center">${d(f.ocupacion)}</td>
+    </tr>
+  `).join('')
+
+    return `
+<div style="font-size:12px; line-height:1.35">
+  <div style="text-align:center; font-weight:700; text-transform:uppercase;">
+    INFORME PSICOLÓGICO
+  </div>
+  <div style="text-align:center; margin-top:2px; font-size:11px; color:#333">
+    Nro. de Caso: ${d(numeroCaso)}&nbsp;&nbsp;|&nbsp;&nbsp;Caso ID: #${d(casoId)}
+  </div>
+
+  <div style="margin-top:8px; border:1px solid #333; border-radius:6px; padding:10px;">
+    <table style="width:100%; border-collapse:collapse; font-size:12px">
+      <tr>
+        <td style="width:10%;"><b>A:</b></td>
+        <td> ${d(abogadoNombre, '________________________________________')} </td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>ABOGADO/A DE LA DIRECCIÓN DE IGUALDAD DE OPORTUNIDADES</td>
+      </tr>
+      <tr><td colspan="2" style="height:8px"></td></tr>
+      <tr>
+        <td><b>DE:</b></td>
+        <td> ${d(psicologoNombre, '________________________________________')} </td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>PSICÓLOGA / PSICÓLOGO – DIRECCIÓN DE IGUALDAD DE OPORTUNIDADES (DIO) SLIM</td>
+      </tr>
+      <tr>
+        <td><b>Fecha:</b></td>
+        <td>${d(fecha)}</td>
+      </tr>
+    </table>
+  </div>
+
+  <h5 style="margin:12px 0 4px 0;">1. DATOS PERSONALES DE LA DENUNCIANTE</h5>
+  <table style="width:100%; border-collapse:collapse; font-size:12px">
+    <tr>
+      <td style="width:45%"><b>Nombres y apellidos:</b> ${d((denunciante.nombres ? (denunciante.nombres + ' ') : '') + (denunciante.apellidos || ''))}</td>
+      <td style="width:20%"><b>Edad:</b> ${d(denunciante.edad)}</td>
+      <td style="width:35%"><b>Fecha de nacimiento:</b> ${d(denunciante.fecha_nacimiento)}</td>
+    </tr>
+    <tr>
+      <td><b>Lugar de nacimiento:</b> ${d(denunciante.lugar_nacimiento)}</td>
+      <td colspan="2"><b>Grado de instrucción:</b> ${d(denunciante.grado)}</td>
+    </tr>
+    <tr>
+      <td><b>Ocupación:</b> ${d(denunciante.ocupacion)}</td>
+      <td colspan="2"><b>Dirección/Domicilio:</b> ${d(denunciante.domicilio)}</td>
+    </tr>
+    <tr>
+      <td><b>Documento:</b> ${d(denunciante.documento)}</td>
+      <td><b>Nro.:</b> ${d(denunciante.nro)}</td>
+      <td><b>Teléfono:</b> ${d(denunciante.telefono)}</td>
+    </tr>
+    <tr>
+      <td colspan="3"><b>Estado civil:</b> ${d(denunciante.estado_civil)}</td>
+    </tr>
+  </table>
+
+  <h5 style="margin:12px 0 4px 0;">2. DATOS FAMILIARES</h5>
+  <table style="width:100%; border:1px solid #333; border-collapse:collapse; font-size:12px">
+    <thead>
+      <tr style="background:#eee">
+        <th style="border:1px solid #333; padding:4px; text-align:left;">Nombres y Apellidos</th>
+        <th style="border:1px solid #333; padding:4px; width:60px;">Edad</th>
+        <th style="border:1px solid #333; padding:4px; width:110px;">Estado civil</th>
+        <th style="border:1px solid #333; padding:4px; width:110px;">Parentesco</th>
+        <th style="border:1px solid #333; padding:4px; width:140px;">Ocupación</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${familiaresRows}
+    </tbody>
+  </table>
+
+  <h5 style="margin:12px 0 4px 0;">3. MOTIVO DE CONSULTA</h5>
+  <p style="text-align:justify">${d(motivo, 'Evaluación psicológica para determinar los efectos emocionales y psicológicos en la evaluada.')}</p>
+
+  <h5 style="margin:12px 0 4px 0;">4. ANTECEDENTES</h5>
+  <p style="text-align:justify">${d(antecedentes, 'Se resume el relato referido por la denunciante al momento de la apertura del caso, consignando fechas, lugares, actores involucrados y acciones observadas.')}</p>
+
+  <h5 style="margin:12px 0 4px 0;">5. TÉCNICAS E INSTRUMENTOS EMPLEADOS</h5>
+  <ul style="margin:0 0 0 16px;">
+    <li>Entrevista clínica y observación conductual.</li>
+    <li>Escala de Ansiedad y Depresión de Goldberg (si aplica).</li>
+    <li>Inventario de Estrés Postraumático (IES-R) (si aplica).</li>
+    <li>Test de Autoestima de Rosenberg (si aplica).</li>
+    <li>${d(tecnicas)}</li>
+  </ul>
+
+  <h5 style="margin:12px 0 4px 0;">6. CONCLUSIONES</h5>
+  <p style="text-align:justify">${d(conclusiones, 'Se evidencian afectación psicológica y reactividad emocional en relación a los hechos referidos, con impacto en autoestima y estabilidad emocional. No se observan signos de psicosis. Se recomienda seguimiento.')}</p>
+
+  <h5 style="margin:12px 0 4px 0;">7. RECOMENDACIONES</h5>
+  <ol style="margin:0 0 0 16px;">
+    <li>Intervención psicológica: terapia de fortalecimiento emocional, manejo de ansiedad y estrés.</li>
+    <li>Evaluación legal: asesoramiento jurídico para evitar revictimización y garantizar protección.</li>
+    <li>${d(recomendaciones)}</li>
+  </ol>
+
+  <p style="margin-top:12px">Se emite el presente informe en honor a la verdad para fines consiguientes.</p>
+
+  <div style="margin-top:28px; display:flex; justify-content:space-between; font-size:12px;">
+    <div style="text-align:center; width:45%;">
+      __________________________<br/>
+      ${d(psicologoNombre, 'Psicóloga/o Interviniente')}
+    </div>
+    <div style="text-align:center; width:45%;">
+      __________________________<br/>
+      Vo.Bo.
+    </div>
+  </div>
+</div>
+`
+  },
 };
