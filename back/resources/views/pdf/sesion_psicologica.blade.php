@@ -32,23 +32,23 @@
     <table width="100%">
         <tr>
             <td class="muted">Documento impreso por el sistema — {{ now()->format('d/m/Y H:i') }}</td>
-            <td align="right" class="muted">Página {PAGE_NUM} de {PAGE_COUNT}</td>
+{{--            <td align="right" class="muted">Página {PAGE_NUM} de {PAGE_COUNT}</td>--}}
         </tr>
     </table>
 </footer>
 
 <main>
-    <div class="box" style="margin-bottom:12px;">
-        <div class="row">
-            <div class="col"><span class="h">Caso:</span> #{{ $sesion->caso_id }}</div>
-            <div class="col"><span class="h">Sesión:</span> #{{ $sesion->id }}</div>
-            <div class="col"><span class="h">Fecha:</span> {{ optional($sesion->fecha)->format('d/m/Y') ?? '—' }}</div>
-        </div>
-        <div class="row" style="margin-top:6px;">
-            <div class="col"><span class="h">Título:</span> {{ $sesion->titulo }}</div>
-            <div class="col"><span class="h">Responsable:</span> {{ $sesion->user->name ?? $sesion->user->username ?? '—' }}</div>
-        </div>
-    </div>
+{{--    <div class="box" style="margin-bottom:12px;">--}}
+{{--        <div class="row">--}}
+{{--            <div class="col"><span class="h">Caso:</span> #{{ $sesion->caso_id }}</div>--}}
+{{--            <div class="col"><span class="h">Sesión:</span> #{{ $sesion->id }}</div>--}}
+{{--            <div class="col"><span class="h">Fecha:</span> {{ optional($sesion->fecha)->format('d/m/Y') ?? '—' }}</div>--}}
+{{--        </div>--}}
+{{--        <div class="row" style="margin-top:6px;">--}}
+{{--            <div class="col"><span class="h">Título:</span> {{ $sesion->titulo }}</div>--}}
+{{--            <div class="col"><span class="h">Responsable:</span> {{ $sesion->user->name ?? $sesion->user->username ?? '—' }}</div>--}}
+{{--        </div>--}}
+{{--    </div>--}}
 
     {{-- Contenido HTML guardado desde el WYSIWYG --}}
     {!! $sesion->contenido_html !!}
