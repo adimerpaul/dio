@@ -204,7 +204,7 @@ class CasoController extends Controller
     }
     public function show(Caso $caso)
     {
-        // si ocultaste campos en $hidden, se respetan
+        $caso = Caso::with(['psicologica_user:id,name,celular','trabajo_social_user:id,name,celular','legal_user:id,name,celular','user:id,name,celular'])->find($caso->id);
         return response()->json($caso);
     }
 
