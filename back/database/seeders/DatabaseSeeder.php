@@ -93,6 +93,7 @@ class DatabaseSeeder extends Seeder
             'Lineas de Tiempo',
             'KPIs',
             'Auditorias',
+            'Agenda',
         ];
         foreach ($permisos as $permiso) {
             Permission::firstOrCreate(['name' => $permiso]);
@@ -102,7 +103,7 @@ class DatabaseSeeder extends Seeder
 
         $admin->syncPermissions($permisos);
         $asistente->syncPermissions(['Dashboard', 'Casos', 'Documentos', 'Lineas de Tiempo']);
-        $psicologo->syncPermissions(['Dashboard', 'Casos', 'Documentos', 'Lineas de Tiempo', 'KPIs']);
+        $psicologo->syncPermissions(['Dashboard', 'Casos', 'Documentos', 'Lineas de Tiempo', 'KPIs','Agenda']);
         $abogado->syncPermissions(['Dashboard', 'Casos', 'Documentos', 'Lineas de Tiempo', 'KPIs']);
         $social->syncPermissions(['Dashboard', 'Casos', 'Documentos', 'Lineas de Tiempo', 'KPIs']);
 //        $this->call([
