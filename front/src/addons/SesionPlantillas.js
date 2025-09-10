@@ -117,20 +117,36 @@ export const SesionHtml = {
   De esta evaluación acepto, según los resultados de las pruebas psicológicas que se me realice, libre y voluntariamente, doy mi consentimiento para realizar las evaluaciones psicológicas.
 </p>
 
-<div style="margin-top:48px; display:flex; justify-content:space-between; font-size:12px;">
-  <div style="text-align:center; width:30%;">
+<!--<div style="margin-top:48px; display:flex; justify-content:space-between; font-size:12px;">-->
+<!--  <div style="text-align:center; width:30%;">-->
+<!--    __________________________<br/>-->
+<!--    FIRMA-->
+<!--  </div>-->
+<!--  <div style="text-align:center; width:30%;">-->
+<!--    __________________________<br/>-->
+<!--    NOMBRE-->
+<!--  </div>-->
+<!--  <div style="text-align:center; width:30%;">-->
+<!--    __________________________<br/>-->
+<!--    HUELLA DIGITAL-->
+<!--  </div>-->
+<!--</div>-->
+<table style="width:100%; border-collapse:collapse; font-size:12px; margin-top:48px;">
+  <tr>
+    <td style="width:33%; text-align:center;">
+      __________________________<br/>
+      FIRMA
+    </td>
+    <td style="width:33%; text-align:center;">
+      __________________________<br/>
+      NOMBRE
+    </td>
+    <td style="width:33%; text-align:center;">
     __________________________<br/>
-    FIRMA
-  </div>
-  <div style="text-align:center; width:30%;">
-    __________________________<br/>
-    NOMBRE
-  </div>
-  <div style="text-align:center; width:30%;">
-    __________________________<br/>
-    HUELLA DIGITAL
-  </div>
-</div>
+      HUELLA DIGITAL
+    </td>
+  </tr>
+</table>
 `
   }
 };

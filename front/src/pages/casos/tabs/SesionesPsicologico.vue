@@ -6,7 +6,7 @@
       <div class="col">
         <div class="text-subtitle1 text-weight-medium">Sesiones (Psicológico)</div>
         <div class="text-caption text-grey-7">Vinculadas al caso #{{ caseId }}</div>
-        <pre>{{caso}}</pre>
+<!--        <pre>{{caso}}</pre>-->
       </div>
       <div class="col-auto row items-center q-gutter-sm">
         <q-input dense outlined v-model="search" placeholder="Buscar..." style="width:260px">
@@ -227,7 +227,7 @@ export default {
         lugar: this.form.lugar || '',
         tipo:  this.form.tipo  || 'Individual',
         nombre: this.caso.denunciante_nombre_completo,
-        documento: this.caso.denunciante_nombre_completo,
+        documento: this.caso.denunciante_nro,
       }
       if(val==='acta')       this.form.contenido_html = SesionHtml.acta(base)
       else if(val==='informe')   this.form.contenido_html = SesionHtml.informe(base)
