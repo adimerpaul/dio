@@ -8,6 +8,33 @@
         <div class="text-caption text-grey-7">Detalle y gestión integral</div>
       </div>
       <div class="col-auto row q-gutter-sm">
+        <q-btn-dropdown
+          flat
+          color="positive"
+          icon="chat"
+          label="WhatsApp"
+          v-if="hasAnyWa"
+        >
+          <q-list>
+            <q-item v-if="caso?.psicologica_user?.celular" clickable @click="sendWhatsApp('psico')">
+              <q-item-section avatar><q-icon name="psychology"/></q-item-section>
+              <q-item-section>Psicología ({{ caso.psicologica_user.name }})</q-item-section>
+              <q-item-section side class="text-caption text-grey">{{ caso.psicologica_user.celular }}</q-item-section>
+            </q-item>
+
+            <q-item v-if="caso?.legal_user?.celular" clickable @click="sendWhatsApp('legal')">
+              <q-item-section avatar><q-icon name="gavel"/></q-item-section>
+              <q-item-section>Legal ({{ caso.legal_user.name }})</q-item-section>
+              <q-item-section side class="text-caption text-grey">{{ caso.legal_user.celular }}</q-item-section>
+            </q-item>
+
+            <q-item v-if="caso?.trabajo_social_user?.celular" clickable @click="sendWhatsApp('social')">
+              <q-item-section avatar><q-icon name="people"/></q-item-section>
+              <q-item-section>Trabajo social ({{ caso.trabajo_social_user.name }})</q-item-section>
+              <q-item-section side class="text-caption text-grey">{{ caso.trabajo_social_user.celular }}</q-item-section>
+            </q-item>
+          </q-list>
+        </q-btn-dropdown>
 <!--        <q-btn flat color="secondary" icon="print" label="Imprimir PDF" @click="printPdf" />-->
         <q-btn-dropdown flat color="secondary" icon="print" label="Imprimir PDF">
           <q-list>
@@ -113,17 +140,83 @@ export default {
     return {
       loading: false,
       tab: 'info',
-      caso: null
+      caso: null,
+      defaultCountryCallingCode: '591',
     }
   },
   computed: {
     caseId () { return this.$route.params.id },
     role () { return this.$store.user?.role || '' },
+    hasAnyWa () {
+      const c = this.caso || {}
+      return !!(c?.psicologica_user?.celular || c?.legal_user?.celular || c?.trabajo_social_user?.celular)
+    },
   },
   created () {
     this.fetchCaso()
   },
   methods: {
+    normalizePhone (raw) {
+      if (!raw) return ''
+      // Solo dígitos
+      let digits = String(raw).replace(/\D+/g, '')
+      // Si ya viene con 11-12 dígitos (ej. 5917xxxxxxx), lo respetamos
+      if (/^(\d{11,13})$/.test(digits)) return digits
+      // Si es un número local de 8 dígitos (BO), anteponer código país
+      if (digits.length === 8) return this.defaultCountryCallingCode + digits
+      // Si trae 9 dígitos (a veces 7 + prefijo), también anteponer
+      if (digits.length === 9 && !digits.startsWith(this.defaultCountryCallingCode)) {
+        return this.defaultCountryCallingCode + digits
+      }
+      return digits
+    },
+
+    waUrl (phone, text) {
+      const p = this.normalizePhone(phone)
+      const msg = encodeURIComponent(text || '')
+      return `https://wa.me/${p}${msg ? `?text=${msg}` : ''}`
+    },
+
+    waMessage (roleKey) {
+      // Mensaje base (edítalo a tu gusto)
+      const c = this.caso || {}
+      const num = c.caso_numero ? c.caso_numero.replace(/\\\//g, '/') : `#${this.caseId}`
+      const link = (this.$axios?.defaults?.baseURL || '') + `/casos/${this.caseId}`
+
+      const rolNombre = roleKey === 'psico'
+        ? 'Psicología'
+        : roleKey === 'legal'
+          ? 'Legal'
+          : 'Trabajo Social'
+
+      return [
+        `*SLIM - Notificación de Caso*`,
+        `Nro: ${num}`,
+        `Área: ${rolNombre}`,
+        `Denunciante: ${c.denunciante_nombre_completo || '—'}`,
+        c.caso_tipologia ? `Tipología: ${c.caso_tipologia}` : null,
+        c.caso_modalidad ? `Modalidad: ${c.caso_modalidad}` : null,
+        c.caso_fecha_hecho ? `Fecha del hecho: ${c.caso_fecha_hecho}` : null,
+        '',
+        `Ver caso: ${link}`
+      ].filter(Boolean).join('\n')
+    },
+
+    sendWhatsApp (roleKey) {
+      const c = this.caso || {}
+      const user =
+        roleKey === 'psico'  ? c.psicologica_user :
+          roleKey === 'legal'  ? c.legal_user :
+            roleKey === 'social' ? c.trabajo_social_user : null
+
+      if (!user?.celular) {
+        this.$q.notify({ type:'warning', message: 'No hay número de celular configurado para ese responsable' })
+        return
+      }
+
+      const url = this.waUrl(user.celular, this.waMessage(roleKey))
+      window.open(url, '_blank')
+    },
     async fetchCaso () {
       this.loading = true
       try {

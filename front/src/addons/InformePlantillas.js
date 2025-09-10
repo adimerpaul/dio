@@ -127,4 +127,161 @@ export const InformeHtml = {
 </div>
     `;
   },
+  // DENUNCIA PENAL ANTE MINISTERIO PÚBLICO (formato DIO / Oruro)
+// Campos esperados (todos opcionales; la plantilla se autopuebla con "—" o textos base):
+// {
+//   casoId, fecha, numero, ciudad, fiscaliaTitulo, titulo,
+//   denunciante: { nombre, ci, fecha_nac, lugar_nac, edad, ocupacion, estado_civil, domicilio, celular, correo },
+//   denunciado:  { nombre, ci, fecha_nac, nacionalidad, ocupacion, estado_civil, domicilio, celular, correo },
+//   relato, fundamentos_derecho_extra, petitorio_extra,
+//   anexos: ['...', '...'], // si se omite, se muestran varios por defecto
+//   abogado: { nombre, correo, whatsapp },
+//   ciudadania_digital_denunciante // ej. número
+// }
+  denuncia_mp (p = {}) {
+    const d = (v, fb = '—') => (v == null || v === '' ? fb : v)
+    const denunciante = p.denunciante || {}
+    const denunciado  = p.denunciado  || {}
+    const anexos = (p.anexos && p.anexos.length ? p.anexos : [
+      'Formulario de Registro domiciliario de la denunciante.',
+      'Formulario de Registro domiciliario del denunciado.',
+      'Croquis denunciante.',
+      'Croquis del denunciado.',
+      'Fotocopia simple de la Cédula de Identidad de la denunciante.',
+      'Fotocopia simple de la Cédula de Identidad del denunciado.',
+      'Informe Psicológico emitido por profesional de la D.I.O.'
+    ])
+
+    const ciudad = d(p.ciudad, 'ORURO')
+    const fecha  = d(p.fecha)
+    const numero = d(p.numero)
+    const fiscaliaTitulo = d(p.fiscaliaTitulo, 'SEÑOR REPRESENTANTE DEL MINISTERIO PÚBLICO DE LA CIUDAD DE ORURO')
+
+    return `
+<div style="font-size:12px; line-height:1.35">
+  <!-- Encabezado simple DomPDF-friendly -->
+  <div style="border:1px solid #333;border-radius:6px;padding:10px;margin-bottom:10px;">
+    <div style="font-weight:700">DIRECCIÓN DE IGUALDAD DE OPORTUNIDADES — DEFENSORÍA DE LA NIÑEZ Y ADOLESCENCIA</div>
+    <div style="font-size:11px;color:#555">SERVICIO LEGAL INTEGRAL MUNICIPAL</div>
+  </div>
+
+  <div style="text-align:center; font-weight:700; text-transform:uppercase; margin-top:4px;">
+    ${fiscaliaTitulo}
+  </div>
+
+  <div style="margin:10px 0 6px 0;">
+    <b>I.</b>&nbsp; <b>FORMULA DENUNCIA POR EL DELITO DE ABUSO SEXUAL</b>, SOLICITANDO EL LEVANTAMIENTO DE DILIGENCIAS PRELIMINARES Y SE PROCEDA CONFORME A LEY.
+  </div>
+
+  <div style="margin:6px 0;">
+    <b>II.</b>&nbsp; <b>FUNDAMENTO DE HECHO</b>
+  </div>
+
+  <div style="margin:6px 0;">
+    <b>III.</b>&nbsp; <b>FUNDAMENTO DE DERECHO</b>
+  </div>
+
+  <div style="margin:6px 0;">
+    <b>IV.</b>&nbsp; <b>PETITORIO</b>
+  </div>
+
+  <div style="margin:6px 0;">
+    <b>V.</b>&nbsp; <b>OTROSÍES</b>
+  </div>
+
+  <hr style="margin:10px 0;">
+
+  <!-- Datos Generales de Denunciante -->
+  <h5 style="margin:6px 0 4px 0;">DATOS GENERALES DE DENUNCIANTE</h5>
+  <table style="width:100%; border-collapse:collapse; font-size:12px">
+    <tr><td style="width:35%"><b>Nombres y apellidos:</b></td><td>${d(denunciante.nombre)}</td></tr>
+    <tr><td><b>Fecha de nacimiento:</b></td><td>${d(denunciante.fecha_nac)}</td></tr>
+    <tr><td><b>Lugar de nacimiento:</b></td><td>${d(denunciante.lugar_nac)}</td></tr>
+    <tr><td><b>Cédula de identidad:</b></td><td>${d(denunciante.ci)}</td></tr>
+    <tr><td><b>Edad:</b></td><td>${d(denunciante.edad)}</td></tr>
+    <tr><td><b>Ocupación:</b></td><td>${d(denunciante.ocupacion)}</td></tr>
+    <tr><td><b>Estado Civil:</b></td><td>${d(denunciante.estado_civil)}</td></tr>
+    <tr><td><b>Domicilio:</b></td><td>${d(denunciante.domicilio)}</td></tr>
+    <tr><td><b>Teléfono Celular:</b></td><td>${d(denunciante.celular)}</td></tr>
+    <tr><td><b>Correo electrónico:</b></td><td>${d(denunciante.correo)}</td></tr>
+    <tr><td><b>Ciudadanía Digital:</b></td><td>${d(p.ciudadania_digital_denunciante)}</td></tr>
+  </table>
+
+  <h5 style="margin:12px 0 4px 0;">DATOS GENERALES DEL DENUNCIADO</h5>
+  <table style="width:100%; border-collapse:collapse; font-size:12px">
+    <tr><td style="width:35%"><b>Nombres y apellidos:</b></td><td>${d(denunciado.nombre)}</td></tr>
+    <tr><td><b>Fecha de nacimiento:</b></td><td>${d(denunciado.fecha_nac)}</td></tr>
+    <tr><td><b>Nacionalidad:</b></td><td>${d(denunciado.nacionalidad, 'Boliviana')}</td></tr>
+    <tr><td><b>Cédula de identidad:</b></td><td>${d(denunciado.ci)}</td></tr>
+    <tr><td><b>Ocupación:</b></td><td>${d(denunciado.ocupacion)}</td></tr>
+    <tr><td><b>Estado Civil:</b></td><td>${d(denunciado.estado_civil)}</td></tr>
+    <tr><td><b>Domicilio:</b></td><td>${d(denunciado.domicilio)}</td></tr>
+    <tr><td><b>Teléfono Celular:</b></td><td>${d(denunciado.celular)}</td></tr>
+    <tr><td><b>Correo electrónico:</b></td><td>${d(denunciado.correo, 'Se desconoce')}</td></tr>
+  </table>
+
+  <h5 style="margin:12px 0 4px 0;">II. FUNDAMENTO DE HECHO — RELACIÓN CIRCUNSTANCIADA</h5>
+  <p style="text-align:justify;">
+    ${d(p.relato, 'La denunciante refiere los hechos ocurridos, consignando fechas, lugares, personas involucradas y las acciones desplegadas.')}
+  </p>
+
+  <h5 style="margin:12px 0 4px 0;">III. FUNDAMENTO DE DERECHO</h5>
+  <div style="margin-left:6px">
+    <div style="margin:4px 0;"><b>a) DE LA CONSTITUCIÓN POLÍTICA DEL ESTADO — Artículo 15</b></div>
+    <ul style="margin:0 0 0 16px;">
+      <li>Toda persona tiene derecho a la vida y a la integridad física, psicológica y sexual. Nadie será torturado ni sufrirá tratos crueles, inhumanos, degradantes u humillantes.</li>
+      <li>Las personas, en particular las mujeres, tienen derecho a no sufrir violencia física, sexual o psicológica.</li>
+      <li>El Estado adoptará medidas para prevenir, eliminar y sancionar la violencia de género.</li>
+    </ul>
+
+    <div style="margin:8px 0 4px 0;"><b>b) DE LA LEY 348 — Artículo 83 (modifica el Código Penal)</b></div>
+    <div style="margin:0 0 6px 0;">Se adecúan tipos penales y se agravan penas cuando la víctima es niña, niño o adolescente.</div>
+
+    <div style="margin:4px 0;"><b>c) CÓDIGO PENAL — Artículo 312 (Abuso Sexual)</b></div>
+    <div>Cuando, en las circunstancias previstas por ley, se realicen actos sexuales no constitutivos de penetración o acceso carnal, la pena será de seis (6) a diez (10) años de privación de libertad.</div>
+
+    ${p.fundamentos_derecho_extra ? `<div style="margin-top:8px;">${p.fundamentos_derecho_extra}</div>` : ''}
+  </div>
+
+  <h5 style="margin:12px 0 4px 0;">IV. PETITORIO</h5>
+  <p style="text-align:justify;">
+    Por lo expuesto y al amparo de las normas citadas, solicito se admita la presente DENUNCIA por el delito de ABUSO SEXUAL, se disponga el levantamiento de diligencias preliminares y se remitan las actuaciones que correspondan, a efectos de que el hecho no quede impune, determinando responsabilidades conforme a derecho.
+    ${p.petitorio_extra ? ` ${p.petitorio_extra}` : ''}
+  </p>
+
+  <h5 style="margin:12px 0 4px 0;">V. OTROSÍ 1º — Prueba literal</h5>
+  <ul style="margin:0 0 0 16px;">
+    ${anexos.map(x => `<li>${x}</li>`).join('')}
+  </ul>
+
+  <h5 style="margin:10px 0 4px 0;">OTROSÍ 2º — Medidas de protección</h5>
+  <p>Al amparo de la Ley 348, solicito se evalúen medidas de protección a favor de la víctima y su entorno familiar para precautelar el normal desenvolvimiento de sus actividades.</p>
+
+  <h5 style="margin:10px 0 4px 0;">OTROSÍ 3º — Domicilio procesal y contactos</h5>
+  <table style="width:100%; border-collapse:collapse; font-size:12px">
+    <tr><td style="width:30%"><b>Ciudadanía digital (víctima):</b></td><td>${d(p.ciudadania_digital_denunciante)}</td></tr>
+    <tr><td><b>WhatsApp (víctima):</b></td><td>${d(denunciante.celular)}</td></tr>
+    <tr><td><b>Correo electrónico (víctima):</b></td><td>${d(denunciante.correo)}</td></tr>
+    <tr><td><b>Ciudadanía digital (abogado/a):</b></td><td>${d(p.abogado?.ciudadania)}</td></tr>
+    <tr><td><b>Correo electrónico (abogado/a):</b></td><td>${d(p.abogado?.correo)}</td></tr>
+    <tr><td><b>Celular / WhatsApp (abogado/a):</b></td><td>${d(p.abogado?.whatsapp)}</td></tr>
+  </table>
+
+  <div style="margin-top:18px;">
+    ${d(ciudad)}, ${fecha ? fecha : '___ de __________ de _____'}
+  </div>
+
+  <div style="margin-top:26px; display:flex; justify-content:space-between;">
+    <div style="text-align:center; width:45%;">
+      __________________________<br/>
+      Firma Denunciante
+    </div>
+    <div style="text-align:center; width:45%;">
+      __________________________<br/>
+      Abg. ${d(p.abogado?.nombre, 'Responsable')}
+    </div>
+  </div>
+</div>
+`
+  },
 };
