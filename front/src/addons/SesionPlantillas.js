@@ -1,7 +1,7 @@
 // Plantillas simples en HTML para el WYSIWYG (DomPDF friendly)
 
 export const SesionHtml = {
-  acta({ casoId, fecha, titulo, lugar, tipo }) {
+  acta({casoId, fecha, titulo, lugar, tipo}) {
     return `
 <div style="border:1px solid #333;border-radius:6px;padding:12px;margin-bottom:12px;font-size:12px">
   <div style="display:flex;justify-content:space-between">
@@ -49,7 +49,7 @@ export const SesionHtml = {
 </div>`;
   },
 
-  informe({ casoId, fecha, titulo }) {
+  informe({casoId, fecha, titulo}) {
     return `
 <h4 style="margin:0 0 8px 0;">Informe psicológico</h4>
 <div style="font-size:12px;color:#555;margin-bottom:8px">
@@ -72,7 +72,7 @@ export const SesionHtml = {
 <ul><li>...</li></ul>`;
   },
 
-  constancia({ casoId, fecha, titulo }) {
+  constancia({casoId, fecha, titulo}) {
     return `
 <div style="text-align:center; font-weight:700; text-decoration:underline; margin-bottom:12px;">CONSTANCIA DE ASISTENCIA</div>
 <p>Se deja constancia que la persona atendió a la sesión psicológica indicada:</p>
@@ -88,5 +88,49 @@ export const SesionHtml = {
   __________________________<br>
   Firma profesional
 </div>`;
+  },
+  consentimiento({fecha, nombre, documento}) {
+    return `
+<div style="text-align:center; font-weight:700; margin-bottom:12px;">
+  CONSENTIMIENTO INFORMADO PSICOLOGÍA
+</div>
+
+<p style="font-size:12px; margin-bottom:8px;">
+  <b>Fecha:</b> ${fecha || '______/______/______'}
+</p>
+
+<p style="font-size:12px; text-align:justify;">
+  Sr.(a) Usuario, por favor lea atentamente el siguiente documento que tiene como objetivo explicarle el uso y la confidencialidad de sus datos, así como sus derechos, respecto al proceso de atención psicológica.
+  Si tiene alguna duda y/o consulta lo puede realizar con el/la Psicólogo/a.
+</p>
+
+<p style="font-size:12px; margin-top:12px;">
+  <b>Yo:</b> ${nombre || '_____________________________________________'}
+</p>
+
+<p style="font-size:12px; margin-top:8px;">
+  <b>Con Documento Nro.:</b> ${documento || '_____________________________'}
+</p>
+
+<p style="font-size:12px; text-align:justify; margin-top:12px;">
+  Confirmo que he sido informado con claridad y veracidad, respecto al proceso de evaluaciones, sesiones, tiempos, las pruebas psicológicas que se me van a realizar, y también en cuanto a los resultados.
+  De esta evaluación acepto, según los resultados de las pruebas psicológicas que se me realice, libre y voluntariamente, doy mi consentimiento para realizar las evaluaciones psicológicas.
+</p>
+
+<div style="margin-top:48px; display:flex; justify-content:space-between; font-size:12px;">
+  <div style="text-align:center; width:30%;">
+    __________________________<br/>
+    FIRMA
+  </div>
+  <div style="text-align:center; width:30%;">
+    __________________________<br/>
+    NOMBRE
+  </div>
+  <div style="text-align:center; width:30%;">
+    __________________________<br/>
+    HUELLA DIGITAL
+  </div>
+</div>
+`
   }
 };

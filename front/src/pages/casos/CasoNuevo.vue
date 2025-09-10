@@ -302,8 +302,28 @@
               <q-input v-model="f.caso_modalidad" dense outlined clearable label="Modalidad"/>
             </div>
             <div class="col-12">
-              <q-input v-model="f.caso_descripcion" type="textarea" autogrow outlined dense clearable
-                       label="Descripción del hecho" counter maxlength="3000"/>
+              <q-input
+                v-model="f.caso_descripcion"
+                type="textarea"
+                autogrow
+                outlined
+                dense
+                clearable
+                label="Descripción del hecho"
+                counter
+                maxlength="3000"
+              >
+                <template v-slot:append>
+                  <q-btn
+                    flat
+                    round
+                    dense
+                    :icon="isListening && activeField==='caso_descripcion' ? 'mic_off' : 'mic'"
+                    :color="isListening && activeField==='caso_descripcion' ? 'negative' : 'primary'"
+                    @click="toggleRecognition('caso_descripcion')"
+                  />
+                </template>
+              </q-input>
             </div>
           </div>
         </q-card-section>
@@ -411,6 +431,9 @@ export default {
   },
   data () {
     return {
+      recognition: null,
+      activeField: null,
+      isListening: false,
       psicologos: [],
       abogados: [],
       sociales: [],
@@ -454,7 +477,7 @@ export default {
         denunciante_edad: '',
         denunciante_telefono: '',
         denunciante_grado: '',
-        denunciante_documento: '',
+        denunciante_documento: 'Carnet de identidad',
         denunciante_nro: '',
         denunciante_sexo: '',
         denunciante_residencia: '',
@@ -520,6 +543,38 @@ export default {
     }).catch(() => {
       this.$alert.error('No se pudo cargar los usuarios por rol')
     })
+    // ==== Inicializar Web Speech API ====
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+      this.recognition = new SpeechRecognition()
+      // Puedes usar 'es-ES' o 'es-BO'; es-BO no está en todos los navegadores. Dejo es-ES por compatibilidad.
+      this.recognition.lang = 'es-ES'
+      this.recognition.interimResults = false
+      this.recognition.continuous = false
+
+      this.recognition.onstart = () => {
+        this.isListening = true
+      }
+      this.recognition.onend = () => {
+        this.isListening = false
+        this.activeField = null
+      }
+      this.recognition.onresult = (event) => {
+        const text = event.results[0][0].transcript
+        if (this.activeField === 'caso_descripcion') {
+          // agrega con espacio si ya hay contenido
+          this.f.caso_descripcion = (this.f.caso_descripcion ? (this.f.caso_descripcion + ' ') : '') + text
+        }
+      }
+      this.recognition.onerror = (event) => {
+        console.error('Error de reconocimiento de voz:', event.error)
+        this.$q.notify({ color: 'negative', message: 'Error de micrófono: ' + event.error })
+        this.isListening = false
+        this.activeField = null
+      }
+    } else {
+      console.warn('Reconocimiento de voz no soportado en este navegador.')
+    }
   },
   computed: {
     denunciantePos: {
@@ -532,6 +587,31 @@ export default {
     }
   },
   methods: {
+    toggleRecognition(field) {
+      if (!this.recognition) {
+        this.$q.notify({
+          color: 'negative',
+          message: 'El navegador no soporta reconocimiento de voz.',
+        })
+        return
+      }
+      // Si ya está escuchando este mismo campo, detén
+      if (this.isListening && this.activeField === field) {
+        try { this.recognition.stop() } catch (e) {}
+        return
+      }
+      // Si está escuchando otro, detén primero y luego inicia en este
+      if (this.isListening && this.activeField !== field) {
+        try { this.recognition.stop() } catch (e) {}
+      }
+      this.activeField = field
+      try {
+        this.recognition.start()
+      } catch (e) {
+        // algunos navegadores lanzan si se llama start() muy seguido
+        console.warn('No se pudo iniciar el reconocimiento:', e)
+      }
+    },
     req (v) { return !!v || 'Requerido' },
     resetForm () {
       const bools = ['denunciante_trabaja','violencia_fisica','violencia_psicologica','violencia_sexual','violencia_economica']

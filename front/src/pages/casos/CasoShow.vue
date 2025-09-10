@@ -66,7 +66,7 @@
 
       <!-- 3) Sesiones Psicológico -->
       <q-tab-panel name="psico">
-        <SesionesPsicologico :case-id="caseId"/>
+        <SesionesPsicologico :case-id="caseId" :caso="caso"/>
       </q-tab-panel>
 
       <!-- 4) Informes Legal -->

@@ -6,6 +6,7 @@
       <div class="col">
         <div class="text-subtitle1 text-weight-medium">Sesiones (Psicológico)</div>
         <div class="text-caption text-grey-7">Vinculadas al caso #{{ caseId }}</div>
+        <pre>{{caso}}</pre>
       </div>
       <div class="col-auto row items-center q-gutter-sm">
         <q-input dense outlined v-model="search" placeholder="Buscar..." style="width:260px">
@@ -153,7 +154,10 @@ import { SesionHtml } from 'src/addons/SesionPlantillas.js'
 
 export default {
   name: 'SesionesPsicologico',
-  props: { caseId: { type:[String,Number], required:true } },
+  props: {
+    caseId: { type:[String,Number], required:true },
+    caso: { type:Object, default:null }
+  },
   data(){
     return {
       loading:false, saving:false,
@@ -171,6 +175,7 @@ export default {
       // plantillas
       plantilla: null,
       plantillasOptions: [
+        { label:'Consentimiento informado', value:'consentimiento'},
         { label:'Acta de sesión (DIO)', value:'acta' },
         { label:'Informe breve (psicológico)', value:'informe' },
         { label:'Constancia de asistencia', value:'constancia' },
@@ -202,13 +207,13 @@ export default {
 
     openCreate(){
       this.mode='create'
-      this.plantilla = 'acta'
+      this.plantilla = 'consentimiento'
       this.form = {
         id:null, fecha:this.today(), titulo:'',
         duracion_min:null, lugar:'', tipo:'Individual', contenido_html:''
       }
       this.dialog = true
-      this.$nextTick(()=> this.applyTemplate('acta'))
+      this.$nextTick(()=> this.applyTemplate('consentimiento'))
     },
     openView(it){ this.mode='view'; this.form={...it}; this.dialog=true },
     openEdit(it){ this.mode='edit'; this.form={...it}; this.dialog=true },
@@ -220,11 +225,14 @@ export default {
         fecha: this.form.fecha || this.today(),
         titulo: this.form.titulo || 'Sesión psicológica',
         lugar: this.form.lugar || '',
-        tipo:  this.form.tipo  || 'Individual'
+        tipo:  this.form.tipo  || 'Individual',
+        nombre: this.caso.denunciante_nombre_completo,
+        documento: this.caso.denunciante_nombre_completo,
       }
       if(val==='acta')       this.form.contenido_html = SesionHtml.acta(base)
       else if(val==='informe')   this.form.contenido_html = SesionHtml.informe(base)
       else if(val==='constancia') this.form.contenido_html = SesionHtml.constancia(base)
+      else if(val==='consentimiento') this.form.contenido_html = SesionHtml.consentimiento(base)
     },
 
     async save(){
