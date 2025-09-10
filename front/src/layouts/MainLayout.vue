@@ -176,7 +176,8 @@ const linksList = [
     ]
   },
   { title: 'Casos',            icon: 'folder_shared',   link: '/casos',          canPerm: 'Casos' },
-  // { title: 'Documentos',       icon: 'description',     link: '/documentos',     canPerm: 'Documentos' },
+  // { title: 'Casos',            icon: 'folder_shared',   link: '/casos',          canPerm: 'Casos' }, agenda
+  { title: 'Agenda',           icon: 'event',          link: '/agenda',         canPerm: 'Agenda' },
   { title: 'Líneas de Tiempo', icon: 'timeline',        link: '/lineas-tiempo',  canPerm: 'Lineas de Tiempo' },
   { title: 'KPIs',             icon: 'query_stats',     link: '/kpis',           canPerm: 'KPIs' },
   { title: 'Auditorías',       icon: 'shield',          link: '/auditorias',     canPerm: 'Auditorias' },

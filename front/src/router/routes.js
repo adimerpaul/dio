@@ -12,6 +12,9 @@ const routes = [
       { path: '/lineas-tiempo', component: () => import('pages/lineastiempo/LineasTiempo.vue'), meta: { requiresAuth: true, perm: 'Lineas de Tiempo' } },
       { path: '/kpis', component: () => import('pages/kpis/Kpis.vue'), meta: { requiresAuth: true, perm: 'Kpis' } },
       { path: '/auditorias', component: () => import('pages/auditorias/Auditorias.vue'), meta: { requiresAuth: true, perm: 'Auditorias' } },
+
+    //   agenda
+      { path: '/agenda', component: () => import('pages/agenda/Agenda.vue'), meta: { requiresAuth: true, perm: 'Agenda' } },
     ]
   },
   { path: '/login', component: () => import('layouts/Login.vue') },
