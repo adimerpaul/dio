@@ -96,6 +96,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index']);
 
+    Route::get('/casos/{caso}/seguimiento', [\App\Http\Controllers\CasoController::class, 'seguimiento']);
+
 });
 Route::get('/casos/{caso}/pdf', [CasoController::class, 'pdf']);
 Route::get('/casos/{caso}/pdf/hoja-ruta', [CasoController::class, 'pdfHojaRuta']);

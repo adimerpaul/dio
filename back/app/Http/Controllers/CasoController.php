@@ -7,7 +7,143 @@ use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 class CasoController extends Controller
 {
-// app/Http/Controllers/CasoController.php
+    public function seguimiento(\Illuminate\Http\Request $request, \App\Models\Caso $caso)
+    {
+        // Cabecera compacta para el bloque superior
+        $header = [
+            'caso_id'        => $caso->id,
+            'caso_numero'    => $caso->caso_numero,
+            'tipologia'      => $caso->caso_tipologia,
+            'modalidad'      => $caso->caso_modalidad,
+            'fecha_hecho'    => $caso->caso_fecha_hecho,
+            'zona'           => $caso->caso_zona ?: $caso->zona,
+            'direccion'      => $caso->caso_direccion ?: $caso->denunciante_domicilio_actual,
+            'denunciante'    => $caso->denunciante_nombre_completo,
+            'denunciado'     => $caso->denunciado_nombre_completo,
+            'registrado_por' => optional($caso->user)->name,
+            'fecha_registro' => optional($caso->created_at)?->format('Y-m-d H:i'),
+        ];
+
+        // Colecciones por tipo
+        $informes = \App\Models\Informe::with('user')
+            ->where('caso_id', $caso->id)
+            ->get()
+            ->map(function ($i) {
+                return [
+                    'uid'        => 'INF-'.$i->id,
+                    'id'         => $i->id,
+                    'fecha'      => $i->fecha ? $i->fecha->format('Y-m-d') : optional($i->created_at)?->format('Y-m-d'),
+                    'tipo'       => 'Informe',
+                    'modulo'     => $i->area ?: 'General',
+                    'titulo'     => $i->titulo,
+                    'descripcion'=> strip_tags((string) $i->contenido_html),
+                    'usuario'    => optional($i->user)->name,
+                    'origen'     => 'SLIM',
+                    // banderas para columnas estilo “visto/reserva/OJ/instrucción” (si las necesitas a futuro)
+                    'visto'      => false,
+                    'reserva'    => false,
+                    'oj_enviado' => false,
+                    'instruccion'=> null,
+                    'links'      => [
+                        'pdf' => url("/api/informes/{$i->id}/pdf"),
+                    ],
+                    'icon'       => 'description',
+                ];
+            });
+
+        $sesiones = \App\Models\SesionPsicologica::with('user')
+            ->where('caso_id', $caso->id)
+            ->get()
+            ->map(function ($s) {
+                return [
+                    'uid'        => 'SES-'.$s->id,
+                    'id'         => $s->id,
+                    'fecha'      => $s->fecha ? $s->fecha->format('Y-m-d') : optional($s->created_at)?->format('Y-m-d'),
+                    'tipo'       => 'Sesión',
+                    'modulo'     => $s->tipo ?: 'Psicológico',
+                    'titulo'     => $s->titulo,
+                    'descripcion'=> strip_tags((string) $s->contenido_html),
+                    'usuario'    => optional($s->user)->name,
+                    'origen'     => 'SLIM',
+                    'visto'      => false,
+                    'reserva'    => false,
+                    'oj_enviado' => false,
+                    'instruccion'=> null,
+                    'links'      => [
+                        'pdf' => url("/api/sesiones-psicologicas/{$s->id}/pdf"),
+                    ],
+                    'icon'       => 'psychology',
+                ];
+            });
+
+        $docs = \App\Models\Documento::with('user')
+            ->where('caso_id', $caso->id)
+            ->get()
+            ->map(function ($d) {
+                return [
+                    'uid'        => 'DOC-'.$d->id,
+                    'id'         => $d->id,
+                    'fecha'      => optional($d->created_at)?->format('Y-m-d'),
+                    'tipo'       => 'Documento',
+                    'modulo'     => $d->categoria ?: 'Documentos',
+                    'titulo'     => $d->titulo,
+                    'descripcion'=> (string) $d->descripcion,
+                    'usuario'    => optional($d->user)->name,
+                    'origen'     => 'SLIM',
+                    'visto'      => false,
+                    'reserva'    => false,
+                    'oj_enviado' => false,
+                    'instruccion'=> null,
+                    'links'      => [
+                        'view'     => url("/api/documentos/{$d->id}/view"),
+                        'download' => url("/api/documentos/{$d->id}/download"),
+                    ],
+                    'icon'       => 'attach_file',
+                ];
+            });
+
+        $fotos = \App\Models\Fotografia::with('user')
+            ->where('caso_id', $caso->id)
+            ->get()
+            ->map(function ($f) {
+                return [
+                    'uid'        => 'FOT-'.$f->id,
+                    'id'         => $f->id,
+                    'fecha'      => optional($f->created_at)?->format('Y-m-d'),
+                    'tipo'       => 'Fotografía',
+                    'modulo'     => 'Multimedia',
+                    'titulo'     => $f->titulo,
+                    'descripcion'=> (string) $f->descripcion,
+                    'usuario'    => optional($f->user)->name,
+                    'origen'     => 'SLIM',
+                    'visto'      => false,
+                    'reserva'    => false,
+                    'oj_enviado' => false,
+                    'instruccion'=> null,
+                    'links'      => [
+                        'open' => $f->url ?: $f->thumb_url,
+                    ],
+                    'icon'       => 'image',
+                ];
+            });
+
+        // Merge + ordenar por fecha (desc) y por created_at como desempate
+        $items = collect()
+            ->merge($informes)
+            ->merge($sesiones)
+            ->merge($docs)
+            ->merge($fotos)
+            ->sortByDesc(function ($x) {
+                return sprintf('%s-%s', $x['fecha'] ?? '0000-00-00', $x['uid']);
+            })
+            ->values();
+
+        return response()->json([
+            'header' => $header,
+            'items'  => $items,
+        ]);
+    }
+
 
     public function pdfHojaRuta(Request $request, Caso $caso)
     {
