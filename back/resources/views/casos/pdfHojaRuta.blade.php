@@ -3,7 +3,7 @@
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <title>Hoja de Ruta — {{ $tituloPersona }} — Caso #{{ $caso->id }}</title>
+    <title>Ubicacion — {{ $tituloPersona }} — Caso #{{ $caso->id }}</title>
 
     <link rel="stylesheet"
           href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -43,7 +43,7 @@
 
     <div class="head">
         <div>
-            <h1 class="title">Hoja de Ruta — {{ $tituloPersona }} — SLIM</h1>
+            <h1 class="title">Ubicacion — {{ $tituloPersona }} — SLIM</h1>
             <p class="meta">
                 Caso <b>#{{ $caso->id }}</b> · N° {{ $caso->caso_numero ?? '—' }} ·
                 Registrado: {{ optional($caso->created_at)->format('d/m/Y H:i') }}
