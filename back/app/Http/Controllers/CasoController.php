@@ -7,8 +7,54 @@ use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 class CasoController extends Controller
 {
-    function pdfHojaRuta(Request $request, Caso $caso){
-        return view('casos.pdfHojaRuta', compact('caso'));
+// app/Http/Controllers/CasoController.php
+
+    public function pdfHojaRuta(Request $request, Caso $caso)
+    {
+        // 'denunciante' por defecto; acepta 'denunciado'
+        $tipo = strtolower($request->query('tipo', 'denunciante'));
+        if (!in_array($tipo, ['denunciante', 'denunciado'])) {
+            $tipo = 'denunciante';
+        }
+
+        // Coordenadas por tipo
+        if ($tipo === 'denunciado') {
+            $lat = is_numeric($caso->denunciado_latitud)  ? (float)$caso->denunciado_latitud  : null;
+            $lng = is_numeric($caso->denunciado_longitud) ? (float)$caso->denunciado_longitud : null;
+            $nombre    = $caso->denunciado_nombre_completo ?: trim("{$caso->denunciado_nombres} {$caso->denunciado_paterno} {$caso->denunciado_materno}");
+            $telefono  = $caso->denunciado_telefono ?: ($caso->denunciado_movil ?: $caso->denunciado_fijo);
+            $direccion = $caso->denunciado_domicilio_actual ?: '—';
+            $zona      = $caso->caso_zona ?: $caso->zona; // si tienes zona específica del denunciado, cámbialo aquí
+            $tituloPersona = 'Denunciado';
+        } else {
+            // denunciante
+            $lat = is_numeric($caso->latitud)  ? (float)$caso->latitud  : null;
+            $lng = is_numeric($caso->longitud) ? (float)$caso->longitud : null;
+            $nombre    = $caso->denunciante_nombre_completo ?: trim("{$caso->denunciante_nombres} {$caso->denunciante_paterno} {$caso->denunciante_materno}");
+            $telefono  = $caso->denunciante_telefono ?: ($caso->denunciante_movil ?: $caso->denunciante_fijo);
+            $direccion = $caso->denunciante_domicilio_actual ?: ($caso->caso_direccion ?: '—');
+            $zona      = $caso->caso_zona ?: $caso->zona;
+            $tituloPersona = 'Denunciante';
+        }
+
+        // Fallback Oruro si no hay coords
+        $LAT = $lat ?? -17.966700;
+        $LNG = $lng ?? -67.116700;
+        $HAS = is_numeric($lat) && is_numeric($lng);
+
+        // Pasamos todo a la vista
+        return view('casos.pdfHojaRuta', [
+            'caso'          => $caso,
+            'tipo'          => $tipo,
+            'tituloPersona' => $tituloPersona,
+            'LAT'           => $LAT,
+            'LNG'           => $LNG,
+            'HAS'           => $HAS,
+            'nombre'        => $nombre ?: '—',
+            'telefono'      => $telefono ?: '—',
+            'zona'          => $zona ?: '—',
+            'direccion'     => $direccion ?: '—',
+        ]);
     }
     public function pdf(Request $request, Caso $caso)
     {
