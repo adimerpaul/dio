@@ -298,9 +298,9 @@
             <div class="col-12 col-md-4">
               <q-input v-model="f.caso_tipologia" dense outlined clearable label="Tipología"/>
             </div>
-            <div class="col-12 col-md-4">
-              <q-input v-model="f.caso_modalidad" dense outlined clearable label="Modalidad"/>
-            </div>
+<!--            <div class="col-12 col-md-4">-->
+<!--              <q-input v-model="f.caso_modalidad" dense outlined clearable label="Modalidad"/>-->
+<!--            </div>-->
             <div class="col-12">
               <q-input
                 v-model="f.caso_descripcion"
@@ -383,7 +383,7 @@
       <q-card flat bordered class="section-card q-mb-xl">
         <q-card-section class="row items-center">
           <q-icon name="task_alt" class="q-mr-sm"/>
-          <div class="text-subtitle1 text-weight-medium">6) Check documento adjuntos</div>
+          <div class="text-subtitle1 text-weight-medium">7) Check documento adjuntos</div>
         </q-card-section>
         <q-separator/>
 

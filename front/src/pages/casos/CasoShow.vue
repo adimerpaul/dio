@@ -38,22 +38,19 @@
 <!--        <q-btn flat color="secondary" icon="print" label="Imprimir PDF" @click="printPdf" />-->
         <q-btn-dropdown flat color="secondary" icon="print" label="Imprimir PDF">
           <q-list>
-            <q-item clickable @click="printPdf">
+            <q-item clickable @click="printPdf" v-close-popup >
               <q-item-section>Ficha del Caso</q-item-section>
             </q-item>
+
             <q-separator/>
-            <q-item clickable @click="printPdfHojaRuta">
-              <q-item-section>Hoja de Ruta</q-item-section>
+
+            <!-- NUEVO: hoja de ruta con dos variantes -->
+            <q-item clickable @click="printPdfHojaRuta('denunciante')" v-close-popup >
+              <q-item-section>Ubicacion (Denunciante)</q-item-section>
             </q-item>
-<!--            <q-item clickable :to="`/casos/${$route.params.id}/pdf/informes-legal`" target="_blank">-->
-<!--              <q-item-section>Informes Legal</q-item-section>-->
-<!--            </q-item>-->
-<!--            <q-item clickable :to="`/casos/${$route.params.id}/pdf/sesiones-psicologico`" target="_blank">-->
-<!--              <q-item-section>Sesiones Psicológico</q-item-section>-->
-<!--            </q-item>-->
-<!--            <q-item clickable :to="`/casos/${$route.params.id}/pdf/apoyo-integral`" target="_blank">-->
-<!--              <q-item-section>Apoyo Integral</q-item-section>-->
-<!--            </q-item>-->
+            <q-item clickable @click="printPdfHojaRuta('denunciado')" v-close-popup >
+              <q-item-section>Ubicacion (Denunciado)</q-item-section>
+            </q-item>
           </q-list>
         </q-btn-dropdown>
         <q-btn flat color="primary" icon="refresh" @click="fetchCaso" :loading="loading"/>
@@ -232,10 +229,10 @@ export default {
       const url = this.$axios.defaults.baseURL + `/casos/${this.caseId}/pdf`
       window.open(url, '_blank')
     },
-    printPdfHojaRuta() {
-      const url = this.$axios.defaults.baseURL + `/casos/${this.caseId}/pdf/hoja-ruta`
+    printPdfHojaRuta (tipo = 'denunciante') {
+      const url = this.$axios.defaults.baseURL + `/casos/${this.caseId}/pdf/hoja-ruta?tipo=${tipo}`
       window.open(url, '_blank')
-    }
+    },
   }
 }
 </script>
