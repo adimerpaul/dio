@@ -27,6 +27,26 @@
 
         <!-- Perfil -->
         <div class="row items-center q-gutter-sm">
+          <!-- Badge de pendientes -->
+          <q-btn
+            flat round dense
+            :icon="pendingCount > 0 ? 'notifications_active' : 'notifications_none'"
+            :color="pendingCount > 0 ? 'negative' : 'grey-7'"
+            @click="irPendientes"
+            :loading="pendingLoading"
+            aria-label="Pendientes"
+          >
+            <q-badge
+              v-if="pendingCount > 0"
+              color="red" text-color="white"
+              floating
+            >
+              {{ pendingCount }}
+            </q-badge>
+            <q-tooltip v-if="pendingCount > 0">
+              Tienes {{ pendingCount }} pendiente(s)
+            </q-tooltip>
+          </q-btn>
           <q-btn-dropdown flat unelevated no-caps dropdown-icon="expand_more">
             <template #label>
               <div class="row items-center no-wrap q-gutter-sm">
@@ -152,10 +172,12 @@
 </template>
 
 <script setup>
-import { computed, getCurrentInstance, ref } from 'vue'
+import { computed, getCurrentInstance, ref, onMounted, watch } from 'vue'
 const { proxy } = getCurrentInstance()
 
 const leftDrawerOpen = ref(false)
+const pendingCount   = ref(0)
+const pendingLoading = ref(false)
 
 function hasPerm (perm) {
   if (!perm) return true
@@ -186,6 +208,31 @@ const linksList = [
 const filteredLinks = computed(() =>
   linksList.filter(l => Array.isArray(l.canPerm) ? hasAnyPerm(l.canPerm) : hasPerm(l.canPerm))
 )
+async function fetchPendientesCount () {
+  pendingLoading.value = true
+  try {
+    const { data } = await proxy.$axios.get('/casos/pendientes-resumen')
+    pendingCount.value = Number(data?.pendientes || 0)
+  } catch (e) {
+    // opcional: proxy.$q.notify({ type:'warning', message:'No se pudo cargar pendientes' })
+  } finally {
+    pendingLoading.value = false
+  }
+}
+
+function irPendientes () {
+  // abre Casos mostrando SOLO faltantes
+  proxy.$router.push({ path: '/casos', query: { only_pendientes: 1 } })
+}
+
+onMounted(() => {
+  fetchPendientesCount()
+})
+
+// refresco simple cuando navegas (opcional)
+watch(() => proxy.$route.fullPath, () => {
+  fetchPendientesCount()
+})
 
 function toggleLeftDrawer () { leftDrawerOpen.value = !leftDrawerOpen.value }
 

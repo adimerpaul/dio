@@ -10,6 +10,38 @@ use App\Models\Informe;
 use App\Models\SesionPsicologica;
 class CasoController extends Controller
 {
+    public function pendientesResumen(Request $request)
+    {
+        $user = $request->user();
+        $q = Caso::query();
+
+        switch ($user->role) {
+            case 'Psicologo':
+                $q->where('psicologica_user_id', $user->id)
+                    ->whereDoesntHave('sesionesPsicologicas'); // sin la primera sesión
+                break;
+
+            case 'Abogado':
+                $q->where('legal_user_id', $user->id)
+                    ->whereDoesntHave('informes', function ($s) {
+                        $s->where('area', 'Legal'); // sin el primer informe legal
+                    });
+                break;
+
+            case 'Social':
+                $q->where('trabajo_social_user_id', $user->id)
+                    ->whereDoesntHave('informes', function ($s) {
+                        $s->where('area', 'Social'); // sin el primer informe social
+                    });
+                break;
+
+            default:
+                return response()->json(['pendientes' => 0]);
+        }
+
+        return response()->json(['pendientes' => $q->count()]);
+    }
+
     public function seguimiento(\Illuminate\Http\Request $request, \App\Models\Caso $caso)
     {
         // Cabecera compacta para el bloque superior
