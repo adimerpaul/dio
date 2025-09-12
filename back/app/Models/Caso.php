@@ -156,4 +156,9 @@ class Caso extends Model implements AuditableContract
     public function psicologica_user(){ return $this->belongsTo(User::class, 'psicologica_user_id'); }
     public function trabajo_social_user(){ return $this->belongsTo(User::class, 'trabajo_social_user_id'); }
     public function legal_user(){ return $this->belongsTo(User::class, 'legal_user_id');}
+
+    public function sesionesPsicologicas(){ return $this->hasMany(SesionPsicologica::class); }
+    public function informes(){ return $this->hasMany(Informe::class); }
+    public function documentos(){ return $this->hasMany(Documento::class); }
+    public function fotografias(){ return $this->hasMany(Fotografia::class); }
 }

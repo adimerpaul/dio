@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Caso;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
+use App\Models\Informe;
+use App\Models\SesionPsicologica;
 class CasoController extends Controller
 {
     public function seguimiento(\Illuminate\Http\Request $request, \App\Models\Caso $caso)
@@ -216,22 +219,7 @@ class CasoController extends Controller
     {
         $q        = trim((string) $request->get('q', ''));
         $perPage  = (int) $request->get('per_page', 10);
-        $perPage  = max(5, min($perPage, 100)); // entre 5 y 100
-
-//        $columns = [
-//            'id',
-//            'caso_numero',
-//            'caso_fecha_hecho',
-//            'caso_tipologia',
-//            'caso_zona',
-//            'caso_direccion',
-//            'caso_descripcion',
-//            'denunciante_nombre_completo',
-//            'denunciante_nro',
-//            'denunciado_nombre_completo',
-//            'denunciado_nro',
-//            'created_at'
-//        ];
+        $perPage  = max(5, min($perPage, 100));
 
         $query = Caso::orderByDesc('created_at');
 
@@ -249,23 +237,90 @@ class CasoController extends Controller
                     ->orWhere('denunciado_nro', 'like', $like);
             });
         }
+
         $user = $request->user();
-        if($user->role == 'Psicologo'){
-            $query->where('psicologica_user_id', $user->id);
-        }
-        if($user->role == 'Social'){
-            $query->where('trabajo_social_user_id', $user->id);
-        }
-        if($user->role == 'Abogado'){
-            $query->where('legal_user_id', $user->id);
-        }
+
+        // Mantén tus filtros por rol
+        if ($user->role == 'Psicologo')      { $query->where('psicologica_user_id', $user->id); }
+        if ($user->role == 'Social')         { $query->where('trabajo_social_user_id', $user->id); }
+        if ($user->role == 'Abogado')        { $query->where('legal_user_id', $user->id); }
+
         $query->with(['psicologica_user:id,name','trabajo_social_user:id,name','legal_user:id,name','user:id,name']);
 
         $paginated = $query->paginate($perPage)->appends($request->query());
 
-        // respuesta "plana" fácil para el front
+        // === NUEVO: construir mi_estado por cada caso ===
+        $areaPorRol = [
+            'Psicologo' => 'Psicológico', // usa exactamente los valores que guardas en Informe.area
+            'Social'    => 'Social',
+            'Abogado'   => 'Legal',
+        ];
+
+        $items = $paginated->getCollection();
+        $now = Carbon::now();
+
+        $items->transform(function ($c) use ($user, $now) {
+            $rolUsuario = $user->role;
+
+            // ¿estoy asignado a este caso?
+            $meAsignado = (
+                ($rolUsuario === 'Psicologo' && (int)$c->psicologica_user_id === (int)$user->id) ||
+                ($rolUsuario === 'Social'    && (int)$c->trabajo_social_user_id === (int)$user->id) ||
+                ($rolUsuario === 'Abogado'   && (int)$c->legal_user_id === (int)$user->id)
+            );
+
+            // ⬇️ FECHA BASE = fecha_apertura_caso (fallback a created_at y, si falta, ahora)
+            $apertura = $c->fecha_apertura_caso
+                ? Carbon::parse($c->fecha_apertura_caso)
+                : ($c->created_at ? Carbon::parse($c->created_at) : $now);
+
+            // Plazo 10 días desde apertura
+            $deadline = $apertura->copy()->addDays(10);
+            $diasRest = $now->diffInDays($deadline, false); // negativo si vencido
+            $atrasado = $diasRest < 0;
+
+            // por defecto
+            $hecho = false;
+            $labelListo = 'Primer informe listo';
+
+            if ($meAsignado) {
+                switch ($rolUsuario) {
+                    case 'Psicologo':
+                        // cuenta la primera sesión psicológica
+                        $hecho = \App\Models\SesionPsicologica::where('caso_id', $c->id)->exists();
+                        $labelListo = 'Primera sesión lista';
+                        break;
+
+                    case 'Abogado':
+                        // primer informe legal
+                        $hecho = \App\Models\Informe::where('caso_id', $c->id)->where('area', 'Legal')->exists();
+                        $labelListo = 'Primer informe (Legal) listo';
+                        break;
+
+                    case 'Social':
+                        // primer informe social
+                        $hecho = \App\Models\Informe::where('caso_id', $c->id)->where('area', 'Social')->exists();
+                        $labelListo = 'Primer informe (Social) listo';
+                        break;
+                }
+            }
+
+            $c->setAttribute('mi_estado', [
+                'me_asignado'          => $meAsignado,
+                'rol'                  => $meAsignado ? $rolUsuario : null,
+                'primer_informe_hecho' => $hecho,
+                'label_listo'          => $labelListo,
+                'deadline'             => $deadline->format('Y-m-d'),
+                'dias_restantes'       => (int) $diasRest,
+                'atrasado'             => $atrasado,
+            ]);
+
+            return $c;
+        });
+
+        // respuesta "plana"
         return response()->json([
-            'data'         => $paginated->items(),
+            'data'         => $items->values(),
             'current_page' => $paginated->currentPage(),
             'last_page'    => $paginated->lastPage(),
             'per_page'     => $paginated->perPage(),
@@ -274,6 +329,7 @@ class CasoController extends Controller
             'to'           => $paginated->lastItem(),
         ]);
     }
+
     public function store(Request $request)
     {
         // Validación básica (ajusta a gusto)

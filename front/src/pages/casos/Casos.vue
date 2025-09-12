@@ -41,6 +41,7 @@
         <th>Tipología</th>
         <th>Zona</th>
         <th>Tipo</th>
+        <th>Alerta</th>
       </tr>
       </thead>
       <tbody v-if="!loading && casos.length">
@@ -66,6 +67,37 @@
             rounded
             dense
           />
+        </td>
+        <td>
+          <template v-if="c.mi_estado?.me_asignado">
+            <template v-if="c.mi_estado.primer_informe_hecho">
+              <q-badge color="green" text-color="white" class="q-mr-xs">
+                {{ c.mi_estado.label_listo || 'Primer informe listo' }}
+              </q-badge>
+            </template>
+            <template v-else>
+              <q-badge
+                :color="c.mi_estado.atrasado ? 'red' : 'orange'"
+                :text-color="c.mi_estado.atrasado ? 'white' : 'black'"
+                class="q-mr-xs"
+              >
+                <template v-if="c.mi_estado.atrasado">
+                  Atrasado {{ Math.abs(c.mi_estado.dias_restantes) }} d
+                </template>
+                <template v-else>
+                  Faltan {{ c.mi_estado.dias_restantes }} d
+                </template>
+              </q-badge>
+              <q-tooltip transition-show="jump-down" transition-hide="jump-up">
+                Debes cargar tu
+                <b>{{ c.mi_estado.rol === 'Psicologo' ? 'primera sesión' : 'primer informe' }}</b>.<br>
+                Fecha límite: <b>{{ c.mi_estado.deadline }}</b>.
+              </q-tooltip>
+            </template>
+          </template>
+          <template v-else>
+            <span class="text-grey-6">—</span>
+          </template>
         </td>
       </tr>
       </tbody>
