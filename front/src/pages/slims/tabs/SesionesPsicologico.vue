@@ -1,19 +1,24 @@
 <template>
   <q-card flat bordered class="q-pa-md">
-
     <!-- Header -->
     <div class="row items-center q-mb-sm">
       <div class="col">
         <div class="text-subtitle1 text-weight-medium">Sesiones (Psicológico)</div>
         <div class="text-caption text-grey-7">Vinculadas al caso #{{ caseId }}</div>
-<!--        <pre>{{caso}}</pre>-->
       </div>
       <div class="col-auto row items-center q-gutter-sm">
         <q-input dense outlined v-model="search" placeholder="Buscar..." style="width:260px">
-          <template v-slot:append><q-icon name="search"/></template>
+          <template #append><q-icon name="search"/></template>
         </q-input>
         <q-btn flat color="primary" icon="refresh" :loading="loading" @click="fetchRows"/>
-        <q-btn color="green" icon="add_circle_outline" no-caps label="Crear sesión" @click="openCreate"/>
+        <q-btn
+          v-if="canEdit"
+          color="green"
+          icon="add_circle_outline"
+          no-caps
+          label="Crear sesión"
+          @click="openCreate"
+        />
       </div>
     </div>
 
@@ -44,15 +49,18 @@
               <q-item-section avatar><q-icon name="print"/></q-item-section>
               <q-item-section>Imprimir</q-item-section>
             </q-item>
-            <q-separator/>
-            <q-item clickable v-close-popup @click="openEdit(it)">
-              <q-item-section avatar><q-icon name="edit"/></q-item-section>
-              <q-item-section>Editar</q-item-section>
-            </q-item>
-            <q-item clickable v-close-popup @click="remove(it)">
-              <q-item-section avatar><q-icon name="delete" color="negative"/></q-item-section>
-              <q-item-section class="text-negative">Eliminar</q-item-section>
-            </q-item>
+
+            <template v-if="canEdit">
+              <q-separator/>
+              <q-item clickable v-close-popup @click="openEdit(it)">
+                <q-item-section avatar><q-icon name="edit"/></q-item-section>
+                <q-item-section>Editar</q-item-section>
+              </q-item>
+              <q-item clickable v-close-popup @click="remove(it)">
+                <q-item-section avatar><q-icon name="delete" color="negative"/></q-item-section>
+                <q-item-section class="text-negative">Eliminar</q-item-section>
+              </q-item>
+            </template>
           </q-btn-dropdown>
         </td>
         <td>{{ it.titulo }}</td>
@@ -74,7 +82,7 @@
         :max="rows.last_page || 1"
         boundary-numbers
         direction-links
-        @input="fetchRows"
+        @update:model-value="fetchRows"
       />
     </div>
 
@@ -108,7 +116,7 @@
             </div>
           </div>
 
-          <!-- Selector de plantilla cuando es creación -->
+          <!-- Selector de plantilla cuando es creación/edición -->
           <div v-if="mode!=='view'">
             <q-select
               v-model="plantilla"
@@ -142,7 +150,7 @@
         <q-separator/>
         <q-card-actions align="right">
           <q-btn flat label="Cerrar" v-close-popup/>
-          <q-btn color="primary" label="Guardar" v-if="mode!=='view'" :loading="saving" @click="save"/>
+          <q-btn color="primary" label="Guardar" v-if="mode!=='view' && canEdit" :loading="saving" @click="save"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -183,6 +191,12 @@ export default {
       ],
     }
   },
+  computed:{
+    role(){ return this.$store.user?.role || '' },
+    canEdit(){
+      return this.role === 'Administrador' || this.role === 'Psicologo'
+    }
+  },
   watch:{
     caseId(){ this.page=1; this.fetchRows() },
     search(){ this.page=1; this.fetchRows() }
@@ -197,7 +211,8 @@ export default {
       if(!this.caseId) return
       this.loading = true
       try{
-        const res = await this.$axios.get(`/casos/${this.caseId}/sesiones-psicologicas`, {
+        // ✅ migrado a SLIMs
+        const res = await this.$axios.get(`/slims/${this.caseId}/sesiones-psicologicas`, {
           params:{ q:this.search, page:this.page, per_page:this.perPage }
         })
         this.rows = res.data || { data:[], last_page:1 }
@@ -207,6 +222,7 @@ export default {
     },
 
     openCreate(){
+      if(!this.canEdit) return
       this.mode='create'
       this.plantilla = 'consentimiento'
       this.form = {
@@ -217,7 +233,7 @@ export default {
       this.$nextTick(()=> this.applyTemplate('consentimiento'))
     },
     openView(it){ this.mode='view'; this.form={...it}; this.dialog=true },
-    openEdit(it){ this.mode='edit'; this.form={...it}; this.dialog=true },
+    openEdit(it){ if(!this.canEdit) return; this.mode='edit'; this.form={...it}; this.dialog=true },
 
     applyTemplate(val) {
       if (this.mode === 'view') return
@@ -251,34 +267,26 @@ export default {
           familiares.push({
             nombre: nombre || '',
             edad: edad || '',
-            estado_civil: '',        // No está en el modelo; lo dejamos vacío
+            estado_civil: '',
             parentesco: parent || '',
-            ocupacion: '',           // Tampoco está; puedes agregarlo si luego lo guardas
+            ocupacion: '',
           })
         }
       }
 
-      // ===== Número de caso (preferir campo del modelo) =====
+      // ===== Número de caso =====
       const yyyy = (this.form.fecha || this.today()).slice(0, 4)
       const numeroCaso = c.caso_numero && String(c.caso_numero).trim() !== ''
         ? String(c.caso_numero)
         : `${String(this.caseId).padStart(2, '0')}/${yyyy}`
 
-      // ===== Nombres de responsables (si viene con relaciones) =====
-      const abogadoNombre =
-        (c.legal_user?.name || c.legal_user?.username) || ''   // requiere ->with('legal_user')
-      const psicologoNombre =
-        (c.psicologica_user?.name || c.psicologica_user?.username) || (this.$store?.state?.user?.name) || ''
+      const abogadoNombre = (c.legal_user?.name || c.legal_user?.username) || ''
+      const psicologoNombre = (c.psicologica_user?.name || c.psicologica_user?.username) || (this.$store?.state?.user?.name) || ''
 
-      // ===== Semillas de contenido =====
-      // Motivo: breve, editable
       const motivo = c.caso_tipologia || c.caso_modalidad
-        ? `Evaluación psicológica en el marco de presunta(s) ${[
-          c.caso_tipologia, c.caso_modalidad,
-        ].filter(Boolean).join(' / ')}.`
+        ? `Evaluación psicológica en el marco de presunta(s) ${[c.caso_tipologia, c.caso_modalidad].filter(Boolean).join(' / ')}.`
         : 'Evaluación psicológica para determinar los efectos emocionales y psicológicos en la evaluada.'
 
-      // Antecedentes: usa fecha, lugar y descripción del caso
       const antecedentes = (() => {
         const f = c.caso_fecha_hecho ? `el ${c.caso_fecha_hecho}` : 'en fecha no precisada'
         const lugar = [c.caso_lugar_hecho, c.caso_zona, c.caso_direccion].filter(Boolean).join(', ')
@@ -287,13 +295,11 @@ export default {
         return `Según la apertura del caso, el hecho habría ocurrido ${f}${lugarTxt}.${relato}`
       })()
 
-      // Técnicas: base + si hay violencias marcadas
       const tecnicas = [
         'Entrevista clínica y observación conductual',
         'Aplicación de instrumentos psicométricos según pertinencia (Goldberg, IES-R, Rosenberg)',
       ].join('; ') + '.'
 
-      // Conclusiones: base + lectura simple según flags de violencia
       const flags = [
         c.violencia_fisica ? 'violencia física' : null,
         c.violencia_psicologica ? 'violencia psicológica' : null,
@@ -306,13 +312,11 @@ export default {
         conclViol +
         ' No se evidencian signos de psicosis. Se sugiere seguimiento clínico y contención.'
 
-      // Recomendaciones: base editable
       const recomendaciones = [
         'Intervención psicológica: terapia focalizada en manejo de ansiedad/estrés y fortalecimiento de recursos personales.',
         'Orientación/asesoramiento legal para evitar revictimización y garantizar medidas de protección, si corresponde.',
       ].join(' ')
 
-      // ===== Base común para todas las plantillas =====
       const base = {
         casoId: this.caseId,
         fecha: this.form.fecha || this.today(),
@@ -322,14 +326,12 @@ export default {
         nombre: c.denunciante_nombre_completo,
         documento: c.denunciante_nro,
 
-        // extras (informe DIO)
         numeroCaso,
         abogadoNombre,
         psicologoNombre,
         denunciante,
         familiares,
 
-        // contenido inicial
         motivo,
         antecedentes,
         tecnicas,
@@ -341,10 +343,11 @@ export default {
       else if (val === 'informe')       this.form.contenido_html = SesionHtml.informe(base)
       else if (val === 'constancia')    this.form.contenido_html = SesionHtml.constancia(base)
       else if (val === 'consentimiento')this.form.contenido_html = SesionHtml.consentimiento(base)
-      else if (val === 'informe_dio')   this.form.contenido_html = SesionHtml.informe_dio(base) // NUEVO
+      else if (val === 'informe_dio')   this.form.contenido_html = SesionHtml.informe_dio(base)
     },
 
     async save(){
+      if(!this.canEdit) return
       if(!this.form.titulo){
         this.$q.notify({ type:'negative', message:'El título es obligatorio' })
         return
@@ -356,9 +359,10 @@ export default {
       this.saving = true
       try{
         if(this.form.id){
-          await this.$axios.put(`/sesiones-psicologicas/${this.form.id}`, this.form)
+          // ✅ alias SLIMs
+          await this.$axios.put(`/slims/sesiones-psicologicas/${this.form.id}`, this.form)
         }else{
-          await this.$axios.post(`/casos/${this.caseId}/sesiones-psicologicas`, this.form)
+          await this.$axios.post(`/slims/${this.caseId}/sesiones-psicologicas`, this.form)
         }
         this.$q.notify({ type:'positive', message:'Guardado' })
         this.dialog=false
@@ -369,9 +373,10 @@ export default {
     },
 
     remove(it){
+      if(!this.canEdit) return
       const go = async ()=>{
         try{
-          await this.$axios.delete(`/sesiones-psicologicas/${it.id}`)
+          await this.$axios.delete(`/slims/sesiones-psicologicas/${it.id}`)
           this.$q.notify({ type:'positive', message:'Eliminado' })
           this.fetchRows()
         }catch(e){
@@ -383,9 +388,8 @@ export default {
     },
 
     printPdf(it){
-      // Usa tu base URL si la tienes como $url
-      const base = this.$url || ''
-      window.open(`${base}/sesiones-psicologicas/${it.id}/pdf`, '_blank')
+      const base = this.$axios?.defaults?.baseURL || ''
+      window.open(`${base}/slims/sesiones-psicologicas/${it.id}/pdf`, '_blank')
     }
   }
 }

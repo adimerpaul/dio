@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\SlimDocumentoController;
+use App\Http\Controllers\SlimFotografiaController;
+use App\Http\Controllers\SlimInformeLegalController;
+use App\Http\Controllers\SlimPsicologicaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SlimController;
 // ... (tus otros use ya existentes)
@@ -29,6 +33,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get ('/slims/{slim}', [SlimController::class, 'show']);
     Route::put ('/slims/{slim}', [SlimController::class, 'update']);
 
+    // Anidadas a SLIM (lista/crear)
+    Route::get ('/slims/{slim}/sesiones-psicologicas', [SlimPsicologicaController::class, 'index']);
+    Route::post('/slims/{slim}/sesiones-psicologicas', [SlimPsicologicaController::class, 'store']);
+
+// Planas (ver/editar/eliminar/pdf)
+    Route::get   ('/slims/sesiones-psicologicas/{psicologica}',      [SlimPsicologicaController::class, 'show']);
+    Route::put   ('/slims/sesiones-psicologicas/{psicologica}',      [SlimPsicologicaController::class, 'update']);
+    Route::delete('/slims/sesiones-psicologicas/{psicologica}',      [SlimPsicologicaController::class, 'destroy']);
+
+
     // Seguimiento y dashboard siguen igual pero ya apuntando a Slim
     Route::get('/slims/{slim}/seguimiento', [SlimController::class, 'seguimiento']);
 
@@ -42,8 +56,38 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/agendas/{agenda}', [\App\Http\Controllers\AgendaController::class, 'update']);
     Route::delete('/agendas/{agenda}', [\App\Http\Controllers\AgendaController::class, 'destroy']);
     Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index']);
+
+
+// Anidadas a SLIM (listar / crear)
+    Route::get ('/slims/{slim}/informes-legales', [SlimInformeLegalController::class, 'index']);
+    Route::post('/slims/{slim}/informes-legales', [SlimInformeLegalController::class, 'store']);
+
+// Planas (ver / editar / eliminar / pdf)
+    Route::get   ('/slims/informes-legales/{informe}',     [SlimInformeLegalController::class, 'show']);
+    Route::put   ('/slims/informes-legales/{informe}',     [SlimInformeLegalController::class, 'update']);
+    Route::delete('/slims/informes-legales/{informe}',     [SlimInformeLegalController::class, 'destroy']);
+
+
+    // Listar y subir (anidadas al SLIM)
+    Route::get ('/slims/{slim}/documentos', [SlimDocumentoController::class, 'index']);
+    Route::post('/slims/{slim}/documentos', [SlimDocumentoController::class, 'store']);
+
+// Operaciones por documento (planas)
+    Route::get   ('/slims/documentos/{documento}',        [SlimDocumentoController::class, 'show']);
+    Route::put   ('/slims/documentos/{documento}',        [SlimDocumentoController::class, 'update']);
+    Route::delete('/slims/documentos/{documento}',        [SlimDocumentoController::class, 'destroy']);
+    Route::get   ('/slims/documentos/{documento}/download',[SlimDocumentoController::class, 'download']);
+
+    Route::get   ('/slims/{slim}/fotografias',     [SlimFotografiaController::class, 'index']);
+    Route::post  ('/slims/{slim}/fotografias',     [SlimFotografiaController::class, 'store']);
+    Route::delete('/slims/fotografias/{fotografia}', [SlimFotografiaController::class, 'destroy']);
 });
+
+Route::get   ('/slims/documentos/{documento}/view',   [SlimDocumentoController::class, 'view']);
 
 // PDFs (expuestos igual pero con Slim)
 Route::get('/slims/{slim}/pdf', [SlimController::class, 'pdf']);
 Route::get('/slims/{slim}/pdf/hoja-ruta', [SlimController::class, 'pdfHojaRuta']);
+
+Route::get   ('/slims/sesiones-psicologicas/{psicologica}/pdf',  [SlimPsicologicaController::class, 'pdf']);
+Route::get   ('/slims/informes-legales/{informe}/pdf', [SlimInformeLegalController::class, 'pdf']);

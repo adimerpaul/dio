@@ -67,7 +67,13 @@
     </q-markup-table>
 
     <div class="row justify-end q-mt-sm">
-      <q-pagination v-model="page" :max="rows.last_page || 1" boundary-numbers direction-links @input="fetchRows"/>
+      <q-pagination
+        v-model="page"
+        :max="rows.last_page || 1"
+        boundary-numbers
+        direction-links
+        @update:model-value="fetchRows"
+      />
     </div>
 
     <!-- Subida -->
@@ -142,7 +148,7 @@ export default {
       if(!this.caseId) return
       this.loading=true
       try{
-        const res = await this.$axios.get(`/casos/${this.caseId}/documentos`, {
+        const res = await this.$axios.get(`/slims/${this.caseId}/documentos`, {
           params:{ q:this.search, page:this.page, per_page:this.perPage }
         })
         this.rows = res.data || { data:[], last_page:1 }
@@ -151,10 +157,17 @@ export default {
       }finally{ this.loading=false }
     },
 
-    openUpload(){ this.file=null; this.meta={titulo:'',categoria:'',descripcion:''}; this.dlgUpload=true },
+    openUpload(){
+      this.file=null
+      this.meta={titulo:'',categoria:'',descripcion:''}
+      this.dlgUpload=true
+    },
 
     async upload(){
-      if(!this.file){ this.$q.notify({type:'negative', message:'Seleccione un archivo'}); return }
+      if(!this.file){
+        this.$q.notify({type:'negative', message:'Seleccione un archivo'})
+        return
+      }
       this.saving=true
       try{
         const fd = new FormData()
@@ -163,7 +176,7 @@ export default {
         if(this.meta.categoria)   fd.append('categoria', this.meta.categoria)
         if(this.meta.descripcion) fd.append('descripcion', this.meta.descripcion)
 
-        await this.$axios.post(`/casos/${this.caseId}/documentos`, fd, {
+        await this.$axios.post(`/slims/${this.caseId}/documentos`, fd, {
           headers:{ 'Content-Type':'multipart/form-data' }
         })
         this.$q.notify({ type:'positive', message:'Archivo subido' })
@@ -175,12 +188,12 @@ export default {
     },
 
     viewDoc(it){
-      const base = this.$url || ''
-      window.open(`${base}/documentos/${it.id}/view`, '_blank')
+      const base = this.$axios?.defaults?.baseURL || ''
+      window.open(`${base}/slims/documentos/${it.id}/view`, '_blank')
     },
     downloadDoc(it){
-      const base = this.$url || ''
-      window.open(`${base}/documentos/${it.id}/download`, '_blank')
+      const base = this.$axios?.defaults?.baseURL || ''
+      window.open(`${base}/slims/documentos/${it.id}/download`, '_blank')
     },
 
     editMeta(it){
@@ -191,7 +204,7 @@ export default {
     async saveMeta(){
       this.saving = true
       try{
-        await this.$axios.put(`/documentos/${this.editingId}`, this.edit)
+        await this.$axios.put(`/slims/documentos/${this.editingId}`, this.edit)
         this.$q.notify({ type:'positive', message:'Actualizado' })
         this.dlgEdit=false
         this.fetchRows()
@@ -203,7 +216,7 @@ export default {
     removeDoc(it){
       const go = async () => {
         try{
-          await this.$axios.delete(`/documentos/${it.id}`)
+          await this.$axios.delete(`/slims/documentos/${it.id}`)
           this.$q.notify({ type:'positive', message:'Eliminado' })
           this.fetchRows()
         }catch(e){

@@ -43,7 +43,7 @@
     <q-pagination
       v-model="page"
       :max="rows.last_page || 1"
-      @input="fetchRows"
+      @update:model-value="fetchRows"
       class="q-mt-md flex justify-end"
     />
   </q-card>
@@ -64,18 +64,19 @@ export default {
   },
   created () { this.fetchRows() },
   methods: {
-    // Convierte '/storage/...' a 'http://localhost:8000/storage/...'
     toPublicUrl (url) {
+      console.log('url', url)
       if (!url) return ''
       if (/^https?:\/\//i.test(url)) return url
-      const basePublic = (this.$url || '').replace(/\/api\/?$/, '')
+      const baseApi = this.$axios?.defaults?.baseURL || ''
+      const basePublic = baseApi.replace(/\/api\/?$/, '')
       return `${basePublic}${url}`
     },
 
     async fetchRows () {
       this.loading = true
       try {
-        const res = await this.$axios.get(`/casos/${this.caseId}/fotografias`, {
+        const res = await this.$axios.get(`/slims/${this.caseId}/fotografias`, {
           params: { page: this.page, per_page: this.perPage }
         })
         this.rows = res.data || { data: [], last_page: 1 }
@@ -95,7 +96,7 @@ export default {
       try {
         const fd = new FormData()
         fd.append('file', file)
-        await this.$axios.post(`/casos/${this.caseId}/fotografias`, fd, {
+        await this.$axios.post(`/slims/${this.caseId}/fotografias`, fd, {
           headers: { 'Content-Type': 'multipart/form-data' }
         })
         this.$q.notify({ type: 'positive', message: 'Foto subida' })
@@ -111,7 +112,7 @@ export default {
     async remove (f) {
       if (!confirm('¿Eliminar foto?')) return
       try {
-        await this.$axios.delete(`/fotografias/${f.id}`)
+        await this.$axios.delete(`/slims/fotografias/${f.id}`)
         this.$q.notify({ type: 'positive', message: 'Eliminada' })
         this.fetchRows()
       } catch (e) {

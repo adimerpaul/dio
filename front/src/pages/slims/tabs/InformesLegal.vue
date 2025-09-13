@@ -1,9 +1,9 @@
-<!-- src/components/Informes.vue -->
 <template>
   <q-card flat bordered class="q-pa-md">
+    <!-- Header -->
     <div class="row items-center q-mb-sm">
       <div class="col">
-        <div class="text-subtitle1 text-weight-medium">Informes</div>
+        <div class="text-subtitle1 text-weight-medium">Informes legales</div>
         <div class="text-caption text-grey-7">Vinculados al caso #{{ caseId }}</div>
       </div>
       <div class="col-auto row items-center q-gutter-sm">
@@ -11,12 +11,20 @@
           <template #append><q-icon name="search"/></template>
         </q-input>
         <q-btn flat color="primary" icon="refresh" :loading="loading" @click="fetchRows"/>
-        <q-btn color="green" icon="add_circle_outline" no-caps label="Crear informe" @click="openCreate"/>
+        <q-btn
+          v-if="canEdit"
+          color="green"
+          icon="add_circle_outline"
+          no-caps
+          label="Crear informe"
+          @click="openCreate"
+        />
       </div>
     </div>
 
     <q-separator/>
 
+    <!-- Tabla -->
     <q-markup-table dense flat bordered wrap-cells class="q-mt-sm">
       <thead>
       <tr class="bg-primary text-white">
@@ -24,7 +32,6 @@
         <th style="width:140px">Acciones</th>
         <th>Título</th>
         <th style="width:120px">Fecha</th>
-        <th style="width:130px">Área</th>
         <th style="width:120px">Nro</th>
         <th style="width:180px">Usuario</th>
       </tr>
@@ -42,34 +49,43 @@
               <q-item-section avatar><q-icon name="picture_as_pdf"/></q-item-section>
               <q-item-section>Imprimir</q-item-section>
             </q-item>
-            <q-separator/>
-            <q-item clickable v-close-popup @click="openEdit(it)">
-              <q-item-section avatar><q-icon name="edit"/></q-item-section>
-              <q-item-section>Editar</q-item-section>
-            </q-item>
-            <q-item clickable v-close-popup @click="removeIt(it)">
-              <q-item-section avatar><q-icon name="delete" color="negative"/></q-item-section>
-              <q-item-section class="text-negative">Eliminar</q-item-section>
-            </q-item>
+
+            <template v-if="canEdit">
+              <q-separator/>
+              <q-item clickable v-close-popup @click="openEdit(it)">
+                <q-item-section avatar><q-icon name="edit"/></q-item-section>
+                <q-item-section>Editar</q-item-section>
+              </q-item>
+              <q-item clickable v-close-popup @click="removeIt(it)">
+                <q-item-section avatar><q-icon name="delete" color="negative"/></q-item-section>
+                <q-item-section class="text-negative">Eliminar</q-item-section>
+              </q-item>
+            </template>
           </q-btn-dropdown>
         </td>
         <td>{{ it.titulo }}</td>
         <td>{{ it.fecha || 's/f' }}</td>
-        <td>{{ it.area || '—' }}</td>
         <td>{{ it.numero || '—' }}</td>
         <td>{{ it.user?.name || it.user?.username || '—' }}</td>
       </tr>
       <tr v-if="!rows.data.length && !loading">
-        <td colspan="7" class="text-center text-grey">Sin registros</td>
+        <td colspan="6" class="text-center text-grey">Sin registros</td>
       </tr>
       </tbody>
     </q-markup-table>
 
+    <!-- Paginación -->
     <div class="row justify-end q-mt-sm">
-      <q-pagination v-model="page" :max="rows.last_page || 1" boundary-numbers direction-links @input="fetchRows"/>
+      <q-pagination
+        v-model="page"
+        :max="rows.last_page || 1"
+        boundary-numbers
+        direction-links
+        @update:model-value="fetchRows"
+      />
     </div>
 
-    <!-- Diálogo -->
+    <!-- Diálogo Crear / Ver / Editar -->
     <q-dialog v-model="dialog" persistent maximized>
       <q-card>
         <q-bar class="bg-white text-dark">
@@ -87,17 +103,15 @@
             <div class="col-12 col-md-3">
               <q-input v-model="form.fecha" type="date" dense outlined label="Fecha" :readonly="mode==='view'"/>
             </div>
-            <div class="col-12 col-md-5">
+            <div class="col-12 col-md-7">
               <q-input v-model="form.titulo" dense outlined label="Título *" :readonly="mode==='view'" :rules="[v=>!!v||'Requerido']"/>
             </div>
-            <div class="col-6 col-md-2">
-              <q-select v-model="form.area" :options="areas" dense outlined label="Área" :readonly="mode==='view'" emit-value map-options/>
-            </div>
-            <div class="col-6 col-md-2">
+            <div class="col-12 col-md-2">
               <q-input v-model="form.numero" dense outlined label="Nro" :readonly="mode==='view'"/>
             </div>
           </div>
 
+          <!-- Plantillas (legales) -->
           <div v-if="mode!=='view'">
             <q-select
               v-model="plantilla"
@@ -114,7 +128,7 @@
               v-model="form.contenido_html"
               :readonly="mode==='view'"
               min-height="320px"
-              placeholder="Escriba el informe..."
+              placeholder="Escriba el informe legal..."
               :toolbar="[
                 ['left','center','right','justify'],
                 ['bold','italic','strike','underline'],
@@ -130,7 +144,7 @@
         <q-separator/>
         <q-card-actions align="right">
           <q-btn flat label="Cerrar" v-close-popup/>
-          <q-btn color="primary" label="Guardar" v-if="mode!=='view'" :loading="saving" @click="save"/>
+          <q-btn color="primary" label="Guardar" v-if="mode!=='view' && canEdit" :loading="saving" @click="save"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -138,11 +152,13 @@
 </template>
 
 <script>
-import { InformeHtml } from 'src/addons/InformePlantillas.js'
-
 export default {
-  name: 'Informes',
-  props: { caseId: { type:[String,Number], required:true } },
+  name: 'InformesLegal',
+  props: {
+    caseId: { type:[String,Number], required:true },
+    // opcional: pásame el SLIM completo si quieres auto-rellenar alguna plantilla (ej. denuncia_mp)
+    caso: { type:Object, default:null }
+  },
   data(){
     return {
       loading:false, saving:false,
@@ -150,21 +166,21 @@ export default {
       rows:{ data:[], total:0, last_page:1 },
 
       dialog:false, mode:'create',
-      form:{ id:null, fecha:'', titulo:'', area:'psicologico', numero:'', contenido_html:'' },
+      form:{ id:null, fecha:'', titulo:'', numero:'', contenido_html:'' },
 
-      plantilla: 'informe_psico',
+      plantilla: 'informe_legal',
       plantillasOptions: [
-        { label:'Informe Psicológico (formato SLIM)', value:'informe_psico' },
-        { label:'Informe Legal (fundamentos)',       value:'informe_legal' },
-        { label:'Informe Social (visita / entorno)', value:'informe_social' },
-        { label:'Denuncia penal — Ministerio Público (Abuso sexual)', value:'denuncia_mp' }
-      ],
-      areas: [
-        { label:'Psicológico', value:'psicologico' },
-        { label:'Legal',       value:'legal' },
-        { label:'Social',      value:'social' },
+        { label:'Informe Legal (SLIM)', value:'informe_legal' },
+        { label:'Memorial (simple)',   value:'memorial' },
+        { label:'Oficio / Nota',       value:'oficio' },
+        { label:'Acta de Compromiso',  value:'acta' },
+        { label:'Denuncia penal — Ministerio Público', value:'denuncia_mp' },
       ],
     }
+  },
+  computed:{
+    role(){ return this.$store.user?.role || '' },
+    canEdit(){ return this.role === 'Administrador' || this.role === 'Abogado' }
   },
   watch:{
     caseId(){ this.page=1; this.fetchRows() },
@@ -177,7 +193,7 @@ export default {
       if(!this.caseId) return
       this.loading = true
       try{
-        const res = await this.$axios.get(`/casos/${this.caseId}/informes`, {
+        const res = await this.$axios.get(`/slims/${this.caseId}/informes-legales`, {
           params:{ q:this.search, page:this.page, per_page:this.perPage }
         })
         this.rows = res.data || { data:[], last_page:1 }
@@ -186,83 +202,93 @@ export default {
       }finally{ this.loading=false }
     },
     openCreate(){
+      if(!this.canEdit) return
       this.mode='create'
-      this.form = { id:null, fecha:this.today(), titulo:'', area:'psicologico', numero:'', contenido_html:'' }
+      this.form = { id:null, fecha:this.today(), titulo:'', numero:'', contenido_html:'' }
       this.dialog = true
       this.$nextTick(()=> this.applyTemplate(this.plantilla))
     },
     openView(it){ this.mode='view'; this.form={...it}; this.dialog=true },
-    openEdit(it){ this.mode='edit'; this.form={...it}; this.dialog=true },
+    openEdit(it){ if(!this.canEdit) return; this.mode='edit'; this.form={...it}; this.dialog=true },
 
     applyTemplate(val){
       if(this.mode==='view') return
+      const fecha = this.form.fecha || this.today()
+      const year  = fecha.slice(0,4)
+      const nro   = this.form.numero ? `N° ${this.form.numero}` : ''
+      const header = `
+        <div style="text-align:center; margin-bottom:8px;">
+          <div style="font-size:16px; font-weight:bold;">DIRECCIÓN DE IGUALDAD DE OPORTUNIDADES</div>
+          <div style="font-size:12px;">Gobierno Autónomo Municipal de Oruro</div>
+          <div style="font-size:12px; font-weight:bold;">${nro}</div>
+          <hr/>
+        </div>
+      `
 
-      const baseMin = {
-        casoId: this.caseId,
-        fecha: this.form.fecha || this.today(),
-        titulo: this.form.titulo || 'Informe',
-        area: this.form.area || 'psicologico',
-        numero: this.form.numero || ''
+      if (val === 'memorial') {
+        this.form.contenido_html = header + `
+          <p><b>Señor(a) Juez/Fiscal</b></p>
+          <p>De mi consideración:</p>
+          <p style="text-align:justify">Por medio del presente, ...</p>
+          <p>Oruro, ${fecha}</p>
+        `
+        return
       }
-
-      if (val === 'informe_psico')  this.form.contenido_html = InformeHtml.psicologico(baseMin)
-      if (val === 'informe_legal')  this.form.contenido_html = InformeHtml.legal(baseMin)
-      if (val === 'informe_social') this.form.contenido_html = InformeHtml.social(baseMin)
-
+      if (val === 'oficio') {
+        this.form.contenido_html = header + `
+          <p><b>Ref.:</b> Solicitud de información</p>
+          <p>De nuestra consideración:</p>
+          <p style="text-align:justify">Solicitamos remitir la información ...</p>
+          <p>Oruro, ${fecha}</p>
+        `
+        return
+      }
+      if (val === 'acta') {
+        this.form.contenido_html = header + `
+          <p style="text-align:center"><b>ACTA DE COMPROMISO</b></p>
+          <p style="text-align:justify">En la ciudad de Oruro, a ${fecha}, las partes acuerdan ...</p>
+        `
+        return
+      }
       if (val === 'denuncia_mp') {
-        // Si tienes el caso cargado en esta vista, úsalo aquí.
-        const c = this.caso || {}  // <-- pásalo como prop si puedes, similar a SesionesPsicologico
-        const denunciante = {
-          nombre: c.denunciante_nombre_completo,
-          ci: c.denunciante_nro,
-          fecha_nac: c.denunciante_fecha_nacimiento,
-          lugar_nac: c.denunciante_lugar_nacimiento,
-          edad: c.denunciante_edad,
-          ocupacion: c.denunciante_ocupacion_exacto || c.denunciante_ocupacion,
-          estado_civil: c.denunciante_estado_civil,
-          domicilio: c.denunciante_domicilio_actual || c.denunciante_residencia,
-          celular: c.denunciante_telefono || c.denunciante_movil,
-          correo: c.denunciante_correo // si lo tienes
-        }
-        const denunciado = {
-          nombre: c.denunciado_nombre_completo,
-          ci: c.denunciado_nro,
-          fecha_nac: c.denunciado_fecha_nacimiento,
-          nacionalidad: 'Boliviana',
-          ocupacion: c.denunciado_ocupacion_exacto || c.denunciado_ocupacion,
-          estado_civil: c.denunciado_estado_civil,
-          domicilio: c.denunciado_domicilio_actual || c.denunciado_residencia,
-          celular: c.denunciado_telefono || c.denunciado_movil,
-          correo: c.denunciado_correo // si lo tienes
-        }
-
-        const payload = {
-          ...baseMin,
-          ciudad: 'ORURO',
-          fiscaliaTitulo: 'SEÑOR REPRESENTANTE DEL MINISTERIO PÚBLICO DE LA CIUDAD DE ORURO',
-          titulo: 'Denuncia penal por Abuso Sexual',
-          denunciante,
-          denunciado,
-          ciudadania_digital_denunciante: c.documento_ciudadania_digital ? c.denunciante_nro : '',
-          relato: c.caso_descripcion || '',
-          abogado: {
-            nombre: c.legal_user?.name || '',
-            correo: c.legal_user?.correo || '',
-            whatsapp: c.legal_user?.celular || ''
-          }
-        }
-
-        this.form.contenido_html = InformeHtml.denuncia_mp(payload)
+        const c = this.caso || {}
+        const den = c.denunciante_nombre_completo || ''
+        this.form.contenido_html = header + `
+          <p style="text-align:center"><b>SEÑOR(A) REPRESENTANTE DEL MINISTERIO PÚBLICO — ORURO</b></p>
+          <p><b>DENUNCIANTE:</b> ${den || '—'}</p>
+          <p style="text-align:justify">Que, en mérito a los antecedentes ...</p>
+          <p>Oruro, ${fecha}</p>
+        `
+        return
       }
+
+      // default: informe_legal
+      this.form.contenido_html = header + `
+        <p><b>Informe Legal ${year}</b></p>
+        <p style="text-align:justify">En atención a los antecedentes, se emite el presente informe con el siguiente análisis jurídico:</p>
+        <p><b>Fundamentos de derecho:</b></p>
+        <ul>
+          <li>Ley N° 348 y reglamentación.</li>
+          <li>Constitución Política del Estado.</li>
+          <li>Normativa municipal vigente.</li>
+        </ul>
+        <p><b>Recomendaciones:</b> …</p>
+        <p>Oruro, ${fecha}</p>
+      `
     },
 
     async save(){
+      if(!this.canEdit) return
       if(!this.form.titulo) return this.$q.notify({type:'negative', message:'El título es obligatorio'})
       if(!this.form.contenido_html) return this.$q.notify({type:'negative', message:'El contenido está vacío'})
+
       this.saving = true
       try{
-        if(this.form.id) await this.$axios.put(`/informes/${this.form.id}`, this.form)
-        else await this.$axios.post(`/casos/${this.caseId}/informes`, this.form)
+        if(this.form.id)
+          await this.$axios.put(`/slims/informes-legales/${this.form.id}`, this.form)
+        else
+          await this.$axios.post(`/slims/${this.caseId}/informes-legales`, this.form)
+
         this.$q.notify({ type:'positive', message:'Guardado' })
         this.dialog=false; this.fetchRows()
       }catch(e){
@@ -271,17 +297,23 @@ export default {
     },
 
     removeIt(it){
+      if(!this.canEdit) return
       const go = async ()=> {
-        try{ await this.$axios.delete(`/informes/${it.id}`); this.$q.notify({type:'positive', message:'Eliminado'}); this.fetchRows() }
-        catch(e){ this.$q.notify({type:'negative', message:e?.response?.data?.message || 'No se pudo eliminar'}) }
+        try{
+          await this.$axios.delete(`/slims/informes-legales/${it.id}`)
+          this.$q.notify({type:'positive', message:'Eliminado'})
+          this.fetchRows()
+        }catch(e){
+          this.$q.notify({type:'negative', message:e?.response?.data?.message || 'No se pudo eliminar'})
+        }
       }
       if(this.$alert?.dialog) this.$alert.dialog('¿Eliminar el informe?').onOk(go)
       else if(confirm('¿Eliminar el informe?')) go()
     },
 
     printPdf(it){
-      const base = this.$url || ''
-      window.open(`${base}/informes/${it.id}/pdf`, '_blank')
+      const base = this.$axios?.defaults?.baseURL || ''
+      window.open(`${base}/slims/informes-legales/${it.id}/pdf`, '_blank')
     }
   }
 }

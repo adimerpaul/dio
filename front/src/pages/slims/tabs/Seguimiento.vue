@@ -1,26 +1,28 @@
 <template>
   <div>
-    <!-- BLOQUE SUPERIOR: cabecera estilo ficha -->
+    <!-- CABECERA -->
     <q-card flat bordered class="q-pa-sm q-mb-md">
       <div class="row items-start q-col-gutter-sm">
         <div class="col-12 col-md-8">
           <div class="text-subtitle1 text-weight-bold">Seguimiento del Caso</div>
           <div class="text-caption text-grey-7">
-            Caso <b>#{{ header.caso_id }}</b> · N° <b>{{ header.caso_numero || '—' }}</b>
+            SLIM <b>#{{ header.caso_id }}</b> · N° <b>{{ header.caso_numero || '—' }}</b>
           </div>
         </div>
         <div class="col-12 col-md-4 flex items-center justify-end">
           <q-chip dense color="indigo-1" text-color="indigo-9" class="q-mr-xs">
             {{ header.fecha_registro || '—' }}
           </q-chip>
-          <!--            btn actulizar-->
-          <q-btn flat color="primary" icon="refresh" @click="fetch" :loading="loading" title="Actualizar" :label="loading ? '' : 'Actualizar'" no-caps dense/>
+          <q-btn
+            flat color="primary" icon="refresh"
+            @click="fetch" :loading="loading" title="Actualizar"
+            :label="loading ? '' : 'Actualizar'" no-caps dense
+          />
         </div>
       </div>
 
       <q-separator class="q-my-sm"/>
 
-      <!-- Grid de datos compactos -->
       <div class="row q-col-gutter-sm">
         <div class="col-12 col-md-3">
           <div class="lbl">Tipología</div>
@@ -97,7 +99,9 @@
           <div class="row no-wrap items-center q-gutter-xs">
             <q-icon :name="props.row.icon || 'feed'" size="18px" class="text-primary"/>
             <div>
-              <div class="text-weight-medium">{{ props.row.tipo }} <span class="text-grey-7">·</span> {{ props.row.titulo || '—' }}</div>
+              <div class="text-weight-medium">
+                {{ props.row.tipo }} <span class="text-grey-7">·</span> {{ props.row.titulo || '—' }}
+              </div>
               <div class="text-caption text-grey-7 ellipsis-2-lines" style="max-width:520px">
                 {{ props.row.descripcion || '—' }}
               </div>
@@ -160,7 +164,6 @@ export default {
   computed: {
     rowsFiltered () {
       let r = this.rows.slice()
-
       if (this.filters.q) {
         const q = this.filters.q.toLowerCase()
         r = r.filter(x =>
@@ -182,9 +185,6 @@ export default {
         r = r.filter(x => (x.fecha || '9999-12-31') <= this.filters.hasta)
       }
       return r
-    },
-    apiBase () {
-      return this.$axios?.defaults?.baseURL || ''
     }
   },
   mounted () {
@@ -194,7 +194,8 @@ export default {
     async fetch () {
       this.loading = true
       try {
-        const { data } = await this.$axios.get(`/casos/${this.caseId}/seguimiento`)
+        // ⬇⬇⬇ MIGRADO A /slims
+        const { data } = await this.$axios.get(`/slims/${this.caseId}/seguimiento`)
         this.header = data.header || {}
         this.rows   = data.items  || []
       } catch (e) {

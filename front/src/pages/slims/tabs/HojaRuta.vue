@@ -8,19 +8,27 @@
           Completa las fechas clave del caso ({{ done }}/{{ total }} completadas)
         </div>
       </div>
-      <div class="col-auto row q-gutter-sm">
+
+      <div class="col-auto row items-center q-gutter-sm">
+        <q-chip v-if="!canEdit" dense color="grey-3" text-color="grey-9" icon="visibility_off">
+          Solo lectura
+        </q-chip>
+
         <q-btn flat color="secondary" icon="refresh" :loading="loading" @click="fetch" />
-        <q-btn
-          v-if="!editing"
-          color="primary"
-          icon="edit"
-          label="Editar"
-          @click="startEdit"
-          :loading="loading"
-        />
-        <template v-else>
-          <q-btn flat color="negative" icon="close" label="Cancelar" @click="cancelEdit" :loading="loading"/>
-          <q-btn color="primary" icon="save" label="Guardar" @click="save" :loading="loading"/>
+
+        <template v-if="canEdit">
+          <q-btn
+            v-if="!editing"
+            color="primary"
+            icon="edit"
+            label="Editar"
+            @click="startEdit"
+            :loading="loading"
+          />
+          <template v-else>
+            <q-btn flat color="negative" icon="close" label="Cancelar" @click="cancelEdit" :loading="loading"/>
+            <q-btn color="primary" icon="save" label="Guardar" @click="save" :loading="loading"/>
+          </template>
         </template>
       </div>
     </div>
@@ -46,7 +54,7 @@
             <q-input
               v-model="form.fecha_derivacion_psicologica"
               type="date"
-              :readonly="!editing"
+              :readonly="isReadOnly"
               dense outlined
               label="Fecha de derivación psicológica"
             />
@@ -56,7 +64,7 @@
             <q-input
               v-model="form.fecha_informe_area_psicologica"
               type="date"
-              :readonly="!editing"
+              :readonly="isReadOnly"
               dense outlined
               label="Fecha de entrega informe (Área psicológica)"
             />
@@ -66,7 +74,7 @@
             <q-input
               v-model="form.fecha_informe_trabajo_social"
               type="date"
-              :readonly="!editing"
+              :readonly="isReadOnly"
               dense outlined
               label="Fecha de entrega (Trabajo social)"
             />
@@ -76,7 +84,7 @@
             <q-input
               v-model="form.fecha_derivacion_area_legal"
               type="date"
-              :readonly="!editing"
+              :readonly="isReadOnly"
               dense outlined
               label="Fecha de derivación (Área legal)"
             />
@@ -84,7 +92,7 @@
         </div>
       </q-card-section>
 
-      <!-- Línea de tiempo opcional -->
+      <!-- Línea de tiempo -->
       <q-separator />
       <q-card-section>
         <q-timeline color="primary" layout="comfortable" side="right">
@@ -133,7 +141,6 @@ export default {
       editing: false,
       backup: null,
       form: {
-        // solo los campos que usamos en esta vista
         caso_numero: '',
         fecha_apertura_caso: '',
         fecha_derivacion_psicologica: '',
@@ -144,16 +151,13 @@ export default {
     }
   },
   computed: {
-    today () {
-      // YYYY-MM-DD
-      const d = new Date()
-      const mm = String(d.getMonth() + 1).padStart(2, '0')
-      const dd = String(d.getDate()).padStart(2, '0')
-      return `${d.getFullYear()}-${mm}-${dd}`
+    canEdit () {
+      const r = this.$store.user?.role || ''
+      return r === 'Administrador' || r === 'Asistente'
     },
-    total () { return 5 }, // solo contamos las editables + apertura? si quieres 5 editables, cambia
+    isReadOnly () { return !this.editing || !this.canEdit },
+    total () { return 5 },
     done () {
-      // cuenta las que están llenas (incluyendo apertura)
       const keys = [
         'fecha_apertura_caso',
         'fecha_derivacion_psicologica',
@@ -168,16 +172,12 @@ export default {
     this.fetch()
   },
   methods: {
-    format (val) {
-      if (!val) return '—'
-      // val ya viene como YYYY-MM-DD
-      return val
-    },
+    format (val) { return val || '—' },
     async fetch () {
       this.loading = true
       try {
-        const { data } = await this.$axios.get(`/casos/${this.caseId}`)
-        // Tomamos solo los campos que necesitamos
+        // ✅ migrado a SLIMs
+        const { data } = await this.$axios.get(`/slims/${this.caseId}`)
         this.form = {
           caso_numero: data.caso_numero || '',
           fecha_apertura_caso: data.fecha_apertura_caso || '',
@@ -194,6 +194,7 @@ export default {
       }
     },
     startEdit () {
+      if (!this.canEdit) return
       this.editing = true
       this.backup = { ...this.form }
     },
@@ -203,7 +204,8 @@ export default {
       this.$q.notify({ type: 'info', message: 'Cambios descartados' })
     },
     async save () {
-      // payload mínimo: solo campos de hoja de ruta (evita sobreescribir otros)
+      if (!this.canEdit) return
+
       const payload = {
         fecha_derivacion_psicologica: this.form.fecha_derivacion_psicologica || null,
         fecha_informe_area_psicologica: this.form.fecha_informe_area_psicologica || null,
@@ -213,14 +215,14 @@ export default {
 
       this.loading = true
       try {
-        const { data } = await this.$axios.put(`/casos/${this.caseId}`, payload)
-        // refrescamos con lo que devuelve el backend
+        // ✅ migrado a SLIMs
+        const { data } = await this.$axios.put(`/slims/${this.caseId}`, payload)
         this.form = {
           ...this.form,
-          fecha_derivacion_psicologica: data.data?.fecha_derivacion_psicologica || this.form.fecha_derivacion_psicologica,
-          fecha_informe_area_psicologica: data.data?.fecha_informe_area_psicologica || this.form.fecha_informe_area_psicologica,
-          fecha_informe_trabajo_social: data.data?.fecha_informe_trabajo_social || this.form.fecha_informe_trabajo_social,
-          fecha_derivacion_area_legal: data.data?.fecha_derivacion_area_legal || this.form.fecha_derivacion_area_legal
+          fecha_derivacion_psicologica: data.data?.fecha_derivacion_psicologica ?? this.form.fecha_derivacion_psicologica,
+          fecha_informe_area_psicologica: data.data?.fecha_informe_area_psicologica ?? this.form.fecha_informe_area_psicologica,
+          fecha_informe_trabajo_social: data.data?.fecha_informe_trabajo_social ?? this.form.fecha_informe_trabajo_social,
+          fecha_derivacion_area_legal: data.data?.fecha_derivacion_area_legal ?? this.form.fecha_derivacion_area_legal
         }
         this.backup = { ...this.form }
         this.editing = false
