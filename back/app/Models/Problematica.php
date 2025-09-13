@@ -12,12 +12,12 @@ class Problematica extends Model implements AuditableContract
     use SoftDeletes, AuditableTrait;
 
     protected $fillable = [
-        'caso_id','user_id','fecha','titulo','detalle','acciones_inmediatas','observaciones'
+        'caseable_id','caseable_type',
+        'user_id','fecha','titulo','detalle','acciones_inmediatas','observaciones'
     ];
 
     protected $hidden = ['created_at','updated_at','deleted_at'];
 
-    // Relaciones
-    public function caso(){ return $this->belongsTo(Caso::class); }
-    public function user(){ return $this->belongsTo(User::class); }
+    public function caseable() { return $this->morphTo(); }
+    public function user()     { return $this->belongsTo(User::class); }
 }

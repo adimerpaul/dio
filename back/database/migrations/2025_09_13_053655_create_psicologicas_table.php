@@ -6,24 +6,24 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
     public function up(): void {
-        Schema::create('problematicas', function (Blueprint $table) {
+        Schema::create('psicologicas', function (Blueprint $table) {
             $table->id();
 
-            // Polimórfico al expediente (slim, dna, slam, ...)
-            $table->morphs('caseable'); // caseable_type, caseable_id (index)
-
+            $table->morphs('caseable'); // polimórfico
             $table->foreignId('user_id')->constrained('users');
+
             $table->date('fecha')->nullable();
-            $table->string('titulo');
-            $table->text('detalle')->nullable();
-            $table->text('acciones_inmediatas')->nullable();
-            $table->text('observaciones')->nullable();
+            $table->string('titulo')->nullable();
+            $table->unsignedInteger('duracion_min')->nullable();
+            $table->string('lugar')->nullable();
+            $table->string('tipo', 30)->nullable(); // individual/grupal/etc.
+            $table->longText('contenido_html');
 
             $table->timestamps();
             $table->softDeletes();
         });
     }
     public function down(): void {
-        Schema::dropIfExists('problematicas');
+        Schema::dropIfExists('psicologicas');
     }
 };

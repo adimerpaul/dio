@@ -5,12 +5,13 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    public function up(): void
-    {
+    public function up(): void {
         Schema::create('fotografias', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('caso_id');
-            $table->unsignedBigInteger('user_id'); // quién subió la foto
+
+            $table->morphs('caseable'); // polimórfico
+            $table->foreignId('user_id')->constrained('users');
+
             $table->string('titulo')->nullable();
             $table->string('descripcion')->nullable();
 
@@ -23,8 +24,8 @@ return new class extends Migration {
 
             // rutas
             $table->string('disk')->default('public');
-            $table->string('path');       // almacenamiento
-            $table->string('url');        // acceso web
+            $table->string('path');
+            $table->string('url');
             $table->string('thumb_path')->nullable();
             $table->string('thumb_url')->nullable();
 
@@ -34,14 +35,9 @@ return new class extends Migration {
 
             $table->timestamps();
             $table->softDeletes();
-
-            $table->foreign('caso_id')->references('id')->on('casos')->cascadeOnDelete();
-            $table->foreign('user_id')->references('id')->on('users')->restrictOnDelete();
         });
     }
-
-    public function down(): void
-    {
+    public function down(): void {
         Schema::dropIfExists('fotografias');
     }
 };

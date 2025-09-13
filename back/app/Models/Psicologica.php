@@ -8,16 +8,20 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use OwenIt\Auditing\Auditable as AuditableTrait;
 
-class Fotografia extends Model implements AuditableContract
+class Psicologica extends Model implements AuditableContract
 {
     use HasFactory, SoftDeletes, AuditableTrait;
 
+    protected $table = 'psicologicas';
+
     protected $fillable = [
-        'caseable_id','caseable_type','user_id',
-        'titulo','descripcion',
-        'original_name','stored_name','extension','mime','size_bytes',
-        'disk','path','url','thumb_path','thumb_url',
-        'width','height'
+        'caseable_id','caseable_type',
+        'user_id','fecha','titulo','duracion_min','lugar','tipo','contenido_html'
+    ];
+
+    protected $casts = [
+        'fecha' => 'date:Y-m-d',
+        'duracion_min' => 'integer',
     ];
 
     public function caseable() { return $this->morphTo(); }

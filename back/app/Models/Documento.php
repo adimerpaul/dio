@@ -13,15 +13,16 @@ class Documento extends Model implements AuditableContract
     use HasFactory, SoftDeletes, AuditableTrait;
 
     protected $fillable = [
-        'caso_id','user_id','titulo','categoria','descripcion',
+        'caseable_id','caseable_type','user_id',
+        'titulo','categoria','descripcion',
         'original_name','stored_name','extension','mime','size_bytes',
         'disk','path','url'
     ];
 
     protected $appends = ['size_human'];
 
-    public function caso() { return $this->belongsTo(Caso::class); }
-    public function user() { return $this->belongsTo(\App\Models\User::class); }
+    public function caseable() { return $this->morphTo(); }
+    public function user()     { return $this->belongsTo(User::class); }
 
     public function getSizeHumanAttribute(): string
     {

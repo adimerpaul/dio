@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
         $admin = User::firstOrCreate(
             ['username' => 'admin'],
             [
-                'name' => 'Administrador DIO',
+                'name' => 'Ing Evelin Ramirez Cube',
                 'email' => 'admin@dio.gob.bo',
                 'password' => Hash::make('admin123Admin'),
                 'avatar' => 'default.png',
@@ -31,7 +31,7 @@ class DatabaseSeeder extends Seeder
         $asistente = User::firstOrCreate(
             ['username' => 'asistente'],
             [
-                'name' => 'Asistente DIO',
+                'name' => 'Lic. Juan Riveros',
                 'email' => 'asistente@dio.gob.bo',
                 'password' => Hash::make('123456'),
                 'avatar' => 'default.png',
@@ -46,7 +46,8 @@ class DatabaseSeeder extends Seeder
         $psicologo = User::firstOrCreate(
             ['username' => 'psicologo'],
             [
-                'name' => 'Psicologo DIO',
+                //                un nombre falslo
+                'name' => 'Lic. Ana  Calle',
                 'email' => 'psocologo@dio.gob.bo',
                 'password' => Hash::make('123456'),
                 'avatar' => 'default.png',
@@ -60,7 +61,7 @@ class DatabaseSeeder extends Seeder
         $abogado = User::firstOrCreate(
             ['username' => 'abogado'],
             [
-                'name' => 'Abogado DIO',
+                'name' => 'Abo. Anita Calle',
                 'email' => 'abogado@dio.gob.bo',
                 'password' => Hash::make('123456'),
                 'avatar' => 'default.png',
@@ -74,7 +75,7 @@ class DatabaseSeeder extends Seeder
         $social = User::firstOrCreate(
             ['username' => 'social'],
             [
-                'name' => 'Trabajador Social DIO',
+                'name' => 'Lic. Tania Calizaya',
                 'email' => 'social@dio.go.bo',
                 'password' => Hash::make('123456'),
                 'avatar' => 'default.png',
