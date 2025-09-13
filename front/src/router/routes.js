@@ -5,15 +5,16 @@ const routes = [
     children: [
       { path: '', component: () => import('pages/IndexPage.vue'), meta: { requiresAuth: true, perm: 'Dashboard' } },
       { path: '/usuarios', component: () => import('pages/usuarios/Usuarios.vue'), meta: { requiresAuth: true, perm: 'Usuarios' } },
-      { path: '/casos', component: () => import('pages/casos/Casos.vue'), meta: { requiresAuth: true, perm: 'Usuarios' } },
-      { path: '/casos/nuevofisica', component: () => import('pages/casos/CasoNuevoFisico.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
-      { path: '/casos/nuevointegral', component: () => import('pages/casos/CasoNuevoIntegral.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
-      { path: '/casos/:id', component: () => import('pages/casos/CasoShow.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
+
+      // ======== SLIMS (antes /casos)
+      { path: '/slims', component: () => import('pages/slims/Slims.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
+      { path: '/slims/nuevofisica', component: () => import('pages/slims/SlimNuevoFisico.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
+      { path: '/slims/nuevointegral', component: () => import('pages/slims/SlimNuevoIntegral.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
+      { path: '/slims/:id', component: () => import('pages/slims/SlimShow.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
+
       { path: '/lineas-tiempo', component: () => import('pages/lineastiempo/LineasTiempo.vue'), meta: { requiresAuth: true, perm: 'Lineas de Tiempo' } },
       { path: '/kpis', component: () => import('pages/kpis/Kpis.vue'), meta: { requiresAuth: true, perm: 'Kpis' } },
       { path: '/auditorias', component: () => import('pages/auditorias/Auditorias.vue'), meta: { requiresAuth: true, perm: 'Auditorias' } },
-
-    //   agenda
       { path: '/agenda', component: () => import('pages/agenda/Agenda.vue'), meta: { requiresAuth: true, perm: 'Agenda' } },
     ]
   },

@@ -12,14 +12,12 @@
         <div class="row items-center q-gutter-sm">
           <div class="text-subtitle1 text-weight-medium" style="line-height:.95">
             Panel DIO · GAMO <br>
-<!--            q-chip area zona-->
             <q-chip v-if="$store.user?.area" color="grey-3" text-color="black" size="10px" dense>
               {{ $store.user?.area }}
             </q-chip>
             <q-chip v-if="$store.user?.zona" color="grey-3" text-color="black" size="10px" dense>
               {{ $store.user?.zona }}
             </q-chip>
-
           </div>
         </div>
 
@@ -47,6 +45,7 @@
               Tienes {{ pendingCount }} pendiente(s)
             </q-tooltip>
           </q-btn>
+
           <q-btn-dropdown flat unelevated no-caps dropdown-icon="expand_more">
             <template #label>
               <div class="row items-center no-wrap q-gutter-sm">
@@ -112,12 +111,12 @@
           Módulos del Sistema
         </q-item-label>
 
-        <!-- Menú por permisos (en español) -->
+        <!-- Menú por permisos -->
         <template v-for="link in filteredLinks" :key="link.title">
           <q-item
+            v-if="!link.childrens || !link.childrens.length"
             clickable :to="link.link" exact dense
             class="menu-item" active-class="menu-active" v-close-popup
-            v-if="!link.childrens || !link.childrens.length"
           >
             <q-item-section avatar>
               <q-icon :name="link.icon" class="text-white"/>
@@ -126,6 +125,7 @@
               <q-item-label class="text-white">{{ link.title }}</q-item-label>
             </q-item-section>
           </q-item>
+
           <q-expansion-item
             v-else
             :label="link.title" :icon="link.icon"
@@ -137,14 +137,14 @@
                 v-for="sublink in link.childrens" :key="sublink.title"
                 clickable :to="sublink.link" exact dense
                 active-class="menu-active" v-close-popup
-                :header-inset-level="2"
+                :inset-level="0.3"
               >
-                <q-item-section avatar>
-                  <q-icon :name="sublink.icon" class="text-white"/>
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label class="text-white">{{ sublink.title }}</q-item-label>
-                </q-item-section>
+              <q-item-section avatar>
+                <q-icon :name="sublink.icon" class="text-white"/>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label class="text-white">{{ sublink.title }}</q-item-label>
+              </q-item-section>
               </q-item>
             </q-list>
           </q-expansion-item>
@@ -187,31 +187,36 @@ function hasAnyPerm (perms = []) {
   return (perms || []).some(p => hasPerm(p))
 }
 
-/** Mapea cada módulo al permiso EXACTO del seeder (en español) */
+/** Menú actualizado a SLIMs */
 const linksList = [
-  { title: 'Dashboard',        icon: 'analytics',       link: '/',               canPerm: 'Dashboard' },
-  { title: 'Usuarios',         icon: 'people',          link: '/usuarios',       canPerm: 'Usuarios' },
-  { title: 'Nuevo Caso',      icon: 'add_circle',     link: '/casos/nuevo',   canPerm: 'Casos',
+  { title: 'Dashboard',        icon: 'analytics',       link: '/',                  canPerm: 'Dashboard' },
+  { title: 'Usuarios',         icon: 'people',          link: '/usuarios',          canPerm: 'Usuarios' },
+
+  // ======== SLIMs
+  { title: 'Nuevo SLIM', icon: 'add_circle', link: '/slims/nuevofisica', canPerm: 'Casos',
     childrens: [
-      { title: 'Denuncia Fisica', icon: '',      link: '/casos/nuevofisica', canPerm: 'Casos' },
-      { title: 'Apoyo Integral', icon: '', link: '/casos/nuevointegral', canPerm: 'Casos' },
+      { title: 'Denuncia Física', icon: 'person_add',   link: '/slims/nuevofisica',   canPerm: 'Casos' },
+      { title: 'Apoyo Integral',  icon: 'diversity_1',  link: '/slims/nuevointegral', canPerm: 'Casos' },
     ]
   },
-  { title: 'Casos',            icon: 'folder_shared',   link: '/casos',          canPerm: 'Casos' },
-  // { title: 'Casos',            icon: 'folder_shared',   link: '/casos',          canPerm: 'Casos' }, agenda
-  { title: 'Agenda',           icon: 'event',          link: '/agenda',         canPerm: 'Agenda' },
-  { title: 'Líneas de Tiempo', icon: 'timeline',        link: '/lineas-tiempo',  canPerm: 'Lineas de Tiempo' },
-  { title: 'KPIs',             icon: 'query_stats',     link: '/kpis',           canPerm: 'KPIs' },
-  { title: 'Auditorías',       icon: 'shield',          link: '/auditorias',     canPerm: 'Auditorias' },
+  { title: 'SLIMs',            icon: 'folder_shared',   link: '/slims',             canPerm: 'Casos' },
+
+  // Otros módulos
+  { title: 'Agenda',           icon: 'event',           link: '/agenda',            canPerm: 'Agenda' },
+  { title: 'Líneas de Tiempo', icon: 'timeline',        link: '/lineas-tiempo',     canPerm: 'Lineas de Tiempo' },
+  { title: 'KPIs',             icon: 'query_stats',     link: '/kpis',              canPerm: 'Kpis' },
+  { title: 'Auditorías',       icon: 'shield',          link: '/auditorias',        canPerm: 'Auditorias' },
 ]
 
 const filteredLinks = computed(() =>
   linksList.filter(l => Array.isArray(l.canPerm) ? hasAnyPerm(l.canPerm) : hasPerm(l.canPerm))
 )
+
+/** Ahora consulta pendientes de SLIMs */
 async function fetchPendientesCount () {
   pendingLoading.value = true
   try {
-    const { data } = await proxy.$axios.get('/casos/pendientes-resumen')
+    const { data } = await proxy.$axios.get('/slims/pendientes-resumen')
     pendingCount.value = Number(data?.pendientes || 0)
   } catch (e) {
     // opcional: proxy.$q.notify({ type:'warning', message:'No se pudo cargar pendientes' })
@@ -221,18 +226,12 @@ async function fetchPendientesCount () {
 }
 
 function irPendientes () {
-  // abre Casos mostrando SOLO faltantes
-  proxy.$router.push({ path: '/casos', query: { only_pendientes: 1 } })
+  // abre SLIMs mostrando SOLO faltantes (si usas query en la tabla)
+  proxy.$router.push({ path: '/slims', query: { only_pendientes: 1 } })
 }
 
-onMounted(() => {
-  fetchPendientesCount()
-})
-
-// refresco simple cuando navegas (opcional)
-watch(() => proxy.$route.fullPath, () => {
-  fetchPendientesCount()
-})
+onMounted(() => { fetchPendientesCount() })
+watch(() => proxy.$route.fullPath, () => { fetchPendientesCount() })
 
 function toggleLeftDrawer () { leftDrawerOpen.value = !leftDrawerOpen.value }
 
