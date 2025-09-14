@@ -69,8 +69,8 @@
         <q-tab name="legal"        label="5 Área Legal"            icon="gavel"           no-caps v-if="role === 'Administrador' || role === 'Abogado'"/>
 <!--        <q-tab name="social"       label="6 Área Social"           icon="people"          no-caps v-if="role === 'Administrador' || role === 'Social'"/>-->
 <!--        <q-tab name="apoyo"        label="7 Apoyo Integral"        icon="diversity_1"     no-caps v-if="role === 'Administrador' || role === 'Social'"/>-->
-        <q-tab name="docs"         label="8 Documentos General"    icon="folder"          no-caps/>
-        <q-tab name="fotos"        label="9 Fotografías"           icon="photo_library"   no-caps/>
+        <q-tab name="docs"         label="6 Documentos General"    icon="folder"          no-caps/>
+        <q-tab name="fotos"        label="7 Fotografías"           icon="photo_library"   no-caps/>
       </q-tabs>
     </q-card>
 

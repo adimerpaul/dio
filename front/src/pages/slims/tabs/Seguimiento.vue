@@ -6,7 +6,7 @@
         <div class="col-12 col-md-8">
           <div class="text-subtitle1 text-weight-bold">Seguimiento del Caso</div>
           <div class="text-caption text-grey-7">
-            SLIM <b>#{{ header.caso_id }}</b> · N° <b>{{ header.caso_numero || '—' }}</b>
+            SLIM <b>#{{ header.slim_id || header.caso_id }}</b> · N° <b>{{ header.caso_numero || '—' }}</b>
           </div>
         </div>
         <div class="col-12 col-md-4 flex items-center justify-end">
@@ -125,10 +125,10 @@
 
       <template #body-cell-acciones="props">
         <q-td :props="props" class="q-gutter-xs">
-          <q-btn v-if="props.row.links?.pdf" dense flat icon="picture_as_pdf" @click="open(props.row.links.pdf)" title="Ver PDF"/>
-          <q-btn v-if="props.row.links?.view" dense flat icon="visibility" @click="open(props.row.links.view)" title="Ver"/>
-          <q-btn v-if="props.row.links?.download" dense flat icon="download" @click="open(props.row.links.download)" title="Descargar"/>
-          <q-btn v-if="props.row.links?.open" dense flat icon="open_in_new" @click="open(props.row.links.open)" title="Abrir"/>
+          <q-btn v-if="props.row.links?.pdf"      dense flat icon="picture_as_pdf" @click="open(props.row.links.pdf)"      title="Ver PDF"/>
+          <q-btn v-if="props.row.links?.view"     dense flat icon="visibility"      @click="open(props.row.links.view)"     title="Ver"/>
+          <q-btn v-if="props.row.links?.download" dense flat icon="download"        @click="open(props.row.links.download)" title="Descargar"/>
+          <q-btn v-if="props.row.links?.open"     dense flat icon="open_in_new"     @click="open(props.row.links.open)"     title="Abrir"/>
         </q-td>
       </template>
     </q-table>
@@ -154,10 +154,10 @@ export default {
       tipos: ['Todos', 'Informe', 'Sesión', 'Documento', 'Fotografía'],
       modulos: ['Todos', 'General', 'Psicológico', 'Legal', 'Social', 'Documentos', 'Multimedia'],
       columns: [
-        { name: 'actividad', label: 'Actividad', field: 'actividad', align: 'left', sortable: false },
-        { name: 'fecha',     label: 'Fecha / Usuario', field: 'fecha', align: 'left', sortable: true },
-        { name: 'modulo',    label: 'Módulo', field: 'modulo', align: 'left', sortable: true },
-        { name: 'acciones',  label: '', field: 'acciones', align: 'right', sortable: false, style: 'width: 140px' }
+        { name: 'actividad', label: 'Actividad',        field: 'actividad', align: 'left',  sortable: false },
+        { name: 'fecha',     label: 'Fecha / Usuario',  field: 'fecha',     align: 'left',  sortable: true  },
+        { name: 'modulo',    label: 'Módulo',           field: 'modulo',    align: 'left',  sortable: true  },
+        { name: 'acciones',  label: '',                 field: 'acciones',  align: 'right', sortable: false, style: 'width: 140px' }
       ]
     }
   },
@@ -194,7 +194,6 @@ export default {
     async fetch () {
       this.loading = true
       try {
-        // ⬇⬇⬇ MIGRADO A /slims
         const { data } = await this.$axios.get(`/slims/${this.caseId}/seguimiento`)
         this.header = data.header || {}
         this.rows   = data.items  || []
@@ -204,8 +203,19 @@ export default {
         this.loading = false
       }
     },
+
+    // Normaliza rutas relativas (/api/... o /storage/...) a absolutas del backend
+    toPublicUrl (url) {
+      if (!url) return ''
+      if (/^https?:\/\//i.test(url)) return url
+      const baseApi = this.$axios?.defaults?.baseURL || ''
+      const basePublic = baseApi.replace(/\/api\/?$/, '')
+      return `${basePublic}${url}`
+    },
+
     open (url) {
-      if (url) window.open(url, '_blank')
+      const u = this.toPublicUrl(url)
+      if (u) window.open(u, '_blank')
     }
   }
 }
