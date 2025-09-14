@@ -76,7 +76,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get   ('/slims/documentos/{documento}',        [SlimDocumentoController::class, 'show']);
     Route::put   ('/slims/documentos/{documento}',        [SlimDocumentoController::class, 'update']);
     Route::delete('/slims/documentos/{documento}',        [SlimDocumentoController::class, 'destroy']);
-    Route::get   ('/slims/documentos/{documento}/download',[SlimDocumentoController::class, 'download']);
 
     Route::get   ('/slims/{slim}/fotografias',     [SlimFotografiaController::class, 'index']);
     Route::post  ('/slims/{slim}/fotografias',     [SlimFotografiaController::class, 'store']);
@@ -91,3 +90,4 @@ Route::get('/slims/{slim}/pdf/hoja-ruta', [SlimController::class, 'pdfHojaRuta']
 
 Route::get   ('/slims/sesiones-psicologicas/{psicologica}/pdf',  [SlimPsicologicaController::class, 'pdf']);
 Route::get   ('/slims/informes-legales/{informe}/pdf', [SlimInformeLegalController::class, 'pdf']);
+Route::get   ('/slims/documentos/{documento}/download',[SlimDocumentoController::class, 'download']);

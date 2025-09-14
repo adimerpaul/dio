@@ -297,7 +297,7 @@ class SlimController extends Controller
                     'descripcion'=> strip_tags((string) $i->contenido_html),
                     'usuario'    => optional($i->user)->name,
                     'origen'     => 'SLIM',
-                    'links'      => ['pdf' => url("/api/informes/{$i->id}/pdf")],
+                    'links'      => ['pdf' => url("/api/slims/informes-legales/{$i->id}/pdf")],
                     'icon'       => 'description',
                 ];
             });
@@ -316,7 +316,7 @@ class SlimController extends Controller
                     'descripcion'=> strip_tags((string) $s->contenido_html),
                     'usuario'    => optional($s->user)->name,
                     'origen'     => 'SLIM',
-                    'links'      => ['pdf' => url("/api/sesiones-psicologicas/{$s->id}/pdf")],
+                    'links'      => ['pdf' => url("/api/slims/sesiones-psicologicas/{$s->id}/pdf")],
                     'icon'       => 'psychology',
                 ];
             });
@@ -336,8 +336,8 @@ class SlimController extends Controller
                     'usuario'    => optional($d->user)->name,
                     'origen'     => 'SLIM',
                     'links'      => [
-                        'view'     => url("/api/documentos/{$d->id}/view"),
-                        'download' => url("/api/documentos/{$d->id}/download"),
+                        'view'     => url("/api/slims/documentos/{$d->id}/view"),
+                        'download' => url("/api/slims/documentos/{$d->id}/download"),
                     ],
                     'icon'       => 'attach_file',
                 ];
