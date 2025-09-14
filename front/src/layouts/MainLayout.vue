@@ -178,25 +178,32 @@ const { proxy } = getCurrentInstance()
 /* ---------- Helpers de normalización ---------- */
 const norm = (s) => (s ?? '')
   .toString()
-  .normalize('NFD')                     // quita tildes
+  .normalize('NFD')
   .replace(/\p{Diacritic}/gu, '')
-  .replace(/[^\p{L}\p{N}]+/gu, ' ')     // quita puntos/guiones/etc.
+  .replace(/[^\p{L}\p{N}]+/gu, ' ')
   .trim()
   .toUpperCase()
-
-const inList = (val, list = []) => list.map(norm).includes(norm(val))
 
 /* ---------- UI header ---------- */
 const leftDrawerOpen = ref(false)
 const pendingCount   = ref(0)
 const pendingLoading = ref(false)
 
+/* ---------- Super Admin SOLO por ÁREA ---------- */
+function isSuperAdmin () {
+  const area = norm(proxy.$store.user?.area)
+  // Solo quienes tengan área = ADMIN ven todo
+  return area === 'ADMIN'
+}
+
 /* ---------- Permisos "clásicos" ---------- */
 function hasPerm (perm) {
   if (!perm) return true
+  if (isSuperAdmin()) return true
   return (proxy.$store.permissions || []).includes(perm)
 }
 function hasAnyPerm (perms = []) {
+  if (isSuperAdmin()) return true
   return (perms || []).some(p => hasPerm(p))
 }
 
@@ -205,7 +212,7 @@ const linksList = [
   { title: 'Dashboard',  icon: 'analytics', link: '/',         canPerm: 'Dashboard' },
   { title: 'Usuarios',   icon: 'people',    link: '/usuarios', canPerm: 'Usuarios' },
 
-  // SOLO para área SLIM
+  // SLIM
   { title: 'Nuevo SLIM', icon: 'add_circle', link: '/slims/nuevofisica',
     onlyAreas: ['SLIM'],
     childrens: [
@@ -214,21 +221,23 @@ const linksList = [
     ]
   },
   { title: 'SLIMs', icon: 'folder_shared', link: '/slims', onlyAreas: ['SLIM'] },
+
+  // DNA
   {
     title: 'Nuevo DNA',
     icon: 'gavel',
-    link: '/dnas/nuevo-penal',        // puede apuntar a un wrapper
+    link: '/dnas/nuevo-penal',
     onlyAreas: ['DNA'],
     childrens: [
-      { title: 'Procesos Penales',           icon: 'balance',      link: '/dnas/nuevo-penal',    onlyAreas: ['DNA'] },
-      { title: 'Procesos Familiares',        icon: 'family_restroom', link: '/dnas/nuevo-familiar', onlyAreas: ['DNA'] },
-      { title: 'Procesos Niñez y Adolescencia', icon: 'child_care', link: '/dnas/nuevo-nna',     onlyAreas: ['DNA'] },
-      { title: 'Apoyos Integrales',          icon: 'diversity_1',  link: '/dnas/nuevo-apoyo',    onlyAreas: ['DNA'] },
+      { title: 'Procesos Penales',              icon: 'balance',           link: '/dnas/nuevo-penal',     onlyAreas: ['DNA'] },
+      { title: 'Procesos Familiares',           icon: 'family_restroom',   link: '/dnas/nuevo-familiar',  onlyAreas: ['DNA'] },
+      { title: 'Procesos Niñez y Adolescencia', icon: 'child_care',        link: '/dnas/nuevo-nna',       onlyAreas: ['DNA'] },
+      { title: 'Apoyos Integrales',             icon: 'diversity_1',       link: '/dnas/nuevo-apoyo',     onlyAreas: ['DNA'] },
     ]
   },
   { title: 'DNA (Casos)', icon: 'folder_shared', link: '/dnas', onlyAreas: ['DNA'] },
 
-  // Resto por permisos (sin relación al área)
+  // Otros
   { title: 'Agenda',           icon: 'event',       link: '/agenda',        canPerm: 'Agenda' },
   { title: 'Líneas de Tiempo', icon: 'timeline',    link: '/lineas-tiempo', canPerm: 'Lineas de Tiempo' },
   { title: 'KPIs',             icon: 'query_stats', link: '/kpis',          canPerm: 'Kpis' },
@@ -236,27 +245,23 @@ const linksList = [
 ]
 
 const filteredLinks = computed(() => {
-  const role = norm(proxy.$store.user?.role)
-  const area = norm(proxy.$store.user?.area)
+  const area  = norm(proxy.$store.user?.area)
+  const admin = isSuperAdmin()
 
   const matchPerm = (item) =>
-    Array.isArray(item.canPerm) ? hasAnyPerm(item.canPerm) : hasPerm(item.canPerm)
+    admin ? true : (Array.isArray(item.canPerm) ? hasAnyPerm(item.canPerm) : hasPerm(item.canPerm))
 
   const matchArea = (item) => {
+    if (admin) return true                       // ADMIN (área) ve todo
     if (item.onlyArea || item.onlyAreas) {
-      // Si requiere área pero aún no cargó el área del usuario → no mostrar
-      if (!area) return false
+      if (!area) return false                    // si requiere área y no hay, ocultar
       if (item.onlyArea)  return norm(item.onlyArea) === area
       if (item.onlyAreas) return item.onlyAreas.some(a => norm(a) === area)
     }
     return true
   }
 
-  // Prioridad: área → permisos
-  const passes = (item) => {
-    if (item.onlyArea || item.onlyAreas) return matchArea(item)
-    return matchPerm(item)
-  }
+  const passes = (item) => matchArea(item) && matchPerm(item)
 
   return linksList
     .filter(passes)
@@ -273,7 +278,7 @@ async function fetchPendientesCount () {
     const { data } = await proxy.$axios.get('/slims/pendientes-resumen')
     pendingCount.value = Number(data?.pendientes || 0)
   } catch (e) {
-    // opcional: proxy.$q.notify({ type:'warning', message:'No se pudo cargar pendientes' })
+    // opcional
   } finally {
     pendingLoading.value = false
   }

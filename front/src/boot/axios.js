@@ -24,7 +24,7 @@ export default boot(({ app, router }) => {
 
   // $areas = ['DNA', 'SLIM', 'SLAM', 'UMAGUIS', 'PROCENI'];
   // $zonas = ['CENTRAL', 'NORTE', 'SUR', 'ESTE', 'OESTE'];
-  app.config.globalProperties.$areas = ['DNA', 'SLIM', 'SLAM', 'UMAGUIS', 'PROCENI']
+  app.config.globalProperties.$areas = ['DNA', 'SLIM', 'SLAM', 'UMAGUIS', 'PROCENI','ADMIN']
   app.config.globalProperties.$zonas = ['CENTRAL', 'NORTE', 'SUR', 'ESTE', 'OESTE']
 
 
