@@ -58,7 +58,7 @@
         <td>{{ it.numero || '—' }}</td>
         <td>{{ it.user?.name || it.user?.username || '—' }}</td>
       </tr>
-      <tr v-if="!rows.data.length && !loading">
+      <tr v-if="!rows.data?.length && !loading">
         <td colspan="6" class="text-center text-grey">Sin registros</td>
       </tr>
       </tbody>
@@ -68,7 +68,6 @@
       <q-pagination v-model="page" :max="rows.last_page || 1" boundary-numbers direction-links @update:model-value="fetchRows"/>
     </div>
 
-    <!-- Diálogo Crear/Ver/Editar -->
     <q-dialog v-model="dialog" persistent maximized>
       <q-card>
         <q-bar class="bg-white text-dark">
@@ -79,18 +78,36 @@
 
         <q-card-section class="q-gutter-md">
           <div class="row q-col-gutter-md">
-            <div class="col-12 col-md-3"><q-input v-model="form.fecha" type="date" dense outlined label="Fecha" :readonly="mode==='view'"/></div>
-            <div class="col-12 col-md-7"><q-input v-model="form.titulo" dense outlined label="Título *" :readonly="mode==='view'" :rules="[v=>!!v||'Requerido']"/></div>
-            <div class="col-12 col-md-2"><q-input v-model="form.numero" dense outlined label="Nro" :readonly="mode==='view'"/></div>
+            <div class="col-12 col-md-3">
+              <q-input v-model="form.fecha" type="date" dense outlined label="Fecha" :readonly="mode==='view'"/>
+            </div>
+            <div class="col-12 col-md-7">
+              <q-input v-model="form.titulo" dense outlined label="Título *" :readonly="mode==='view'" :rules="[v=>!!v||'Requerido']"/>
+            </div>
+            <div class="col-12 col-md-2">
+              <q-input v-model="form.numero" dense outlined label="Nro" :readonly="mode==='view'"/>
+            </div>
           </div>
 
           <div v-if="mode!=='view'">
-            <q-select v-model="plantilla" :options="plantillasOptions" label="Plantilla" outlined dense emit-value map-options @update:model-value="applyTemplate"/>
+            <q-select
+              v-model="plantilla"
+              :options="plantillasOptions"
+              label="Plantilla"
+              outlined dense emit-value map-options
+              @update:model-value="applyTemplate"
+            />
           </div>
 
           <div>
             <div class="text-caption text-grey-7 q-mb-xs">Contenido (HTML)</div>
-            <q-editor v-model="form.contenido_html" :readonly="mode==='view'" min-height="320px" placeholder="Escriba el informe..." :toolbar="toolbar"/>
+            <q-editor
+              v-model="form.contenido_html"
+              :readonly="mode==='view'"
+              min-height="320px"
+              placeholder="Escriba el informe..."
+              :toolbar="toolbar"
+            />
           </div>
         </q-card-section>
 
@@ -140,14 +157,24 @@ export default {
   methods:{
     today(){ const d=new Date(), z=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}` },
     async fetchRows(){
+      if(!this.caseId) return
       this.loading = true
       try{
-        const { data } = await this.$axios.get(`/dnas/${this.caseId}/informes-legales`, { params:{ q:this.search, page:this.page, per_page:this.perPage }})
+        const { data } = await this.$axios.get(`/dnas/${this.caseId}/informes-legales`, {
+          params:{ q:this.search, page:this.page, per_page:this.perPage }
+        })
         this.rows = data || { data:[], last_page:1 }
-      }catch(e){ this.$q.notify({type:'negative', message: e?.response?.data?.message || 'Error cargando informes'}) }
-      finally{ this.loading=false }
+      }catch(e){
+        this.$q.notify({type:'negative', message: e?.response?.data?.message || 'Error cargando informes'})
+      }finally{ this.loading=false }
     },
-    openCreate(){ if(!this.canEdit) return; this.mode='create'; this.form={ id:null, fecha:this.today(), titulo:'', numero:'', contenido_html:'' }; this.dialog=true; this.$nextTick(()=>this.applyTemplate(this.plantilla)) },
+    openCreate(){
+      if(!this.canEdit) return
+      this.mode='create'
+      this.form={ id:null, fecha:this.today(), titulo:'', numero:'', contenido_html:'' }
+      this.dialog=true
+      this.$nextTick(()=> this.applyTemplate(this.plantilla))
+    },
     openView(it){ this.mode='view'; this.form={...it}; this.dialog=true },
     openEdit(it){ if(!this.canEdit) return; this.mode='edit'; this.form={...it}; this.dialog=true },
     applyTemplate(val){
@@ -162,26 +189,59 @@ export default {
           <div style="font-size:12px; font-weight:bold;">${nro}</div>
           <hr/>
         </div>`
-      if (val==='memorial'){ this.form.contenido_html = header + `<p><b>Señor(a) Juez/Fiscal</b></p><p>De mi consideración:</p><p style="text-align:justify">Por medio del presente, ...</p><p>Oruro, ${fecha}</p>`; return }
-      if (val==='oficio'){ this.form.contenido_html = header + `<p><b>Ref.:</b> Solicitud de información</p><p>De nuestra consideración:</p><p style="text-align:justify">Solicitamos remitir la información ...</p><p>Oruro, ${fecha}</p>`; return }
-      if (val==='acta'){ this.form.contenido_html = header + `<p style="text-align:center"><b>ACTA DE COMPROMISO</b></p><p style="text-align:justify">En la ciudad de Oruro, a ${fecha}, las partes acuerdan ...</p>`; return }
-      if (val==='denuncia_mp'){ const c=this.caso||{}; const den=c.denunciante_nombre||''; this.form.contenido_html = header + `<p style="text-align:center"><b>SEÑOR(A) REPRESENTANTE DEL MINISTERIO PÚBLICO — ORURO</b></p><p><b>DENUNCIANTE:</b> ${den||'—'}</p><p style="text-align:justify">Que, en mérito a los antecedentes ...</p><p>Oruro, ${fecha}</p>`; return }
+      if (val==='memorial'){
+        this.form.contenido_html = header + `<p><b>Señor(a) Juez/Fiscal</b></p><p>De mi consideración:</p><p style="text-align:justify">Por medio del presente, ...</p><p>Oruro, ${fecha}</p>`
+        return
+      }
+      if (val==='oficio'){
+        this.form.contenido_html = header + `<p><b>Ref.:</b> Solicitud de información</p><p>De nuestra consideración:</p><p style="text-align:justify">Solicitamos remitir la información ...</p><p>Oruro, ${fecha}</p>`
+        return
+      }
+      if (val==='acta'){
+        this.form.contenido_html = header + `<p style="text-align:center"><b>ACTA DE COMPROMISO</b></p><p style="text-align:justify">En la ciudad de Oruro, a ${fecha}, las partes acuerdan ...</p>`
+        return
+      }
+      if (val==='denuncia_mp'){
+        const c=this.caso||{}; const den=c.denunciante_nombre||c.denunciante_nombre_completo||'—'
+        this.form.contenido_html = header + `<p style="text-align:center"><b>SEÑOR(A) REPRESENTANTE DEL MINISTERIO PÚBLICO — ORURO</b></p><p><b>DENUNCIANTE:</b> ${den}</p><p style="text-align:justify">Que, en mérito a los antecedentes ...</p><p>Oruro, ${fecha}</p>`
+        return
+      }
+      // default
       this.form.contenido_html = header + `<p><b>Informe Legal ${year}</b></p><p style="text-align:justify">En atención a los antecedentes, se emite el presente informe con el siguiente análisis jurídico:</p><ul><li>Ley N° 348 y reglamentación.</li><li>Constitución Política del Estado.</li><li>Normativa municipal vigente.</li></ul><p><b>Recomendaciones:</b> …</p><p>Oruro, ${fecha}</p>`
     },
     async save(){
       if(!this.canEdit) return
       if(!this.form.titulo) return this.$q.notify({type:'negative', message:'El título es obligatorio'})
-      if(this.form.id) await this.$axios.put(`/dnas/informes-legales/${this.form.id}`, this.form)
-      else await this.$axios.post(`/dnas/${this.caseId}/informes-legales`, this.form)
-      this.$q.notify({type:'positive', message:'Guardado'}); this.dialog=false; this.fetchRows()
+      if(!this.form.contenido_html) return this.$q.notify({type:'negative', message:'El contenido está vacío'})
+      this.saving = true
+      try{
+        if(this.form.id) await this.$axios.put(`/dnas/informes-legales/${this.form.id}`, this.form)
+        else await this.$axios.post(`/dnas/${this.caseId}/informes-legales`, this.form)
+        this.$q.notify({type:'positive', message:'Guardado'})
+        this.dialog=false
+        this.fetchRows()
+      }catch(e){
+        this.$q.notify({type:'negative', message: e?.response?.data?.message || 'No se pudo guardar'})
+      }finally{ this.saving=false }
     },
     removeIt(it){
       if(!this.canEdit) return
-      const go = async()=>{ try{ await this.$axios.delete(`/dnas/informes-legales/${it.id}`); this.$q.notify({type:'positive',message:'Eliminado'}); this.fetchRows() }catch(e){ this.$q.notify({type:'negative',message:e?.response?.data?.message || 'No se pudo eliminar'}) } }
+      const go = async()=> {
+        try{
+          await this.$axios.delete(`/dnas/informes-legales/${it.id}`)
+          this.$q.notify({type:'positive', message:'Eliminado'})
+          this.fetchRows()
+        }catch(e){
+          this.$q.notify({type:'negative', message: e?.response?.data?.message || 'No se pudo eliminar'})
+        }
+      }
       if(this.$alert?.dialog) this.$alert.dialog('¿Eliminar el informe?').onOk(go)
       else if(confirm('¿Eliminar el informe?')) go()
     },
-    printPdf(it){ const base=this.$axios?.defaults?.baseURL || ''; window.open(`${base}/dnas/informes-legales/${it.id}/pdf`, '_blank') }
+    printPdf(it){
+      const base = this.$axios?.defaults?.baseURL || ''
+      window.open(`${base}/dnas/informes-legales/${it.id}/pdf`, '_blank')
+    }
   }
 }
 </script>

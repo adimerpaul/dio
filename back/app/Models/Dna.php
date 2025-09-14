@@ -26,4 +26,10 @@ class Dna extends Model implements AuditableContract
 
     public function menores()    { return $this->hasMany(DnaMenor::class); }
     public function familiares() { return $this->hasMany(DnaFamiliar::class); }
+
+
+    public function psicologicas()    { return $this->morphMany(\App\Models\Psicologica::class, 'caseable'); }
+    public function informesLegales() { return $this->morphMany(\App\Models\InformeLegal::class,'caseable'); }
+    public function documentos()      { return $this->morphMany(\App\Models\Documento::class,    'caseable'); }
+    public function fotografias()     { return $this->morphMany(\App\Models\Fotografia::class,   'caseable'); }
 }

@@ -1,5 +1,6 @@
 <template>
   <q-card flat bordered class="q-pa-md">
+    <!-- Header -->
     <div class="row items-center q-mb-sm">
       <div class="col">
         <div class="text-subtitle1 text-weight-medium">Documentos</div>
@@ -16,7 +17,8 @@
 
     <q-separator/>
 
-    <q-markup-table dense flat bordered class="q-mt-sm">
+    <!-- Tabla -->
+    <q-markup-table dense flat bordered wrap-cells class="q-mt-sm">
       <thead>
       <tr class="bg-primary text-white">
         <th style="width:70px">ID</th>
@@ -33,28 +35,61 @@
         <td>#{{ it.id }}</td>
         <td>
           <q-btn-dropdown dense color="primary" size="sm" label="Opciones" no-caps>
-            <q-item clickable v-close-popup @click="viewDoc(it)"><q-item-section avatar><q-icon name="visibility"/></q-item-section><q-item-section>Ver</q-item-section></q-item>
-            <q-item clickable v-close-popup @click="downloadDoc(it)"><q-item-section avatar><q-icon name="download"/></q-item-section><q-item-section>Descargar</q-item-section></q-item>
+            <q-item clickable v-close-popup @click="viewDoc(it)">
+              <q-item-section avatar><q-icon name="visibility"/></q-item-section>
+              <q-item-section>Ver</q-item-section>
+            </q-item>
+            <q-item clickable v-close-popup @click="downloadDoc(it)">
+              <q-item-section avatar><q-icon name="download"/></q-item-section>
+              <q-item-section>Descargar</q-item-section>
+            </q-item>
             <q-separator/>
-            <q-item clickable v-close-popup @click="editMeta(it)"><q-item-section avatar><q-icon name="edit"/></q-item-section><q-item-section>Editar</q-item-section></q-item>
-            <q-item clickable v-close-popup @click="removeDoc(it)"><q-item-section avatar><q-icon name="delete" color="negative"/></q-item-section><q-item-section class="text-negative">Eliminar</q-item-section></q-item>
+            <q-item clickable v-close-popup @click="editMeta(it)">
+              <q-item-section avatar><q-icon name="edit"/></q-item-section>
+              <q-item-section>Editar</q-item-section>
+            </q-item>
+            <q-item clickable v-close-popup @click="removeDoc(it)">
+              <q-item-section avatar><q-icon name="delete" color="negative"/></q-item-section>
+              <q-item-section class="text-negative">Eliminar</q-item-section>
+            </q-item>
           </q-btn-dropdown>
         </td>
-        <td class="text-weight-medium">{{ it.titulo }}</td>
+        <td class="text-weight-medium">{{ it.titulo || it.original_name }}</td>
         <td>{{ it.categoria || '—' }}</td>
-        <td>{{ it.size_human }}</td>
-        <td>{{ it.mime || it.extension }}</td>
+        <td>{{ it.size_human || '—' }}</td>
+        <td>{{ it.mime || it.extension || '—' }}</td>
         <td>{{ it.user?.name || it.user?.username || '—' }}</td>
       </tr>
-      <tr v-if="!rows.data.length && !loading"><td colspan="7" class="text-center text-grey">Sin registros</td></tr>
+      <tr v-if="!rows.data.length && !loading">
+        <td colspan="7" class="text-center text-grey">Sin registros</td>
+      </tr>
       </tbody>
     </q-markup-table>
 
-    <div class="row justify-end q-mt-sm">
-      <q-pagination v-model="page" :max="rows.last_page || 1" boundary-numbers direction-links @update:model-value="fetchRows"/>
+    <!-- Paginación -->
+    <div class="row items-center q-mt-sm">
+      <div class="col">
+        <q-select
+          v-model="perPage"
+          :options="[5,10,15,20,50].map(n=>({label:n,value:n}))"
+          emit-value map-options dense outlined
+          style="width:110px"
+          @update:model-value="fetchRows"
+          label="Por pág."
+        />
+      </div>
+      <div class="col-auto">
+        <q-pagination
+          v-model="page"
+          :max="rows.last_page || 1"
+          boundary-numbers
+          direction-links
+          @update:model-value="fetchRows"
+        />
+      </div>
     </div>
 
-    <!-- Subir -->
+    <!-- Diálogo: Subir -->
     <q-dialog v-model="dlgUpload" persistent>
       <q-card style="max-width: 700px; width: 95vw;">
         <q-card-section class="row items-center q-pb-none">
@@ -65,8 +100,12 @@
           <q-input v-model="meta.titulo" label="Título" outlined dense/>
           <q-input v-model="meta.categoria" label="Categoría" outlined dense/>
           <q-input v-model="meta.descripcion" type="textarea" label="Descripción" outlined dense autogrow/>
-          <q-file v-model="file" outlined dense use-chips :clearable="true"
-                  :accept="accept" hint="Hasta 20MB. PDF, Word, Excel, imágenes, etc."/>
+          <q-file
+            v-model="file"
+            outlined dense use-chips :clearable="true"
+            :accept="accept"
+            hint="Hasta 50MB. PDF, Word, Excel, imágenes, etc."
+          />
         </q-card-section>
         <q-card-actions align="right">
           <q-btn flat label="Cancelar" v-close-popup/>
@@ -75,7 +114,7 @@
       </q-card>
     </q-dialog>
 
-    <!-- Editar metadatos -->
+    <!-- Diálogo: Editar metadatos -->
     <q-dialog v-model="dlgEdit">
       <q-card style="max-width: 600px; width: 95vw;">
         <q-card-section class="row items-center q-pb-none">
@@ -104,23 +143,40 @@ export default {
     loading:false, saving:false,
     search:'', page:1, perPage:10,
     rows:{ data:[], last_page:1 },
+    // Upload
     dlgUpload:false, file:null,
     meta:{ titulo:'', categoria:'', descripcion:'' },
     accept: '.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.odt,.ods,.txt,.zip,.jpg,.jpeg,.png,.webp',
-    dlgEdit:false, edit:{}, editingId:null
+    // Edit
+    dlgEdit:false, edit:{}, editingId:null,
   }),
-  watch:{ caseId(){ this.page=1; this.fetchRows() }, search(){ this.page=1; this.fetchRows() } },
+  watch:{
+    caseId(){ this.page=1; this.fetchRows() },
+    search(){ this.page=1; this.fetchRows() },
+  },
   created(){ this.fetchRows() },
   methods:{
+    baseURL(){ return this.$axios?.defaults?.baseURL || '' },
+
     async fetchRows(){
-      this.loading=true
+      if(!this.caseId) return
+      this.loading = true
       try{
-        const { data } = await this.$axios.get(`/dnas/${this.caseId}/documentos`, { params:{ q:this.search, page:this.page, per_page:this.perPage }})
+        const { data } = await this.$axios.get(`/dnas/${this.caseId}/documentos`, {
+          params:{ q:this.search, page:this.page, per_page:this.perPage }
+        })
         this.rows = data || { data:[], last_page:1 }
-      }catch(e){ this.$q.notify({ type:'negative', message: e?.response?.data?.message || 'Error cargando documentos' }) }
-      finally{ this.loading=false }
+      }catch(e){
+        this.$q.notify({ type:'negative', message: e?.response?.data?.message || 'Error cargando documentos' })
+      }finally{ this.loading=false }
     },
-    openUpload(){ this.file=null; this.meta={titulo:'',categoria:'',descripcion:''}; this.dlgUpload=true },
+
+    openUpload(){
+      this.file=null
+      this.meta={ titulo:'', categoria:'', descripcion:'' }
+      this.dlgUpload=true
+    },
+
     async upload(){
       if(!this.file) return this.$q.notify({type:'negative', message:'Seleccione un archivo'})
       this.saving=true
@@ -128,26 +184,59 @@ export default {
         const fd = new FormData()
         fd.append('file', this.file)
         Object.entries(this.meta).forEach(([k,v])=> v && fd.append(k,v))
-        await this.$axios.post(`/dnas/${this.caseId}/documentos`, fd, { headers:{ 'Content-Type':'multipart/form-data' }})
+        await this.$axios.post(`/dnas/${this.caseId}/documentos`, fd, {
+          headers:{ 'Content-Type':'multipart/form-data' }
+        })
         this.$q.notify({ type:'positive', message:'Archivo subido' })
-        this.dlgUpload=false; this.fetchRows()
-      }catch(e){ this.$q.notify({ type:'negative', message: e?.response?.data?.message || 'No se pudo subir' }) }
-      finally{ this.saving=false }
+        this.dlgUpload=false
+        this.fetchRows()
+      }catch(e){
+        this.$q.notify({ type:'negative', message: e?.response?.data?.message || 'No se pudo subir' })
+      }finally{ this.saving=false }
     },
-    viewDoc(it){ const base=this.$axios?.defaults?.baseURL || ''; window.open(`${base}/dnas/documentos/${it.id}/view`, '_blank') },
-    downloadDoc(it){ const base=this.$axios?.defaults?.baseURL || ''; window.open(`${base}/dnas/documentos/${it.id}/download`, '_blank') },
-    editMeta(it){ this.editingId=it.id; this.edit={ titulo:it.titulo, categoria:it.categoria, descripcion:it.descripcion }; this.dlgEdit=true },
+
+    viewDoc(it){
+      window.open(`${this.baseURL()}/dnas/documentos/${it.id}/view`, '_blank')
+    },
+    downloadDoc(it){
+      window.open(`${this.baseURL()}/dnas/documentos/${it.id}/download`, '_blank')
+    },
+
+    editMeta(it){
+      this.editingId = it.id
+      this.edit = {
+        titulo: it.titulo || '',
+        categoria: it.categoria || '',
+        descripcion: it.descripcion || ''
+      }
+      this.dlgEdit = true
+    },
+
     async saveMeta(){
       this.saving=true
-      try{ await this.$axios.put(`/dnas/documentos/${this.editingId}`, this.edit); this.$q.notify({type:'positive', message:'Actualizado'}); this.dlgEdit=false; this.fetchRows() }
-      catch(e){ this.$q.notify({type:'negative', message:e?.response?.data?.message || 'No se pudo actualizar'}) }
-      finally{ this.saving=false }
+      try{
+        await this.$axios.put(`/dnas/documentos/${this.editingId}`, this.edit)
+        this.$q.notify({ type:'positive', message:'Actualizado' })
+        this.dlgEdit=false
+        this.fetchRows()
+      }catch(e){
+        this.$q.notify({ type:'negative', message: e?.response?.data?.message || 'No se pudo actualizar' })
+      }finally{ this.saving=false }
     },
+
     removeDoc(it){
-      const go = async()=>{ try{ await this.$axios.delete(`/dnas/documentos/${it.id}`); this.$q.notify({type:'positive', message:'Eliminado'}); this.fetchRows() }catch(e){ this.$q.notify({type:'negative', message:e?.response?.data?.message || 'No se pudo eliminar'}) } }
+      const go = async ()=> {
+        try{
+          await this.$axios.delete(`/dnas/documentos/${it.id}`)
+          this.$q.notify({ type:'positive', message:'Eliminado' })
+          this.fetchRows()
+        }catch(e){
+          this.$q.notify({ type:'negative', message: e?.response?.data?.message || 'No se pudo eliminar' })
+        }
+      }
       if(this.$alert?.dialog) this.$alert.dialog('¿Eliminar el documento?').onOk(go)
       else if(confirm('¿Eliminar el documento?')) go()
-    }
+    },
   }
 }
 </script>

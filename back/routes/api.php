@@ -87,6 +87,39 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get   ('/dnas/{dna}',  [DnaController::class, 'show']);
     Route::put   ('/dnas/{dna}',  [DnaController::class, 'update']);
     Route::delete('/dnas/{dna}',  [DnaController::class, 'destroy']);
+
+// ====== DNA: Seguimiento ======
+    Route::get('/dnas/{dna}/seguimiento', [DnaController::class, 'seguimiento']);
+
+// ====== DNA: Sesiones Psicológicas ======
+    Route::get   ('/dnas/{dna}/sesiones-psicologicas',          [DnaController::class, 'psicoIndex']);
+    Route::post  ('/dnas/{dna}/sesiones-psicologicas',          [DnaController::class, 'psicoStore']);
+    Route::get   ('/dnas/sesiones-psicologicas/{psicologica}',  [DnaController::class, 'psicoShow']);
+    Route::put   ('/dnas/sesiones-psicologicas/{psicologica}',  [DnaController::class, 'psicoUpdate']);
+    Route::delete('/dnas/sesiones-psicologicas/{psicologica}',  [DnaController::class, 'psicoDestroy']);
+
+// ====== DNA: Informes Legales ======
+    Route::get   ('/dnas/{dna}/informes-legales',       [DnaController::class, 'legalIndex']);
+    Route::post  ('/dnas/{dna}/informes-legales',       [DnaController::class, 'legalStore']);
+    Route::get   ('/dnas/informes-legales/{informe}',   [DnaController::class, 'legalShow']);
+    Route::put   ('/dnas/informes-legales/{informe}',   [DnaController::class, 'legalUpdate']);
+    Route::delete('/dnas/informes-legales/{informe}',   [DnaController::class, 'legalDestroy']);
+
+// ====== DNA: Documentos ======
+    Route::get   ('/dnas/{dna}/documentos',           [DnaController::class, 'docIndex']);
+    Route::post  ('/dnas/{dna}/documentos',           [DnaController::class, 'docStore']);
+    Route::get   ('/dnas/documentos/{documento}',     [DnaController::class, 'docShow']);
+    Route::put   ('/dnas/documentos/{documento}',     [DnaController::class, 'docUpdate']);
+    Route::delete('/dnas/documentos/{documento}',     [DnaController::class, 'docDestroy']);
+
+// ====== DNA: Fotografías ======
+    Route::get   ('/dnas/{dna}/fotografias',          [DnaController::class, 'fotoIndex']);
+    Route::post  ('/dnas/{dna}/fotografias',          [DnaController::class, 'fotoStore']);
+    Route::delete('/dnas/fotografias/{fotografia}',   [DnaController::class, 'fotoDestroy']);
+
+    Route::get   ('/dnas/{dna}/fotografias',  [DnaController::class, 'fotoIndex']);
+    Route::post  ('/dnas/{dna}/fotografias',  [DnaController::class, 'fotoStore']);
+    Route::delete('/dnas/fotografias/{fotografia}', [DnaController::class, 'fotoDestroy']);
 });
 
 Route::get   ('/slims/documentos/{documento}/view',   [SlimDocumentoController::class, 'view']);
@@ -98,3 +131,9 @@ Route::get('/slims/{slim}/pdf/hoja-ruta', [SlimController::class, 'pdfHojaRuta']
 Route::get   ('/slims/sesiones-psicologicas/{psicologica}/pdf',  [SlimPsicologicaController::class, 'pdf']);
 Route::get   ('/slims/informes-legales/{informe}/pdf', [SlimInformeLegalController::class, 'pdf']);
 Route::get   ('/slims/documentos/{documento}/download',[SlimDocumentoController::class, 'download']);
+
+Route::get('/dnas/sesiones-psicologicas/{psicologica}/pdf', [DnaController::class, 'psicoPdf']);
+Route::get('/dnas/informes-legales/{informe}/pdf', [\App\Http\Controllers\DnaController::class, 'legalPdf']);
+Route::get('/dnas/documentos/{documento}/view',     [\App\Http\Controllers\DnaController::class, 'docView']);
+Route::get('/dnas/documentos/{documento}/download', [\App\Http\Controllers\DnaController::class, 'docDownload']);
+
