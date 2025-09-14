@@ -111,7 +111,7 @@
           Módulos del Sistema
         </q-item-label>
 
-        <!-- Menú por permisos -->
+        <!-- Menú filtrado -->
         <template v-for="link in filteredLinks" :key="link.title">
           <q-item
             v-if="!link.childrens || !link.childrens.length"
@@ -139,12 +139,12 @@
                 active-class="menu-active" v-close-popup
                 :inset-level="0.3"
               >
-              <q-item-section avatar>
-                <q-icon :name="sublink.icon" class="text-white"/>
-              </q-item-section>
-              <q-item-section>
-                <q-item-label class="text-white">{{ sublink.title }}</q-item-label>
-              </q-item-section>
+                <q-item-section avatar>
+                  <q-icon :name="sublink.icon" class="text-white"/>
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label class="text-white">{{ sublink.title }}</q-item-label>
+                </q-item-section>
               </q-item>
             </q-list>
           </q-expansion-item>
@@ -175,10 +175,23 @@
 import { computed, getCurrentInstance, ref, onMounted, watch } from 'vue'
 const { proxy } = getCurrentInstance()
 
+/* ---------- Helpers de normalización ---------- */
+const norm = (s) => (s ?? '')
+  .toString()
+  .normalize('NFD')                     // quita tildes
+  .replace(/\p{Diacritic}/gu, '')
+  .replace(/[^\p{L}\p{N}]+/gu, ' ')     // quita puntos/guiones/etc.
+  .trim()
+  .toUpperCase()
+
+const inList = (val, list = []) => list.map(norm).includes(norm(val))
+
+/* ---------- UI header ---------- */
 const leftDrawerOpen = ref(false)
 const pendingCount   = ref(0)
 const pendingLoading = ref(false)
 
+/* ---------- Permisos "clásicos" ---------- */
 function hasPerm (perm) {
   if (!perm) return true
   return (proxy.$store.permissions || []).includes(perm)
@@ -187,32 +200,60 @@ function hasAnyPerm (perms = []) {
   return (perms || []).some(p => hasPerm(p))
 }
 
-/** Menú actualizado a SLIMs */
+/* ---------- Menú ---------- */
 const linksList = [
-  { title: 'Dashboard',        icon: 'analytics',       link: '/',                  canPerm: 'Dashboard' },
-  { title: 'Usuarios',         icon: 'people',          link: '/usuarios',          canPerm: 'Usuarios' },
+  { title: 'Dashboard',  icon: 'analytics', link: '/',         canPerm: 'Dashboard' },
+  { title: 'Usuarios',   icon: 'people',    link: '/usuarios', canPerm: 'Usuarios' },
 
-  // ======== SLIMs
-  { title: 'Nuevo SLIM', icon: 'add_circle', link: '/slims/nuevofisica', canPerm: 'Casos',
+  // SOLO para área SLIM
+  { title: 'Nuevo SLIM', icon: 'add_circle', link: '/slims/nuevofisica',
+    onlyAreas: ['SLIM'],
     childrens: [
-      { title: 'Denuncia Física', icon: 'person_add',   link: '/slims/nuevofisica',   canPerm: 'Casos' },
-      { title: 'Apoyo Integral',  icon: 'diversity_1',  link: '/slims/nuevointegral', canPerm: 'Casos' },
+      { title: 'Denuncia Física', icon: 'person_add',  link: '/slims/nuevofisica',   onlyAreas: ['SLIM'] },
+      { title: 'Apoyo Integral',  icon: 'diversity_1', link: '/slims/nuevointegral', onlyAreas: ['SLIM'] },
     ]
   },
-  { title: 'SLIMs',            icon: 'folder_shared',   link: '/slims',             canPerm: 'Casos' },
+  { title: 'SLIMs', icon: 'folder_shared', link: '/slims', onlyAreas: ['SLIM'] },
 
-  // Otros módulos
-  { title: 'Agenda',           icon: 'event',           link: '/agenda',            canPerm: 'Agenda' },
-  { title: 'Líneas de Tiempo', icon: 'timeline',        link: '/lineas-tiempo',     canPerm: 'Lineas de Tiempo' },
-  { title: 'KPIs',             icon: 'query_stats',     link: '/kpis',              canPerm: 'Kpis' },
-  { title: 'Auditorías',       icon: 'shield',          link: '/auditorias',        canPerm: 'Auditorias' },
+  // Resto por permisos (sin relación al área)
+  { title: 'Agenda',           icon: 'event',       link: '/agenda',        canPerm: 'Agenda' },
+  { title: 'Líneas de Tiempo', icon: 'timeline',    link: '/lineas-tiempo', canPerm: 'Lineas de Tiempo' },
+  { title: 'KPIs',             icon: 'query_stats', link: '/kpis',          canPerm: 'Kpis' },
+  { title: 'Auditorías',       icon: 'shield',      link: '/auditorias',    canPerm: 'Auditorias' },
 ]
 
-const filteredLinks = computed(() =>
-  linksList.filter(l => Array.isArray(l.canPerm) ? hasAnyPerm(l.canPerm) : hasPerm(l.canPerm))
-)
+const filteredLinks = computed(() => {
+  const role = norm(proxy.$store.user?.role)
+  const area = norm(proxy.$store.user?.area)
 
-/** Ahora consulta pendientes de SLIMs */
+  const matchPerm = (item) =>
+    Array.isArray(item.canPerm) ? hasAnyPerm(item.canPerm) : hasPerm(item.canPerm)
+
+  const matchArea = (item) => {
+    if (item.onlyArea || item.onlyAreas) {
+      // Si requiere área pero aún no cargó el área del usuario → no mostrar
+      if (!area) return false
+      if (item.onlyArea)  return norm(item.onlyArea) === area
+      if (item.onlyAreas) return item.onlyAreas.some(a => norm(a) === area)
+    }
+    return true
+  }
+
+  // Prioridad: área → permisos
+  const passes = (item) => {
+    if (item.onlyArea || item.onlyAreas) return matchArea(item)
+    return matchPerm(item)
+  }
+
+  return linksList
+    .filter(passes)
+    .map(link => link.childrens
+      ? ({ ...link, childrens: (link.childrens || []).filter(passes) })
+      : link
+    )
+})
+
+/* ---------- Pendientes (SLIM) ---------- */
 async function fetchPendientesCount () {
   pendingLoading.value = true
   try {
@@ -226,13 +267,13 @@ async function fetchPendientesCount () {
 }
 
 function irPendientes () {
-  // abre SLIMs mostrando SOLO faltantes (si usas query en la tabla)
   proxy.$router.push({ path: '/slims', query: { only_pendientes: 1 } })
 }
 
 onMounted(() => { fetchPendientesCount() })
 watch(() => proxy.$route.fullPath, () => { fetchPendientesCount() })
 
+/* ---------- Misc ---------- */
 function toggleLeftDrawer () { leftDrawerOpen.value = !leftDrawerOpen.value }
 
 function logout () {
