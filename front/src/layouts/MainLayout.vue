@@ -214,6 +214,19 @@ const linksList = [
     ]
   },
   { title: 'SLIMs', icon: 'folder_shared', link: '/slims', onlyAreas: ['SLIM'] },
+  {
+    title: 'Nuevo DNA',
+    icon: 'gavel',
+    link: '/dnas/nuevo-penal',        // puede apuntar a un wrapper
+    onlyAreas: ['DNA'],
+    childrens: [
+      { title: 'Procesos Penales',           icon: 'balance',      link: '/dnas/nuevo-penal',    onlyAreas: ['DNA'] },
+      { title: 'Procesos Familiares',        icon: 'family_restroom', link: '/dnas/nuevo-familiar', onlyAreas: ['DNA'] },
+      { title: 'Procesos Niñez y Adolescencia', icon: 'child_care', link: '/dnas/nuevo-nna',     onlyAreas: ['DNA'] },
+      { title: 'Apoyos Integrales',          icon: 'diversity_1',  link: '/dnas/nuevo-apoyo',    onlyAreas: ['DNA'] },
+    ]
+  },
+  { title: 'DNA (Casos)', icon: 'folder_shared', link: '/dnas', onlyAreas: ['DNA'] },
 
   // Resto por permisos (sin relación al área)
   { title: 'Agenda',           icon: 'event',       link: '/agenda',        canPerm: 'Agenda' },

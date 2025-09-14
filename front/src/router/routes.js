@@ -12,6 +12,12 @@ const routes = [
       { path: '/slims/nuevointegral', component: () => import('pages/slims/SlimNuevoIntegral.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
       { path: '/slims/:id', component: () => import('pages/slims/SlimShow.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
 
+      // { path: '/dnas',              component: () => import('pages/dnas/Dnas.vue'),              meta: { requiresAuth: true } },
+      { path: '/dnas/nuevo-penal',  component: () => import('pages/dnas/DnaNuevoPenal.vue'),    meta: { requiresAuth: true } },
+      { path: '/dnas/nuevo-familiar', component: () => import('pages/dnas/DnaNuevoFamiliar.vue'), meta: { requiresAuth: true } },
+      { path: '/dnas/nuevo-nna',    component: () => import('pages/dnas/DnaNuevoNna.vue'),      meta: { requiresAuth: true } },
+      { path: '/dnas/nuevo-apoyo',  component: () => import('pages/dnas/DnaNuevoApoyo.vue'),    meta: { requiresAuth: true } },
+
       { path: '/lineas-tiempo', component: () => import('pages/lineastiempo/LineasTiempo.vue'), meta: { requiresAuth: true, perm: 'Lineas de Tiempo' } },
       { path: '/kpis', component: () => import('pages/kpis/Kpis.vue'), meta: { requiresAuth: true, perm: 'Kpis' } },
       { path: '/auditorias', component: () => import('pages/auditorias/Auditorias.vue'), meta: { requiresAuth: true, perm: 'Auditorias' } },
