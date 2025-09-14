@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DnaController;
 use App\Http\Controllers\SlimDocumentoController;
 use App\Http\Controllers\SlimFotografiaController;
 use App\Http\Controllers\SlimInformeLegalController;
@@ -80,6 +81,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get   ('/slims/{slim}/fotografias',     [SlimFotografiaController::class, 'index']);
     Route::post  ('/slims/{slim}/fotografias',     [SlimFotografiaController::class, 'store']);
     Route::delete('/slims/fotografias/{fotografia}', [SlimFotografiaController::class, 'destroy']);
+
+    Route::get   ('/dnas',        [DnaController::class, 'index']);
+    Route::post  ('/dnas',        [DnaController::class, 'store']);
+    Route::get   ('/dnas/{dna}',  [DnaController::class, 'show']);
+    Route::put   ('/dnas/{dna}',  [DnaController::class, 'update']);
+    Route::delete('/dnas/{dna}',  [DnaController::class, 'destroy']);
 });
 
 Route::get   ('/slims/documentos/{documento}/view',   [SlimDocumentoController::class, 'view']);
