@@ -237,6 +237,16 @@ const linksList = [
   },
   { title: 'DNA (Casos)', icon: 'folder_shared', link: '/dnas', onlyAreas: ['DNA'] },
 
+  // SLAM
+  { title: 'Nuevo SLAM', icon: 'add_circle', link: '/slams/nuevofisica',
+    onlyAreas: ['SLAM'],
+    childrens: [
+      { title: 'Denuncia Física', icon: 'person_add',  link: '/slams/nuevofisica',   onlyAreas: ['SLAM'] },
+      { title: 'Apoyo Integral',  icon: 'diversity_1', link: '/slams/nuevointegral', onlyAreas: ['SLAM'] },
+    ]
+  },
+  { title: 'SLAMs', icon: 'folder_shared', link: '/slams', onlyAreas: ['SLIM'] },
+
   // Otros
   { title: 'Agenda',           icon: 'event',       link: '/agenda',        canPerm: 'Agenda' },
   { title: 'Líneas de Tiempo', icon: 'timeline',    link: '/lineas-tiempo', canPerm: 'Lineas de Tiempo' },
