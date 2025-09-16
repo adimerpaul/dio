@@ -10,12 +10,9 @@
       <div class="col-16 col-md-6 row q-gutter-sm">
         <q-select v-model="filters.status" dense outlined clearable label="Estado"
                   :options="statusOptions" style="width: 180px" @input="refetch" />
-<!--        <q-select v-model="filters.user_id" dense outlined clearable label="Profesional"-->
-<!--                  :options="userOptions" option-label="username" option-value="id"-->
-<!--                  style="width: 220px" @input="refetch" />-->
+        <q-btn color="primary" icon="event" label="Nueva cita" @click="openCreateForNow" />
         <q-btn flat icon="refresh" @click="refetch" />
         <q-btn flat icon="picture_as_pdf" label="PDF" color="primary" @click="exportPdf" />
-
       </div>
     </div>
 
@@ -52,16 +49,41 @@
 
           <q-checkbox v-model="form.all_day" label="Todo el día" />
 
-          <div class="row q-col-gutter-sm">
-            <div class="col-6">
-              <q-select v-model="form.status" dense outlined :options="statusOptions" label="Estado" />
-            </div>
-            <div class="col-6">
-              <q-input v-model="form.location" dense outlined label="Lugar/Ubicación" />
-            </div>
-          </div>
+          <!-- NUEVO: color -->
+          <q-select
+            v-model="form.color"
+            :options="colorOptions"
+            option-value="value"
+            option-label="label"
+            emit-value
+            map-options
+            dense
+            outlined
+            clearable
+            label="Color de la cita"
+          >
+            <!-- opción con chip -->
+            <template #option="scope">
+              <q-item v-bind="scope.itemProps">
+                <q-item-section avatar>
+                  <q-chip square :style="{background: normalizeColor(scope.opt.value) || '#546E7A', color: textColor(normalizeColor(scope.opt.value) || '#546E7A')}" />
+                </q-item-section>
+                <q-item-section>{{ scope.opt.label }}</q-item-section>
+              </q-item>
+            </template>
+            <!-- selected con chip -->
+            <template #selected-item="scope">
+              <q-chip
+                square
+                :style="{background: normalizeColor(scope.opt) || '#546E7A', color: textColor(normalizeColor(scope.opt) || '#546E7A')}"
+                size="sm"
+              >
+                {{ (colorOptions.find(c => c.value === scope.opt) || {}).label || 'Color' }}
+              </q-chip>
+            </template>
+          </q-select>
 
-          <q-input v-model="form.caso_id" dense outlined type="number" label="Caso (ID)" placeholder="Opcional: vincular a Caso"/>
+          <q-input v-model="form.caso_id" dense outlined type="number" label="Caso (ID)" />
           <q-input v-model="form.notes" type="textarea" autogrow dense outlined label="Notas" />
         </q-card-section>
 
@@ -78,7 +100,6 @@
 </template>
 
 <script>
-// IMPORTANTE: para Vue 2 usa @fullcalendar/vue (no vue3)
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
@@ -86,8 +107,6 @@ import interactionPlugin from '@fullcalendar/interaction'
 import esLocale from '@fullcalendar/core/locales/es'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
-// Si NO usas boot/axios de Quasar, puedes importar axios manualmente:
-// import axios from 'axios'
 
 export default {
   name: 'Agenda',
@@ -95,7 +114,6 @@ export default {
   data () {
     return {
       statusOptions: ['Programado','Reprogramado','Atendido','Cancelado'],
-      userOptions: [], // [{id, username}]
       filters: {
         status: null,
         user_id: null
@@ -105,6 +123,15 @@ export default {
         isEdit: false,
         currentId: null
       },
+      colorOptions: [
+        { label: 'Azul',     value: '#1976D2' },
+        { label: 'Naranja',  value: '#FB8C00' },
+        { label: 'Verde',    value: '#2E7D32' },
+        { label: 'Rojo',     value: '#C62828' },
+        { label: 'Gris',     value: '#546E7A' },
+        { label: 'Morado',   value: '#6A1B9A' },
+        { label: 'Cian',     value: '#0097A7' }
+      ],
       form: {
         title: '',
         start: '',
@@ -113,16 +140,17 @@ export default {
         status: 'Programado',
         location: '',
         notes: '',
-        caso_id: null
+        caso_id: null,
+        color: null
       },
-      originalWhen: { start: null, end: null }, // <-- para detectar cambios reales de horario
+      originalWhen: { start: null, end: null },
       saving: false,
       deleting: false,
       eventsCache: [],
       calendarOptions: {
         plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
         locale: esLocale,
-        timeZone: 'local', // recomendado para evitar sorpresas con ISO/UTC
+        timeZone: 'local',
         initialView: 'timeGridWeek',
         headerToolbar: {
           left: 'prev,next today',
@@ -145,43 +173,74 @@ export default {
       }
     }
   },
-  mounted () {
-    // Cargar psicólogos (o todos, como prefieras)
-    this.$axios.get('/usuariosRole').then(res => {
-      const psicologos = res.data?.psicologos || []
-      this.userOptions = psicologos
-    }).catch(() => {
-      // silencioso
-    })
-  },
   methods: {
+    normalizeColor (c) {
+      if (!c) return null
+      if (typeof c !== 'string') c = String(c).trim()
+      if (/^#[0-9A-Fa-f]{3}$/.test(c)) {
+        const r = c[1], g = c[2], b = c[3]
+        return `#${r}${r}${g}${g}${b}${b}`
+      }
+      if (/^#[0-9A-Fa-f]{6}$/.test(c)) return c
+      return null
+    },
+    textColor (bg) {
+      const c = this.normalizeColor(bg)
+      if (!c) return 'white'
+      const hex = c.slice(1)
+      const r = parseInt(hex.slice(0, 2), 16)
+      const g = parseInt(hex.slice(2, 4), 16)
+      const b = parseInt(hex.slice(4, 6), 16)
+      const lum = (0.299 * r + 0.587 * g + 0.114 * b)
+      return lum > 150 ? 'black' : 'white'
+    },
+    toApiLocal (val) {
+      if (!val) return null
+      const withSeconds = val.length === 16 ? `${val}:00` : val
+      return withSeconds.replace('T', ' ')
+    },
+    dateToLocalString (d) {
+      const dt = (d instanceof Date) ? d : new Date(d)
+      const pad = n => String(n).padStart(2, '0')
+      const y = dt.getFullYear()
+      const m = pad(dt.getMonth() + 1)
+      const day = pad(dt.getDate())
+      const hh = pad(dt.getHours())
+      const mm = pad(dt.getMinutes())
+      const ss = pad(dt.getSeconds())
+      return `${y}-${m}-${day} ${hh}:${mm}:${ss}`
+    },
     req (v) { return !!v || 'Requerido' },
 
     async fetchEvents (fetchInfo, success, failure) {
       try {
         const params = new URLSearchParams()
-        // FullCalendar pasa startStr y endStr ISO
         params.set('start', fetchInfo.startStr.slice(0, 19))
         params.set('end',   fetchInfo.endStr.slice(0, 19))
         if (this.filters.status) params.set('status', this.filters.status)
         if (this.filters.user_id) params.set('user_id', this.filters.user_id)
 
         const { data } = await this.$axios.get(`/agendas?${params.toString()}`)
-        const mapped = data.map(e => ({
-          id: e.id,
-          title: e.title,
-          start: e.start,
-          end: e.end,
-          allDay: !!e.all_day,
-          backgroundColor: this.colorFor(e),
-          borderColor: this.colorFor(e),
-          extendedProps: {
-            status: e.status,
-            notes: e.notes,
-            location: e.location,
-            caso_id: e.caso_id
+        const mapped = data.map(e => {
+          const bg = this.normalizeColor(e.color) || this.colorFor(e)
+          return {
+            id: e.id,
+            title: e.title,
+            start: e.start,
+            end: e.end,
+            allDay: !!e.all_day,
+            backgroundColor: bg,
+            borderColor: bg,
+            textColor: this.textColor(bg),
+            extendedProps: {
+              status: e.status,
+              notes: e.notes,
+              location: e.location,
+              caso_id: e.caso_id,
+              color: this.normalizeColor(e.color)
+            }
           }
-        }))
+        })
         this.eventsCache = mapped
         success(mapped)
       } catch (err) {
@@ -210,7 +269,8 @@ export default {
         status: 'Programado',
         location: '',
         notes: '',
-        caso_id: null
+        caso_id: null,
+        color: null
       }
       this.originalWhen = { start: null, end: null }
     },
@@ -222,7 +282,6 @@ export default {
       this.form.start = this.toLocalInputValue(startStr)
       this.form.end   = endStr ? this.toLocalInputValue(endStr) : ''
       this.form.all_day = !!allDay
-      // al crear, originalWhen = valores iniciales (por si el usuario luego cambia)
       this.originalWhen.start = this.form.start
       this.originalWhen.end   = this.form.end
       this.dialog.open = true
@@ -236,26 +295,23 @@ export default {
       this.form.start     = this.toLocalInputValue(ev.startStr)
       this.form.end       = ev.endStr ? this.toLocalInputValue(ev.endStr) : ''
       this.form.all_day   = ev.allDay
-      this.form.status    = ev.extendedProps && ev.extendedProps.status ? ev.extendedProps.status : 'Programado'
-      this.form.location  = ev.extendedProps && ev.extendedProps.location ? ev.extendedProps.location : ''
-      this.form.notes     = ev.extendedProps && ev.extendedProps.notes ? ev.extendedProps.notes : ''
-      this.form.caso_id   = ev.extendedProps && ev.extendedProps.caso_id ? ev.extendedProps.caso_id : null
-      // guarda los valores tal como se muestran en el input
+      this.form.status    = ev.extendedProps?.status || 'Programado'
+      this.form.location  = ev.extendedProps?.location || ''
+      this.form.notes     = ev.extendedProps?.notes || ''
+      this.form.caso_id   = ev.extendedProps?.caso_id || null
+      this.form.color     = ev.extendedProps?.color || null
       this.originalWhen.start = this.form.start
       this.originalWhen.end   = this.form.end
       this.dialog.open = true
     },
 
     toLocalInputValue (iso) {
-      // recorta a "YYYY-MM-DDTHH:MM" para <input type="datetime-local">
       return (iso || '').slice(0, 16)
     },
 
-    // Handlers calendario
     handleSelect (selInfo) {
       this.openCreate(selInfo.startStr, selInfo.endStr, selInfo.allDay)
     },
-
     handleEventClick (info) {
       this.openEdit(info.event)
     },
@@ -263,11 +319,11 @@ export default {
     async handleEventDrop (info) {
       try {
         await this.$axios.put(`/agendas/${info.event.id}`, {
-          start: info.event.startStr,
-          end: info.event.endStr
+          start: this.dateToLocalString(info.event.start),
+          end: info.event.end ? this.dateToLocalString(info.event.end) : null
         })
         this.$q.notify({ type: 'positive', message: 'Cita reprogramada' })
-        await this.refetch() // asegura sincronía
+        await this.refetch()
       } catch (e) {
         info.revert()
         this.$q.notify({ type: 'negative', message: 'No se pudo reprogramar' })
@@ -277,7 +333,7 @@ export default {
     async handleEventResize (info) {
       try {
         await this.$axios.put(`/agendas/${info.event.id}`, {
-          end: info.event.endStr
+          end: info.event.end ? this.dateToLocalString(info.event.end) : null
         })
         this.$q.notify({ type: 'positive', message: 'Duración actualizada' })
         await this.refetch()
@@ -297,26 +353,16 @@ export default {
         }
 
         const isEdit = this.dialog.isEdit && this.dialog.currentId
-        const startChanged = this.form.start !== this.originalWhen.start
-        const endChanged   = this.form.end   !== this.originalWhen.end
-
         const payload = {
           title: this.form.title,
           all_day: this.form.all_day,
           status: this.form.status,
           location: this.form.location || null,
           notes: this.form.notes || null,
-          caso_id: this.form.caso_id || null
-        }
-
-        // Incluir start/end solo si:
-        // - es creación
-        // - o el usuario cambió manualmente los inputs de tiempo
-        if (!isEdit || startChanged) {
-          payload.start = new Date(this.form.start).toISOString()
-        }
-        if (!isEdit || endChanged) {
-          payload.end = this.form.end ? new Date(this.form.end).toISOString() : null
+          caso_id: this.form.caso_id || null,
+          color: this.form.color || null,
+          start: this.toApiLocal(this.form.start),
+          end: this.form.end ? this.toApiLocal(this.form.end) : null
         }
 
         if (isEdit) {
@@ -326,7 +372,6 @@ export default {
           await this.$axios.post('/agendas', payload)
           this.$q.notify({ type: 'positive', message: 'Cita creada' })
         }
-
         this.dialog.open = false
         await this.refetch()
       } catch (e) {
@@ -352,26 +397,37 @@ export default {
     },
 
     async refetch () {
-      const api = this.$refs.calendar && this.$refs.calendar.getApi ? this.$refs.calendar.getApi() : null
+      const api = this.$refs.calendar?.getApi?.()
       if (api) api.refetchEvents()
     },
+
+    openCreateForNow () {
+      const now = new Date()
+      const pad = n => String(n).padStart(2, '0')
+      const y = now.getFullYear()
+      const m = pad(now.getMonth() + 1)
+      const d = pad(now.getDate())
+      const hh = pad(now.getHours())
+      const mm = pad(now.getMinutes())
+      const startLocal = `${y}-${m}-${d}T${hh}:${mm}`
+      const endObj = new Date(now.getTime() + 30*60000)
+      const eh = pad(endObj.getHours())
+      const em = pad(endObj.getMinutes())
+      const endLocal = `${y}-${m}-${d}T${eh}:${em}`
+      this.openCreate(startLocal, endLocal, false)
+    },
+
     async exportPdf () {
       const events = this.eventsCache
-
       if (!events.length) {
         this.$q.notify({ type: 'warning', message: 'No hay citas para exportar' })
         return
       }
-
       const doc = new jsPDF()
-
-      // Título
       doc.setFontSize(16)
       doc.text('Agenda de Citas', 14, 20)
       doc.setFontSize(10)
       doc.text(`Fecha de exportación: ${new Date().toLocaleString()}`, 14, 28)
-
-      // Construir tabla
       const rows = events.map(e => [
         e.title,
         e.extendedProps?.status || '',
@@ -380,16 +436,12 @@ export default {
         e.extendedProps?.location || '',
         e.extendedProps?.caso_id || ''
       ])
-
-      // Usar autoTable correctamente
       autoTable(doc, {
         head: [['Título', 'Estado', 'Inicio', 'Fin', 'Lugar', 'Caso']],
         body: rows,
         startY: 35,
         styles: { fontSize: 9 }
       })
-
-      // Descargar
       doc.save(`agenda-${new Date().toISOString().slice(0,10)}.pdf`)
     }
   }
@@ -403,9 +455,9 @@ export default {
   --fc-page-bg-color: #fff;
   --fc-neutral-bg-color: #fafafa;
   --fc-border-color: #e0e0e0;
-  --fc-today-bg-color: rgba(25,118,210,.08);
-}
-:deep(.fc .fc-toolbar-title){
-  font-weight: 700;
+  --fc-today-bg-color: rgba(25,118,210,0.1);
+  --fc-event-bg-color: #1976D2;
+  --fc-event-text-color: #fff;
+  --fc-event-border-color: #1976D2;
 }
 </style>

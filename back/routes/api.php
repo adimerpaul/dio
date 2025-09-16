@@ -52,11 +52,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/kpis', [App\Http\Controllers\KpiController::class, 'index']);
     Route::get('/audits', [\App\Http\Controllers\AuditController::class, 'index']);
     Route::get('/audits/{audit}', [\App\Http\Controllers\AuditController::class, 'show']);
+
     Route::get('/agendas', [\App\Http\Controllers\AgendaController::class, 'index']);
     Route::post('/agendas', [\App\Http\Controllers\AgendaController::class, 'store']);
     Route::get('/agendas/{agenda}', [\App\Http\Controllers\AgendaController::class, 'show']);
     Route::put('/agendas/{agenda}', [\App\Http\Controllers\AgendaController::class, 'update']);
     Route::delete('/agendas/{agenda}', [\App\Http\Controllers\AgendaController::class, 'destroy']);
+
     Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index']);
 
 
