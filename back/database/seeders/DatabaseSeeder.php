@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
                 'password' => Hash::make('admin123Admin'),
                 'avatar' => 'default.png',
                 'role' => 'Administrador',
-                'area' => 'DNA',
+                'area' => 'ADMIN',
                 'zona' => 'CENTRAL',
                 'email_verified_at' => now(),
                 'celular' => '72461667',

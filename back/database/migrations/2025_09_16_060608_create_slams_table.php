@@ -11,6 +11,7 @@ return new class extends Migration {
 
             // ===== 1) DATOS DEL ADULTO MAYOR =====
             $table->date('fecha_registro')->nullable();
+            $table->string('numero_apoyo_integral', 80)->nullable();
             $table->string('numero_caso', 40)->nullable()->index();
             $table->decimal('am_latitud', 10, 7)->nullable();
             $table->decimal('am_longitud', 10, 7)->nullable();
@@ -18,36 +19,36 @@ return new class extends Migration {
             $table->string('am_medicina')->nullable();
             $table->string('am_fisioterapia')->nullable();
 
-            for ($i = 1; $i <= 6; $i++) {
-                $table->string('am_nombres{$i}', 120)->nullable(); // Permitir hasta 6 nombres
-                $table->string('am_paterno{$i}', 80)->nullable();
-                $table->string('am_materno{$i}', 80)->nullable();
-            }
+//            for ($i = 1; $i <= 6; $i++) {
+//                $table->string('am_nombres{$i}', 120)->nullable(); // Permitir hasta 6 nombres
+//                $table->string('am_paterno{$i}', 80)->nullable();
+//                $table->string('am_materno{$i}', 80)->nullable();
+//            }
 
             // Documentos de identidad (en el formulario hay 2 filas, dejamos campos "A" y "B")
-            $table->string('am_doc_tipo_a', 40)->nullable();       // CI / otro
-            $table->string('am_doc_num_a', 40)->nullable();
-            $table->unsignedSmallInteger('am_doc_dia_a')->nullable();
-            $table->unsignedSmallInteger('am_doc_mes_a')->nullable();
-            $table->unsignedSmallInteger('am_doc_anio_a')->nullable();
-            $table->string('am_doc_lugar_a', 120)->nullable();
-
-            $table->string('am_doc_tipo_b', 40)->nullable();
-            $table->string('am_doc_num_b', 40)->nullable();
-            $table->unsignedSmallInteger('am_doc_dia_b')->nullable();
-            $table->unsignedSmallInteger('am_doc_mes_b')->nullable();
-            $table->unsignedSmallInteger('am_doc_anio_b')->nullable();
-            $table->string('am_doc_lugar_b', 120)->nullable();
-
-            $table->string('am_lugar_nacimiento', 120)->nullable();
-            $table->string('am_edad', 10)->nullable();
-            $table->string('am_domicilio', 160)->nullable();
-            $table->string('am_estado_civil', 40)->nullable();
-
-            // Ocupación e ingresos
-            $table->string('am_ocupacion_1', 120)->nullable();     // p.ej. AGRICULTOR
-            $table->string('am_ocupacion_2', 120)->nullable();     // p.ej. LABORES DE CASA
-            $table->string('am_ingresos', 160)->nullable();        // p.ej. RENTA DIGNIDAD
+//            $table->string('am_doc_tipo_a', 40)->nullable();       // CI / otro
+//            $table->string('am_doc_num_a', 40)->nullable();
+//            $table->unsignedSmallInteger('am_doc_dia_a')->nullable();
+//            $table->unsignedSmallInteger('am_doc_mes_a')->nullable();
+//            $table->unsignedSmallInteger('am_doc_anio_a')->nullable();
+//            $table->string('am_doc_lugar_a', 120)->nullable();
+//
+//            $table->string('am_doc_tipo_b', 40)->nullable();
+//            $table->string('am_doc_num_b', 40)->nullable();
+//            $table->unsignedSmallInteger('am_doc_dia_b')->nullable();
+//            $table->unsignedSmallInteger('am_doc_mes_b')->nullable();
+//            $table->unsignedSmallInteger('am_doc_anio_b')->nullable();
+//            $table->string('am_doc_lugar_b', 120)->nullable();
+//
+//            $table->string('am_lugar_nacimiento', 120)->nullable();
+//            $table->string('am_edad', 10)->nullable();
+//            $table->string('am_domicilio', 160)->nullable();
+//            $table->string('am_estado_civil', 40)->nullable();
+//
+//            // Ocupación e ingresos
+//            $table->string('am_ocupacion_1', 120)->nullable();     // p.ej. AGRICULTOR
+//            $table->string('am_ocupacion_2', 120)->nullable();     // p.ej. LABORES DE CASA
+//            $table->string('am_ingresos', 160)->nullable();        // p.ej. RENTA DIGNIDAD
 
             // Idiomas (checks)
             $table->boolean('am_idioma_castellano')->default(false);
