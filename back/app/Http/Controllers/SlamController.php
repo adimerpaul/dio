@@ -19,6 +19,53 @@ use Intervention\Image\ImageManager;
 
 class SlamController extends Controller
 {
+    function pdfHojaRuta($slam)
+    {
+        $slim = Slam::where('id', $slam)->with(['adultos', 'familiares'])->firstOrFail();
+        $tipo = 'SLAM';
+        $tituloPersona = 'Denunciado/a';
+        $LAT  = (float) $slim->am_latitud;
+        $LNG  = (float) $slim->am_longitud;
+        $HAS  = $slim->has_informacion_geografica ? 'Sí' : 'No';
+        $nombre    = trim($slim->den_nombres . ' ' . $slim->den_paterno . ' ' . $slim->den_materno);
+        $telefono  = $slim->den_telefono;
+        $zona      = $slim->zona;
+        $direccion = $slim->direccion_hechos ?: $slim->referencia_direccion;
+        return view('casos.pdfHojaRuta', [
+            'caso'          => $slim,    // la vista puede seguir llamándose igual
+            'tipo'          => $tipo,
+            'tituloPersona' => $tituloPersona,
+            'LAT'           => $LAT,
+            'LNG'           => $LNG,
+            'HAS'           => $HAS,
+            'nombre'        => $nombre ?: '—',
+            'telefono'      => $telefono ?: '—',
+            'zona'          => $zona ?: '—',
+            'direccion'     => $direccion ?: '—',
+        ]);
+    }
+    function pdf($slam)
+    {
+        $slam = Slam::where('id', $slam)
+            ->with(['adultos', 'familiares',
+                'psicologica_user:id,name',
+                'trabajo_social_user:id,name',
+                'legal_user:id,name',
+                'user:id,name',
+                'psicologicas.user:id,name',
+                'informesLegales.user:id,name',
+                'documentos.user:id,name',
+                'fotografias.user:id,name',
+            ])->first();
+        if ($slam) {
+            $html = view('pdf.slam.pdf', ['slam' => $slam])->render();
+            $pdf = app('dompdf.wrapper');
+            $pdf->loadHTML($html);
+            return $pdf->stream("Slam_{$slam->id}.pdf");
+        } else {
+            return response()->json(['message' => 'Slam no encontrado'], 404);
+        }
+    }
     private function humanFilesize(int $bytes, int $decimals = 1): string
     {
         if ($bytes <= 0) return '0 B';
@@ -300,14 +347,14 @@ class SlamController extends Controller
     function show(Slam $slam)
     {
         $slam->load(['adultos', 'familiares',
-            'psicologica_user:id,name',
-            'trabajo_social_user:id,name',
-            'legal_user:id,name',
-            'user:id,name',
-            'psicologicas.user:id,name',
-            'informesLegales.user:id,name',
-            'documentos.user:id,name',
-            'fotografias.user:id,name',
+            'psicologica_user:id,name,celular',
+            'trabajo_social_user:id,name,celular',
+            'legal_user:id,name,celular',
+            'user:id,name,celular',
+            'psicologicas.user:id,name,celular',
+            'informesLegales.user:id,name,celular',
+            'documentos.user:id,name,celular',
+            'fotografias.user:id,name,celular',
         ]);
 //        public function psicologicas()   { return $this->morphMany(Psicologica::class,  'caseable'); }
 //        public function informesLegales(){ return $this->morphMany(InformeLegal::class,'caseable'); }

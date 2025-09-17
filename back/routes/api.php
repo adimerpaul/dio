@@ -160,9 +160,9 @@ Route::get('/dnas/informes-legales/{informe}/pdf', [\App\Http\Controllers\DnaCon
 Route::get('/dnas/documentos/{documento}/view',     [\App\Http\Controllers\DnaController::class, 'docView']);
 Route::get('/dnas/documentos/{documento}/download', [\App\Http\Controllers\DnaController::class, 'docDownload']);
 
+Route::get('/slams/{slam}/pdf', [SlamController::class, 'pdf']);
 Route::get('/slams/sesiones-psicologicas/{psicologica}/pdf', [SlamController::class, 'psicoPdf']);
-
 Route::get('/slams/informes-legales/{informe}/pdf', [SlamController::class, 'legalPdf']);
-
 Route::get('/slams/documentos/{documento}/view', [SlamController::class, 'docView']);
 Route::get('/slams/documentos/{documento}/download', [SlamController::class, 'docDownload']);
+Route::get('/slams/{slam}/pdf/hoja-ruta', [SlamController::class, 'pdfHojaRuta']);
