@@ -14,6 +14,45 @@ use Illuminate\Support\Facades\DB;
 
 class SlamController extends Controller
 {
+    function legalPdf($legal)
+    {
+        $legal = InformeLegal::where('id', $legal)->with(['user:id,name'])->first();
+        if ($legal) {
+            $html = view('pdf.slam.informe_legal', ['informe' => $legal])->render();
+            $pdf = app('dompdf.wrapper');
+            $pdf->loadHTML($html);
+            return $pdf->stream("Informe_Legal_{$legal->id}.pdf");
+        } else {
+            return response()->json(['message' => 'Informe legal no encontrado'], 404);
+        }
+    }
+    function legalStore(Request $request, Slam $slam)
+    {
+        $data = $request->all();
+        $user = $request->user();
+        $data['user_id'] = $user->id;
+        $data['caseable_type'] = Slam::class;
+        $data['caseable_id']   = $slam->id;
+        $legal = InformeLegal::create($data);
+        return response()->json(['informe_legal' => $legal], 201);
+    }
+    function legalUpdate(Request $request, $legal)
+    {
+        $data = $request->all();
+        $legal = InformeLegal::where('id', $legal)->first();
+        $legal->update($data);
+        return response()->json(['informe_legal' => $legal]);
+    }
+    function legalDestroy($legal)
+    {
+        $legal = InformeLegal::where('id', $legal)->first();
+        if ($legal) {
+            $legal->delete();
+            return response()->json(['message' => 'Informe legal eliminado']);
+        } else {
+            return response()->json(['message' => 'Informe legal no encontrado'], 404);
+        }
+    }
     function psicoPdf($psico)
     {
         $psico = Psicologica::where('id', $psico)->with(['user:id,name'])->first();

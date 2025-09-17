@@ -128,10 +128,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/slams', [SlamController::class, 'index']);
     Route::get('/slams/{slam}', [SlamController::class, 'show']);
     Route::put('/slams/{slam}', [SlamController::class, 'update']);
+
     Route::post('/slams/{slam}/sesiones-psicologicas', [SlamController::class, 'psicoStore']);
     Route::put('/slams/sesiones-psicologicas/{psicologica}', [SlamController::class, 'psicoUpdate']);
     Route::delete('/slams/sesiones-psicologicas/{psicologica}', [SlamController::class, 'psicoDestroy']);
 
+    Route::post('/slams/{slam}/informes-legales', [SlamController::class, 'legalStore']);
+    Route::put('/slams/informes-legales/{legal}', [SlamController::class, 'legalUpdate']);
+    Route::delete('/slams/informes-legales/{legal}', [SlamController::class, 'legalDestroy']);
 
 
 });
@@ -152,3 +156,5 @@ Route::get('/dnas/documentos/{documento}/view',     [\App\Http\Controllers\DnaCo
 Route::get('/dnas/documentos/{documento}/download', [\App\Http\Controllers\DnaController::class, 'docDownload']);
 
 Route::get('/slams/sesiones-psicologicas/{psicologica}/pdf', [SlamController::class, 'psicoPdf']);
+
+Route::get('/slams/informes-legales/{informe}/pdf', [SlamController::class, 'legalPdf']);

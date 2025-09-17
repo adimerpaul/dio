@@ -19,20 +19,20 @@
 </head>
 <body>
 
-<div class="header">
-    <div class="t1">DIRECCIÓN DE IGUALDAD DE OPORTUNIDADES — DNA</div>
-    <div class="t2">Gobierno Autónomo Municipal de Oruro</div>
-    @if(d($informe->numero))
-        <div class="t2" style="font-weight:bold;">N° {{ $informe->numero }}</div>
-    @endif
-    <hr/>
-</div>
+{{--<div class="header">--}}
+{{--    <div class="t1">DIRECCIÓN DE IGUALDAD DE OPORTUNIDADES — DNA</div>--}}
+{{--    <div class="t2">Gobierno Autónomo Municipal de Oruro</div>--}}
+{{--    @if(d($informe->numero))--}}
+{{--        <div class="t2" style="font-weight:bold;">N° {{ $informe->numero }}</div>--}}
+{{--    @endif--}}
+{{--    <hr/>--}}
+{{--</div>--}}
 
-<div class="box" style="margin-bottom:6px;">
-    <div><b>Título:</b> {{ d($informe->titulo) }}</div>
-    <div><b>Fecha:</b> {{ fdate($informe->fecha) }}</div>
-    <div><b>Profesional:</b> {{ optional($informe->user)->name }}</div>
-</div>
+{{--<div class="box" style="margin-bottom:6px;">--}}
+{{--    <div><b>Título:</b> {{ d($informe->titulo) }}</div>--}}
+{{--    <div><b>Fecha:</b> {{ fdate($informe->fecha) }}</div>--}}
+{{--    <div><b>Profesional:</b> {{ optional($informe->user)->name }}</div>--}}
+{{--</div>--}}
 
 <div class="box">
     {!! $informe->contenido_html !!}
