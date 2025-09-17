@@ -21,7 +21,7 @@
     <q-separator />
 
     <div class="row q-col-gutter-md q-mt-sm">
-      <div v-for="f in rows.data" :key="f.id" class="col-6 col-sm-4 col-md-3">
+      <div v-for="f in caso.fotografias" :key="f.id" class="col-6 col-sm-4 col-md-3">
         <q-card flat bordered>
           <q-img
             :src="toPublicUrl(f.thumb_url || f.url)"
@@ -40,19 +40,16 @@
       </div>
     </div>
 
-    <q-pagination
-      v-model="page"
-      :max="rows.last_page || 1"
-      @update:model-value="fetchRows"
-      class="q-mt-md flex justify-end"
-    />
   </q-card>
 </template>
 
 <script>
 export default {
   name: 'Fotografias',
-  props: { caseId: { type: [String, Number], required: true } },
+  props: {
+    caseId: { type: [String, Number], required: true },
+    caso: { type: Object, required: true }
+  },
   data () {
     return {
       rows: { data: [], last_page: 1 },
@@ -62,7 +59,6 @@ export default {
       uploading: false
     }
   },
-  created () { this.fetchRows() },
   methods: {
     toPublicUrl (url) {
       console.log('url', url)
@@ -71,20 +67,6 @@ export default {
       const baseApi = this.$axios?.defaults?.baseURL || ''
       const basePublic = baseApi.replace(/\/api\/?$/, '')
       return `${basePublic}${url}`
-    },
-
-    async fetchRows () {
-      this.loading = true
-      try {
-        const res = await this.$axios.get(`/slims/${this.caseId}/fotografias`, {
-          params: { page: this.page, per_page: this.perPage }
-        })
-        this.rows = res.data || { data: [], last_page: 1 }
-      } catch (e) {
-        this.$q.notify({ type: 'negative', message: e?.response?.data?.message || 'Error cargando fotos' })
-      } finally {
-        this.loading = false
-      }
     },
 
     pickFile () { this.$refs.file.click() },
@@ -96,11 +78,11 @@ export default {
       try {
         const fd = new FormData()
         fd.append('file', file)
-        await this.$axios.post(`/slims/${this.caseId}/fotografias`, fd, {
+        await this.$axios.post(`/slams/${this.caseId}/fotografias`, fd, {
           headers: { 'Content-Type': 'multipart/form-data' }
         })
         this.$q.notify({ type: 'positive', message: 'Foto subida' })
-        this.fetchRows()
+        this.$emit('refresh')
       } catch (e) {
         this.$q.notify({ type: 'negative', message: e?.response?.data?.message || 'No se pudo subir' })
       } finally {
@@ -112,9 +94,9 @@ export default {
     async remove (f) {
       if (!confirm('¿Eliminar foto?')) return
       try {
-        await this.$axios.delete(`/slims/fotografias/${f.id}`)
+        await this.$axios.delete(`/slams/fotografias/${f.id}`)
         this.$q.notify({ type: 'positive', message: 'Eliminada' })
-        this.fetchRows()
+        this.$emit('refresh')
       } catch (e) {
         this.$q.notify({ type: 'negative', message: e?.response?.data?.message || 'No se pudo eliminar' })
       }
