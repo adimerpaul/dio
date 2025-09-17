@@ -126,6 +126,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/slams', [SlamController::class, 'store']);
     Route::get('/slams', [SlamController::class, 'index']);
+    Route::get('/slams/{slam}', [SlamController::class, 'show']);
+    Route::put('/slams/{slam}', [SlamController::class, 'update']);
 
 });
 

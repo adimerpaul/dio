@@ -92,4 +92,8 @@ class Slam extends Model implements Auditable
     public function psicologica_user()     { return $this->belongsTo(User::class, 'psicologica_user_id'); }
     public function trabajo_social_user()  { return $this->belongsTo(User::class, 'trabajo_social_user_id'); }
     public function legal_user()           { return $this->belongsTo(User::class, 'legal_user_id'); }
+    public function psicologicas()   { return $this->morphMany(Psicologica::class,  'caseable'); }
+    public function informesLegales(){ return $this->morphMany(InformeLegal::class,'caseable'); }
+    public function documentos()     { return $this->morphMany(Documento::class,    'caseable'); }
+    public function fotografias()    { return $this->morphMany(Fotografia::class,   'caseable'); }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Documento;
+use App\Models\Fotografia;
 use App\Models\InformeLegal;
 use App\Models\Problematica;
 use App\Models\Psicologica;
@@ -12,6 +14,24 @@ use Illuminate\Support\Facades\DB;
 
 class SlamController extends Controller
 {
+    function show(Slam $slam)
+    {
+        $slam->load(['adultos', 'familiares',
+            'psicologica_user:id,name',
+            'trabajo_social_user:id,name',
+            'legal_user:id,name',
+            'user:id,name',
+            'psicologicas',
+            'informesLegales',
+            'documentos',
+            'fotografias',
+        ]);
+//        public function psicologicas()   { return $this->morphMany(Psicologica::class,  'caseable'); }
+//        public function informesLegales(){ return $this->morphMany(InformeLegal::class,'caseable'); }
+//        public function documentos()     { return $this->morphMany(Documento::class,    'caseable'); }
+//        public function fotografias()    { return $this->morphMany(Fotografia::class,   'caseable'); }
+        return response()->json(['slam' => $slam]);
+    }
     public function index(Request $request)
     {
         $q        = trim((string) $request->get('q', ''));
@@ -113,6 +133,72 @@ class SlamController extends Controller
             'from'         => $paginated->firstItem(),
             'to'           => $paginated->lastItem(),
         ]);
+    }
+    public function update(Request $request, Slam $slam)
+    {
+        $payload     = $request->all();
+        $slamData    = $payload['slam']       ?? [];
+        $adultos     = $payload['adultos']    ?? [];
+        $familiares  = $payload['familiares'] ?? [];
+
+        $slam = DB::transaction(function () use ($slam, $slamData, $adultos, $familiares) {
+
+            // Actualiza el SLAM
+            $slam->update($slamData);
+
+            // Actualiza N adultos (si llegan)
+            if (!empty($adultos)) {
+                foreach ($adultos as $a) {
+                    if (isset($a['id']) && $a['id'] > 0) {
+                        // Actualiza existente
+                        $adulto = $slam->adultos()->where('id', $a['id'])->first();
+                        if ($adulto) {
+                            if (isset($a['_delete']) && $a['_delete']) {
+                                // Elimina
+                                $adulto->delete();
+                            } else {
+                                // Actualiza
+                                $adulto->update($a);
+                            }
+                        }
+                    } else {
+                        // Nuevo adulto
+                        if (empty($a['_delete']) || !$a['_delete']) {
+                            $slam->adultos()->create($a);
+                        }
+                    }
+                }
+            }
+
+            // Actualiza N familiares (si llegan)
+            if (!empty($familiares)) {
+                foreach ($familiares as $f) {
+                    if (isset($f['id']) && $f['id'] > 0) {
+                        // Actualiza existente
+                        $familiar = $slam->familiares()->where('id', $f['id'])->first();
+                        if ($familiar) {
+                            if (isset($f['_delete']) && $f['_delete']) {
+                                // Elimina
+                                $familiar->delete();
+                            } else {
+                                // Actualiza
+                                $familiar->update($f);
+                            }
+                        }
+                    } else {
+                        // Nuevo familiar
+                        if (empty($f['_delete']) || !$f['_delete']) {
+                            $slam->familiares()->create($f);
+                        }
+                    }
+                }
+            }
+
+            // Devuelve con relaciones
+            return $slam->load(['adultos', 'familiares']);
+        });
+
+        return response()->json(['slam' => $slam]);
     }
     public function store(Request $request)
     {
