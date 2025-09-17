@@ -26,6 +26,12 @@ export default boot(({ app, router }) => {
   // $zonas = ['CENTRAL', 'NORTE', 'SUR', 'ESTE', 'OESTE'];
   app.config.globalProperties.$areas = ['DNA', 'SLIM', 'SLAM', 'UMAGUIS', 'PROCENI','ADMIN']
   app.config.globalProperties.$zonas = ['CENTRAL', 'NORTE', 'SUR', 'ESTE', 'OESTE']
+  app.config.globalProperties.$documentos= [
+    { label: 'Carnet de identidad', value: 'Carnet de identidad' },
+    { label: 'Pasaporte', value: 'Pasaporte' },
+    { label: 'Libreta de servicio militar', value: 'Libreta de servicio militar' },
+    { label: 'Licencia de conducir', value: 'Licencia de conducir' }
+  ]
 
 
   app.config.globalProperties.$filters = {

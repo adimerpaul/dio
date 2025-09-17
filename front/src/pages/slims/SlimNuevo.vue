@@ -536,14 +536,6 @@ export default {
   },
   methods: {
     onBirthChange(kind) {
-      // return (v) => {
-      //   if (!v) { this.f[`${kind}_edad`] = ''; return }
-      //   const birthDate = new Date(v)
-      //   const ageDifMs = Date.now() - birthDate.getTime()
-      //   const ageDate = new Date(ageDifMs)
-      //   this.f[`${kind}_edad`] = Math.abs(ageDate.getUTCFullYear() - 1970)
-      // }
-      // edad calculate
       const hoy = moment()
       const v = kind === 'denunciante' ? this.f.denunciante_fecha_nacimiento : this.f.denunciado_fecha_nacimiento
       if(kind ==='denunciante'){

@@ -1,5 +1,53 @@
 <template>
   <q-page class="q-pa-md bg-grey-2">
+<!--    protected $fillable = [-->
+<!--    // ===== 1) DATOS DEL ADULTO MAYOR =====-->
+<!--    'fecha_registro',-->
+<!--    'numero_apoyo_integral',-->
+<!--    'numero_caso',-->
+<!--    'am_latitud',-->
+<!--    'am_longitud',-->
+<!--    'am_extravio',-->
+<!--    'am_medicina',-->
+<!--    'am_fisioterapia',-->
+
+<!--    // Idiomas (checks)-->
+<!--    'am_idioma_castellano',-->
+<!--    'am_idioma_quechua',-->
+<!--    'am_idioma_aymara',-->
+<!--    'am_idioma_otros',-->
+
+<!--    // Teléfonos de referencia-->
+<!--    'ref_tel_fijo',-->
+<!--    'ref_tel_movil',-->
+<!--    'ref_tel_movil_alt',-->
+
+<!--    // ===== 4) DATOS DEL DENUNCIADO/A =====-->
+<!--    'den_nombres',-->
+<!--    'den_paterno',-->
+<!--    'den_materno',-->
+<!--    'den_edad',-->
+<!--    'den_domicilio',-->
+<!--    'den_estado_civil',-->
+
+<!--    'den_idioma',          // p.ej. CASTELLANO-->
+<!--    'den_grado_instruccion', // p.ej. TÉCNICO-->
+<!--    'den_ocupacion',        // p.ej. MECÁNICO-->
+
+<!--    // ===== 5) BREVE CIRCUNSTANCIA DEL HECHO =====-->
+<!--    'hecho_descripcion',-->
+
+<!--    // ===== 6) TIPOLOGÍA (checks) =====-->
+<!--    'tip_violencia_fisica',-->
+<!--    'tip_violencia_psicologica',-->
+<!--    'tip_abandono',-->
+<!--    'tip_apoyo_integral',-->
+<!--    // Metadatos-->
+<!--    'user_id',-->
+<!--    'psicologica_user_id',-->
+<!--    'trabajo_social_user_id',-->
+<!--    'legal_user_id'-->
+<!--    ];-->
     <!-- Toolbar -->
     <div class="toolbar q-pa-sm bg-white row items-center q-gutter-sm shadow-1">
       <div class="col">
@@ -49,17 +97,21 @@
               <MapPicker v-model="mapModel" :center="defaultCenter" :zoom-init="13"/>
             </div>
 
-            <div class="col-6 col-md-3">
-              <q-input v-model.number="slam.am_latitud" dense outlined label="Latitud" />
-            </div>
-            <div class="col-6 col-md-3">
-              <q-input v-model.number="slam.am_longitud" dense outlined label="Longitud" />
-            </div>
+<!--            <div class="col-6 col-md-3">-->
+<!--              <q-input v-model.number="slam.am_latitud" dense outlined label="Latitud" />-->
+<!--            </div>-->
+<!--            <div class="col-6 col-md-3">-->
+<!--              <q-input v-model.number="slam.am_longitud" dense outlined label="Longitud" />-->
+<!--            </div>-->
 
             <div class="col-12 text-subtitle2 q-mt-sm">Hecho y Tipología</div>
             <div class="col-12">
               <q-input v-model="slam.hecho_descripcion" type="textarea" autogrow outlined dense clearable
-                       label="Breve circunstancia del hecho / denuncia" maxlength="3000"/>
+                       label="Breve circunstancia del hecho / denuncia" maxlength="3000">
+                <template v-slot:append>
+                  <q-icon name="mic" class="cursor-pointer" :color="isListening && activeField === 'hecho_descripcion' ? 'red' : 'grey-7'" @click="toggleRecognition('hecho_descripcion')"/>
+                </template>
+              </q-input>
             </div>
             <div class="col-6 col-md-3"><q-toggle v-model="slam.tip_violencia_fisica" label="Violencia física"/></div>
             <div class="col-6 col-md-3"><q-toggle v-model="slam.tip_violencia_psicologica" label="Violencia psicológica"/></div>
@@ -95,7 +147,9 @@
               <div class="col-6 col-md-2"><q-input v-model="a.paterno" dense outlined clearable label="Paterno"/></div>
               <div class="col-6 col-md-2"><q-input v-model="a.materno" dense outlined clearable label="Materno"/></div>
 
-              <div class="col-6 col-md-2"><q-input v-model="a.documento_tipo" dense outlined clearable label="Doc. tipo"/></div>
+              <div class="col-6 col-md-2">
+                  <q-select v-model="a.denunciante_documento" dense outlined emit-value map-options clearable :options="$documentos" label="Documento"/>
+              </div>
               <div class="col-6 col-md-2"><q-input v-model="a.documento_num" dense outlined clearable label="Doc. Nº"/></div>
 
               <div class="col-6 col-md-3"><q-input v-model="a.fecha_nacimiento" type="date" dense outlined label="Fecha nac."/></div>
@@ -149,6 +203,28 @@
         </q-card-section>
       </q-card>
 
+      <!-- 4) DATOS DEL DENUNCIADO/A -->
+      <q-card flat bordered class="section-card">
+        <q-card-section class="row items-center">
+          <q-icon name="person_off" class="q-mr-sm"/>
+          <div class="text-subtitle1 text-weight-medium">4) Datos del denunciado/a </div>
+        </q-card-section>
+        <q-separator/>
+        <q-card-section>
+          <div class="row q-col-gutter-md">
+            <div class="col-12 col-md-4"><q-input v-model="slam.den_nombres" dense outlined clearable label="Nombres"/></div>
+            <div class="col-6 col-md-2"><q-input v-model="slam.den_paterno" dense outlined clearable label="Paterno"/></div>
+            <div class="col-6 col-md-2"><q-input v-model="slam.den_materno" dense outlined clearable label="Materno"/></div>
+            <div class="col-6 col-md-2"><q-input v-model="slam.den_edad" dense outlined clearable label="Edad"/></div>
+            <div class="col-12 col-md-4"><q-input v-model="slam.den_domicilio" dense outlined clearable label="Domicilio"/></div>
+            <div class="col-6 col-md-3"><q-input v-model="slam.den_estado_civil" dense outlined clearable label="Estado civil"/></div>
+            <div class="col-6 col-md-3"><q-input v-model="slam.den_idioma" dense outlined clearable label="Idioma"/></div>
+            <div class="col-6 col-md-3"><q-input v-model="slam.den_grado_instruccion" dense outlined clearable label="Grado de instrucción"/></div>
+            <div class="col-6 col-md-3"><q-input v-model="slam.den_ocupacion" dense outlined clearable label="Ocupación"/></div>
+          </div>
+        </q-card-section>
+      </q-card>
+
       <!-- Acciones bottom -->
       <div class="text-right q-mb-xl">
         <q-btn flat color="primary" icon="history" label="Limpiar" @click="resetForm" class="q-mr-sm"/>
@@ -168,6 +244,9 @@ export default {
   data () {
     return {
       loading: false,
+      recognition: null,
+      activeField: null,
+      isListening: false,
       defaultCenter: [-17.9667, -67.1167], // Oruro (ajústalo)
       // ----- SLAM (cabecera) -----
       slam: {
@@ -186,6 +265,32 @@ export default {
       familiares: [],
     }
   },
+  mounted() {
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+      this.recognition = new SpeechRecognition()
+      this.recognition.lang = 'es-ES'
+      this.recognition.interimResults = false
+      this.recognition.continuous = false
+
+      this.recognition.onstart = () => { this.isListening = true }
+      this.recognition.onend = () => { this.isListening = false; this.activeField = null }
+      this.recognition.onresult = (event) => {
+        const text = event.results[0][0].transcript
+        if (this.activeField === 'hecho_descripcion') {
+          this.slam.hecho_descripcion = (this.slam.hecho_descripcion ? (this.slam.hecho_descripcion + ' ') : '') + text
+        }
+      }
+      this.recognition.onerror = (event) => {
+        console.error('Error de reconocimiento de voz:', event.error)
+        this.$q.notify({ color: 'negative', message: 'Error de micrófono: ' + event.error })
+        this.isListening = false
+        this.activeField = null
+      }
+    } else {
+      console.warn('Reconocimiento de voz no soportado en este navegador.')
+    }
+  },
   computed: {
     // Bridge para el v-model del mapa (tu componente emite/recibe {latitud, longitud})
     mapModel: {
@@ -194,6 +299,21 @@ export default {
     }
   },
   methods: {
+    toggleRecognition(field) {
+      if (!this.recognition) {
+        this.$q.notify({ color: 'negative', message: 'El navegador no soporta reconocimiento de voz.' })
+        return
+      }
+      if (this.isListening && this.activeField === field) {
+        try { this.recognition.stop() } catch (e) {}
+        return
+      }
+      if (this.isListening && this.activeField !== field) {
+        try { this.recognition.stop() } catch (e) {}
+      }
+      this.activeField = field
+      try { this.recognition.start() } catch (e) { console.warn('No se pudo iniciar el reconocimiento:', e) }
+    },
     req (v) { return !!v || 'Requerido' },
     addAdulto () {
       this.adultos.push({
@@ -250,6 +370,6 @@ export default {
 
 <style scoped>
 .bg-grey-2 { min-height: 100%; }
-.toolbar { position: sticky; top: 0; z-index: 5; border-radius: 12px; }
+.toolbar { position: sticky; top: 50px; z-index: 500; border-radius: 12px; }
 .section-card { border-radius: 14px; overflow: hidden; margin-bottom: 16px; background: #fff; }
 </style>
