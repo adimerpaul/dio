@@ -14,9 +14,134 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 
 class SlamController extends Controller
 {
+    private function humanFilesize(int $bytes, int $decimals = 1): string
+    {
+        if ($bytes <= 0) return '0 B';
+        $units = ['B','KB','MB','GB','TB'];
+        $pow   = (int)floor(log($bytes, 1024));
+        $pow   = min($pow, count($units) - 1);
+        $bytes /= (1024 ** $pow);
+        return round($bytes, $decimals).' '.$units[$pow];
+    }
+    function fotoStore(Request $request, Slam $slam)
+    {
+        $request->validate([
+            'file'        => ['required','image','mimes:jpg,jpeg,png,webp','max:20480'], // 20 MB
+            'titulo'      => ['nullable','string','max:255'],
+            'descripcion' => ['nullable','string','max:5000'],
+        ]);
+
+        $disk = 'public';
+        $dir  = "slam/{$slam->id}/fotografias";
+
+        $file         = $request->file('file');
+        $originalName = $file->getClientOriginalName();
+        $nameNoExt    = pathinfo($originalName, PATHINFO_FILENAME);
+        $extLower     = strtolower($file->getClientOriginalExtension() ?: 'jpg');
+
+        // Nombre base único, legible
+        $base = Str::slug($nameNoExt).'-'.Str::random(6);
+
+        // === Procesado de imagen (como en SLIM) ===
+        $manager = new ImageManager(new Driver());
+
+        // Principal (máx 2000px)
+        $img = $manager->read($file->getPathname());
+        $img->resizeDown(width: 2000, height: 2000);
+
+        // Normaliza extensión de salida
+        $storedExt  = in_array($extLower, ['jpg','jpeg','png','webp']) ? ($extLower === 'jpeg' ? 'jpg' : $extLower) : 'jpg';
+        $storedName = "{$base}.{$storedExt}";
+        $path       = "{$dir}/{$storedName}";
+
+        if ($storedExt === 'jpg') {
+            Storage::disk($disk)->put($path, (string) $img->toJpeg(quality: 85));
+            $mime = 'image/jpeg';
+        } elseif ($storedExt === 'png') {
+            Storage::disk($disk)->put($path, (string) $img->toPng());
+            $mime = 'image/png';
+        } else { // webp
+            Storage::disk($disk)->put($path, (string) $img->toWebp(quality: 80));
+            $mime = 'image/webp';
+        }
+
+        // Miniatura (máx 480px)
+        $thumb = $manager->read($file->getPathname());
+        $thumb->resizeDown(width: 480, height: 480);
+        $thumbName = "{$base}-thumb.{$storedExt}";
+        $thumbPath = "{$dir}/{$thumbName}";
+
+        if ($storedExt === 'jpg') {
+            Storage::disk($disk)->put($thumbPath, (string) $thumb->toJpeg(quality: 80));
+        } elseif ($storedExt === 'png') {
+            Storage::disk($disk)->put($thumbPath, (string) $thumb->toPng());
+        } else {
+            Storage::disk($disk)->put($thumbPath, (string) $thumb->toWebp(quality: 75));
+        }
+
+        // URLs públicas
+        $relUrl      = Storage::url($path);       // => "/storage/..."
+        $relThumbUrl = Storage::url($thumbPath);  // => "/storage/..."
+
+        // ABSOLUTAS (http://localhost:8000/...) para que siempre cargue bien
+        $absUrl      = url($relUrl);
+        $absThumbUrl = url($relThumbUrl);
+
+        $bytes  = Storage::disk($disk)->size($path);
+        $width  = $img->width();
+        $height = $img->height();
+
+        $foto = \App\Models\Fotografia::create([
+            'caseable_id'   => $slam->id,
+            'caseable_type' => \App\Models\Slam::class,
+            'user_id'       => $request->user()?->id,
+
+            'titulo'        => $request->string('titulo')->toString() ?: $nameNoExt,
+            'descripcion'   => $request->get('descripcion'),
+
+            'original_name' => $originalName,
+            'stored_name'   => $storedName,
+            'extension'     => $storedExt,
+            'mime'          => $mime,
+            'size_bytes'    => $bytes,
+
+            'disk'          => $disk,
+            'path'          => $path,
+            'url'           => $relUrl,       // se guarda relativo en BD
+
+            'thumb_path'    => $thumbPath,
+            'thumb_url'     => $relThumbUrl,  // se guarda relativo en BD
+
+            'width'         => $width,
+            'height'        => $height,
+        ])->load('user:id,name');
+
+        // Para la respuesta, sobreescribimos con ABSOLUTAS (no cambia lo guardado)
+        $foto->setAttribute('url', $absUrl);
+        $foto->setAttribute('thumb_url', $absThumbUrl);
+        $foto->size_human = $this->humanFilesize((int) $foto->size_bytes);
+
+        return response()->json($foto, 201);
+    }
+    function fotoDestroy($fotografia)
+    {
+        $foto = Fotografia::where('id', $fotografia)->first();
+        if ($foto) {
+            // Elimina el archivo físico si existe
+//            if ($foto->path && Storage::disk($foto->disk)->exists($foto->path)) {
+//                Storage::disk($foto->disk)->delete($foto->path);
+//            }
+            $foto->delete();
+            return response()->json(['message' => 'Fotografía eliminada']);
+        } else {
+            return response()->json(['message' => 'Fotografía no encontrada'], 404);
+        }
+    }
     function docDownload($doc)
     {
         $doc = Documento::where('id', $doc)->first();

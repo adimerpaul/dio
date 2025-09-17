@@ -141,6 +141,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/slams/documentos/{documento}', [SlamController::class, 'docUpdate']);
     Route::delete('/slams/documentos/{documento}', [SlamController::class, 'docDestroy']);
 
+    Route::post('/slams/{slam}/fotografias', [SlamController::class, 'fotoStore']);
+    Route::delete('/slams/fotografias/{fotografia}', [SlamController::class, 'fotoDestroy']);
+
 });
 
 Route::get   ('/slims/documentos/{documento}/view',   [SlimDocumentoController::class, 'view']);
