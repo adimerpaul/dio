@@ -7,10 +7,10 @@
         <div class="text-caption text-grey-7">Gestión de adjuntos del caso #{{ caseId }}</div>
       </div>
       <div class="col-auto row items-center q-gutter-sm">
-        <q-input dense outlined v-model="search" placeholder="Buscar..." style="width:260px">
-          <template #append><q-icon name="search" /></template>
-        </q-input>
-        <q-btn flat color="primary" icon="refresh" :loading="loading" @click="fetchRows"/>
+<!--        <q-input dense outlined v-model="search" placeholder="Buscar..." style="width:260px">-->
+<!--          <template #append><q-icon name="search" /></template>-->
+<!--        </q-input>-->
+        <q-btn flat color="primary" icon="refresh" :loading="loading" @click="$emit('refresh')" />
         <q-btn color="green" icon="upload" no-caps label="Subir archivo" @click="openUpload"/>
       </div>
     </div>
@@ -31,7 +31,7 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="it in rows.data" :key="it.id">
+      <tr v-for="it in caso.documentos" :key="it.id">
         <td>#{{ it.id }}</td>
         <td>
           <q-btn-dropdown dense color="primary" size="sm" label="Opciones" no-caps>
@@ -60,21 +60,11 @@
         <td>{{ it.mime || it.extension }}</td>
         <td>{{ it.user?.name || it.user?.username || '—' }}</td>
       </tr>
-      <tr v-if="!rows.data.length && !loading">
+      <tr v-if="!caso.documentos || caso.documentos.length===0">
         <td colspan="7" class="text-center text-grey">Sin registros</td>
       </tr>
       </tbody>
     </q-markup-table>
-
-    <div class="row justify-end q-mt-sm">
-      <q-pagination
-        v-model="page"
-        :max="rows.last_page || 1"
-        boundary-numbers
-        direction-links
-        @update:model-value="fetchRows"
-      />
-    </div>
 
     <!-- Subida -->
     <q-dialog v-model="dlgUpload" persistent>
@@ -122,7 +112,10 @@
 <script>
 export default {
   name: 'DocumentosGeneral',
-  props: { caseId: { type:[String,Number], required:true } },
+  props: {
+    caseId: { type:[String,Number], required:true },
+    caso: { type:Object, required:false }
+  },
   data(){
     return {
       loading:false, saving:false,
@@ -138,24 +131,12 @@ export default {
       dlgEdit:false, edit:{}, editingId:null,
     }
   },
-  watch:{
-    caseId(){ this.page=1; this.fetchRows() },
-    search(){ this.page=1; this.fetchRows() }
-  },
-  created(){ this.fetchRows() },
+  // watch:{
+  //   caseId(){ this.page=1; this.fetchRows() },
+  //   search(){ this.page=1; this.fetchRows() }
+  // },
+  // created(){ this.fetchRows() },
   methods:{
-    async fetchRows(){
-      if(!this.caseId) return
-      this.loading=true
-      try{
-        const res = await this.$axios.get(`/slims/${this.caseId}/documentos`, {
-          params:{ q:this.search, page:this.page, per_page:this.perPage }
-        })
-        this.rows = res.data || { data:[], last_page:1 }
-      }catch(e){
-        this.$q.notify({ type:'negative', message: e?.response?.data?.message || 'Error cargando documentos' })
-      }finally{ this.loading=false }
-    },
 
     openUpload(){
       this.file=null
@@ -176,12 +157,13 @@ export default {
         if(this.meta.categoria)   fd.append('categoria', this.meta.categoria)
         if(this.meta.descripcion) fd.append('descripcion', this.meta.descripcion)
 
-        await this.$axios.post(`/slims/${this.caseId}/documentos`, fd, {
+        await this.$axios.post(`/slams/${this.caseId}/documentos`, fd, {
           headers:{ 'Content-Type':'multipart/form-data' }
         })
         this.$q.notify({ type:'positive', message:'Archivo subido' })
         this.dlgUpload=false
-        this.fetchRows()
+        // this.fetchRows()
+        this.$emit('refresh')
       }catch(e){
         this.$q.notify({ type:'negative', message: e?.response?.data?.message || 'No se pudo subir' })
       }finally{ this.saving=false }
@@ -189,11 +171,11 @@ export default {
 
     viewDoc(it){
       const base = this.$axios?.defaults?.baseURL || ''
-      window.open(`${base}/slims/documentos/${it.id}/view`, '_blank')
+      window.open(`${base}/slams/documentos/${it.id}/view`, '_blank')
     },
     downloadDoc(it){
       const base = this.$axios?.defaults?.baseURL || ''
-      window.open(`${base}/slims/documentos/${it.id}/download`, '_blank')
+      window.open(`${base}/slams/documentos/${it.id}/download`, '_blank')
     },
 
     editMeta(it){
@@ -204,10 +186,11 @@ export default {
     async saveMeta(){
       this.saving = true
       try{
-        await this.$axios.put(`/slims/documentos/${this.editingId}`, this.edit)
+        await this.$axios.put(`/slams/documentos/${this.editingId}`, this.edit)
         this.$q.notify({ type:'positive', message:'Actualizado' })
         this.dlgEdit=false
-        this.fetchRows()
+        this.$emit('refresh')
+        // this.fetchRows()
       }catch(e){
         this.$q.notify({ type:'negative', message: e?.response?.data?.message || 'No se pudo actualizar' })
       }finally{ this.saving=false }
@@ -216,9 +199,10 @@ export default {
     removeDoc(it){
       const go = async () => {
         try{
-          await this.$axios.delete(`/slims/documentos/${it.id}`)
+          await this.$axios.delete(`/slams/documentos/${it.id}`)
           this.$q.notify({ type:'positive', message:'Eliminado' })
-          this.fetchRows()
+          // this.fetchRows()
+          this.$emit('refresh')
         }catch(e){
           this.$q.notify({ type:'negative', message: e?.response?.data?.message || 'No se pudo eliminar' })
         }
