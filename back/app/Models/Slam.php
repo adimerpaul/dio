@@ -14,43 +14,52 @@ class Slam extends Model implements Auditable
     protected $table = 'slams';
 
     protected $fillable = [
+        // ===== 1) DATOS DEL ADULTO MAYOR =====
         'fecha_registro',
         'numero_apoyo_integral',
         'numero_caso',
-        'am_latitud','am_longitud',
-        'am_extravio','am_medicina','am_fisioterapia',
+        'am_latitud',
+        'am_longitud',
+        'am_extravio',
+        'am_medicina',
+        'am_fisioterapia',
 
-        // Idiomas y teléfonos
-        'am_idioma_castellano','am_idioma_quechua','am_idioma_aymara','am_idioma_otros',
-        'ref_tel_fijo','ref_tel_movil','ref_tel_movil_alt',
+        // Idiomas (checks)
+        'am_idioma_castellano',
+        'am_idioma_quechua',
+        'am_idioma_aymara',
+        'am_idioma_otros',
 
-        // Tipología
-        'tip_violencia_fisica','tip_violencia_psicologica','tip_abandono','tip_apoyo_integral',
+        // Teléfonos de referencia
+        'ref_tel_fijo',
+        'ref_tel_movil',
+        'ref_tel_movil_alt',
 
-        // Seguimiento
-        'seg_trabajo_legal','seg_trabajo_social','seg_psicologico',
+        // ===== 4) DATOS DEL DENUNCIADO/A =====
+        'den_nombres',
+        'den_paterno',
+        'den_materno',
+        'den_edad',
+        'den_domicilio',
+        'den_estado_civil',
 
-        // Responsables
-        'user_id','psicologica_user_id','trabajo_social_user_id','legal_user_id',
+        'den_idioma',          // p.ej. CASTELLANO
+        'den_grado_instruccion', // p.ej. TÉCNICO
+        'den_ocupacion',        // p.ej. MECÁNICO
 
-        // Texto libre del hecho (si lo pones aquí)
+        // ===== 5) BREVE CIRCUNSTANCIA DEL HECHO =====
         'hecho_descripcion',
-    ];
 
-    protected $casts = [
-//        'fecha_registro' => 'date',
-
-        // Booleans
-        'am_idioma_castellano' => 'boolean',
-        'am_idioma_quechua'    => 'boolean',
-        'am_idioma_aymara'     => 'boolean',
-        'tip_violencia_fisica'      => 'boolean',
-        'tip_violencia_psicologica' => 'boolean',
-        'tip_abandono'              => 'boolean',
-        'tip_apoyo_integral'        => 'boolean',
-        'seg_trabajo_legal'         => 'boolean',
-        'seg_trabajo_social'        => 'boolean',
-        'seg_psicologico'           => 'boolean',
+        // ===== 6) TIPOLOGÍA (checks) =====
+        'tip_violencia_fisica',
+        'tip_violencia_psicologica',
+        'tip_abandono',
+        'tip_apoyo_integral',
+        // Metadatos
+        'user_id',
+        'psicologica_user_id',
+        'trabajo_social_user_id',
+        'legal_user_id'
     ];
 
     protected $hidden = ['created_at','updated_at','deleted_at'];
