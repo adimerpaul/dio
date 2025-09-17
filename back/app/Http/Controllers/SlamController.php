@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Dna;
 use App\Models\Documento;
 use App\Models\Fotografia;
 use App\Models\InformeLegal;
@@ -11,9 +12,88 @@ use App\Models\Slam;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class SlamController extends Controller
 {
+    function docDownload($doc)
+    {
+        $doc = Documento::where('id', $doc)->first();
+        if ($doc && $doc->path && Storage::disk($doc->disk)->exists($doc->path)) {
+            return Storage::disk($doc->disk)->download($doc->path, $doc->original_name);
+        } else {
+            return response()->json(['message' => 'Documento no encontrado'], 404);
+        }
+    }
+    function docView($doc)
+    {
+        $doc = Documento::where('id', $doc)->first();
+        if ($doc && $doc->path && Storage::disk($doc->disk)->exists($doc->path)) {
+            $fileContent = Storage::disk($doc->disk)->get($doc->path);
+            $mimeType = $doc->mime ?? 'application/octet-stream';
+            return response($fileContent, 200)->header('Content-Type', $mimeType);
+        } else {
+            return response()->json(['message' => 'Documento no encontrado'], 404);
+        }
+    }
+    function docUpdate(Request $request, $doc)
+    {
+        $data = $request->only(['titulo', 'categoria', 'descripcion']);
+        $doc = Documento::where('id', $doc)->first();
+        if ($doc) {
+            $doc->update($data);
+            return response()->json(['documento' => $doc]);
+        } else {
+            return response()->json(['message' => 'Documento no encontrado'], 404);
+        }
+    }
+    function docDestroy($doc)
+    {
+        $doc = Documento::where('id', $doc)->first();
+        if ($doc) {
+            // Elimina el archivo físico si existe
+            if ($doc->path && Storage::disk($doc->disk)->exists($doc->path)) {
+                Storage::disk($doc->disk)->delete($doc->path);
+            }
+            $doc->delete();
+            return response()->json(['message' => 'Documento eliminado']);
+        } else {
+            return response()->json(['message' => 'Documento no encontrado'], 404);
+        }
+    }
+
+    function docStore(Request $request, Slam $slam)
+    {
+        $payload = [
+            'caseable_id'   => $slam->id,
+            'caseable_type' => Slam::class,
+            'user_id'       => $request->user()?->id,
+            'titulo'        => $request['titulo'] ?? null,
+            'categoria'     => $request['categoria'] ?? null,
+            'descripcion'   => $request['descripcion'] ?? null,
+        ];
+        if ($request->hasFile('file')) {
+            $file        = $request->file('file');
+            $ext         = strtolower($file->getClientOriginalExtension());
+            $storedName  = Str::uuid()->toString().'.'.$ext;
+            $path        = $file->storeAs("slam/{$slam->id}/documentos", $storedName, 'public');
+            $url         = Storage::disk('public')->url($path);
+
+            $payload += [
+                'original_name' => $file->getClientOriginalName(),
+                'stored_name'   => $storedName,
+                'extension'     => $ext,
+                'mime'          => $file->getClientMimeType(),
+                'size_bytes'    => $file->getSize(),
+                'disk'          => 'public',
+                'path'          => $path,
+                'url'           => $url,
+            ];
+        }
+        $documento = Documento::create($payload);
+        return response()->json(['documento' => $documento], 201);
+    }
     function legalPdf($legal)
     {
         $legal = InformeLegal::where('id', $legal)->with(['user:id,name'])->first();

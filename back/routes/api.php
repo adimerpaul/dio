@@ -137,12 +137,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/slams/informes-legales/{legal}', [SlamController::class, 'legalUpdate']);
     Route::delete('/slams/informes-legales/{legal}', [SlamController::class, 'legalDestroy']);
 
+    Route::post('/slams/{slam}/documentos', [SlamController::class, 'docStore']);
+    Route::put('/slams/documentos/{documento}', [SlamController::class, 'docUpdate']);
+    Route::delete('/slams/documentos/{documento}', [SlamController::class, 'docDestroy']);
 
 });
 
 Route::get   ('/slims/documentos/{documento}/view',   [SlimDocumentoController::class, 'view']);
 
-// PDFs (expuestos igual pero con Slim)
 Route::get('/slims/{slim}/pdf', [SlimController::class, 'pdf']);
 Route::get('/slims/{slim}/pdf/hoja-ruta', [SlimController::class, 'pdfHojaRuta']);
 
@@ -158,3 +160,6 @@ Route::get('/dnas/documentos/{documento}/download', [\App\Http\Controllers\DnaCo
 Route::get('/slams/sesiones-psicologicas/{psicologica}/pdf', [SlamController::class, 'psicoPdf']);
 
 Route::get('/slams/informes-legales/{informe}/pdf', [SlamController::class, 'legalPdf']);
+
+Route::get('/slams/documentos/{documento}/view', [SlamController::class, 'docView']);
+Route::get('/slams/documentos/{documento}/download', [SlamController::class, 'docDownload']);
