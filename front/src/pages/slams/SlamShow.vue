@@ -97,7 +97,7 @@
 
       <!-- 5) Informes Legal -->
       <q-tab-panel name="legal">
-        <InformesLegal :case-id="caseId"/>
+        <InformesLegal :case-id="caseId" :caso="slam" @refresh="fetchSlam"/>
       </q-tab-panel>
 
       <!-- 6) Apoyo Integral -->
@@ -107,12 +107,12 @@
 
       <!-- 7) Documentos General -->
       <q-tab-panel name="docs">
-        <DocumentosGeneral :case-id="caseId"/>
+        <DocumentosGeneral :case-id="caseId" :caso="slam" @refresh="fetchSlam"/>
       </q-tab-panel>
 
       <!-- 8) Fotografías -->
       <q-tab-panel name="fotos">
-        <Fotografias :case-id="caseId"/>
+        <Fotografias :case-id="caseId" :caso="slam" @refresh="fetchSlam"/>
       </q-tab-panel>
     </q-tab-panels>
   </q-page>

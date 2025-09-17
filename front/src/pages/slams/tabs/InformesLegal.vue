@@ -7,10 +7,7 @@
         <div class="text-caption text-grey-7">Vinculados al caso #{{ caseId }}</div>
       </div>
       <div class="col-auto row items-center q-gutter-sm">
-        <q-input dense outlined v-model="search" placeholder="Buscar..." style="width:260px">
-          <template #append><q-icon name="search"/></template>
-        </q-input>
-        <q-btn flat color="primary" icon="refresh" :loading="loading" @click="fetchRows"/>
+        <q-btn flat color="primary" icon="refresh" :loading="loading" @click="$emit('refresh')"/>
         <q-btn
           v-if="canEdit"
           color="green"
@@ -37,7 +34,7 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="it in rows.data" :key="it.id">
+      <tr v-for="it in caso.informes_legales" :key="it.id">
         <td>#{{ it.id }}</td>
         <td>
           <q-btn-dropdown dense color="primary" size="sm" label="Opciones" no-caps>
@@ -68,22 +65,11 @@
         <td>{{ it.numero || '—' }}</td>
         <td>{{ it.user?.name || it.user?.username || '—' }}</td>
       </tr>
-      <tr v-if="!rows.data.length && !loading">
+      <tr v-if="!caso.informes_legales.length && !loading">
         <td colspan="6" class="text-center text-grey">Sin registros</td>
       </tr>
       </tbody>
     </q-markup-table>
-
-    <!-- Paginación -->
-    <div class="row justify-end q-mt-sm">
-      <q-pagination
-        v-model="page"
-        :max="rows.last_page || 1"
-        boundary-numbers
-        direction-links
-        @update:model-value="fetchRows"
-      />
-    </div>
 
     <!-- Diálogo Crear / Ver / Editar -->
     <q-dialog v-model="dialog" persistent maximized>
@@ -98,7 +84,7 @@
 
         <q-separator/>
 
-        <q-card-section class="q-gutter-md">
+        <q-card-section class="">
           <div class="row q-col-gutter-md">
             <div class="col-12 col-md-3">
               <q-input v-model="form.fecha" type="date" dense outlined label="Fecha" :readonly="mode==='view'"/>
@@ -156,7 +142,6 @@ export default {
   name: 'InformesLegal',
   props: {
     caseId: { type:[String,Number], required:true },
-    // opcional: pásame el SLIM completo si quieres auto-rellenar alguna plantilla (ej. denuncia_mp)
     caso: { type:Object, default:null }
   },
   data(){
@@ -182,25 +167,25 @@ export default {
     role(){ return this.$store.user?.role || '' },
     canEdit(){ return this.role === 'Administrador' || this.role === 'Abogado' }
   },
-  watch:{
-    caseId(){ this.page=1; this.fetchRows() },
-    search(){ this.page=1; this.fetchRows() },
-  },
-  created(){ this.fetchRows() },
+  // watch:{
+  //   caseId(){ this.page=1; this.fetchRows() },
+  //   search(){ this.page=1; this.fetchRows() },
+  // },
+  // created(){ this.fetchRows() },
   methods:{
     today(){ const d=new Date(), z=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}` },
-    async fetchRows(){
-      if(!this.caseId) return
-      this.loading = true
-      try{
-        const res = await this.$axios.get(`/slims/${this.caseId}/informes-legales`, {
-          params:{ q:this.search, page:this.page, per_page:this.perPage }
-        })
-        this.rows = res.data || { data:[], last_page:1 }
-      }catch(e){
-        this.$q.notify({ type:'negative', message: e?.response?.data?.message || 'Error cargando informes' })
-      }finally{ this.loading=false }
-    },
+    // async fetchRows(){
+    //   if(!this.caseId) return
+    //   this.loading = true
+    //   try{
+    //     const res = await this.$axios.get(`/slams/${this.caseId}/informes-legales`, {
+    //       params:{ q:this.search, page:this.page, per_page:this.perPage }
+    //     })
+    //     this.rows = res.data || { data:[], last_page:1 }
+    //   }catch(e){
+    //     this.$q.notify({ type:'negative', message: e?.response?.data?.message || 'Error cargando informes' })
+    //   }finally{ this.loading=false }
+    // },
     openCreate(){
       if(!this.canEdit) return
       this.mode='create'
@@ -285,12 +270,13 @@ export default {
       this.saving = true
       try{
         if(this.form.id)
-          await this.$axios.put(`/slims/informes-legales/${this.form.id}`, this.form)
+          await this.$axios.put(`/slams/informes-legales/${this.form.id}`, this.form)
         else
-          await this.$axios.post(`/slims/${this.caseId}/informes-legales`, this.form)
+          await this.$axios.post(`/slams/${this.caseId}/informes-legales`, this.form)
 
         this.$q.notify({ type:'positive', message:'Guardado' })
-        this.dialog=false; this.fetchRows()
+        this.dialog=false;
+        this.$emit('refresh')
       }catch(e){
         this.$q.notify({ type:'negative', message: e?.response?.data?.message || 'No se pudo guardar' })
       }finally{ this.saving=false }
@@ -300,9 +286,9 @@ export default {
       if(!this.canEdit) return
       const go = async ()=> {
         try{
-          await this.$axios.delete(`/slims/informes-legales/${it.id}`)
+          await this.$axios.delete(`/slams/informes-legales/${it.id}`)
           this.$q.notify({type:'positive', message:'Eliminado'})
-          this.fetchRows()
+          this.$emit('refresh')
         }catch(e){
           this.$q.notify({type:'negative', message:e?.response?.data?.message || 'No se pudo eliminar'})
         }
@@ -313,7 +299,7 @@ export default {
 
     printPdf(it){
       const base = this.$axios?.defaults?.baseURL || ''
-      window.open(`${base}/slims/informes-legales/${it.id}/pdf`, '_blank')
+      window.open(`${base}/slams/informes-legales/${it.id}/pdf`, '_blank')
     }
   }
 }
