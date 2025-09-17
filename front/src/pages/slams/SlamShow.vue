@@ -46,11 +46,11 @@
 
             <!-- hoja de ruta con dos variantes -->
             <q-item clickable @click="printPdfHojaRuta('denunciante')" v-close-popup >
-              <q-item-section>Ubicación (Denunciante)</q-item-section>
+              <q-item-section>Ubicación</q-item-section>
             </q-item>
-            <q-item clickable @click="printPdfHojaRuta('denunciado')" v-close-popup >
-              <q-item-section>Ubicación (Denunciado)</q-item-section>
-            </q-item>
+<!--            <q-item clickable @click="printPdfHojaRuta('denunciado')" v-close-popup >-->
+<!--              <q-item-section>Ubicación (Denunciado)</q-item-section>-->
+<!--            </q-item>-->
           </q-list>
         </q-btn-dropdown>
 
