@@ -10,6 +10,8 @@ return new class extends Migration {
             $table->id();
 
             // ===== 1) DATOS DEL ADULTO MAYOR =====
+            $table->string('area', 80)->nullable();
+            $table->string('zona', 80)->nullable();
             $table->date('fecha_registro')->nullable();
             $table->string('numero_apoyo_integral', 80)->nullable();
             $table->string('numero_caso', 40)->nullable()->index();

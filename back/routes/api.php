@@ -125,6 +125,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/dnas/fotografias/{fotografia}', [DnaController::class, 'fotoDestroy']);
 
     Route::post('/slams', [SlamController::class, 'store']);
+    Route::get('/slams', [SlamController::class, 'index']);
 
 });
 

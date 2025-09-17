@@ -15,6 +15,8 @@ class Slam extends Model implements Auditable
 
     protected $fillable = [
         // ===== 1) DATOS DEL ADULTO MAYOR =====
+        'zona',
+        'area',
         'fecha_registro',
         'numero_apoyo_integral',
         'numero_caso',
