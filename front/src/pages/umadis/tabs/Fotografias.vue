@@ -78,7 +78,7 @@ export default {
       try {
         const fd = new FormData()
         fd.append('file', file)
-        await this.$axios.post(`/slams/${this.caseId}/fotografias`, fd, {
+        await this.$axios.post(`/umadis/${this.caseId}/fotografias`, fd, {
           headers: { 'Content-Type': 'multipart/form-data' }
         })
         this.$q.notify({ type: 'positive', message: 'Foto subida' })
@@ -94,7 +94,7 @@ export default {
     async remove (f) {
       if (!confirm('¿Eliminar foto?')) return
       try {
-        await this.$axios.delete(`/slams/fotografias/${f.id}`)
+        await this.$axios.delete(`/umadis/fotografias/${f.id}`)
         this.$q.notify({ type: 'positive', message: 'Eliminada' })
         this.$emit('refresh')
       } catch (e) {

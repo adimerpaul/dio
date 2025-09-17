@@ -144,6 +144,26 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/slams/{slam}/fotografias', [SlamController::class, 'fotoStore']);
     Route::delete('/slams/fotografias/{fotografia}', [SlamController::class, 'fotoDestroy']);
 
+    Route::post('/umadis', [\App\Http\Controllers\UmadiController::class, 'store']);
+    Route::get('/umadis', [\App\Http\Controllers\UmadiController::class, 'index']);
+    Route::get('/umadis/{umadi}', [\App\Http\Controllers\UmadiController::class, 'show']);
+    Route::put('/umadis/{umadi}', [\App\Http\Controllers\UmadiController::class, 'update']);
+
+    Route::post('/umadis/{umadi}/sesiones-psicologicas', [\App\Http\Controllers\UmadiController::class, 'psicoStore']);
+    Route::put('/umadis/sesiones-psicologicas/{psicologica}', [\App\Http\Controllers\UmadiController::class, 'psicoUpdate']);
+    Route::delete('/umadis/sesiones-psicologicas/{psicologica}', [\App\Http\Controllers\UmadiController::class, 'psicoDestroy']);
+
+    Route::post('/umadis/{umadi}/informes-legales', [\App\Http\Controllers\UmadiController::class, 'legalStore']);
+    Route::put('/umadis/informes-legales/{legal}', [\App\Http\Controllers\UmadiController::class, 'legalUpdate']);
+    Route::delete('/umadis/informes-legales/{legal}', [\App\Http\Controllers\UmadiController::class, 'legalDestroy']);
+
+    Route::post('/umadis/{umadi}/documentos', [\App\Http\Controllers\UmadiController::class, 'docStore']);
+    Route::put('/umadis/documentos/{documento}', [\App\Http\Controllers\UmadiController::class, 'docUpdate']);
+    Route::delete('/umadis/documentos/{documento}', [\App\Http\Controllers\UmadiController::class, 'docDestroy']);
+
+    Route::post('/umadis/{umadi}/fotografias', [\App\Http\Controllers\UmadiController::class, 'fotoStore']);
+    Route::delete('/umadis/fotografias/{fotografia}', [\App\Http\Controllers\UmadiController::class, 'fotoDestroy']);
+
 });
 
 Route::get   ('/slims/documentos/{documento}/view',   [SlimDocumentoController::class, 'view']);
@@ -166,3 +186,10 @@ Route::get('/slams/informes-legales/{informe}/pdf', [SlamController::class, 'leg
 Route::get('/slams/documentos/{documento}/view', [SlamController::class, 'docView']);
 Route::get('/slams/documentos/{documento}/download', [SlamController::class, 'docDownload']);
 Route::get('/slams/{slam}/pdf/hoja-ruta', [SlamController::class, 'pdfHojaRuta']);
+
+Route::get('/umadis/{slam}/pdf', [\App\Http\Controllers\UmadiController::class, 'pdf']);
+Route::get('/umadis/sesiones-psicologicas/{psicologica}/pdf', [\App\Http\Controllers\UmadiController::class, 'psicoPdf']);
+Route::get('/umadis/informes-legales/{informe}/pdf', [\App\Http\Controllers\UmadiController::class, 'legalPdf']);
+Route::get('/umadis/documentos/{documento}/view', [\App\Http\Controllers\UmadiController::class, 'docView']);
+Route::get('/umadis/documentos/{documento}/download', [\App\Http\Controllers\UmadiController::class, 'docDownload']);
+Route::get('/umadis/{slam}/pdf/hoja-ruta', [\App\Http\Controllers\UmadiController::class, 'pdfHojaRuta']);

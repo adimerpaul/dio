@@ -250,30 +250,21 @@
       </tr>
       </thead>
 
-      <tbody v-if="!loading && slams.length">
+      <tbody v-if="!loading && umadis.length">
       <tr
-        v-for="(c, idx) in slams"
+        v-for="(c, idx) in umadis"
         :key="c.id"
-        @click="$router.push('/slams/' + c.id)"
+        @click="$router.push('/umadis/' + c.id)"
         class="cursor-pointer"
       >
         <td>{{ rowIndex(idx) }}</td>
         <td class="text-no-wrap">{{ c.numero_caso || '—' }}</td>
         <td class="text-no-wrap">{{ $filters.date(c.fecha_registro) }}</td>
         <td>
-<!--          adultos for-->
-          <div
-            v-for="(a, aidx) in c.adultos || []"
-            :key="aidx"
-            class="q-mb-xs"
-          >
-            <div class="text-weight-medium">{{ (a.nombre || '') + ' ' + (a.paterno || '') + ' ' + (a.materno || '') }}</div>
-            <div class="text-caption text-grey-7" v-if="a.documento_num">CI: {{ a.documento_num }}</div>
-          </div>
-          <div v-if="!(c.adultos || []).length" class="text-grey-6">—</div>
+          <div class="text-weight-medium">{{ c.nombres + ' ' + c.paterno + ' ' + c.materno }}</div>
         </td>
         <td>
-          <div class="text-weight-medium">{{ c.den_nombres + ' ' + c.den_paterno + ' ' + c.den_materno }}</div>
+          <div class="text-weight-medium">{{ c.denunciado_nombres + ' ' + c.denunciado_paterno + ' ' + c.denunciado_materno }}</div>
 <!--          <div class="text-caption text-grey-7" v-if="c.denunciado_nro">CI: {{ c.denunciado_nro }}</div>-->
         </td>
         <td>
@@ -340,7 +331,7 @@
       </tr>
       </tbody>
 
-      <tbody v-else-if="!loading && !slams.length">
+      <tbody v-else-if="!loading && !umadis.length">
       <tr>
         <td colspan="9" class="text-center text-grey">
           No hay resultados para tu búsqueda.
@@ -357,7 +348,7 @@
       </tbody>
     </q-markup-table>
 <!--    <pre>-->
-<!--      {{slams}}-->
+<!--      {{umadis}}-->
 <!--    </pre>-->
 
     <div class="row items-center justify-between q-mt-md">
@@ -384,7 +375,7 @@ export default {
   name: 'SlimsPage',
   data () {
     return {
-      slams: [],
+      umadis: [],
       loading: false,
       // server meta
       page: 1,
@@ -410,7 +401,7 @@ export default {
   methods: {
     fetchSlims () {
       this.loading = true
-      this.$axios.get('/slams', {
+      this.$axios.get('/umadis', {
         params: {
           q: this.search || '',
           page: this.page,
@@ -420,7 +411,7 @@ export default {
       })
         .then(res => {
           const r = res.data || {}
-          this.slams = r.data || []
+          this.umadis = r.data || []
           this.meta  = {
             current_page: r.current_page || 1,
             last_page:    r.last_page || 1,

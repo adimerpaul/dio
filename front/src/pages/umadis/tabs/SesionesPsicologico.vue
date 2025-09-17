@@ -198,7 +198,7 @@ export default {
     //   this.loading = true
     //   try{
     //     // ✅ migrado a SLIMs
-    //     const res = await this.$axios.get(`/slams/${this.caseId}/sesiones-psicologicas`, {
+    //     const res = await this.$axios.get(`/umadis/${this.caseId}/sesiones-psicologicas`, {
     //       params:{ q:this.search, page:this.page, per_page:this.perPage }
     //     })
     //     this.rows = res.data || { data:[], last_page:1 }
@@ -346,9 +346,9 @@ export default {
       try{
         if(this.form.id){
           // ✅ alias SLIMs
-          await this.$axios.put(`/slams/sesiones-psicologicas/${this.form.id}`, this.form)
+          await this.$axios.put(`/umadis/sesiones-psicologicas/${this.form.id}`, this.form)
         }else{
-          await this.$axios.post(`/slams/${this.caseId}/sesiones-psicologicas`, this.form)
+          await this.$axios.post(`/umadis/${this.caseId}/sesiones-psicologicas`, this.form)
         }
         this.$q.notify({ type:'positive', message:'Guardado' })
         this.dialog=false
@@ -363,7 +363,7 @@ export default {
       if(!this.canEdit) return
       const go = async ()=>{
         try{
-          await this.$axios.delete(`/slams/sesiones-psicologicas/${it.id}`)
+          await this.$axios.delete(`/umadis/sesiones-psicologicas/${it.id}`)
           this.$q.notify({ type:'positive', message:'Eliminado' })
           // this.fetchRows()
           this.$emit('refresh')
@@ -377,7 +377,7 @@ export default {
 
     printPdf(it){
       const base = this.$axios?.defaults?.baseURL || ''
-      window.open(`${base}/slams/sesiones-psicologicas/${it.id}/pdf`, '_blank')
+      window.open(`${base}/umadis/sesiones-psicologicas/${it.id}/pdf`, '_blank')
     }
   }
 }

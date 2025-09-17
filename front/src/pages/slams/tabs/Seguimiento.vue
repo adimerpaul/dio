@@ -4,218 +4,252 @@
     <q-card flat bordered class="q-pa-sm q-mb-md">
       <div class="row items-start q-col-gutter-sm">
         <div class="col-12 col-md-8">
-          <div class="text-subtitle1 text-weight-bold">Seguimiento del Caso</div>
+          <div class="text-subtitle1 text-weight-bold">Seguimiento del Caso — SLAM</div>
           <div class="text-caption text-grey-7">
-            SLIM <b>#{{ header.slim_id || header.caso_id }}</b> · N° <b>{{ header.caso_numero || '—' }}</b>
+            Área <b>{{ header.area || '—' }}</b> · Zona <b>{{ header.zona || '—' }}</b>
+          </div>
+          <div class="text-caption">
+            N° Caso: <b>{{ header.numero_caso || '—' }}</b>
+            <span class="text-grey-7"> · Registrado:</span> <b>{{ header.fecha_registro || '—' }}</b>
           </div>
         </div>
         <div class="col-12 col-md-4 flex items-center justify-end">
           <q-chip dense color="indigo-1" text-color="indigo-9" class="q-mr-xs">
-            {{ header.fecha_registro || '—' }}
+            {{ header.registrado_por || '—' }}
           </q-chip>
-          <q-btn
-            flat color="primary" icon="refresh"
-            @click="fetch" :loading="loading" title="Actualizar"
-            :label="loading ? '' : 'Actualizar'" no-caps dense
-          />
         </div>
       </div>
 
       <q-separator class="q-my-sm"/>
 
       <div class="row q-col-gutter-sm">
-        <div class="col-12 col-md-3">
-          <div class="lbl">Tipología</div>
-          <div class="val">{{ header.tipologia || '—' }}</div>
+        <div class="col-12 col-md-4">
+          <div class="lbl">Adulto(s) mayor(es)</div>
+          <div class="val">{{ header.adultos || '—' }}</div>
         </div>
-        <div class="col-12 col-md-3">
-          <div class="lbl">Modalidad</div>
-          <div class="val">{{ header.modalidad || '—' }}</div>
-        </div>
-        <div class="col-12 col-md-3">
-          <div class="lbl">Zona</div>
-          <div class="val">{{ header.zona || '—' }}</div>
-        </div>
-        <div class="col-12 col-md-3">
-          <div class="lbl">Dirección</div>
-          <div class="val ellipsis">{{ header.direccion || '—' }}</div>
-        </div>
-
-        <div class="col-12 col-md-3">
-          <div class="lbl">Denunciante</div>
-          <div class="val">{{ header.denunciante || '—' }}</div>
-        </div>
-        <div class="col-12 col-md-3">
+        <div class="col-12 col-md-4">
           <div class="lbl">Denunciado</div>
           <div class="val">{{ header.denunciado || '—' }}</div>
         </div>
-        <div class="col-12 col-md-3">
-          <div class="lbl">Fecha del hecho</div>
-          <div class="val">{{ header.fecha_hecho || '—' }}</div>
-        </div>
-        <div class="col-12 col-md-3">
-          <div class="lbl">Registrado por</div>
-          <div class="val">{{ header.registrado_por || '—' }}</div>
-        </div>
-      </div>
-    </q-card>
-
-    <!-- FILTROS -->
-    <q-card flat bordered class="q-pa-sm q-mb-sm">
-      <div class="row items-center q-col-gutter-sm">
         <div class="col-12 col-md-4">
-          <q-input v-model="filters.q" dense outlined placeholder="Buscar (título, descripción, usuario)">
-            <template #append><q-icon name="search"/></template>
-          </q-input>
-        </div>
-        <div class="col-6 col-md-2">
-          <q-select v-model="filters.tipo" :options="tipos" dense outlined label="Tipo"/>
-        </div>
-        <div class="col-6 col-md-2">
-          <q-select v-model="filters.modulo" :options="modulos" dense outlined label="Módulo"/>
-        </div>
-        <div class="col-6 col-md-2">
-          <q-input v-model="filters.desde" type="date" dense outlined label="Desde"/>
-        </div>
-        <div class="col-6 col-md-2">
-          <q-input v-model="filters.hasta" type="date" dense outlined label="Hasta"/>
+          <div class="lbl">Contacto / Ubicación</div>
+          <div class="val ellipsis">
+            {{ header.contacto || '—' }}
+            <span v-if="header.latlng" class="text-grey-7"> · {{ header.latlng }}</span>
+          </div>
         </div>
       </div>
     </q-card>
 
-    <!-- TABLA -->
-    <q-table
-      flat bordered
-      :rows="rowsFiltered"
-      :columns="columns"
-      row-key="uid"
-      :loading="loading"
-      hide-bottom
-      :rows-per-page-options="[0]"
-      class="rounded-borders"
-    >
-      <template #body-cell-actividad="props">
-        <q-td :props="props">
-          <div class="row no-wrap items-center q-gutter-xs">
-            <q-icon :name="props.row.icon || 'feed'" size="18px" class="text-primary"/>
-            <div>
-              <div class="text-weight-medium">
-                {{ props.row.tipo }} <span class="text-grey-7">·</span> {{ props.row.titulo || '—' }}
-              </div>
-              <div class="text-caption text-grey-7 ellipsis-2-lines" style="max-width:520px">
-                {{ props.row.descripcion || '—' }}
-              </div>
+    <!-- LÍNEA DE TIEMPO -->
+    <q-card flat bordered class="q-pa-md">
+      <div class="text-subtitle1 text-weight-medium q-mb-md">Historial</div>
+
+      <q-timeline color="primary" layout="comfortable">
+        <q-timeline-entry
+          v-for="item in history"
+          :key="item.uid"
+          :title="item.title"
+          :subtitle="item.subtitle"
+          :body="item.brief"
+          :icon="item.icon"
+          :side="item.side"
+        >
+          <div class="q-mt-sm">
+            <div class="row q-gutter-xs">
+              <q-btn
+                v-if="item.kind==='doc' && item.url"
+                dense flat icon="download" label="Descargar / Abrir"
+                @click="open(item.url)"
+              />
+              <q-btn
+                v-if="item.kind==='photo' && item.url"
+                dense flat icon="image" label="Ver imagen"
+                @click="open(item.url)"
+              />
+              <q-btn
+                v-if="(item.kind==='psy' || item.kind==='legal') && item.html"
+                dense flat icon="visibility" label="Ver contenido"
+                @click="openHtml(item.title, item.html)"
+              />
             </div>
+
+            <q-img
+              v-if="item.kind==='photo' && item.thumbUrl"
+              :src="toPublicUrl(item.thumbUrl)"
+              :ratio="16/9"
+              class="q-mt-sm rounded-borders"
+              style="max-width:380px"
+              :alt="item.title"
+              spinner-color="primary"
+            />
           </div>
-        </q-td>
-      </template>
+        </q-timeline-entry>
+      </q-timeline>
 
-      <template #body-cell-fecha="props">
-        <q-td :props="props">
-          <div class="text-weight-medium">{{ props.row.fecha || '—' }}</div>
-          <div class="text-caption text-grey-7">{{ props.row.usuario || '—' }}</div>
-        </q-td>
-      </template>
+      <div v-if="!history.length" class="text-grey-7 text-center q-mt-lg">
+        Sin actividades registradas.
+      </div>
+    </q-card>
 
-      <template #body-cell-modulo="props">
-        <q-td :props="props">
-          <q-chip dense square>{{ props.row.modulo || '—' }}</q-chip>
-        </q-td>
-      </template>
-
-      <template #body-cell-acciones="props">
-        <q-td :props="props" class="q-gutter-xs">
-          <q-btn v-if="props.row.links?.pdf"      dense flat icon="picture_as_pdf" @click="open(props.row.links.pdf)"      title="Ver PDF"/>
-          <q-btn v-if="props.row.links?.view"     dense flat icon="visibility"      @click="open(props.row.links.view)"     title="Ver"/>
-          <q-btn v-if="props.row.links?.download" dense flat icon="download"        @click="open(props.row.links.download)" title="Descargar"/>
-          <q-btn v-if="props.row.links?.open"     dense flat icon="open_in_new"     @click="open(props.row.links.open)"     title="Abrir"/>
-        </q-td>
-      </template>
-    </q-table>
+    <!-- DIALOGO PARA HTML -->
+    <q-dialog v-model="dialog.show" maximized>
+      <q-card style="max-width:1000px; width:100%;">
+        <q-card-section class="row items-center">
+          <div class="text-subtitle1 text-weight-medium">{{ dialog.title }}</div>
+          <q-space/>
+          <q-btn dense flat icon="close" v-close-popup/>
+        </q-card-section>
+        <q-separator/>
+        <q-card-section>
+          <div class="html-content" v-html="dialog.html"></div>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'Seguimiento',
-  props: { caseId: { type: [String, Number], required: true } },
+  name: 'SeguimientoSlam',
+  props: {
+    // Puede venir plano { ... } o anidado { slam: {...} }
+    caso: { type: Object, required: true }
+  },
   data () {
     return {
-      loading: false,
       header: {},
-      rows: [],
-      filters: {
-        q: '',
-        tipo: 'Todos',
-        modulo: 'Todos',
-        desde: '',
-        hasta: ''
-      },
-      tipos: ['Todos', 'Informe', 'Sesión', 'Documento', 'Fotografía'],
-      modulos: ['Todos', 'General', 'Psicológico', 'Legal', 'Social', 'Documentos', 'Multimedia'],
-      columns: [
-        { name: 'actividad', label: 'Actividad',        field: 'actividad', align: 'left',  sortable: false },
-        { name: 'fecha',     label: 'Fecha / Usuario',  field: 'fecha',     align: 'left',  sortable: true  },
-        { name: 'modulo',    label: 'Módulo',           field: 'modulo',    align: 'left',  sortable: true  },
-        { name: 'acciones',  label: '',                 field: 'acciones',  align: 'right', sortable: false, style: 'width: 140px' }
-      ]
+      history: [],
+      dialog: { show: false, title: '', html: '' }
     }
   },
-  computed: {
-    rowsFiltered () {
-      let r = this.rows.slice()
-      if (this.filters.q) {
-        const q = this.filters.q.toLowerCase()
-        r = r.filter(x =>
-          (x.titulo || '').toLowerCase().includes(q) ||
-          (x.descripcion || '').toLowerCase().includes(q) ||
-          (x.usuario || '').toLowerCase().includes(q)
-        )
-      }
-      if (this.filters.tipo && this.filters.tipo !== 'Todos') {
-        r = r.filter(x => x.tipo === this.filters.tipo)
-      }
-      if (this.filters.modulo && this.filters.modulo !== 'Todos') {
-        r = r.filter(x => (x.modulo || '').toLowerCase() === this.filters.modulo.toLowerCase())
-      }
-      if (this.filters.desde) {
-        r = r.filter(x => (x.fecha || '0000-00-00') >= this.filters.desde)
-      }
-      if (this.filters.hasta) {
-        r = r.filter(x => (x.fecha || '9999-12-31') <= this.filters.hasta)
-      }
-      return r
-    }
-  },
-  mounted () {
-    this.fetch()
-  },
+  mounted () { this.hydrate() },
+  watch: { caso: { handler () { this.hydrate() }, deep: true } },
   methods: {
-    async fetch () {
-      this.loading = true
-      try {
-        const { data } = await this.$axios.get(`/slims/${this.caseId}/seguimiento`)
-        this.header = data.header || {}
-        this.rows   = data.items  || []
-      } catch (e) {
-        this.$alert?.error?.(e?.response?.data?.message || 'No se pudo cargar el seguimiento')
-      } finally {
-        this.loading = false
+    hydrate () {
+      // 1) Normaliza forma del objeto
+      const s = this.caso?.slam ? this.caso.slam : (this.caso || {})
+
+      // 2) Header
+      const adultos = (s.adultos || [])
+        .map(a => [a.nombre, a.paterno, a.materno].filter(Boolean).join(' '))
+        .filter(Boolean)
+        .join(' · ')
+      const denunciado = [s.den_nombres, s.den_paterno, s.den_materno].filter(Boolean).join(' ')
+      const contacto = [s.ref_tel_movil, s.ref_tel_fijo, s.ref_tel_movil_alt].filter(Boolean).join(' / ')
+      const latlng = (s.am_latitud && s.am_longitud) ? `${s.am_latitud}, ${s.am_longitud}` : ''
+
+      this.header = {
+        area: s.area, zona: s.zona,
+        fecha_registro: s.fecha_registro,
+        numero_caso: s.numero_caso || s.numero_apoyo_integral,
+        registrado_por: s.user?.name || '—',
+        adultos: adultos || '—',
+        denunciado: denunciado || '—',
+        contacto: contacto || '',
+        latlng
       }
+
+      // 3) Línea de tiempo (psicologicas, informes_legales, documentos, fotografias)
+      const items = []
+
+        // Psicología
+      ;(s.psicologicas || []).forEach(p => {
+        items.push({
+          uid: `psy-${p.id}`,
+          kind: 'psy',
+          icon: 'psychology',
+          side: 'left',
+          date: (p.fecha || p.created_at || '').slice(0,10) || '0000-00-00',
+          title: `Psicológico · ${p.titulo || 'Sin título'}`,
+          subtitle: `${(p.fecha || '').slice(0,10)} · ${p.tipo || '—'} · ${p.user?.name || '—'}`,
+          brief: p.lugar ? `Lugar: ${p.lugar}` : '',
+          html: p.contenido_html || p.contenido || null
+        })
+      })
+
+      // Legal (acepta informes_legales o informesLegales)
+      const legales = s.informes_legales || s.informesLegales || []
+      legales.forEach(l => {
+        items.push({
+          uid: `legal-${l.id}`,
+          kind: 'legal',
+          icon: 'gavel',
+          side: 'right',
+          date: (l.fecha || l.created_at || '').slice(0,10) || '0000-00-00',
+          title: `Legal · ${l.titulo || 'Informe'}`,
+          subtitle: `${(l.fecha || '').slice(0,10)} · ${l.user?.name || '—'}`,
+          brief: l.numero ? `Informe N° ${l.numero}` : (l.descripcion || ''),
+          html: l.contenido_html || l.contenido || null
+        })
+      })
+
+      // Documentos
+      ;(s.documentos || []).forEach(d => {
+        items.push({
+          uid: `doc-${d.id}`,
+          kind: 'doc',
+          icon: 'description',
+          side: 'left',
+          date: (d.created_at || d.fecha || '').slice(0,10) || '0000-00-00',
+          title: `Documento · ${d.titulo || d.original_name || d.filename || 'Archivo'}`,
+          subtitle: `${d.size_human || ''} ${d.extension ? '· '+String(d.extension).toUpperCase() : ''} · ${d.user?.name || '—'}`,
+          brief: d.descripcion || '',
+          url: this.firstUrl(d)
+        })
+      })
+
+      // Fotografías
+      const fotos = s.fotografias || s.fotos || []
+      fotos.forEach(f => {
+        items.push({
+          uid: `photo-${f.id}`,
+          kind: 'photo',
+          icon: 'photo',
+          side: 'right',
+          date: (f.created_at || f.fecha || '').slice(0,10) || '0000-00-00',
+          title: `Fotografía · ${f.titulo || f.original_name || f.filename || 'Imagen'}`,
+          subtitle: `${(f.width && f.height) ? `${f.width}×${f.height}` : ''} ${f.user?.name ? '· '+f.user.name : ''}`,
+          brief: f.descripcion || '',
+          url: this.firstUrl(f),
+          thumbUrl: f.thumb_url || f.thumbPath || f.thumb || null
+        })
+      })
+
+      // Orden: fecha DESC (y uid de tiebreaker)
+      items.sort((a, b) => {
+        const fa = a.date || '0000-00-00'
+        const fb = b.date || '0000-00-00'
+        if (fa === fb) return a.uid > b.uid ? 1 : -1
+        return fb.localeCompare(fa)
+      })
+
+      this.history = items
     },
 
-    // Normaliza rutas relativas (/api/... o /storage/...) a absolutas del backend
+    // Intenta descubrir el mejor campo de URL
+    firstUrl (o = {}) {
+      const url = o.url || o.public_url || o.path || o.file_url || ''
+      return this.toPublicUrl(url)
+    },
+
     toPublicUrl (url) {
       if (!url) return ''
       if (/^https?:\/\//i.test(url)) return url
-      const baseApi = this.$axios?.defaults?.baseURL || ''
-      const basePublic = baseApi.replace(/\/api\/?$/, '')
-      return `${basePublic}${url}`
+      const baseApi = this.$axios?.defaults?.baseURL || ''           // ej: http://host/api
+      const basePublic = baseApi.replace(/\/api\/?$/, '')            // -> http://host
+      return `${basePublic}${url.startsWith('/') ? url : `/${url}`}` // concat seguro
     },
 
     open (url) {
       const u = this.toPublicUrl(url)
       if (u) window.open(u, '_blank')
+    },
+
+    openHtml (title, html) {
+      this.dialog.title = title || 'Contenido'
+      this.dialog.html = html || '<em>Sin contenido</em>'
+      this.dialog.show = true
     }
   }
 }
@@ -225,10 +259,5 @@ export default {
 .lbl { font-size: 11px; color: #6b7280; }
 .val { font-size: 13px; font-weight: 600; color: #111; }
 .rounded-borders { border-radius: 12px; }
-.ellipsis-2-lines {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
+.html-content :deep(*) { color: #111; }
 </style>

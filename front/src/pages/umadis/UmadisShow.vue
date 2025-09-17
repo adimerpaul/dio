@@ -4,7 +4,7 @@
     <!-- Header -->
     <div class="row items-center q-mb-md">
       <div class="col">
-        <div class="text-h6 text-weight-bold">SLAM #{{ slam?.id || '...' }}</div>
+        <div class="text-h6 text-weight-bold">Umadi #{{ umadis?.id || '...' }}</div>
         <div class="text-caption text-grey-7">Detalle y gestión integral</div>
       </div>
       <div class="col-auto row q-gutter-sm">
@@ -16,22 +16,22 @@
           v-if="hasAnyWa"
         >
           <q-list>
-            <q-item v-if="slam?.psicologica_user?.celular" clickable @click="sendWhatsApp('psico')">
+            <q-item v-if="umadis?.psicologica_user?.celular" clickable @click="sendWhatsApp('psico')">
               <q-item-section avatar><q-icon name="psychology"/></q-item-section>
-              <q-item-section>Psicología ({{ slam.psicologica_user.name }})</q-item-section>
-              <q-item-section side class="text-caption text-grey">{{ slam.psicologica_user.celular }}</q-item-section>
+              <q-item-section>Psicología ({{ umadis.psicologica_user.name }})</q-item-section>
+              <q-item-section side class="text-caption text-grey">{{ umadis.psicologica_user.celular }}</q-item-section>
             </q-item>
 
-            <q-item v-if="slam?.legal_user?.celular" clickable @click="sendWhatsApp('legal')">
+            <q-item v-if="umadis?.legal_user?.celular" clickable @click="sendWhatsApp('legal')">
               <q-item-section avatar><q-icon name="gavel"/></q-item-section>
-              <q-item-section>Legal ({{ slam.legal_user.name }})</q-item-section>
-              <q-item-section side class="text-caption text-grey">{{ slam.legal_user.celular }}</q-item-section>
+              <q-item-section>Legal ({{ umadis.legal_user.name }})</q-item-section>
+              <q-item-section side class="text-caption text-grey">{{ umadis.legal_user.celular }}</q-item-section>
             </q-item>
 
-            <q-item v-if="slam?.trabajo_social_user?.celular" clickable @click="sendWhatsApp('social')">
+            <q-item v-if="umadis?.trabajo_social_user?.celular" clickable @click="sendWhatsApp('social')">
               <q-item-section avatar><q-icon name="people"/></q-item-section>
-              <q-item-section>Trabajo social ({{ slam.trabajo_social_user.name }})</q-item-section>
-              <q-item-section side class="text-caption text-grey">{{ slam.trabajo_social_user.celular }}</q-item-section>
+              <q-item-section>Trabajo social ({{ umadis.trabajo_social_user.name }})</q-item-section>
+              <q-item-section side class="text-caption text-grey">{{ umadis.trabajo_social_user.celular }}</q-item-section>
             </q-item>
           </q-list>
         </q-btn-dropdown>
@@ -39,7 +39,7 @@
         <q-btn-dropdown flat color="secondary" icon="print" label="Imprimir PDF">
           <q-list>
             <q-item clickable @click="printPdf" v-close-popup >
-              <q-item-section>Ficha del SLAM</q-item-section>
+              <q-item-section>Ficha del Umadi</q-item-section>
             </q-item>
 
             <q-separator/>
@@ -54,7 +54,7 @@
           </q-list>
         </q-btn-dropdown>
 
-        <q-btn flat color="primary" icon="refresh" @click="fetchSlam" :loading="loading"/>
+        <q-btn flat color="primary" icon="refresh" @click="fetchUmadi" :loading="loading"/>
       </div>
     </div>
 
@@ -77,12 +77,12 @@
     <q-tab-panels v-model="tab" animated keep-alive>
       <!-- 1) Información General -->
       <q-tab-panel name="info">
-        <InfoGeneral :case-id="caseId" :caso="slam" @update="fetchSlam"/>
+        <InfoGeneral :case-id="caseId" :caso="umadis" @update="fetchUmadi"/>
       </q-tab-panel>
 
       <!-- 2) Seguimiento -->
       <q-tab-panel name="seguimiento">
-        <Seguimiento :case-id="caseId"/>
+        <Seguimiento :case-id="caseId" :caso="umadis" @refresh="fetchUmadi"/>
       </q-tab-panel>
 
       <!-- 3) Hoja de Ruta -->
@@ -92,12 +92,12 @@
 
       <!-- 4) Sesiones Psicológico -->
       <q-tab-panel name="psico">
-        <SesionesPsicologico :case-id="caseId" :caso="slam" @refresh="fetchSlam"/>
+        <SesionesPsicologico :case-id="caseId" :caso="umadis" @refresh="fetchUmadi"/>
       </q-tab-panel>
 
       <!-- 5) Informes Legal -->
       <q-tab-panel name="legal">
-        <InformesLegal :case-id="caseId" :caso="slam" @refresh="fetchSlam"/>
+        <InformesLegal :case-id="caseId" :caso="umadis" @refresh="fetchUmadi"/>
       </q-tab-panel>
 
       <!-- 6) Apoyo Integral -->
@@ -107,19 +107,19 @@
 
       <!-- 7) Documentos General -->
       <q-tab-panel name="docs">
-        <DocumentosGeneral :case-id="caseId" :caso="slam" @refresh="fetchSlam"/>
+        <DocumentosGeneral :case-id="caseId" :caso="umadis" @refresh="fetchUmadi"/>
       </q-tab-panel>
 
       <!-- 8) Fotografías -->
       <q-tab-panel name="fotos">
-        <Fotografias :case-id="caseId" :caso="slam" @refresh="fetchSlam"/>
+        <Fotografias :case-id="caseId" :caso="umadis" @refresh="fetchUmadi"/>
       </q-tab-panel>
     </q-tab-panels>
   </q-page>
 </template>
 
 <script>
-// Componentes de tabs (ubicados ahora en pages/slams/tabs/)
+// Componentes de tabs (ubicados ahora en pages/umadis/tabs/)
 import InfoGeneral          from './tabs/InfoGeneral.vue'
 import SesionesPsicologico  from './tabs/SesionesPsicologico.vue'
 import InformesLegal        from './tabs/InformesLegal.vue'
@@ -130,7 +130,7 @@ import HojaRuta             from './tabs/HojaRuta.vue'
 import Seguimiento          from './tabs/Seguimiento.vue'
 
 export default {
-  name: 'SlamDetalle',
+  name: 'UmadiDetalle',
   components: {
     InfoGeneral, SesionesPsicologico, InformesLegal, ApoyoIntegral, DocumentosGeneral, Fotografias, HojaRuta, Seguimiento
   },
@@ -138,7 +138,7 @@ export default {
     return {
       loading: false,
       tab: 'info',
-      slam: null,
+      umadis: null,
       defaultCountryCallingCode: '591',
     }
   },
@@ -146,12 +146,12 @@ export default {
     caseId () { return this.$route.params.id },
     role () { return this.$store.user?.role || '' },
     hasAnyWa () {
-      const c = this.slam || {}
+      const c = this.umadis || {}
       return !!(c?.psicologica_user?.celular || c?.legal_user?.celular || c?.trabajo_social_user?.celular)
     },
   },
   created () {
-    this.fetchSlam()
+    this.fetchUmadi()
   },
   methods: {
     normalizePhone (raw) {
@@ -170,16 +170,16 @@ export default {
       return `https://wa.me/${p}${msg ? `?text=${msg}` : ''}`
     },
     waMessage (roleKey) {
-      const c = this.slam || {}
+      const c = this.umadis || {}
       const num = c.caso_numero ? c.caso_numero.replace(/\\\//g, '/') : `#${this.caseId}`
-      const link = (this.$axios?.defaults?.baseURL || '') + `/slams/${this.caseId}`
+      const link = (this.$axios?.defaults?.baseURL || '') + `/umadis/${this.caseId}`
       const rolNombre = roleKey === 'psico'
         ? 'Psicología'
         : roleKey === 'legal'
           ? 'Legal'
           : 'Trabajo Social'
       return [
-        `*SLAM - Notificación de Caso*`,
+        `*Umadi - Notificación de Caso*`,
         `Nro: ${num}`,
         `Área: ${rolNombre}`,
         `Denunciante: ${c.denunciante_nombre_completo || '—'}`,
@@ -187,11 +187,11 @@ export default {
         c.caso_modalidad ? `Modalidad: ${c.caso_modalidad}` : null,
         c.caso_fecha_hecho ? `Fecha del hecho: ${c.caso_fecha_hecho}` : null,
         '',
-        `Ver SLAM: ${link}`
+        `Ver Umadi: ${link}`
       ].filter(Boolean).join('\n')
     },
     sendWhatsApp (roleKey) {
-      const c = this.slam || {}
+      const c = this.umadis || {}
       const user =
         roleKey === 'psico'   ? c.psicologica_user :
           roleKey === 'legal'   ? c.legal_user :
@@ -205,24 +205,24 @@ export default {
       window.open(url, '_blank')
     },
 
-    async fetchSlam () {
+    async fetchUmadi () {
       this.loading = true
       try {
-        const res = await this.$axios.get(`/slams/${this.caseId}`)
-        this.slam = res.data.slam
+        const res = await this.$axios.get(`/umadis/${this.caseId}`)
+        this.umadis = res.data.umadi
       } catch (e) {
-        this.$alert.error(e?.response?.data?.message || 'No se pudo cargar el SLAM')
+        this.$alert.error(e?.response?.data?.message || 'No se pudo cargar el Umadi')
       } finally {
         this.loading = false
       }
     },
 
     printPdf () {
-      const url = this.$axios.defaults.baseURL + `/slams/${this.caseId}/pdf`
+      const url = this.$axios.defaults.baseURL + `/umadis/${this.caseId}/pdf`
       window.open(url, '_blank')
     },
     printPdfHojaRuta (tipo = 'denunciante') {
-      const url = this.$axios.defaults.baseURL + `/slams/${this.caseId}/pdf/hoja-ruta?tipo=${tipo}`
+      const url = this.$axios.defaults.baseURL + `/umadis/${this.caseId}/pdf/hoja-ruta?tipo=${tipo}`
       window.open(url, '_blank')
     },
   }

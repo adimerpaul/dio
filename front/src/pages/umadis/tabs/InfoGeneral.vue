@@ -1,11 +1,10 @@
-<!-- pages/slims/tabs/InfoGeneral.vue -->
 <template>
   <div>
     <!-- ======= HEADER / ACCIONES ======= -->
     <div class="row items-center q-mb-sm">
       <div class="col">
         <div class="text-subtitle1 text-weight-medium">Información General</div>
-        <div class="text-caption text-grey-7">SLAM #{{ orDash(form.numero_caso) }}</div>
+        <div class="text-caption text-grey-7">UMADI #{{ orDash(form.numero_caso) }}</div>
       </div>
       <div class="col-auto row q-gutter-sm" v-if="canEdit">
         <q-btn
@@ -23,16 +22,13 @@
       </div>
     </div>
 
-    <!-- Debug opcional -->
-    <!-- <pre>{{ form }}</pre> -->
-
     <!-- ========= MODO LECTURA ========= -->
     <template v-if="!editing">
-      <!-- 1) Datos del caso (S.L.A.M.) -->
+      <!-- 1) Adulto mayor / denunciante -->
       <q-card flat bordered class="section-card q-mb-md">
         <q-card-section class="row items-center">
-          <q-icon name="description" class="q-mr-sm"/>
-          <div class="text-subtitle1 text-weight-medium">1) Datos del caso (S.L.A.M.)</div>
+          <q-icon name="badge" class="q-mr-sm"/>
+          <div class="text-subtitle1 text-weight-medium">1) Adulto mayor / denunciante</div>
         </q-card-section>
         <q-separator/>
         <q-card-section class="row q-col-gutter-md">
@@ -40,53 +36,87 @@
           <div class="col-6 col-md-3"><b>Nº de caso:</b> {{ orDash(form.numero_caso) }}</div>
           <div class="col-6 col-md-3"><b>Fecha registro:</b> {{ orDash(form.fecha_registro) }}</div>
 
-          <div class="col-12 text-subtitle2 q-mt-sm">Idiomas (AM)</div>
-          <div class="col-6 col-md-2">Castellano: {{ yesNo(form.am_idioma_castellano) }}</div>
-          <div class="col-6 col-md-2">Quechua: {{ yesNo(form.am_idioma_quechua) }}</div>
-          <div class="col-6 col-md-2">Aymara: {{ yesNo(form.am_idioma_aymara) }}</div>
-          <div class="col-12 col-md-6">Otros: {{ orDash(form.am_idioma_otros) }}</div>
+          <div class="col-12 text-subtitle2 q-mt-sm">Identificación</div>
+          <div class="col-12 col-md-6"><b>Nombre:</b> {{ nombreDenunciante }}</div>
+          <div class="col-6 col-md-3"><b>Documento:</b> {{ orDash(form.tipo_documento) }}</div>
+          <div class="col-6 col-md-3"><b>Nº documento:</b> {{ orDash(form.numero_documento) }}</div>
+          <div class="col-6 col-md-3"><b>Sexo:</b> {{ orDash(form.sexo) }}</div>
+          <div class="col-6 col-md-3"><b>Lugar nac.:</b> {{ orDash(form.lugar_nacimiento) }}</div>
+          <div class="col-6 col-md-3"><b>Fecha nac.:</b> {{ orDash(form.fecha_nacimiento) }}</div>
+          <div class="col-6 col-md-3"><b>Edad:</b> {{ orDash(form.edad) }}</div>
 
-          <div class="col-12 text-subtitle2 q-mt-sm">Teléfonos de referencia</div>
-          <div class="col-12 col-md-4"><b>Tel. fijo:</b> {{ orDash(form.ref_tel_fijo) }}</div>
-          <div class="col-12 col-md-4"><b>Tel. móvil:</b> {{ orDash(form.ref_tel_movil) }}</div>
-          <div class="col-12 col-md-4"><b>Tel. móvil (alt):</b> {{ orDash(form.ref_tel_movil_alt) }}</div>
+          <div class="col-12 text-subtitle2 q-mt-sm">Contacto y dirección</div>
+          <div class="col-12 col-md-6"><b>Dirección (anterior):</b> {{ orDash(form.direccion) }}</div>
+          <div class="col-12 col-md-6"><b>Dirección actual:</b> {{ orDash(form.direccion_actual) }}</div>
+          <div class="col-6 col-md-3"><b>Estado civil:</b> {{ orDash(form.estado_civil) }}</div>
+          <div class="col-6 col-md-3"><b>Relación con denunciado:</b> {{ orDash(form.relacion_denunciado) }}</div>
+
+          <div class="col-6 col-md-3"><b>Grado de instrucción:</b> {{ orDash(form.grado_instruccion) }}</div>
+          <div class="col-6 col-md-3"><b>Trabaja:</b> {{ yesNo(form.trabaja) }}</div>
+          <div class="col-6 col-md-3"><b>Ocupación:</b> {{ orDash(form.ocupacion) }}</div>
+          <div class="col-6 col-md-3"><b>Edad aprox.:</b> {{ orDash(form.edad_aprox) }}</div>
+          <div class="col-6 col-md-3"><b>Edad exacta:</b> {{ orDash(form.edada_exacto) }}</div>
+          <div class="col-6 col-md-3"><b>Idioma:</b> {{ orDash(form.idioma) }}</div>
+
+          <div class="col-12 text-subtitle2 q-mt-sm">Teléfonos</div>
+          <div class="col-6 col-md-3"><b>Celular 1:</b> {{ orDash(form.celular1) }}</div>
+          <div class="col-6 col-md-3"><b>Celular 2:</b> {{ orDash(form.celular2) }}</div>
+          <div class="col-6 col-md-3"><b>Tel. fijo 1:</b> {{ orDash(form.telefono_fijo1) }}</div>
+          <div class="col-6 col-md-3"><b>Tel. fijo 2:</b> {{ orDash(form.telefono_fijo2) }}</div>
 
           <div class="col-12 text-subtitle2 q-mt-sm">Ubicación</div>
-          <div class="col-6 col-md-3"><b>Latitud:</b> {{ orDash(form.am_latitud) }}</div>
-          <div class="col-6 col-md-3"><b>Longitud:</b> {{ orDash(form.am_longitud) }}</div>
-
-          <div class="col-12 text-subtitle2 q-mt-sm">Hecho y Tipología</div>
-          <div class="col-12"><b>Descripción:</b> <span class="ellipsis-3">{{ orDash(form.hecho_descripcion) }}</span></div>
-          <div class="col-6 col-md-3">Violencia física: {{ yesNo(form.tip_violencia_fisica) }}</div>
-          <div class="col-6 col-md-3">Violencia psicológica: {{ yesNo(form.tip_violencia_psicologica) }}</div>
-          <div class="col-6 col-md-3">Abandono: {{ yesNo(form.tip_abandono) }}</div>
-          <div class="col-6 col-md-3">Apoyo integral: {{ yesNo(form.tip_apoyo_integral) }}</div>
+          <div class="col-6 col-md-3"><b>Latitud:</b> {{ orDash(form.latitud) }}</div>
+          <div class="col-6 col-md-3"><b>Longitud:</b> {{ orDash(form.longitud) }}</div>
         </q-card-section>
       </q-card>
 
-      <!-- 4) Datos del denunciado/a -->
+      <!-- 2) Denunciado -->
       <q-card flat bordered class="section-card q-mb-md">
         <q-card-section class="row items-center">
           <q-icon name="person_off" class="q-mr-sm"/>
-          <div class="text-subtitle1 text-weight-medium">4) Datos del denunciado/a</div>
+          <div class="text-subtitle1 text-weight-medium">2) Denunciado</div>
         </q-card-section>
         <q-separator/>
         <q-card-section class="row q-col-gutter-md">
           <div class="col-12 col-md-6"><b>Nombre:</b> {{ nombreDenunciado }}</div>
-          <div class="col-6 col-md-2"><b>Edad:</b> {{ orDash(form.den_edad) }}</div>
-          <div class="col-12 col-md-4"><b>Domicilio:</b> {{ orDash(form.den_domicilio) }}</div>
-          <div class="col-6 col-md-3"><b>Estado civil:</b> {{ orDash(form.den_estado_civil) }}</div>
-          <div class="col-6 col-md-3"><b>Idioma:</b> {{ orDash(form.den_idioma) }}</div>
-          <div class="col-6 col-md-3"><b>Grado de instrucción:</b> {{ orDash(form.den_grado_instruccion) }}</div>
-          <div class="col-6 col-md-3"><b>Ocupación:</b> {{ orDash(form.den_ocupacion) }}</div>
+          <div class="col-6 col-md-2"><b>Edad:</b> {{ orDash(form.denunciado_edad) }}</div>
+          <div class="col-6 col-md-2"><b>CI:</b> {{ orDash(form.denunciado_ci) }}</div>
+          <div class="col-6 col-md-2"><b>Sexo:</b> {{ orDash(form.denunciado_sexo) }}</div>
+          <div class="col-6 col-md-3"><b>Lugar nac.:</b> {{ orDash(form.denunciado_lugar_nacimiento) }}</div>
+          <div class="col-6 col-md-3"><b>Fecha nac.:</b> {{ orDash(form.denunciado_fecha_nacimiento) }}</div>
+          <div class="col-12 col-md-6"><b>Dirección:</b> {{ orDash(form.denunciado_direccion) }}</div>
+          <div class="col-6 col-md-3"><b>Estado civil:</b> {{ orDash(form.denunciado_estado_civil) }}</div>
+          <div class="col-6 col-md-3"><b>Idioma:</b> {{ orDash(form.denunciado_idioma) }}</div>
+          <div class="col-6 col-md-3"><b>Grado de instrucción:</b> {{ orDash(form.denunciado_grado_instruccion) }}</div>
+          <div class="col-6 col-md-3"><b>Ocupación:</b> {{ orDash(form.denunciado_ocupacion) }}</div>
+          <div class="col-6 col-md-3"><b>Celular 1:</b> {{ orDash(form.denunciado_celular1) }}</div>
+          <div class="col-6 col-md-3"><b>Celular 2:</b> {{ orDash(form.denunciado_celular2) }}</div>
+          <div class="col-6 col-md-3"><b>Tel. fijo 1:</b> {{ orDash(form.denunciado_telefono_fijo1) }}</div>
+          <div class="col-6 col-md-3"><b>Tel. fijo 2:</b> {{ orDash(form.denunciado_telefono_fijo2) }}</div>
+          <div class="col-12 col-md-6"><b>Dirección actual:</b> {{ orDash(form.denunciado_direccion_actual) }}</div>
         </q-card-section>
       </q-card>
 
-      <!-- 5) Seguimiento -->
+      <!-- 3) Hecho / denuncia -->
+      <q-card flat bordered class="section-card q-mb-md">
+        <q-card-section class="row items-center">
+          <q-icon name="description" class="q-mr-sm"/>
+          <div class="text-subtitle1 text-weight-medium">3) Hecho / denuncia</div>
+        </q-card-section>
+        <q-separator/>
+        <q-card-section class="row q-col-gutter-md">
+          <div class="col-6 col-md-3"><b>Fecha del hecho:</b> {{ orDash(form.fecha_hecho) }}</div>
+          <div class="col-6 col-md-4"><b>Relación con denunciante:</b> {{ orDash(form.relacion_denunciante) }}</div>
+          <div class="col-12 col-md-5"><b>Dirección del hecho:</b> {{ orDash(form.direccion_hecho) }}</div>
+          <div class="col-12"><b>Descripción:</b> <span class="ellipsis-3">{{ orDash(form.descripcion_hecho) }}</span></div>
+        </q-card-section>
+      </q-card>
+
+      <!-- 4) Seguimiento -->
       <q-card flat bordered class="section-card q-mb-md">
         <q-card-section class="row items-center">
           <q-icon name="task_alt" class="q-mr-sm"/>
-          <div class="text-subtitle1 text-weight-medium">5) Seguimiento</div>
+          <div class="text-subtitle1 text-weight-medium">4) Seguimiento</div>
         </q-card-section>
         <q-separator/>
         <q-card-section class="row q-col-gutter-md">
@@ -96,11 +126,11 @@
         </q-card-section>
       </q-card>
 
-      <!-- 6) Check documentos adjuntos -->
+      <!-- 5) Check documentos -->
       <q-card flat bordered class="section-card q-mb-xl">
         <q-card-section class="row items-center">
           <q-icon name="inventory_2" class="q-mr-sm"/>
-          <div class="text-subtitle1 text-weight-medium">6) Check documentos adjuntos</div>
+          <div class="text-subtitle1 text-weight-medium">5) Check documentos adjuntos</div>
         </q-card-section>
         <q-separator/>
         <q-card-section class="row q-col-gutter-md">
@@ -114,113 +144,144 @@
 
     <!-- ========= MODO EDICIÓN ========= -->
     <template v-else>
-      <!-- 1) Datos del caso (S.L.A.M.) -->
+      <!-- 1) Adulto mayor / denunciante -->
       <q-card flat bordered class="section-card q-mb-md">
         <q-card-section class="row items-center">
-          <q-icon name="description" class="q-mr-sm"/>
-          <div class="text-subtitle1 text-weight-medium">1) Datos del caso (S.L.A.M.)</div>
+          <q-icon name="badge" class="q-mr-sm"/>
+          <div class="text-subtitle1 text-weight-medium">1) Adulto mayor / denunciante</div>
         </q-card-section>
         <q-separator/>
         <q-card-section>
           <div class="row q-col-gutter-md">
-            <div class="col-12 col-md-3">
-              <q-input v-model="form.numero_apoyo_integral" dense outlined clearable label="Nº Apoyo Integral"/>
-            </div>
-            <div class="col-12 col-md-3">
-              <q-input v-model="form.numero_caso" dense outlined clearable label="Nº de caso"/>
-            </div>
-            <div class="col-12 col-md-3">
-              <q-input v-model="form.fecha_registro" type="date" dense outlined label="Fecha registro"/>
-            </div>
+            <div class="col-12 col-md-3"><q-input v-model="form.numero_apoyo_integral" dense outlined clearable label="Nº Apoyo Integral"/></div>
+            <div class="col-12 col-md-3"><q-input v-model="form.numero_caso" dense outlined clearable label="Nº de caso"/></div>
+            <div class="col-12 col-md-3"><q-input v-model="form.fecha_registro" type="date" dense outlined label="Fecha registro"/></div>
 
-            <div class="col-12 text-subtitle2 q-mt-md">Idiomas (AM - marcadores generales)</div>
-            <div class="col-6 col-md-2"><q-toggle v-model="form.am_idioma_castellano" label="Castellano"/></div>
-            <div class="col-6 col-md-2"><q-toggle v-model="form.am_idioma_quechua" label="Quechua"/></div>
-            <div class="col-6 col-md-2"><q-toggle v-model="form.am_idioma_aymara" label="Aymara"/></div>
-            <div class="col-12 col-md-6"><q-input v-model="form.am_idioma_otros" dense outlined clearable label="Otros idiomas"/></div>
+            <div class="col-12 text-subtitle2 q-mt-sm">Identificación</div>
+            <div class="col-12 col-md-3"><q-input v-model="form.nombres" dense outlined clearable label="Nombres"/></div>
+            <div class="col-6 col-md-2"><q-input v-model="form.paterno" dense outlined clearable label="Paterno"/></div>
+            <div class="col-6 col-md-2"><q-input v-model="form.materno" dense outlined clearable label="Materno"/></div>
+            <div class="col-6 col-md-2"><q-input v-model="form.tipo_documento" dense outlined clearable label="Documento"/></div>
+            <div class="col-6 col-md-3"><q-input v-model="form.numero_documento" dense outlined clearable label="Nº documento"/></div>
 
-            <div class="col-12 text-subtitle2 q-mt-sm">Teléfonos de referencia</div>
-            <div class="col-12 col-md-4"><q-input v-model="form.ref_tel_fijo" dense outlined label="Tel. fijo"/></div>
-            <div class="col-12 col-md-4"><q-input v-model="form.ref_tel_movil" dense outlined label="Tel. móvil"/></div>
-            <div class="col-12 col-md-4"><q-input v-model="form.ref_tel_movil_alt" dense outlined label="Tel. móvil (alt)"/></div>
+            <div class="col-6 col-md-2"><q-input v-model="form.sexo" dense outlined clearable label="Sexo"/></div>
+            <div class="col-6 col-md-3"><q-input v-model="form.lugar_nacimiento" dense outlined clearable label="Lugar de nacimiento"/></div>
+            <div class="col-6 col-md-3"><q-input v-model="form.fecha_nacimiento" type="date" dense outlined label="Fecha de nacimiento" @update:model-value="onBirthChange('denunciante')"/></div>
+            <div class="col-6 col-md-2"><q-input v-model="form.edad" dense outlined clearable label="Edad"/></div>
+
+            <div class="col-12 col-md-6"><q-input v-model="form.direccion" dense outlined clearable label="Dirección"/></div>
+            <div class="col-6 col-md-3"><q-input v-model="form.estado_civil" dense outlined clearable label="Estado civil"/></div>
+            <div class="col-6 col-md-3"><q-input v-model="form.relacion_denunciado" dense outlined clearable label="Relación con denunciado"/></div>
+
+            <div class="col-6 col-md-3"><q-input v-model="form.grado_instruccion" dense outlined clearable label="Grado de instrucción"/></div>
+            <div class="col-6 col-md-3"><q-toggle v-model="form.trabaja" label="Trabaja"/></div>
+            <div class="col-6 col-md-3"><q-input v-model="form.ocupacion" dense outlined clearable label="Ocupación"/></div>
+            <div class="col-6 col-md-3"><q-input v-model="form.edad_aprox" dense outlined clearable label="Edad aprox."/></div>
+            <div class="col-6 col-md-3"><q-input v-model="form.edada_exacto" dense outlined clearable label="Edad exacta"/></div>
+            <div class="col-6 col-md-3"><q-input v-model="form.idioma" dense outlined clearable label="Idioma"/></div>
+
+            <div class="col-12 text-subtitle2 q-mt-sm">Teléfonos</div>
+            <div class="col-6 col-md-3"><q-input v-model="form.celular1" dense outlined clearable label="Celular 1"/></div>
+            <div class="col-6 col-md-3"><q-input v-model="form.celular2" dense outlined clearable label="Celular 2"/></div>
+            <div class="col-6 col-md-3"><q-input v-model="form.telefono_fijo1" dense outlined clearable label="Teléfono fijo 1"/></div>
+            <div class="col-6 col-md-3"><q-input v-model="form.telefono_fijo2" dense outlined clearable label="Teléfono fijo 2"/></div>
+
+            <div class="col-12 col-md-9"><q-input v-model="form.direccion_actual" dense outlined clearable label="Dirección actual"/></div>
 
             <div class="col-12 text-subtitle2 q-mt-sm">Ubicación (lat/lng)</div>
             <div class="col-12">
               <MapPicker v-model="mapModel" :center="oruroCenter" :zoom-init="13"/>
             </div>
-
-            <div class="col-12 text-subtitle2 q-mt-sm">Hecho y Tipología</div>
-            <div class="col-12">
-              <q-input
-                v-model="form.hecho_descripcion"
-                type="textarea"
-                autogrow
-                outlined dense
-                clearable
-                label="Breve circunstancia del hecho / denuncia"
-                maxlength="3000"
-              />
-            </div>
-            <div class="col-6 col-md-3"><q-toggle v-model="form.tip_violencia_fisica" label="Violencia física"/></div>
-            <div class="col-6 col-md-3"><q-toggle v-model="form.tip_violencia_psicologica" label="Violencia psicológica"/></div>
-            <div class="col-6 col-md-3"><q-toggle v-model="form.tip_abandono" label="Abandono"/></div>
-            <div class="col-6 col-md-3"><q-toggle v-model="form.tip_apoyo_integral" label="Apoyo integral"/></div>
           </div>
         </q-card-section>
       </q-card>
 
-      <!-- 4) Datos del denunciado/a -->
+      <!-- 2) Denunciado -->
       <q-card flat bordered class="section-card q-mb-md">
         <q-card-section class="row items-center">
           <q-icon name="person_off" class="q-mr-sm"/>
-          <div class="text-subtitle1 text-weight-medium">4) Datos del denunciado/a</div>
+          <div class="text-subtitle1 text-weight-medium">2) Denunciado</div>
         </q-card-section>
         <q-separator/>
         <q-card-section>
           <div class="row q-col-gutter-md">
-            <div class="col-12 col-md-4"><q-input v-model="form.den_nombres" dense outlined clearable label="Nombres"/></div>
-            <div class="col-6 col-md-2"><q-input v-model="form.den_paterno" dense outlined clearable label="Paterno"/></div>
-            <div class="col-6 col-md-2"><q-input v-model="form.den_materno" dense outlined clearable label="Materno"/></div>
-            <div class="col-6 col-md-2"><q-input v-model="form.den_edad" dense outlined clearable label="Edad"/></div>
-            <div class="col-12 col-md-4"><q-input v-model="form.den_domicilio" dense outlined clearable label="Domicilio"/></div>
-            <div class="col-6 col-md-3"><q-input v-model="form.den_estado_civil" dense outlined clearable label="Estado civil"/></div>
-            <div class="col-6 col-md-3"><q-input v-model="form.den_idioma" dense outlined clearable label="Idioma"/></div>
-            <div class="col-6 col-md-3"><q-input v-model="form.den_grado_instruccion" dense outlined clearable label="Grado de instrucción"/></div>
-            <div class="col-6 col-md-3"><q-input v-model="form.den_ocupacion" dense outlined clearable label="Ocupación"/></div>
+            <div class="col-12 col-md-4"><q-input v-model="form.denunciado_nombres" dense outlined clearable label="Nombres"/></div>
+            <div class="col-6 col-md-2"><q-input v-model="form.denunciado_paterno" dense outlined clearable label="Paterno"/></div>
+            <div class="col-6 col-md-2"><q-input v-model="form.denunciado_materno" dense outlined clearable label="Materno"/></div>
+            <div class="col-6 col-md-2"><q-input v-model="form.denunciado_edad" dense outlined clearable label="Edad"/></div>
+            <div class="col-6 col-md-2"><q-input v-model="form.denunciado_ci" dense outlined clearable label="CI"/></div>
+
+            <div class="col-6 col-md-2"><q-input v-model="form.denunciado_ciudad_nacimiento" dense outlined clearable label="Ciudad nac."/></div>
+            <div class="col-6 col-md-2"><q-input v-model="form.denunciado_sexo" dense outlined clearable label="Sexo"/></div>
+            <div class="col-6 col-md-3"><q-input v-model="form.denunciado_lugar_nacimiento" dense outlined clearable label="Lugar nac."/></div>
+            <div class="col-6 col-md-3"><q-input v-model="form.denunciado_fecha_nacimiento" type="date" dense outlined label="Fecha nac." @update:model-value="onBirthChange('denunciado')"/></div>
+
+            <div class="col-12 col-md-6"><q-input v-model="form.denunciado_direccion" dense outlined clearable label="Dirección"/></div>
+            <div class="col-6 col-md-3"><q-input v-model="form.denunciado_estado_civil" dense outlined clearable label="Estado civil"/></div>
+            <div class="col-6 col-md-3"><q-input v-model="form.denunciado_idioma" dense outlined clearable label="Idioma"/></div>
+            <div class="col-6 col-md-3"><q-input v-model="form.denunciado_grado_instruccion" dense outlined clearable label="Grado de instrucción"/></div>
+            <div class="col-6 col-md-3"><q-input v-model="form.denunciado_ocupacion" dense outlined clearable label="Ocupación"/></div>
+
+            <div class="col-6 col-md-3"><q-input v-model="form.denunciado_celular1" dense outlined clearable label="Celular 1"/></div>
+            <div class="col-6 col-md-3"><q-input v-model="form.denunciado_celular2" dense outlined clearable label="Celular 2"/></div>
+            <div class="col-6 col-md-3"><q-input v-model="form.denunciado_telefono_fijo1" dense outlined clearable label="Teléfono fijo 1"/></div>
+            <div class="col-6 col-md-3"><q-input v-model="form.denunciado_telefono_fijo2" dense outlined clearable label="Teléfono fijo 2"/></div>
+            <div class="col-12 col-md-6"><q-input v-model="form.denunciado_direccion_actual" dense outlined clearable label="Dirección actual"/></div>
           </div>
         </q-card-section>
       </q-card>
 
-      <!-- 5) Seguimiento (responsables) -->
+      <!-- 3) Hecho / denuncia -->
+      <q-card flat bordered class="section-card q-mb-md">
+        <q-card-section class="row items-center">
+          <q-icon name="description" class="q-mr-sm"/>
+          <div class="text-subtitle1 text-weight-medium">3) Hecho / denuncia</div>
+        </q-card-section>
+        <q-separator/>
+        <q-card-section>
+          <div class="row q-col-gutter-md">
+            <div class="col-6 col-md-3"><q-input v-model="form.fecha_hecho" type="date" dense outlined label="Fecha del hecho"/></div>
+            <div class="col-6 col-md-4"><q-input v-model="form.relacion_denunciante" dense outlined clearable label="Relación con denunciante"/></div>
+            <div class="col-12 col-md-5"><q-input v-model="form.direccion_hecho" dense outlined clearable label="Dirección del hecho"/></div>
+
+            <div class="col-12">
+              <q-input v-model="form.descripcion_hecho" type="textarea" autogrow outlined dense clearable
+                       label="Breve circunstancia del hecho / denuncia" maxlength="4000"/>
+            </div>
+          </div>
+        </q-card-section>
+      </q-card>
+
+      <!-- 4) Seguimiento (responsables) -->
       <q-card flat bordered class="section-card q-mb-md">
         <q-card-section class="row items-center">
           <q-icon name="task_alt" class="q-mr-sm"/>
-          <div class="text-subtitle1 text-weight-medium">5) Seguimiento</div>
+          <div class="text-subtitle1 text-weight-medium">4) Seguimiento</div>
         </q-card-section>
         <q-separator/>
         <q-card-section>
           <div class="row q-col-gutter-md">
             <div class="col-12 col-md-4">
               <q-select v-model="form.psicologica_user_id" dense outlined emit-value map-options clearable
-                        :options="optPsicologos" label="Área psicológica (responsable)"/>
+                        :options="optPsicologos" label="Psicológica (responsable)"/>
             </div>
             <div class="col-12 col-md-4">
               <q-select v-model="form.trabajo_social_user_id" dense outlined emit-value map-options clearable
-                        :options="optSociales" label="Área social (responsable)"/>
+                        :options="optSociales" label="Trabajo social (responsable)"/>
             </div>
             <div class="col-12 col-md-4">
               <q-select v-model="form.legal_user_id" dense outlined emit-value map-options clearable
-                        :options="optAbogados" label="Área legal (responsable)"/>
+                        :options="optAbogados" label="Legal (responsable)"/>
             </div>
           </div>
         </q-card-section>
       </q-card>
 
-      <!-- 6) Check documentos adjuntos -->
+      <!-- 5) Check documentos -->
       <q-card flat bordered class="section-card q-mb-xl">
         <q-card-section class="row items-center">
           <q-icon name="inventory_2" class="q-mr-sm"/>
-          <div class="text-subtitle1 text-weight-medium">6) Check documentos adjuntos</div>
+          <div class="text-subtitle1 text-weight-medium">5) Check documentos adjuntos</div>
         </q-card-section>
         <q-separator/>
         <q-card-section>
@@ -240,11 +301,11 @@
 import MapPicker from 'components/MapPicker.vue'
 
 export default {
-  name: 'InfoGeneral',
+  name: 'UmadiInfoGeneral',
   components: { MapPicker },
   props: {
     caseId: { type: [String, Number], required: true },
-    caso:   { type: Object, default: () => null }   // ← viene del padre
+    caso:   { type: Object, default: () => null }   // puede venir { umadi: {...}, familiares: [...] }
   },
   data () {
     return {
@@ -252,15 +313,12 @@ export default {
       editing: false,
       backup: null,
 
-      // geocentro
       oruroCenter: [-17.9667, -67.1167],
 
-      // responsables
       psicologos: [],
       abogados: [],
       sociales: [],
 
-      // form local (clon del slam)
       form: {}
     }
   },
@@ -270,43 +328,43 @@ export default {
       return r === 'Administrador' || r === 'Asistente'
     },
 
-    nombreDenunciado () {
+    nombreDenunciante () {
       const f = this.form || {}
-      const full = [f.den_nombres, f.den_paterno, f.den_materno].filter(Boolean).join(' ').trim()
+      const full = [f.nombres, f.paterno, f.materno].filter(Boolean).join(' ').trim()
       return full || '—'
     },
 
-    // opciones selects de responsables
+    nombreDenunciado () {
+      const f = this.form || {}
+      const full = [f.denunciado_nombres, f.denunciado_paterno, f.denunciado_materno].filter(Boolean).join(' ').trim()
+      return full || '—'
+    },
+
     optPsicologos () { return this.psicologos.map(u => ({ label: u.name, value: u.id })) },
     optAbogados  () { return this.abogados .map(u => ({ label: u.name, value: u.id })) },
     optSociales  () { return this.sociales .map(u => ({ label: u.name, value: u.id })) },
 
-    // v-model MapPicker (usa am_latitud/am_longitud)
     mapModel: {
-      get () { return { latitud: this.form.am_latitud, longitud: this.form.am_longitud } },
+      get () { return { latitud: this.form.latitud, longitud: this.form.longitud } },
       set (v) {
-        this.form.am_latitud  = v?.latitud ?? v?.lat ?? null
-        this.form.am_longitud = v?.longitud ?? v?.lng ?? null
+        this.form.latitud  = v?.latitud ?? v?.lat ?? null
+        this.form.longitud = v?.longitud ?? v?.lng ?? null
       }
     }
   },
   watch: {
-    // cuando el padre actualiza 'caso', clonar a form (tomando caso.slam si viene anidado)
     caso: {
       immediate: true,
       deep: true,
       handler (val) {
         if (!val) return
-        const data = val.slam ? val.slam : val
-        // clonar y normalizar booleanos 0/1→true/false para toggles/checkboxes
+        const data = val.umadi ? val.umadi : val
         const norm = this.normalizeFromBackend(data)
-        // set form
         this.form = { ...norm }
 
-        // normalizar ids desde relaciones (si faltan)
         if (!this.form.psicologica_user_id && data.psicologica_user?.id) this.form.psicologica_user_id = data.psicologica_user.id
         if (!this.form.trabajo_social_user_id && data.trabajo_social_user?.id) this.form.trabajo_social_user_id = data.trabajo_social_user.id
-        if (!this.form.legal_user_id && data.legal_user?.id)         this.form.legal_user_id = data.legal_user.id
+        if (!this.form.legal_user_id && data.legal_user?.id) this.form.legal_user_id = data.legal_user.id
       }
     }
   },
@@ -314,9 +372,19 @@ export default {
     this.fetchRoles()
   },
   methods: {
-    // ===== utilidades =====
     orDash (v) { return (v !== null && v !== undefined && v !== '') ? v : '—' },
     yesNo (v) { return (v === true || v === 1 || v === '1') ? 'Sí' : 'No' },
+
+    onBirthChange (who) {
+      const key = (who === 'denunciado') ? 'denunciado' : ''
+      const field = key ? `${key}_fecha_nacimiento` : 'fecha_nacimiento'
+      if (!this.form[field]) return
+      const d = new Date(this.form[field])
+      const diff = Date.now() - d.getTime()
+      const age = Math.abs(new Date(diff).getUTCFullYear() - 1970)
+      if (key) this.form['denunciado_edad'] = String(age)
+      else this.form['edad'] = String(age)
+    },
 
     nombreUsuario (relObj, id, arr) {
       if (relObj && relObj.name) return relObj.name
@@ -325,11 +393,8 @@ export default {
     },
 
     normalizeFromBackend (o = {}) {
-      // convierte 0/1 a boolean para los campos check/toggle
       const boolKeys = [
-        'am_idioma_castellano','am_idioma_quechua','am_idioma_aymara',
-        'tip_violencia_fisica','tip_violencia_psicologica','tip_abandono','tip_apoyo_integral',
-        'doc_ci','doc_frontal_denunciado','doc_frontal_denunciante','doc_croquis'
+        'trabaja','doc_ci','doc_frontal_denunciado','doc_frontal_denunciante','doc_croquis'
       ]
       const out = { ...o }
       boolKeys.forEach(k => { if (k in out) out[k] = (out[k] === 1 || out[k] === true || out[k] === '1') })
@@ -337,11 +402,8 @@ export default {
     },
 
     prepareForSave (o = {}) {
-      // convierte boolean → 0/1 para enviar homogéneo
       const boolKeys = [
-        'am_idioma_castellano','am_idioma_quechua','am_idioma_aymara',
-        'tip_violencia_fisica','tip_violencia_psicologica','tip_abandono','tip_apoyo_integral',
-        'doc_ci','doc_frontal_denunciado','doc_frontal_denunciante','doc_croquis'
+        'trabaja','doc_ci','doc_frontal_denunciado','doc_frontal_denunciante','doc_croquis'
       ]
       const out = { ...o }
       boolKeys.forEach(k => { if (k in out) out[k] = out[k] ? 1 : 0 })
@@ -375,14 +437,13 @@ export default {
       if (!this.canEdit) return
       this.loading = true
       try {
-        // prepara payload (solo slam en este tab)
-        const payload = { slam: this.prepareForSave(this.form) }
-        const { data } = await this.$axios.put(`/slams/${this.caseId}`, payload)
-        const updated = data?.slam ? this.normalizeFromBackend(data.slam) : this.normalizeFromBackend(data)
+        const payload = { umadi: this.prepareForSave(this.form) }
+        const { data } = await this.$axios.put(`/umadis/${this.caseId}`, payload)
+        const updated = data?.umadi ? this.normalizeFromBackend(data.umadi) : this.normalizeFromBackend(data)
         this.form = { ...updated }
         this.editing = false
         this.$alert?.success?.('Información general actualizada') || this.$q.notify({ type:'positive', message:'Información general actualizada' })
-        this.$emit('update') // para que el padre haga fetchSlam()
+        this.$emit('update')
       } catch (e) {
         this.$alert?.error?.(e?.response?.data?.message || 'No se pudo actualizar') || this.$q.notify({ type:'negative', message: e?.response?.data?.message || 'No se pudo actualizar' })
       } finally {

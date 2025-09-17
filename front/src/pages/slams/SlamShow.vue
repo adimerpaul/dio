@@ -82,7 +82,7 @@
 
       <!-- 2) Seguimiento -->
       <q-tab-panel name="seguimiento">
-        <Seguimiento :case-id="caseId"/>
+        <Seguimiento :case-id="caseId" :caso="slam" @refresh="fetchSlam"/>
       </q-tab-panel>
 
       <!-- 3) Hoja de Ruta -->

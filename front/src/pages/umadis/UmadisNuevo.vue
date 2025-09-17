@@ -1,58 +1,10 @@
 <template>
   <q-page class="q-pa-md bg-grey-2">
-<!--    protected $fillable = [-->
-<!--    // ===== 1) DATOS DEL ADULTO MAYOR =====-->
-<!--    'fecha_registro',-->
-<!--    'numero_apoyo_integral',-->
-<!--    'numero_caso',-->
-<!--    'am_latitud',-->
-<!--    'am_longitud',-->
-<!--    'am_extravio',-->
-<!--    'am_medicina',-->
-<!--    'am_fisioterapia',-->
-
-<!--    // Idiomas (checks)-->
-<!--    'am_idioma_castellano',-->
-<!--    'am_idioma_quechua',-->
-<!--    'am_idioma_aymara',-->
-<!--    'am_idioma_otros',-->
-
-<!--    // Teléfonos de referencia-->
-<!--    'ref_tel_fijo',-->
-<!--    'ref_tel_movil',-->
-<!--    'ref_tel_movil_alt',-->
-
-<!--    // ===== 4) DATOS DEL DENUNCIADO/A =====-->
-<!--    'den_nombres',-->
-<!--    'den_paterno',-->
-<!--    'den_materno',-->
-<!--    'den_edad',-->
-<!--    'den_domicilio',-->
-<!--    'den_estado_civil',-->
-
-<!--    'den_idioma',          // p.ej. CASTELLANO-->
-<!--    'den_grado_instruccion', // p.ej. TÉCNICO-->
-<!--    'den_ocupacion',        // p.ej. MECÁNICO-->
-
-<!--    // ===== 5) BREVE CIRCUNSTANCIA DEL HECHO =====-->
-<!--    'hecho_descripcion',-->
-
-<!--    // ===== 6) TIPOLOGÍA (checks) =====-->
-<!--    'tip_violencia_fisica',-->
-<!--    'tip_violencia_psicologica',-->
-<!--    'tip_abandono',-->
-<!--    'tip_apoyo_integral',-->
-<!--    // Metadatos-->
-<!--    'user_id',-->
-<!--    'psicologica_user_id',-->
-<!--    'trabajo_social_user_id',-->
-<!--    'legal_user_id'-->
-<!--    ];-->
     <!-- Toolbar -->
     <div class="toolbar q-pa-sm bg-white row items-center q-gutter-sm shadow-1">
       <div class="col">
-        <div class="text-h6 text-weight-bold">Nuevo S.L.A.M.</div>
-        <div class="text-caption text-grey-7">Registro con múltiples Adultos y Familiares</div>
+        <div class="text-h6 text-weight-bold">Nuevo U.M.A.D.I.</div>
+        <div class="text-caption text-grey-7">Registro del adulto mayor + denunciado + familiares</div>
       </div>
       <div class="col-auto row q-gutter-sm">
         <q-btn flat color="primary" icon="history" label="Limpiar" @click="resetForm"/>
@@ -61,121 +13,68 @@
     </div>
 
     <q-form class="q-mt-lg" @submit.prevent="save">
-      <!-- 1) Datos del caso (Slam) -->
+      <!-- 1) Datos del adulto mayor / denunciante -->
       <q-card flat bordered class="section-card">
         <q-card-section class="row items-center">
-          <q-icon name="description" class="q-mr-sm"/>
-          <div class="text-subtitle1 text-weight-medium">1) Datos del caso (S.L.A.M.)</div>
+          <q-icon name="badge" class="q-mr-sm"/>
+          <div class="text-subtitle1 text-weight-medium">1) Datos del adulto mayor / denunciante</div>
         </q-card-section>
         <q-separator/>
         <q-card-section>
           <div class="row q-col-gutter-md">
+<!--            <div class="col-12 col-md-2"><q-input v-model="umadi.area" dense outlined label="Área"/></div>-->
+<!--            <div class="col-12 col-md-2"><q-input v-model="umadi.zona" dense outlined label="Zona"/></div>-->
             <div class="col-12 col-md-3" v-if="showNumeroApoyoIntegral">
-              <q-input v-model="slam.numero_apoyo_integral" dense outlined clearable
-                       label="Nº Apoyo Integral" hint="Requerido si aplica"/>
+              <q-input v-model="umadi.numero_apoyo_integral" dense outlined label="Nº Apoyo Integral"/>
             </div>
-            <div class="col-12 col-md-3">
-              <q-input v-model="slam.numero_caso" dense outlined clearable label="Nº de caso"/>
-            </div>
+            <div class="col-12 col-md-3"><q-input v-model="umadi.numero_caso" dense outlined label="Nº de caso"/></div>
+            <div class="col-12 col-md-2"><q-input v-model="umadi.fecha_registro" type="date" dense outlined label="Fecha registro"/></div>
 
-            <div class="col-12 text-subtitle2 q-mt-md">Idiomas (AM - marcadores generales)</div>
-            <div class="col-6 col-md-2"><q-toggle v-model="slam.am_idioma_castellano" label="Castellano"/></div>
-            <div class="col-6 col-md-2"><q-toggle v-model="slam.am_idioma_quechua" label="Quechua"/></div>
-            <div class="col-6 col-md-2"><q-toggle v-model="slam.am_idioma_aymara" label="Aymara"/></div>
-            <div class="col-12 col-md-6">
-              <q-input v-model="slam.am_idioma_otros" dense outlined clearable label="Otros idiomas"/>
-            </div>
+            <div class="col-12 text-subtitle2 q-mt-sm">Identificación</div>
+            <div class="col-12 col-md-3"><q-input v-model="umadi.nombres" dense outlined label="Nombres"/></div>
+            <div class="col-6 col-md-2"><q-input v-model="umadi.paterno" dense outlined label="Paterno"/></div>
+            <div class="col-6 col-md-2"><q-input v-model="umadi.materno" dense outlined label="Materno"/></div>
+            <div class="col-6 col-md-2"><q-select v-model="umadi.tipo_documento" :options="documentos" emit-value map-options dense outlined label="Documento"/></div>
+            <div class="col-6 col-md-3"><q-input v-model="umadi.numero_documento" dense outlined label="Nº documento"/></div>
 
-            <div class="col-12 text-subtitle2 q-mt-sm">Teléfonos de referencia</div>
-            <div class="col-12 col-md-4"><q-input v-model="slam.ref_tel_fijo" dense outlined label="Tel. fijo"/></div>
-            <div class="col-12 col-md-4"><q-input v-model="slam.ref_tel_movil" dense outlined label="Tel. móvil"/></div>
-            <div class="col-12 col-md-4"><q-input v-model="slam.ref_tel_movil_alt" dense outlined label="Tel. móvil (alt)"/></div>
+            <div class="col-6 col-md-2"><q-select v-model="umadi.sexo" :options="sexos" emit-value map-options dense outlined label="Sexo"/></div>
+            <div class="col-6 col-md-3"><q-input v-model="umadi.lugar_nacimiento" dense outlined label="Lugar de nacimiento"/></div>
+            <div class="col-6 col-md-3"><q-input v-model="umadi.fecha_nacimiento" type="date" dense outlined label="Fecha de nacimiento" @update:model-value="calcEdad"/></div>
+            <div class="col-6 col-md-2"><q-input v-model="umadi.edad" dense outlined label="Edad"/></div>
 
+            <div class="col-12 col-md-6"><q-input v-model="umadi.direccion" dense outlined label="Dirección"/></div>
+            <div class="col-6 col-md-3"><q-input v-model="umadi.estado_civil" dense outlined label="Estado civil"/></div>
+            <div class="col-6 col-md-3"><q-input v-model="umadi.relacion_denunciado" dense outlined label="Relación con denunciado"/></div>
+
+            <div class="col-6 col-md-3"><q-input v-model="umadi.grado_instruccion" dense outlined label="Grado de instrucción"/></div>
+            <div class="col-6 col-md-3"><q-toggle v-model="umadi.trabaja" label="Trabaja"/></div>
+            <div class="col-6 col-md-3"><q-input v-model="umadi.ocupacion" dense outlined label="Ocupación"/></div>
+
+            <div class="col-12 text-subtitle2 q-mt-sm">Otros datos</div>
+            <div class="col-6 col-md-2"><q-input v-model="umadi.edad_aprox" dense outlined label="Edad aprox."/></div>
+            <div class="col-6 col-md-2"><q-input v-model="umadi.edada_exacto" dense outlined label="Edad exacta"/></div>
+            <div class="col-6 col-md-3"><q-input v-model="umadi.idioma" dense outlined label="Idioma"/></div>
+
+            <div class="col-12 text-subtitle2 q-mt-sm">Teléfonos</div>
+            <div class="col-6 col-md-3"><q-input v-model="umadi.celular1" dense outlined label="Celular 1"/></div>
+            <div class="col-6 col-md-3"><q-input v-model="umadi.celular2" dense outlined label="Celular 2"/></div>
+            <div class="col-6 col-md-3"><q-input v-model="umadi.telefono_fijo1" dense outlined label="Teléfono fijo 1"/></div>
+            <div class="col-6 col-md-3"><q-input v-model="umadi.telefono_fijo2" dense outlined label="Teléfono fijo 2"/></div>
+
+            <div class="col-12 col-md-9"><q-input v-model="umadi.direccion_actual" dense outlined label="Dirección actual"/></div>
             <div class="col-12 text-subtitle2 q-mt-sm">Ubicación (lat/lng)</div>
             <div class="col-12">
-              <!-- Tu componente de mapa: pega la ruta correcta del archivo que me mandaste -->
               <MapPicker v-model="mapModel" :center="defaultCenter" :zoom-init="13"/>
             </div>
-
-<!--            <div class="col-6 col-md-3">-->
-<!--              <q-input v-model.number="slam.am_latitud" dense outlined label="Latitud" />-->
-<!--            </div>-->
-<!--            <div class="col-6 col-md-3">-->
-<!--              <q-input v-model.number="slam.am_longitud" dense outlined label="Longitud" />-->
-<!--            </div>-->
-
-            <div class="col-12 text-subtitle2 q-mt-sm">Hecho y Tipología</div>
-            <div class="col-12">
-              <q-input v-model="slam.hecho_descripcion" type="textarea" autogrow outlined dense clearable
-                       label="Breve circunstancia del hecho / denuncia" maxlength="3000">
-                <template v-slot:append>
-                  <q-icon name="mic" class="cursor-pointer" :color="isListening && activeField === 'hecho_descripcion' ? 'red' : 'grey-7'" @click="toggleRecognition('hecho_descripcion')"/>
-                </template>
-              </q-input>
-            </div>
-            <div class="col-6 col-md-3"><q-toggle v-model="slam.tip_violencia_fisica" label="Violencia física"/></div>
-            <div class="col-6 col-md-3"><q-toggle v-model="slam.tip_violencia_psicologica" label="Violencia psicológica"/></div>
-            <div class="col-6 col-md-3"><q-toggle v-model="slam.tip_abandono" label="Abandono"/></div>
-            <div class="col-6 col-md-3"><q-toggle v-model="slam.tip_apoyo_integral" label="Apoyo integral"/></div>
-
-<!--            <div class="col-6 col-md-3"><q-toggle v-model="slam.seg_trabajo_legal" label="Trabajo legal"/></div>-->
-<!--            <div class="col-6 col-md-3"><q-toggle v-model="slam.seg_trabajo_social" label="Trabajo social"/></div>-->
-<!--            <div class="col-6 col-md-3"><q-toggle v-model="slam.seg_psicologico" label="Psicológico"/></div>-->
           </div>
         </q-card-section>
       </q-card>
 
-      <!-- 2) Adultos (N) -->
-      <q-card flat bordered class="section-card">
-        <q-card-section class="row items-center">
-          <q-icon name="elderly" class="q-mr-sm"/>
-          <div class="text-subtitle1 text-weight-medium">2) Adultos (N)</div>
-          <q-space/>
-          <q-btn dense color="primary" flat icon="add" label="Agregar adulto" @click="addAdulto"/>
-        </q-card-section>
-        <q-separator/>
-        <q-card-section>
-          <div v-if="adultos.length === 0" class="text-grey-7 q-mb-md">
-            No hay adultos agregados. Usa “Agregar adulto”.
-          </div>
-          <div v-for="(a, idx) in adultos" :key="idx" class="q-mb-md">
-            <div class="row q-col-gutter-md items-center">
-              <div class="col-12 col-md-4">
-                <q-input v-model="a.nombre" dense outlined clearable :rules="[req]"
-                         label="Nombres *"/>
-              </div>
-              <div class="col-6 col-md-2"><q-input v-model="a.paterno" dense outlined clearable label="Paterno"/></div>
-              <div class="col-6 col-md-2"><q-input v-model="a.materno" dense outlined clearable label="Materno"/></div>
-
-              <div class="col-6 col-md-2">
-                  <q-select v-model="a.denunciante_documento" dense outlined emit-value map-options clearable :options="$documentos" label="Documento"/>
-              </div>
-              <div class="col-6 col-md-2"><q-input v-model="a.documento_num" dense outlined clearable label="Doc. Nº"/></div>
-
-              <div class="col-6 col-md-3"><q-input v-model="a.fecha_nacimiento" type="date" dense outlined label="Fecha nac."/></div>
-              <div class="col-6 col-md-3"><q-input v-model="a.lugar_nacimiento" dense outlined clearable label="Lugar nac."/></div>
-              <div class="col-6 col-md-2"><q-input v-model="a.edad" dense outlined clearable label="Edad"/></div>
-              <div class="col-12 col-md-4"><q-input v-model="a.domicilio" dense outlined clearable label="Domicilio"/></div>
-              <div class="col-6 col-md-3"><q-input v-model="a.estado_civil" dense outlined clearable label="Estado civil"/></div>
-
-              <div class="col-6 col-md-3"><q-input v-model="a.ocupacion_1" dense outlined clearable label="Ocupación 1"/></div>
-              <div class="col-6 col-md-3"><q-input v-model="a.ocupacion_2" dense outlined clearable label="Ocupación 2"/></div>
-              <div class="col-12 col-md-3"><q-input v-model="a.ingresos" dense outlined clearable label="Ingresos"/></div>
-
-              <div class="col-auto q-mt-sm">
-                <q-btn dense round flat color="negative" icon="delete" @click="removeAdulto(idx)"/>
-              </div>
-            </div>
-            <q-separator spaced/>
-          </div>
-        </q-card-section>
-      </q-card>
-
-      <!-- 3) Familiares (N) -->
+      <!-- 2) Familiares (N) -->
       <q-card flat bordered class="section-card">
         <q-card-section class="row items-center">
           <q-icon name="diversity_3" class="q-mr-sm"/>
-          <div class="text-subtitle1 text-weight-medium">3) Familiares (N)</div>
+          <div class="text-subtitle1 text-weight-medium">2) Familiares (N)</div>
           <q-space/>
           <q-btn dense color="primary" flat icon="add" label="Agregar familiar" @click="addFamiliar"/>
         </q-card-section>
@@ -184,15 +83,16 @@
           <div v-if="familiares.length === 0" class="text-grey-7 q-mb-md">
             No hay familiares agregados. Usa “Agregar familiar”.
           </div>
+
           <div v-for="(f, idx) in familiares" :key="idx" class="q-mb-md">
             <div class="row q-col-gutter-md items-center">
-              <div class="col-12 col-md-4"><q-input v-model="f.nombre" dense outlined clearable label="Nombres *"/></div>
-              <div class="col-6 col-md-2"><q-input v-model="f.paterno" dense outlined clearable label="Paterno"/></div>
-              <div class="col-6 col-md-2"><q-input v-model="f.materno" dense outlined clearable label="Materno"/></div>
-              <div class="col-6 col-md-2"><q-input v-model="f.parentesco" dense outlined clearable label="Parentesco"/></div>
-              <div class="col-3 col-md-1"><q-input v-model.number="f.edad" type="number" dense outlined label="Edad"/></div>
-              <div class="col-3 col-md-1"><q-input v-model="f.sexo" dense outlined clearable label="Sexo"/></div>
-              <div class="col-12 col-md-2"><q-input v-model="f.telefono" dense outlined clearable label="Teléfono"/></div>
+              <div class="col-12 col-md-4"><q-input v-model="f.nombre" dense outlined label="Nombres *"/></div>
+              <div class="col-6  col-md-2"><q-input v-model="f.paterno" dense outlined label="Paterno"/></div>
+              <div class="col-6  col-md-2"><q-input v-model="f.materno" dense outlined label="Materno"/></div>
+              <div class="col-6  col-md-2"><q-input v-model="f.parentesco" dense outlined label="Parentesco"/></div>
+              <div class="col-3  col-md-1"><q-input v-model.number="f.edad" type="number" dense outlined label="Edad"/></div>
+              <div class="col-3  col-md-1"><q-input v-model="f.sexo" dense outlined label="Sexo"/></div>
+              <div class="col-12 col-md-3"><q-input v-model="f.telefono" dense outlined label="Teléfono"/></div>
 
               <div class="col-auto q-mt-sm">
                 <q-btn dense round flat color="negative" icon="delete" @click="removeFamiliar(idx)"/>
@@ -203,82 +103,103 @@
         </q-card-section>
       </q-card>
 
-      <!-- 4) DATOS DEL DENUNCIADO/A -->
+      <!-- 3) Datos del denunciado -->
       <q-card flat bordered class="section-card">
         <q-card-section class="row items-center">
           <q-icon name="person_off" class="q-mr-sm"/>
-          <div class="text-subtitle1 text-weight-medium">4) Datos del denunciado/a </div>
+          <div class="text-subtitle1 text-weight-medium">3) Datos del denunciado</div>
         </q-card-section>
         <q-separator/>
         <q-card-section>
           <div class="row q-col-gutter-md">
-            <div class="col-12 col-md-4"><q-input v-model="slam.den_nombres" dense outlined clearable label="Nombres"/></div>
-            <div class="col-6 col-md-2"><q-input v-model="slam.den_paterno" dense outlined clearable label="Paterno"/></div>
-            <div class="col-6 col-md-2"><q-input v-model="slam.den_materno" dense outlined clearable label="Materno"/></div>
-            <div class="col-6 col-md-2"><q-input v-model="slam.den_edad" dense outlined clearable label="Edad"/></div>
-            <div class="col-12 col-md-4"><q-input v-model="slam.den_domicilio" dense outlined clearable label="Domicilio"/></div>
-            <div class="col-6 col-md-3"><q-input v-model="slam.den_estado_civil" dense outlined clearable label="Estado civil"/></div>
-            <div class="col-6 col-md-3"><q-input v-model="slam.den_idioma" dense outlined clearable label="Idioma"/></div>
-            <div class="col-6 col-md-3"><q-input v-model="slam.den_grado_instruccion" dense outlined clearable label="Grado de instrucción"/></div>
-            <div class="col-6 col-md-3"><q-input v-model="slam.den_ocupacion" dense outlined clearable label="Ocupación"/></div>
+            <div class="col-12 col-md-4"><q-input v-model="umadi.denunciado_nombres" dense outlined label="Nombres"/></div>
+            <div class="col-6  col-md-2"><q-input v-model="umadi.denunciado_paterno" dense outlined label="Paterno"/></div>
+            <div class="col-6  col-md-2"><q-input v-model="umadi.denunciado_materno" dense outlined label="Materno"/></div>
+            <div class="col-6  col-md-2"><q-input v-model="umadi.denunciado_edad" dense outlined label="Edad"/></div>
+            <div class="col-6  col-md-2"><q-input v-model="umadi.denunciado_ci" dense outlined label="CI"/></div>
+
+            <div class="col-6  col-md-2"><q-input v-model="umadi.denunciado_ciudad_nacimiento" dense outlined label="Ciudad nac."/></div>
+            <div class="col-6  col-md-2"><q-select v-model="umadi.denunciado_sexo" :options="sexos" emit-value map-options dense outlined label="Sexo"/></div>
+            <div class="col-6  col-md-3"><q-input v-model="umadi.denunciado_lugar_nacimiento" dense outlined label="Lugar nac."/></div>
+            <div class="col-6  col-md-3"><q-input v-model="umadi.denunciado_fecha_nacimiento" type="date" dense outlined label="Fecha nac." @update:model-value="calcEdadDenunciado"/></div>
+
+            <div class="col-12 col-md-6"><q-input v-model="umadi.denunciado_direccion" dense outlined label="Dirección"/></div>
+            <div class="col-6  col-md-3"><q-input v-model="umadi.denunciado_estado_civil" dense outlined label="Estado civil"/></div>
+            <div class="col-6  col-md-3"><q-input v-model="umadi.denunciado_idioma" dense outlined label="Idioma"/></div>
+            <div class="col-6  col-md-3"><q-input v-model="umadi.denunciado_grado_instruccion" dense outlined label="Grado de instrucción"/></div>
+            <div class="col-6  col-md-3"><q-input v-model="umadi.denunciado_ocupacion" dense outlined label="Ocupación"/></div>
+
+            <div class="col-6  col-md-3"><q-input v-model="umadi.denunciado_celular1" dense outlined label="Celular 1"/></div>
+            <div class="col-6  col-md-3"><q-input v-model="umadi.denunciado_celular2" dense outlined label="Celular 2"/></div>
+            <div class="col-6  col-md-3"><q-input v-model="umadi.denunciado_telefono_fijo1" dense outlined label="Teléfono fijo 1"/></div>
+            <div class="col-6  col-md-3"><q-input v-model="umadi.denunciado_telefono_fijo2" dense outlined label="Teléfono fijo 2"/></div>
+            <div class="col-12 col-md-6"><q-input v-model="umadi.denunciado_direccion_actual" dense outlined label="Dirección actual"/></div>
           </div>
         </q-card-section>
       </q-card>
 
-      <q-card flat bordered class="section-card q-mb-xl">
+      <!-- 4) Datos del hecho / denuncia -->
+      <q-card flat bordered class="section-card">
         <q-card-section class="row items-center">
-          <q-icon name="task_alt" class="q-mr-sm"/>
-          <div class="text-subtitle1 text-weight-medium">5) Seguimiento</div>
+          <q-icon name="description" class="q-mr-sm"/>
+          <div class="text-subtitle1 text-weight-medium">4) Datos del hecho / denuncia</div>
         </q-card-section>
         <q-separator/>
+        <q-card-section>
+          <div class="row q-col-gutter-md">
+            <div class="col-6 col-md-3"><q-input v-model="umadi.fecha_hecho" type="date" dense outlined label="Fecha del hecho"/></div>
+            <div class="col-6 col-md-4"><q-input v-model="umadi.relacion_denunciante" dense outlined label="Relación con denunciante"/></div>
+            <div class="col-12 col-md-5"><q-input v-model="umadi.direccion_hecho" dense outlined label="Dirección del hecho"/></div>
 
+            <div class="col-12">
+              <q-input v-model="umadi.descripcion_hecho" type="textarea" autogrow outlined dense
+                       label="Breve circunstancia del hecho / denuncia" maxlength="4000"/>
+            </div>
+          </div>
+        </q-card-section>
+      </q-card>
+
+      <!-- 5) Seguimiento / responsables -->
+      <q-card flat bordered class="section-card">
+        <q-card-section class="row items-center">
+          <q-icon name="task_alt" class="q-mr-sm"/>
+          <div class="text-subtitle1 text-weight-medium">5) Seguimiento / responsables</div>
+        </q-card-section>
+        <q-separator/>
         <q-card-section>
           <div class="row q-col-gutter-md">
             <div class="col-12 col-md-4">
-              <q-select v-model="slam.psicologica_user_id" dense outlined emit-value map-options clearable
+              <q-select v-model="umadi.psicologica_user_id" dense outlined emit-value map-options clearable
                         :options="psicologos.map(u => ({ label: u.name, value: u.id }))"
-                        label="Área psicológica (responsable)"/>
+                        label="Psicológica (responsable)"/>
             </div>
             <div class="col-12 col-md-4">
-              <q-select v-model="slam.trabajo_social_user_id" dense outlined emit-value map-options clearable
+              <q-select v-model="umadi.trabajo_social_user_id" dense outlined emit-value map-options clearable
                         :options="sociales.map(u => ({ label: u.name, value: u.id }))"
-                        label="Área social (responsable)"/>
+                        label="Trabajo social (responsable)"/>
             </div>
             <div class="col-12 col-md-4">
-              <q-select v-model="slam.legal_user_id" dense outlined emit-value map-options clearable
+              <q-select v-model="umadi.legal_user_id" dense outlined emit-value map-options clearable
                         :options="abogados.map(u => ({ label: u.name, value: u.id }))"
-                        label="Área legal (responsable)"/>
+                        label="Legal (responsable)"/>
             </div>
           </div>
         </q-card-section>
       </q-card>
 
-<!--      $table->boolean('doc_ci')->default(false);-->
-<!--      $table->boolean('doc_frontal_denunciado')->default(false);-->
-<!--      $table->boolean('doc_frontal_denunciante')->default(false);-->
-<!--      $table->boolean('doc_croquis')->default(false);-->
-
+      <!-- 6) Check documentos -->
       <q-card flat bordered class="section-card q-mb-xl">
         <q-card-section class="row items-center">
-          <q-icon name="task_alt" class="q-mr-sm"/>
-          <div class="text-subtitle1 text-weight-medium">6) Check documentos adjuntos</div>
+          <q-icon name="inventory_2" class="q-mr-sm"/>
+          <div class="text-subtitle1 text-weight-medium">6) Check documentos</div>
         </q-card-section>
         <q-separator/>
-
         <q-card-section>
           <div class="row q-col-gutter-md">
-            <div class="col-12 col-md-2">
-              <q-checkbox v-model="slam.doc_ci" label="Fotocopia CI denunciante"/>
-            </div>
-            <div class="col-12 col-md-2">
-              <q-checkbox v-model="slam.doc_frontal_denunciado" label="Foto frontal denunciado"/>
-            </div>
-            <div class="col-12 col-md-2">
-              <q-checkbox v-model="slam.doc_frontal_denunciante" label="Foto frontal denunciante"/>
-            </div>
-            <div class="col-12 col-md-2">
-              <q-checkbox v-model="slam.doc_croquis" label="Croquis del hecho"/>
-            </div>
+            <div class="col-12 col-md-2"><q-checkbox v-model="umadi.doc_ci" label="Fotocopia CI denunciante"/></div>
+            <div class="col-12 col-md-2"><q-checkbox v-model="umadi.doc_frontal_denunciado" label="Foto frontal denunciado"/></div>
+            <div class="col-12 col-md-2"><q-checkbox v-model="umadi.doc_frontal_denunciante" label="Foto frontal denunciante"/></div>
+            <div class="col-12 col-md-2"><q-checkbox v-model="umadi.doc_croquis" label="Croquis del hecho"/></div>
           </div>
         </q-card-section>
       </q-card>
@@ -293,144 +214,121 @@
 </template>
 
 <script>
-import MapPicker from 'components/MapPicker.vue' // <-- usa el nombre/ruta de TU componente de mapa
+import MapPicker from 'components/MapPicker.vue'
 
 export default {
-  name: 'SlamNuevoDynamic',
+  name: 'NuevoUmadi',
+  props: { showNumeroApoyoIntegral: { type: Boolean, default: true } },
   components: { MapPicker },
-  props: { showNumeroApoyoIntegral: { type: Boolean, default: false } },
   data () {
     return {
       loading: false,
-      recognition: null,
-      activeField: null,
-      isListening: false,
-      defaultCenter: [-17.9667, -67.1167], // Oruro (ajústalo)
-      // ----- SLAM (cabecera) -----
-      slam: {
-        numero_apoyo_integral: '',
-        numero_caso: '',
-        am_latitud: null, am_longitud: null,
-        am_idioma_castellano: false, am_idioma_quechua: false, am_idioma_aymara: false, am_idioma_otros: '',
-        ref_tel_fijo: '', ref_tel_movil: '', ref_tel_movil_alt: '',
-        hecho_descripcion: '',
-        tip_violencia_fisica: false, tip_violencia_psicologica: false, tip_abandono: false, tip_apoyo_integral: false,
-        seg_trabajo_legal: false, seg_trabajo_social: false, seg_psicologico: false,
-        psicologica_user_id: null, trabajo_social_user_id: null, legal_user_id: null,
-        den_nombres: '', den_paterno: '', den_materno: '', den_edad: '', den_domicilio: '', den_estado_civil: '',
-        den_idioma: '', den_grado_instruccion: '', den_ocupacion: '',
-        doc_ci: false, doc_frontal_denunciado: false, doc_frontal_denunciante: false, doc_croquis: false,
-      },
-      // ----- adultos y familiares dinámicos -----
-      adultos: [],
-      familiares: [],
+      defaultCenter: [-17.9667, -67.1167], // Oruro aprox
+      // catálogo simple
+      documentos: [
+        { label: 'Carnet de identidad', value: 'CI' },
+        { label: 'Pasaporte', value: 'Pasaporte' },
+        { label: 'Libreta militar', value: 'Libreta militar' },
+        { label: 'Licencia de conducir', value: 'Licencia' }
+      ],
+      sexos: [
+        { label: 'Masculino', value: 'Masculino' },
+        { label: 'Femenino',  value: 'Femenino'  },
+        { label: 'Otro',      value: 'Otro'      }
+      ],
+
+      // responsables
       psicologos: [],
       abogados: [],
       sociales: [],
-    }
-  },
-  mounted() {
-    this.$axios.get('/usuariosRole').then(res => {
-      this.psicologos = res.data.psicologos
-      this.abogados = res.data.abogados
-      this.sociales = res.data.sociales
-    }).catch(() => {
-      this.$alert.error('No se pudo cargar los usuarios por rol')
-    })
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
-      this.recognition = new SpeechRecognition()
-      this.recognition.lang = 'es-ES'
-      this.recognition.interimResults = false
-      this.recognition.continuous = false
 
-      this.recognition.onstart = () => { this.isListening = true }
-      this.recognition.onend = () => { this.isListening = false; this.activeField = null }
-      this.recognition.onresult = (event) => {
-        const text = event.results[0][0].transcript
-        if (this.activeField === 'hecho_descripcion') {
-          this.slam.hecho_descripcion = (this.slam.hecho_descripcion ? (this.slam.hecho_descripcion + ' ') : '') + text
-        }
-      }
-      this.recognition.onerror = (event) => {
-        console.error('Error de reconocimiento de voz:', event.error)
-        this.$q.notify({ color: 'negative', message: 'Error de micrófono: ' + event.error })
-        this.isListening = false
-        this.activeField = null
-      }
-    } else {
-      console.warn('Reconocimiento de voz no soportado en este navegador.')
+      // ----- UMADI (cabecera) -----
+      umadi: {
+        area: '', zona: '', fecha_registro: '', numero_apoyo_integral: '', numero_caso: '',
+        latitud: null, longitud: null,
+        nombres: '', paterno: '', materno: '', tipo_documento: '', numero_documento: '',
+        sexo: '', lugar_nacimiento: '', fecha_nacimiento: '', edad: '',
+        direccion: '', estado_civil: '', relacion_denunciado: '', grado_instruccion: '',
+        trabaja: false, ocupacion: '', edad_aprox: '', edada_exacto: '', idioma: '',
+        celular1: '', celular2: '', telefono_fijo1: '', telefono_fijo2: '', direccion_actual: '',
+
+        denunciado_nombres: '', denunciado_paterno: '', denunciado_materno: '',
+        denunciado_ci: '', denunciado_ciudad_nacimiento: '', denunciado_sexo: '',
+        denunciado_lugar_nacimiento: '', denunciado_fecha_nacimiento: '', denunciado_edad: '',
+        denunciado_direccion: '', denunciado_estado_civil: '', denunciado_idioma: '',
+        denunciado_grado_instruccion: '', denunciado_ocupacion: '',
+        denunciado_celular1: '', denunciado_celular2: '', denunciado_telefono_fijo1: '', denunciado_telefono_fijo2: '',
+        denunciado_direccion_actual: '',
+
+        fecha_hecho: '', relacion_denunciante: '', direccion_hecho: '', descripcion_hecho: '',
+
+        doc_ci: false, doc_frontal_denunciado: false, doc_frontal_denunciante: false, doc_croquis: false,
+
+        psicologica_user_id: null, trabajo_social_user_id: null, legal_user_id: null
+      },
+
+      // ----- familiares dinámicos -----
+      familiares: []
     }
   },
   computed: {
-    // Bridge para el v-model del mapa (tu componente emite/recibe {latitud, longitud})
     mapModel: {
-      get () { return { latitud: this.slam.am_latitud, longitud: this.slam.am_longitud } },
-      set (v) { this.slam.am_latitud = v?.latitud ?? v?.lat ?? null; this.slam.am_longitud = v?.longitud ?? v?.lng ?? null }
+      get () { return { latitud: this.umadi.latitud, longitud: this.umadi.longitud } },
+      set (v) { this.umadi.latitud = v?.latitud ?? v?.lat ?? null; this.umadi.longitud = v?.longitud ?? v?.lng ?? null }
     }
   },
-  methods: {
-    toggleRecognition(field) {
-      if (!this.recognition) {
-        this.$q.notify({ color: 'negative', message: 'El navegador no soporta reconocimiento de voz.' })
-        return
-      }
-      if (this.isListening && this.activeField === field) {
-        try { this.recognition.stop() } catch (e) {}
-        return
-      }
-      if (this.isListening && this.activeField !== field) {
-        try { this.recognition.stop() } catch (e) {}
-      }
-      this.activeField = field
-      try { this.recognition.start() } catch (e) { console.warn('No se pudo iniciar el reconocimiento:', e) }
-    },
-    req (v) { return !!v || 'Requerido' },
-    addAdulto () {
-      this.adultos.push({
-        nombre: '', paterno: '', materno: '',
-        documento_tipo: '', documento_num: '',
-        fecha_nacimiento: '', lugar_nacimiento: '',
-        edad: '', domicilio: '', estado_civil: '',
-        ocupacion_1: '', ocupacion_2: '', ingresos: '',
+  mounted() {
+    // cargar responsables
+    this.$axios.get('/usuariosRole')
+      .then(res => {
+        this.psicologos = res.data.psicologos || []
+        this.abogados  = res.data.abogados  || []
+        this.sociales  = res.data.sociales  || []
       })
+      .catch(() => this.$q.notify({ type:'negative', message:'No se pudo cargar los usuarios por rol' }))
+  },
+  methods: {
+    calcEdad () {
+      const v = this.umadi.fecha_nacimiento
+      if (!v) { this.umadi.edad = ''; return }
+      const birth = new Date(v)
+      const diff  = Date.now() - birth.getTime()
+      const age   = Math.abs(new Date(diff).getUTCFullYear() - 1970)
+      this.umadi.edad = String(age)
     },
-    removeAdulto (i) { this.adultos.splice(i, 1) },
+    calcEdadDenunciado () {
+      const v = this.umadi.denunciado_fecha_nacimiento
+      if (!v) { this.umadi.denunciado_edad = ''; return }
+      const birth = new Date(v)
+      const diff  = Date.now() - birth.getTime()
+      const age   = Math.abs(new Date(diff).getUTCFullYear() - 1970)
+      this.umadi.denunciado_edad = String(age)
+    },
     addFamiliar () {
       this.familiares.push({ nombre:'', paterno:'', materno:'', parentesco:'', edad:null, sexo:'', telefono:'' })
     },
     removeFamiliar (i) { this.familiares.splice(i, 1) },
     resetForm () {
-      const bools = ['am_idioma_castellano','am_idioma_quechua','am_idioma_aymara','tip_violencia_fisica','tip_violencia_psicologica','tip_abandono','tip_apoyo_integral','seg_trabajo_legal','seg_trabajo_social','seg_psicologico']
-      Object.keys(this.slam).forEach(k => {
-        if (bools.includes(k)) this.slam[k] = false
-        else if (k.includes('lat') || k.includes('long')) this.slam[k] = null
-        else this.slam[k] = ''
+      const bools = ['trabaja', 'doc_ci','doc_frontal_denunciado','doc_frontal_denunciante','doc_croquis']
+      Object.keys(this.umadi).forEach(k => {
+        if (bools.includes(k)) this.umadi[k] = false
+        else if (['latitud','longitud'].includes(k)) this.umadi[k] = null
+        else this.umadi[k] = ''
       })
-      this.slam.psicologica_user_id = this.slam.trabajo_social_user_id = this.slam.legal_user_id = null
-      this.adultos = []
+      this.umadi.psicologica_user_id = this.umadi.trabajo_social_user_id = this.umadi.legal_user_id = null
       this.familiares = []
     },
     async save () {
-      // Validación mínima: al menos un adulto con nombre
-      const firstAdult = this.adultos[0]
-      if (!firstAdult || !firstAdult.nombre) {
-        this.$q.notify({ type: 'negative', message: 'Debe agregar al menos un Adulto con nombres.' })
-        return
-      }
-      // Limpiar arrays: quitar filas vacías
-      const adultos = this.adultos.filter(a => (a && (a.nombre?.trim()?.length)))
-      const familiares = this.familiares.filter(f => (f && (f.nombre?.trim()?.length)))
-
+      // simple: permitimos guardar incluso sin familiares
       this.loading = true
       try {
-        const payload = { slam: this.slam, adultos, familiares }
-        const { data } = await this.$axios.post('/slams', payload)
-        this.$q.notify({ type: 'positive', message: 'SLAM creado' })
-        this.$router.push(`/slams/${data.slam.id}`)
+        const payload = { umadi: this.umadi, familiares: this.familiares.filter(f => f?.nombre?.trim()) }
+        const { data } = await this.$axios.post('/umadis', payload)
+        this.$q.notify({ type: 'positive', message: 'UMADI creado' })
+        this.$router.push(`/umadis/${data.umadi.id}`)
         this.resetForm()
       } catch (e) {
-        this.$q.notify({ type: 'negative', message: e?.response?.data?.message || 'No se pudo crear el SLAM' })
+        this.$q.notify({ type: 'negative', message: e?.response?.data?.message || 'No se pudo crear el UMADI' })
       } finally {
         this.loading = false
       }

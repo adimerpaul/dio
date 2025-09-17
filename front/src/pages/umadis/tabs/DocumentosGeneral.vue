@@ -157,7 +157,7 @@ export default {
         if(this.meta.categoria)   fd.append('categoria', this.meta.categoria)
         if(this.meta.descripcion) fd.append('descripcion', this.meta.descripcion)
 
-        await this.$axios.post(`/slams/${this.caseId}/documentos`, fd, {
+        await this.$axios.post(`/umadis/${this.caseId}/documentos`, fd, {
           headers:{ 'Content-Type':'multipart/form-data' }
         })
         this.$q.notify({ type:'positive', message:'Archivo subido' })
@@ -171,11 +171,11 @@ export default {
 
     viewDoc(it){
       const base = this.$axios?.defaults?.baseURL || ''
-      window.open(`${base}/slams/documentos/${it.id}/view`, '_blank')
+      window.open(`${base}/umadis/documentos/${it.id}/view`, '_blank')
     },
     downloadDoc(it){
       const base = this.$axios?.defaults?.baseURL || ''
-      window.open(`${base}/slams/documentos/${it.id}/download`, '_blank')
+      window.open(`${base}/umadis/documentos/${it.id}/download`, '_blank')
     },
 
     editMeta(it){
@@ -186,7 +186,7 @@ export default {
     async saveMeta(){
       this.saving = true
       try{
-        await this.$axios.put(`/slams/documentos/${this.editingId}`, this.edit)
+        await this.$axios.put(`/umadis/documentos/${this.editingId}`, this.edit)
         this.$q.notify({ type:'positive', message:'Actualizado' })
         this.dlgEdit=false
         this.$emit('refresh')
@@ -199,7 +199,7 @@ export default {
     removeDoc(it){
       const go = async () => {
         try{
-          await this.$axios.delete(`/slams/documentos/${it.id}`)
+          await this.$axios.delete(`/umadis/documentos/${it.id}`)
           this.$q.notify({ type:'positive', message:'Eliminado' })
           // this.fetchRows()
           this.$emit('refresh')
