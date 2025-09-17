@@ -118,9 +118,9 @@
             <div class="col-6 col-md-3"><q-toggle v-model="slam.tip_abandono" label="Abandono"/></div>
             <div class="col-6 col-md-3"><q-toggle v-model="slam.tip_apoyo_integral" label="Apoyo integral"/></div>
 
-            <div class="col-6 col-md-3"><q-toggle v-model="slam.seg_trabajo_legal" label="Trabajo legal"/></div>
-            <div class="col-6 col-md-3"><q-toggle v-model="slam.seg_trabajo_social" label="Trabajo social"/></div>
-            <div class="col-6 col-md-3"><q-toggle v-model="slam.seg_psicologico" label="Psicológico"/></div>
+<!--            <div class="col-6 col-md-3"><q-toggle v-model="slam.seg_trabajo_legal" label="Trabajo legal"/></div>-->
+<!--            <div class="col-6 col-md-3"><q-toggle v-model="slam.seg_trabajo_social" label="Trabajo social"/></div>-->
+<!--            <div class="col-6 col-md-3"><q-toggle v-model="slam.seg_psicologico" label="Psicológico"/></div>-->
           </div>
         </q-card-section>
       </q-card>
@@ -225,6 +225,64 @@
         </q-card-section>
       </q-card>
 
+      <q-card flat bordered class="section-card q-mb-xl">
+        <q-card-section class="row items-center">
+          <q-icon name="task_alt" class="q-mr-sm"/>
+          <div class="text-subtitle1 text-weight-medium">5) Seguimiento</div>
+        </q-card-section>
+        <q-separator/>
+
+        <q-card-section>
+          <div class="row q-col-gutter-md">
+            <div class="col-12 col-md-4">
+              <q-select v-model="slam.psicologica_user_id" dense outlined emit-value map-options clearable
+                        :options="psicologos.map(u => ({ label: u.name, value: u.id }))"
+                        label="Área psicológica (responsable)"/>
+            </div>
+            <div class="col-12 col-md-4">
+              <q-select v-model="slam.trabajo_social_user_id" dense outlined emit-value map-options clearable
+                        :options="sociales.map(u => ({ label: u.name, value: u.id }))"
+                        label="Área social (responsable)"/>
+            </div>
+            <div class="col-12 col-md-4">
+              <q-select v-model="slam.legal_user_id" dense outlined emit-value map-options clearable
+                        :options="abogados.map(u => ({ label: u.name, value: u.id }))"
+                        label="Área legal (responsable)"/>
+            </div>
+          </div>
+        </q-card-section>
+      </q-card>
+
+<!--      $table->boolean('doc_ci')->default(false);-->
+<!--      $table->boolean('doc_frontal_denunciado')->default(false);-->
+<!--      $table->boolean('doc_frontal_denunciante')->default(false);-->
+<!--      $table->boolean('doc_croquis')->default(false);-->
+
+      <q-card flat bordered class="section-card q-mb-xl">
+        <q-card-section class="row items-center">
+          <q-icon name="task_alt" class="q-mr-sm"/>
+          <div class="text-subtitle1 text-weight-medium">6) Check documentos adjuntos</div>
+        </q-card-section>
+        <q-separator/>
+
+        <q-card-section>
+          <div class="row q-col-gutter-md">
+            <div class="col-12 col-md-2">
+              <q-checkbox v-model="slam.doc_ci" label="Fotocopia CI denunciante"/>
+            </div>
+            <div class="col-12 col-md-2">
+              <q-checkbox v-model="slam.doc_frontal_denunciado" label="Foto frontal denunciado"/>
+            </div>
+            <div class="col-12 col-md-2">
+              <q-checkbox v-model="slam.doc_frontal_denunciante" label="Foto frontal denunciante"/>
+            </div>
+            <div class="col-12 col-md-2">
+              <q-checkbox v-model="slam.doc_croquis" label="Croquis del hecho"/>
+            </div>
+          </div>
+        </q-card-section>
+      </q-card>
+
       <!-- Acciones bottom -->
       <div class="text-right q-mb-xl">
         <q-btn flat color="primary" icon="history" label="Limpiar" @click="resetForm" class="q-mr-sm"/>
@@ -259,13 +317,26 @@ export default {
         tip_violencia_fisica: false, tip_violencia_psicologica: false, tip_abandono: false, tip_apoyo_integral: false,
         seg_trabajo_legal: false, seg_trabajo_social: false, seg_psicologico: false,
         psicologica_user_id: null, trabajo_social_user_id: null, legal_user_id: null,
+        den_nombres: '', den_paterno: '', den_materno: '', den_edad: '', den_domicilio: '', den_estado_civil: '',
+        den_idioma: '', den_grado_instruccion: '', den_ocupacion: '',
+        doc_ci: false, doc_frontal_denunciado: false, doc_frontal_denunciante: false, doc_croquis: false,
       },
       // ----- adultos y familiares dinámicos -----
       adultos: [],
       familiares: [],
+      psicologos: [],
+      abogados: [],
+      sociales: [],
     }
   },
   mounted() {
+    this.$axios.get('/usuariosRole').then(res => {
+      this.psicologos = res.data.psicologos
+      this.abogados = res.data.abogados
+      this.sociales = res.data.sociales
+    }).catch(() => {
+      this.$alert.error('No se pudo cargar los usuarios por rol')
+    })
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
       this.recognition = new SpeechRecognition()
