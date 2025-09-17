@@ -55,6 +55,13 @@ class Slam extends Model implements Auditable
         'tip_violencia_psicologica',
         'tip_abandono',
         'tip_apoyo_integral',
+
+        // ===== 7) Documentos checks =====
+        'doc_ci',
+        'doc_frontal_denunciado',
+        'doc_frontal_denunciante',
+        'doc_croquis',
+
         // Metadatos
         'user_id',
         'psicologica_user_id',

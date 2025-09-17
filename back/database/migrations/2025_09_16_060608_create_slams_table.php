@@ -51,6 +51,13 @@ return new class extends Migration {
             $table->boolean('tip_abandono')->default(false);
             $table->boolean('tip_apoyo_integral')->default(false);
 
+            // ===== 7) Documentos checks =====
+
+            $table->boolean('doc_ci')->default(false);
+            $table->boolean('doc_frontal_denunciado')->default(false);
+            $table->boolean('doc_frontal_denunciante')->default(false);
+            $table->boolean('doc_croquis')->default(false);
+
 
             // Metadatos
             $table->unsignedBigInteger('user_id')->nullable();
