@@ -245,7 +245,16 @@ const linksList = [
       { title: 'Apoyo Integral',  icon: 'diversity_1', link: '/slams/nuevointegral', onlyAreas: ['SLAM'] },
     ]
   },
-  { title: 'SLAMs', icon: 'folder_shared', link: '/slams', onlyAreas: ['SLIM'] },
+  { title: 'SLAMs', icon: 'folder_shared', link: '/slams', onlyAreas: ['SLAM'] },
+  // UMADIS
+  { title: 'Nuevo UMADIS', icon: 'add_circle', link: '/umadis/nuevofisica',
+    onlyAreas: ['UMADIS'],
+    childrens: [
+      { title: 'Denuncia Física', icon: 'person_add',  link: '/umadis/nuevofisica',   onlyAreas: ['UMADIS'] },
+      { title: 'Apoyo Integral',  icon: 'diversity_1', link: '/umadis/nuevointegral', onlyAreas: ['UMADIS'] },
+    ]
+  },
+  { title: 'UMADISs', icon: 'folder_shared', link: '/umadis', onlyAreas: ['UMADIS'] },
 
   // Otros
   { title: 'Agenda',           icon: 'event',       link: '/agenda',        canPerm: 'Agenda' },
