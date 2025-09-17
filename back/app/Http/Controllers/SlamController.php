@@ -26,18 +26,19 @@ class SlamController extends Controller
                 $s->orWhere('numero_caso', 'like', $like)
                     ->orWhere('den_nombres', 'like', $like)
                     ->orWhere('den_paterno', 'like', $like)
-                    ->orWhere('den_materno', 'like', $like)
-                    ->orWhere('caso_descripcion', 'like', $like);
+                    ->orWhere('den_materno', 'like', $like);
             });
             $query->orWhereHas('adultos', function ($a) use ($like) {
-                $a->where('nombres', 'like', $like)
-                  ->orWhere('paterno', 'like', $like)
-                  ->orWhere('materno', 'like', $like);
+//                $a->where('nombres', 'like', $like)
+//                  ->orWhere('paterno', 'like', $like)
+//                  ->orWhere('materno', 'like', $like);
+                $a->where(DB::raw("CONCAT_WS(' ', nombre, paterno, materno)"), 'like', $like);
             });
             $query->orWhereHas('familiares', function ($f) use ($like) {
-                $f->where('nombres', 'like', $like)
-                  ->orWhere('paterno', 'like', $like)
-                  ->orWhere('materno', 'like', $like);
+//                $f->where('nombres', 'like', $like)
+//                  ->orWhere('paterno', 'like', $like)
+//                  ->orWhere('materno', 'like', $like);
+                $f->where(DB::raw("CONCAT_WS(' ', nombre, paterno, materno)"), 'like', $like);
             });
         }
 
