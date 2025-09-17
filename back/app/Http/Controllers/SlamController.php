@@ -14,6 +14,45 @@ use Illuminate\Support\Facades\DB;
 
 class SlamController extends Controller
 {
+    function psicoPdf($psico)
+    {
+        $psico = Psicologica::where('id', $psico)->with(['user:id,name'])->first();
+        if ($psico) {
+            $html = view('pdf.slam.psicologica', ['sesion' => $psico])->render();
+            $pdf = app('dompdf.wrapper');
+            $pdf->loadHTML($html);
+            return $pdf->stream("Psicológica_{$psico->id}.pdf");
+        } else {
+            return response()->json(['message' => 'Psicológica no encontrada'], 404);
+        }
+    }
+    function psicoDestroy($psico)
+    {
+        $psico = Psicologica::where('id', $psico)->first();
+        if ($psico) {
+            $psico->delete();
+            return response()->json(['message' => 'Psicológica eliminada']);
+        } else {
+            return response()->json(['message' => 'Psicológica no encontrada'], 404);
+        }
+    }
+    function psicoUpdate(Request $request, $psico)
+    {
+        $data = $request->all();
+        $psico = Psicologica::where('id', $psico)->first();
+        $psico->update($data);
+        return response()->json(['psicologica' => $psico]);
+    }
+    function psicoStore(Request $request, Slam $slam)
+    {
+        $data = $request->all();
+        $user = $request->user();
+        $data['user_id'] = $user->id;
+        $data['caseable_type'] = Slam::class;
+        $data['caseable_id']   = $slam->id;
+        $psico = Psicologica::create($data);
+        return response()->json(['psicologica' => $psico], 201);
+    }
     function show(Slam $slam)
     {
         $slam->load(['adultos', 'familiares',
@@ -21,10 +60,10 @@ class SlamController extends Controller
             'trabajo_social_user:id,name',
             'legal_user:id,name',
             'user:id,name',
-            'psicologicas',
-            'informesLegales',
-            'documentos',
-            'fotografias',
+            'psicologicas.user:id,name',
+            'informesLegales.user:id,name',
+            'documentos.user:id,name',
+            'fotografias.user:id,name',
         ]);
 //        public function psicologicas()   { return $this->morphMany(Psicologica::class,  'caseable'); }
 //        public function informesLegales(){ return $this->morphMany(InformeLegal::class,'caseable'); }

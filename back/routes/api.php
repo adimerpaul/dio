@@ -128,6 +128,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/slams', [SlamController::class, 'index']);
     Route::get('/slams/{slam}', [SlamController::class, 'show']);
     Route::put('/slams/{slam}', [SlamController::class, 'update']);
+    Route::post('/slams/{slam}/sesiones-psicologicas', [SlamController::class, 'psicoStore']);
+    Route::put('/slams/sesiones-psicologicas/{psicologica}', [SlamController::class, 'psicoUpdate']);
+    Route::delete('/slams/sesiones-psicologicas/{psicologica}', [SlamController::class, 'psicoDestroy']);
+
+
 
 });
 
@@ -146,3 +151,4 @@ Route::get('/dnas/informes-legales/{informe}/pdf', [\App\Http\Controllers\DnaCon
 Route::get('/dnas/documentos/{documento}/view',     [\App\Http\Controllers\DnaController::class, 'docView']);
 Route::get('/dnas/documentos/{documento}/download', [\App\Http\Controllers\DnaController::class, 'docDownload']);
 
+Route::get('/slams/sesiones-psicologicas/{psicologica}/pdf', [SlamController::class, 'psicoPdf']);
