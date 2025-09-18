@@ -7,6 +7,20 @@
         <div class="text-caption text-grey-7">Detalle y gestión</div>
       </div>
       <div class="col-auto">
+        <q-btn-dropdown flat color="secondary" icon="print" label="Imprimir PDF">
+          <q-list>
+            <q-item clickable @click="printPdf" v-close-popup >
+              <q-item-section>Ficha del DNA</q-item-section>
+            </q-item>
+
+            <q-separator/>
+
+            <!-- hoja de ruta con dos variantes -->
+            <q-item clickable @click="printPdfHojaRuta('denunciante')" v-close-popup >
+              <q-item-section>Ubicación (Denunciante)</q-item-section>
+            </q-item>
+          </q-list>
+        </q-btn-dropdown>
         <q-btn flat color="primary" icon="refresh" @click="load" :loading="loading"/>
       </div>
     </div>
@@ -69,6 +83,14 @@ export default {
   },
   mounted () { this.load() },
   methods: {
+    printPdf () {
+      const url = this.$axios.defaults.baseURL + `/dna/${this.caseId}/pdf`
+      window.open(url, '_blank')
+    },
+    printPdfHojaRuta (tipo = 'denunciante') {
+      const url = this.$axios.defaults.baseURL + `/dna/${this.caseId}/pdf/hoja-ruta?tipo=${tipo}`
+      window.open(url, '_blank')
+    },
     async load () {
       this.loading = true
       try {

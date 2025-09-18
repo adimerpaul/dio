@@ -18,6 +18,10 @@ return new class extends Migration {
             $table->string('principal')->nullable();
             $table->string('zona', 120)->nullable();
             $table->string('area', 50)->default('DNA');
+            $table->string('tipologia', 100)->nullable();
+
+            $table->decimal('latitud', 10, 7)->nullable();
+            $table->decimal('longitud', 10, 7)->nullable();
 
             $table->string('domicilio')->nullable();
             $table->string('telefono', 100)->nullable();

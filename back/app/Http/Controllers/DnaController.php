@@ -9,6 +9,7 @@ use App\Models\Psicologica;
 use App\Models\InformeLegal;
 use App\Models\Documento;
 use App\Models\Fotografia;
+use App\Models\Slam;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -19,6 +20,59 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DnaController extends Controller
 {
+    public function pdfHojaRuta($id)
+    {
+        // Carga el caso con relaciones correctas para DNA
+        $dna = Dna::with(['menores', 'familiares', 'user:id,name', 'abogado:id,name'])
+            ->findOrFail($id);
+
+        // Coordenadas (fallback Oruro si no hay números válidos)
+        $latRaw = $dna->latitud;
+        $lngRaw = $dna->longitud;
+        $hasGeo = is_numeric($latRaw) && is_numeric($lngRaw);
+
+        $LAT = $hasGeo ? (float) $latRaw : -17.966700;
+        $LNG = $hasGeo ? (float) $lngRaw : -67.116700;
+        $HAS = $hasGeo ? 'Sí' : 'No';
+
+        // Persona que aparecerá en la cabecera (Denunciante por defecto)
+        $tituloPersona = 'Denunciante';
+
+        // Datos para mostrar (con fallback si faltan campos del denunciante)
+        $nombre = trim((string) ($dna->denunciante_nombre ?: $dna->denunciado_nombre));
+        $telefono = $dna->denunciante_telefono ?: $dna->denunciado_telefono;
+        $zona = $dna->zona;
+        $direccion = $dna->domicilio; // en DNA el domicilio está aquí
+
+        // Tipo fijo para la hoja
+        $tipo = 'DNA';
+
+        // Reutilizamos la misma vista (no se modifica el Blade)
+        return view('casos.pdfHojaRuta', [
+            'caso'          => $dna,
+            'tipo'          => $tipo,
+            'tituloPersona' => $tituloPersona,
+            'LAT'           => $LAT,
+            'LNG'           => $LNG,
+            'HAS'           => $HAS,
+            'nombre'        => $nombre ?: '—',
+            'telefono'      => $telefono ?: '—',
+            'zona'          => $zona ?: '—',
+            'direccion'     => $direccion ?: '—',
+        ]);
+    }
+    function pdf(Dna $dna)
+    {
+        $dna->load(['user:id,name', 'abogado:id,name', 'menores', 'familiares']);
+
+        // Usa dompdf (barryvdh/laravel-dompdf). Si ya lo tienes en SLIM, esto funciona igual.
+        $pdf = app('dompdf.wrapper');
+        $pdf->setPaper('letter'); // o 'a4'
+        $pdf->loadView('pdf.dna.pdf', ['dna' => $dna]);
+
+        $filename = 'DNA-Caso-'.$dna->id.'.pdf';
+        return $pdf->stream($filename);
+    }
 
     public function docIndex(Request $request, Dna $dna)
     {
@@ -163,7 +217,11 @@ class DnaController extends Controller
         ];
 
         $data = $request->validate($rules);
-        $data['area']    = 'DNA';
+        $user = $request->user();
+        $data['area']    = $user && $user->area ? $user->area : 'DNA';
+        $data['latitud']  = $request->input('latitud')  ?? null;
+        $data['longitud'] = $request->input('longitud') ?? null;
+        $data['tipologia'] = $request->input('tipologia') ?? null;
         $data['user_id'] = $request->user()?->id;
 
         $menores = $data['menores'] ?? [];

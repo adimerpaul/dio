@@ -175,6 +175,8 @@ Route::get   ('/slims/sesiones-psicologicas/{psicologica}/pdf',  [SlimPsicologic
 Route::get   ('/slims/informes-legales/{informe}/pdf', [SlimInformeLegalController::class, 'pdf']);
 Route::get   ('/slims/documentos/{documento}/download',[SlimDocumentoController::class, 'download']);
 
+Route::get('/dna/{dna}/pdf', [DnaController::class, 'pdf']);
+Route::get('/dna/{dna}/pdf/hoja-ruta', [DnaController::class, 'pdfHojaRuta']);
 Route::get('/dnas/sesiones-psicologicas/{psicologica}/pdf', [DnaController::class, 'psicoPdf']);
 Route::get('/dnas/informes-legales/{informe}/pdf', [\App\Http\Controllers\DnaController::class, 'legalPdf']);
 Route::get('/dnas/documentos/{documento}/view',     [\App\Http\Controllers\DnaController::class, 'docView']);

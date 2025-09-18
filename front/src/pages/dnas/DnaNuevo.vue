@@ -29,6 +29,10 @@
               <q-input v-model="f.fecha_atencion" type="date" dense outlined label="Fecha de atención"/>
             </div>
             <div class="col-12 col-md-3">
+              <q-select v-model="f.tipologia" :options="tipologias" emit-value map-options dense outlined
+                        label="Tipología *" :rules="[req]"/>
+            </div>
+            <div class="col-12 col-md-3">
               <q-input v-model="f.principal" dense outlined clearable label="Principal (ej. 'Asistencia Familiar')"/>
             </div>
             <div class="col-12 col-md-3">
@@ -48,6 +52,16 @@
             </div>
             <div class="col-12 col-md-4">
               <q-input v-model="f.telefono" dense outlined clearable label="Teléfono"/>
+            </div>
+            <div class="col-12">
+              <!--              MapPicker-->
+              <MapPicker
+                v-model="denunciantePos"
+                :center="oruroCenter"
+                :address="f.denunciante_domicilio_actual"
+                country="bo"
+                ref="denMap"
+              />
             </div>
           </div>
         </q-card-section>
@@ -113,12 +127,24 @@
               </div>
 
               <div v-for="(g, i) in f.grupo_familiar" :key="'g'+i" class="row q-col-gutter-sm items-end q-mb-sm">
-                <div class="col-12 col-md-4"><q-input v-model="g.nombre" dense outlined label="Nombres y apellidos"/></div>
-                <div class="col-6 col-md-2"><q-input v-model="g.parentesco" dense outlined label="Parentesco"/></div>
-                <div class="col-6 col-md-2"><q-input v-model.number="g.edad" type="number" dense outlined label="Edad"/></div>
-                <div class="col-6 col-md-2"><q-select v-model="g.sexo" :options="sexos" emit-value map-options dense outlined label="Sexo"/></div>
-                <div class="col-6 col-md-2"><q-input v-model="g.instruccion" dense outlined label="G. Instrucción"/></div>
-                <div class="col-6 col-md-2"><q-input v-model="g.ocupacion" dense outlined label="Ocupación"/></div>
+                <div class="col-12 col-md-4">
+                  <q-input v-model="g.nombre" dense outlined label="Nombres y apellidos"/>
+                </div>
+                <div class="col-6 col-md-2">
+                  <q-input v-model="g.parentesco" dense outlined label="Parentesco"/>
+                </div>
+                <div class="col-6 col-md-2">
+                  <q-input v-model.number="g.edad" type="number" dense outlined label="Edad"/>
+                </div>
+                <div class="col-6 col-md-2">
+                  <q-select v-model="g.sexo" :options="sexos" emit-value map-options dense outlined label="Sexo"/>
+                </div>
+                <div class="col-6 col-md-2">
+                  <q-input v-model="g.instruccion" dense outlined label="G. Instrucción"/>
+                </div>
+                <div class="col-6 col-md-2">
+                  <q-input v-model="g.ocupacion" dense outlined label="Ocupación"/>
+                </div>
                 <div class="col-12 col-md-2">
                   <q-btn icon="delete" color="negative" flat dense @click="f.grupo_familiar.splice(i,1)"/>
                 </div>
@@ -138,15 +164,34 @@
         <q-separator/>
         <q-card-section>
           <div class="row q-col-gutter-md">
-            <div class="col-12 col-md-6"><q-input v-model="f.denunciado_nombre" dense outlined clearable label="Nombre completo"/></div>
-            <div class="col-6 col-md-2"><q-select v-model="f.denunciado_sexo" :options="sexos" emit-value map-options dense outlined label="Sexo"/></div>
-            <div class="col-6 col-md-2"><q-input v-model.number="f.denunciado_edad" type="number" dense outlined label="Edad"/></div>
-            <div class="col-6 col-md-2"><q-input v-model="f.denunciado_relacion" dense outlined label="Relación / tipo"/></div>
-            <div class="col-6 col-md-2"><q-input v-model="f.denunciado_ci" dense outlined clearable label="C.I."/></div>
-            <div class="col-12 col-md-6"><q-input v-model="f.denunciado_domicilio" dense outlined clearable label="Domicilio"/></div>
-            <div class="col-6 col-md-3"><q-input v-model="f.denunciado_telefono" dense outlined clearable label="Teléfono"/></div>
-            <div class="col-6 col-md-3"><q-input v-model="f.denunciado_lugar_trabajo" dense outlined clearable label="Lugar de trabajo"/></div>
-            <div class="col-6 col-md-3"><q-input v-model="f.denunciado_ocupacion" dense outlined clearable label="Ocupación"/></div>
+            <div class="col-12 col-md-6">
+              <q-input v-model="f.denunciado_nombre" dense outlined clearable label="Nombre completo"/>
+            </div>
+            <div class="col-6 col-md-2">
+              <q-select v-model="f.denunciado_sexo" :options="sexos" emit-value map-options dense outlined
+                        label="Sexo"/>
+            </div>
+            <div class="col-6 col-md-2">
+              <q-input v-model.number="f.denunciado_edad" type="number" dense outlined label="Edad"/>
+            </div>
+            <div class="col-6 col-md-2">
+              <q-input v-model="f.denunciado_relacion" dense outlined label="Relación / tipo"/>
+            </div>
+            <div class="col-6 col-md-2">
+              <q-input v-model="f.denunciado_ci" dense outlined clearable label="C.I."/>
+            </div>
+            <div class="col-12 col-md-6">
+              <q-input v-model="f.denunciado_domicilio" dense outlined clearable label="Domicilio"/>
+            </div>
+            <div class="col-6 col-md-3">
+              <q-input v-model="f.denunciado_telefono" dense outlined clearable label="Teléfono"/>
+            </div>
+            <div class="col-6 col-md-3">
+              <q-input v-model="f.denunciado_lugar_trabajo" dense outlined clearable label="Lugar de trabajo"/>
+            </div>
+            <div class="col-6 col-md-3">
+              <q-input v-model="f.denunciado_ocupacion" dense outlined clearable label="Ocupación"/>
+            </div>
           </div>
         </q-card-section>
       </q-card>
@@ -160,14 +205,32 @@
         <q-separator/>
         <q-card-section>
           <div class="row q-col-gutter-md">
-            <div class="col-12 col-md-6"><q-input v-model="f.denunciante_nombre" dense outlined clearable label="Nombre completo *" :rules="[req]"/></div>
-            <div class="col-6 col-md-2"><q-select v-model="f.denunciante_sexo" :options="sexos" emit-value map-options dense outlined label="Sexo"/></div>
-            <div class="col-6 col-md-2"><q-input v-model.number="f.denunciante_edad" type="number" dense outlined label="Edad"/></div>
-            <div class="col-6 col-md-2"><q-input v-model="f.denunciante_ci" dense outlined clearable label="C.I."/></div>
-            <div class="col-12 col-md-6"><q-input v-model="f.denunciante_domicilio" dense outlined clearable label="Domicilio"/></div>
-            <div class="col-6 col-md-3"><q-input v-model="f.denunciante_telefono" dense outlined clearable label="Teléfono"/></div>
-            <div class="col-6 col-md-3"><q-input v-model="f.denunciante_lugar_trabajo" dense outlined clearable label="Lugar de trabajo"/></div>
-            <div class="col-6 col-md-3"><q-input v-model="f.denunciante_ocupacion" dense outlined clearable label="Ocupación"/></div>
+            <div class="col-12 col-md-6">
+              <q-input v-model="f.denunciante_nombre" dense outlined clearable label="Nombre completo *"
+                       :rules="[req]"/>
+            </div>
+            <div class="col-6 col-md-2">
+              <q-select v-model="f.denunciante_sexo" :options="sexos" emit-value map-options dense outlined
+                        label="Sexo"/>
+            </div>
+            <div class="col-6 col-md-2">
+              <q-input v-model.number="f.denunciante_edad" type="number" dense outlined label="Edad"/>
+            </div>
+            <div class="col-6 col-md-2">
+              <q-input v-model="f.denunciante_ci" dense outlined clearable label="C.I."/>
+            </div>
+            <div class="col-12 col-md-6">
+              <q-input v-model="f.denunciante_domicilio" dense outlined clearable label="Domicilio"/>
+            </div>
+            <div class="col-6 col-md-3">
+              <q-input v-model="f.denunciante_telefono" dense outlined clearable label="Teléfono"/>
+            </div>
+            <div class="col-6 col-md-3">
+              <q-input v-model="f.denunciante_lugar_trabajo" dense outlined clearable label="Lugar de trabajo"/>
+            </div>
+            <div class="col-6 col-md-3">
+              <q-input v-model="f.denunciante_ocupacion" dense outlined clearable label="Ocupación"/>
+            </div>
           </div>
         </q-card-section>
       </q-card>
@@ -220,20 +283,25 @@
 </template>
 
 <script>
+import MapPicker from "components/MapPicker.vue";
+
 export default {
   name: 'DnaNuevo',
+  components: {MapPicker},
   props: {
     // 'PROCESO_PENAL' | 'PROCESO_FAMILIAR' | 'PROCESO_NNA' | 'APOYO_INTEGRAL'
-    tipoProceso: { type: String, required: true }
+    tipoProceso: {type: String, required: true}
   },
-  data () {
+  data() {
     return {
+      oruroCenter: [-17.9667, -67.1167],
       loading: false,
+      tipologias: [],
       abogados: [],
       sexos: [
-        { label: 'Masculino', value: 'Masculino' },
-        { label: 'Femenino',  value: 'Femenino'  },
-        { label: 'Otro',      value: 'Otro'      },
+        {label: 'Masculino', value: 'Masculino'},
+        {label: 'Femenino', value: 'Femenino'},
+        {label: 'Otro', value: 'Otro'},
       ],
       f: {
         // metadatos
@@ -249,7 +317,17 @@ export default {
         telefono: '',
 
         // tablas
-        menores: [ { nombre:'', gestante:false, edad_anios:null, edad_meses:null, sexo:'', cert_nac:false, estudia:false, ultimo_curso:'', tipo_trabajo:'' } ],
+        menores: [{
+          nombre: '',
+          gestante: false,
+          edad_anios: null,
+          edad_meses: null,
+          sexo: '',
+          cert_nac: false,
+          estudia: false,
+          ultimo_curso: '',
+          tipo_trabajo: ''
+        }],
         grupo_familiar: [],
 
         // denunciado
@@ -271,70 +349,192 @@ export default {
     }
   },
   computed: {
-    isApoyo () { return (this.tipoProceso || '').toUpperCase() === 'APOYO_INTEGRAL' },
-    tipoProcesoLabel () {
-      const map = {
-        PROCESO_PENAL: 'Procesos Penales',
-        PROCESO_FAMILIAR: 'Procesos Familiares',
-        PROCESO_NNA: 'Procesos Niñez y Adolescencia',
-        APOYO_INTEGRAL: 'Apoyos Integrales'
+      denunciantePos: {
+        get() {
+          return {latitud: this.f.latitud, longitud: this.f.longitud}
+        },
+        set(v) {
+          this.f.latitud = v.latitud;
+          this.f.longitud = v.longitud
+        }
+      },
+      isApoyo() {
+        return (this.tipoProceso || '').toUpperCase() === 'APOYO_INTEGRAL'
+      },
+      tipoProcesoLabel() {
+        const map = {
+          PROCESO_PENAL: 'Procesos Penales',
+          PROCESO_FAMILIAR: 'Procesos Familiares',
+          PROCESO_NNA: 'Procesos Niñez y Adolescencia',
+          APOYO_INTEGRAL: 'Apoyos Integrales'
+        }
+        return map[this.tipoProceso] || this.tipoProceso
       }
-      return map[this.tipoProceso] || this.tipoProceso
-    }
-  },
-  mounted () {
-    // Si ya tienes este endpoint que devuelve listas por rol:
-    this.$axios.get('/usuariosRole')
-      .then(r => { this.abogados = r.data.abogados || [] })
-      .catch(() => { this.$alert?.error?.('No se pudo cargar abogados') })
-  },
-  methods: {
-    req (v) { return !!v || 'Requerido' },
-    addMenor () {
-      this.f.menores.push({ nombre:'', gestante:false, edad_anios:null, edad_meses:null, sexo:'', cert_nac:false, estudia:false, ultimo_curso:'', tipo_trabajo:'' })
     },
-    addFam () {
-      this.f.grupo_familiar.push({ nombre:'', parentesco:'', edad:null, sexo:'', instruccion:'', ocupacion:'' })
-    },
-    resetForm () {
-      const keep = { tipo_proceso: this.tipoProceso, area: 'DNA', zona: this.$store?.user?.zona || '' }
-      this.f = {
-        ...keep,
-        fecha_atencion: '',
-        principal: '',
-        codigo: '',
-        domicilio: '',
-        telefono: '',
-        menores: [ { nombre:'', gestante:false, edad_anios:null, edad_meses:null, sexo:'', cert_nac:false, estudia:false, ultimo_curso:'', tipo_trabajo:'' } ],
-        grupo_familiar: [],
-        denunciado_nombre:'', denunciado_sexo:'', denunciado_edad:null, denunciado_relacion:'', denunciado_ci:'', denunciado_domicilio:'', denunciado_telefono:'', denunciado_lugar_trabajo:'', denunciado_ocupacion:'',
-        denunciante_nombre:'', denunciante_sexo:'', denunciante_edad:null, denunciante_ci:'', denunciante_domicilio:'', denunciante_telefono:'', denunciante_lugar_trabajo:'', denunciante_ocupacion:'',
-        descripcion:'',
-        abogado_user_id:null
+    mounted() {
+      // // 'PROCESO_PENAL' | 'PROCESO_FAMILIAR' | 'PROCESO_NNA' | 'APOYO_INTEGRAL'
+      // tipoProceso:
+//       1.	PROCESOS PENALES
+//       TIPOLOGIAS
+// •	VIOLACION
+// •	ESTUPRO
+// •	ABUSO SEXUAL
+// •	ACOSO SEXUAL
+// •	INFANTICIDIO
+// •	RAPTO
+// •	CORRUPCION
+// •	PROXENETISMO
+// •	VIOLENCIA SEXUAL COMERCIAL
+// •	PORNOGRAFIA
+// •	TRAFICO DE PERSONAS
+// •	TRATA DE PERSONAS
+// •	LESIONES GRAVES Y LEVES
+// •	LESIONES GRAVISIMAS
+// •	SUSTRACCIÓN DE MENOR INCAPAZ
+// •	VIOLENCIA FAMILIAR O DOMESTICA (FISICA, PSICOLOGICA)
+// •	ABANDONO DE NIÑOS/AS
+// •	ABANDONO POR CAUSA DE HONOR
+// •	OTROS
+//
+//       2.	PROCESOS FAMILIARES
+//       TIPOLOGIA
+// •	ASISTENCIA FAMILIAR
+// •	OTROS
+//       3.	PROCESOS DE NIÑEZ Y ADOLECENCIA
+// •	ACOGIMIENTO CIRCUNSTANCIAL
+// •	INFRACCION POR VIOLENCIA
+// •	IRRESPONSABILIDAD PATERNA O MATERNA
+// •	OTROS
+//       4.	APOYOS INTEGRALES
+// •	INFORMES PSICOLOGICOS
+// •	INFORMES SOCIALES
+
+      if (this.tipoProceso === 'PROCESO_PENAL') {
+        this.tipologias = [
+          'VIOLACION', 'ESTUPRO', 'ABUSO SEXUAL', 'ACOSO SEXUAL', 'INFANTICIDIO', 'RAPTO',
+          'CORRUPCION', 'PROXENETISMO', 'VIOLENCIA SEXUAL COMERCIAL', 'PORNOGRAFIA',
+          'TRAFICO DE PERSONAS', 'TRATA DE PERSONAS', 'LESIONES GRAVES Y LEVES',
+          'LESIONES GRAVISIMAS', 'SUSTRACCIÓN DE MENOR INCAPAZ',
+          'VIOLENCIA FAMILIAR O DOMESTICA (FISICA, PSICOLOGICA)', 'ABANDONO DE NIÑOS/AS',
+          'ABANDONO POR CAUSA DE HONOR', 'OTROS'
+        ]
+      }else if (this.tipoProceso === 'PROCESO_FAMILIAR') {
+        this.tipologias = ['ASISTENCIA FAMILIAR', 'OTROS']
+      } else if (this.tipoProceso === 'PROCESO_NNA') {
+        this.tipologias = ['ACOGIMIENTO CIRCUNSTANCIAL', 'INFRACCION POR VIOLENCIA', 'IRRESPONSABILIDAD PATERNA O MATERNA', 'OTROS']
+      } else if (this.tipoProceso === 'APOYO_INTEGRAL') {
+        this.tipologias = ['INFORMES PSICOLOGICOS', 'INFORMES SOCIALES']
+      } else {
+        this.tipologias = []
       }
-      this.$q.notify({ type: 'info', message: 'Formulario reiniciado' })
+      // Si ya tienes este endpoint que devuelve listas por rol:
+      this.$axios.get('/usuariosRole')
+        .then(r => {
+          this.abogados = r.data.abogados || []
+        })
+        .catch(() => {
+          this.$alert?.error?.('No se pudo cargar abogados')
+        })
     },
-    async save () {
-      if (!this.f.denunciante_nombre) {
-        this.$alert?.error?.('El nombre del denunciante es obligatorio'); return
-      }
-      this.loading = true
-      try {
-        const { data } = await this.$axios.post('/dnas', this.f)
-        this.$alert?.success?.('Caso DNA creado')
-        this.$router.push('/dnas') // o `/dnas/${data.dna.id}` si luego haces el show
-      } catch (e) {
-        this.$alert?.error?.(e?.response?.data?.message || 'No se pudo crear el caso DNA')
-      } finally {
-        this.loading = false
+    methods: {
+      req(v) {
+        return !!v || 'Requerido'
+      },
+      addMenor() {
+        this.f.menores.push({
+          nombre: '',
+          gestante: false,
+          edad_anios: null,
+          edad_meses: null,
+          sexo: '',
+          cert_nac: false,
+          estudia: false,
+          ultimo_curso: '',
+          tipo_trabajo: ''
+        })
+      },
+      addFam() {
+        this.f.grupo_familiar.push({nombre: '', parentesco: '', edad: null, sexo: '', instruccion: '', ocupacion: ''})
+      },
+      resetForm() {
+        const keep = {tipo_proceso: this.tipoProceso, area: 'DNA', zona: this.$store?.user?.zona || ''}
+        this.f = {
+          ...keep,
+          fecha_atencion: '',
+          principal: '',
+          codigo: '',
+          domicilio: '',
+          telefono: '',
+          menores: [{
+            nombre: '',
+            gestante: false,
+            edad_anios: null,
+            edad_meses: null,
+            sexo: '',
+            cert_nac: false,
+            estudia: false,
+            ultimo_curso: '',
+            tipo_trabajo: ''
+          }],
+          grupo_familiar: [],
+          denunciado_nombre: '',
+          denunciado_sexo: '',
+          denunciado_edad: null,
+          denunciado_relacion: '',
+          denunciado_ci: '',
+          denunciado_domicilio: '',
+          denunciado_telefono: '',
+          denunciado_lugar_trabajo: '',
+          denunciado_ocupacion: '',
+          denunciante_nombre: '',
+          denunciante_sexo: '',
+          denunciante_edad: null,
+          denunciante_ci: '',
+          denunciante_domicilio: '',
+          denunciante_telefono: '',
+          denunciante_lugar_trabajo: '',
+          denunciante_ocupacion: '',
+          descripcion: '',
+          abogado_user_id: null
+        }
+        this.$q.notify({type: 'info', message: 'Formulario reiniciado'})
+      },
+      async save() {
+        if (!this.f.denunciante_nombre) {
+          this.$alert?.error?.('El nombre del denunciante es obligatorio');
+          return
+        }
+        this.loading = true
+        try {
+          const {data} = await this.$axios.post('/dnas', this.f)
+          this.$alert?.success?.('Caso DNA creado')
+          this.$router.push('/dnas') // o `/dnas/${data.dna.id}` si luego haces el show
+        } catch (e) {
+          this.$alert?.error?.(e?.response?.data?.message || 'No se pudo crear el caso DNA')
+        } finally {
+          this.loading = false
+        }
       }
     }
   }
-}
 </script>
 
 <style scoped>
-.bg-grey-2 { min-height: 100%; }
-.toolbar { position: sticky; top: 0; z-index: 5; border-radius: 12px; }
-.section-card { border-radius: 14px; overflow: hidden; margin-bottom: 16px; background: #fff; }
+.bg-grey-2 {
+  min-height: 100%;
+}
+
+.toolbar {
+  position: sticky;
+  top: 50px;
+  z-index: 1000;
+  border-radius: 12px;
+}
+
+.section-card {
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  background: #fff;
+}
 </style>
