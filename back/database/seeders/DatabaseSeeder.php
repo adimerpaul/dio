@@ -165,12 +165,18 @@ class DatabaseSeeder extends Seeder
         $permisos = [
             'Dashboard',
             'Usuarios',
-            'Casos',
-            'Documentos',
             'Lineas de Tiempo',
-            'KPIs',
-            'Auditorias',
             'Agenda',
+            'Crear SLIM',
+            'Ver SLIM',
+            'Crear DNA',
+            'Ver DNA',
+            'Crear SLAM',
+            'Ver SLAM',
+            'Crear UMADIS',
+            'Ver UMADIS',
+            'Crear PROMPREMIS',
+            'Ver PROMPREMIS',
         ];
         foreach ($permisos as $permiso) {
             Permission::firstOrCreate(['name' => $permiso]);
@@ -187,18 +193,18 @@ class DatabaseSeeder extends Seeder
         $social    = $created['social']    ?? null;
 
         // Asignación de permisos (igual que tu esquema)
-        if ($asistente) {
-            $asistente->syncPermissions(['Dashboard', 'Casos', 'Documentos', 'Lineas de Tiempo']);
-        }
-        if ($psicologo) {
-            $psicologo->syncPermissions(['Dashboard', 'Casos', 'Documentos', 'Lineas de Tiempo', 'KPIs', 'Agenda']);
-        }
-        if ($abogado) {
-            $abogado->syncPermissions(['Dashboard', 'Casos', 'Documentos', 'Lineas de Tiempo', 'KPIs']);
-        }
-        if ($social) {
-            $social->syncPermissions(['Dashboard', 'Casos', 'Documentos', 'Lineas de Tiempo', 'KPIs']);
-        }
+//        if ($asistente) {
+//            $asistente->syncPermissions(['Dashboard', 'Casos', 'Documentos', 'Lineas de Tiempo']);
+//        }
+//        if ($psicologo) {
+//            $psicologo->syncPermissions(['Dashboard', 'Casos', 'Documentos', 'Lineas de Tiempo', 'KPIs', 'Agenda']);
+//        }
+//        if ($abogado) {
+//            $abogado->syncPermissions(['Dashboard', 'Casos', 'Documentos', 'Lineas de Tiempo', 'KPIs']);
+//        }
+//        if ($social) {
+//            $social->syncPermissions(['Dashboard', 'Casos', 'Documentos', 'Lineas de Tiempo', 'KPIs']);
+//        }
 
         // Puedes seguir con otros seeders si corresponde
         // $this->call([CasoSeeder::class]);

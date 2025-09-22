@@ -22,7 +22,6 @@ return new class extends Migration
             $table->string('sexo', 15)->nullable();
             $table->string('estado_civil', 15)->nullable();
             $table->string('ocupacion', 15)->nullable();
-            $table->string('sexo', 15)->nullable();
             $table->string('telefono', 30)->nullable();
             $table->timestamps();
             $table->softDeletes();
