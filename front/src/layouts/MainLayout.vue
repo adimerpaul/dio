@@ -30,7 +30,6 @@
             flat round dense
             :icon="pendingCount > 0 ? 'notifications_active' : 'notifications_none'"
             :color="pendingCount > 0 ? 'negative' : 'grey-7'"
-            @click="irPendientes"
             :loading="pendingLoading"
             aria-label="Pendientes"
           >
@@ -44,6 +43,43 @@
             <q-tooltip v-if="pendingCount > 0">
               Tienes {{ pendingCount }} pendiente(s)
             </q-tooltip>
+            <q-menu>
+              <q-list style="min-width: 250px">
+                <q-item v-if="pending.pendientesSlim > 0" clickable @click="irPendientes" v-close-popup>
+                  <q-item-section avatar><q-icon name="person_add" /></q-item-section>
+                  <q-item-section>
+                    <q-item-label>Denuncias Físicas (SLIM)</q-item-label>
+                    <q-item-label caption>{{ pending.pendientesSlim }} pendiente(s)</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item v-if="pending.pendientesDna > 0" clickable @click="irPendientes" v-close-popup>
+                  <q-item-section avatar><q-icon name="gavel" /></q-item-section>
+                  <q-item-section>
+                    <q-item-label>Procesos (DNA)</q-item-label>
+                    <q-item-label caption>{{ pending.pendientesDna }} pendiente(s)</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item v-if="pending.pendientesSlam > 0" clickable @click="irPendientes" v-close-popup>
+                  <q-item-section avatar><q-icon name="person_add" /></q-item-section>
+                  <q-item-section>
+                    <q-item-label>Denuncias Físicas (SLAM)</q-item-label>
+                    <q-item-label caption>{{ pending.pendientesSlam }} pendiente(s)</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item v-if="pending.pendientesUmadis > 0" clickable @click="irPendientes" v-close-popup>
+                  <q-item-section avatar><q-icon name="person_add" /></q-item-section>
+                  <q-item-section>
+                    <q-item-label>Denuncias Físicas (UMADIS/PROPREMI)</q-item-label>
+                    <q-item-label caption>{{ pending.pendientesUmadis }} pendiente(s)</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item v-if="!pendingCount && !pendingLoading" disabled>
+                  <q-item-section>
+                    <q-item-label>No tienes pendientes</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
           </q-btn>
 
           <q-btn-dropdown flat unelevated no-caps dropdown-icon="expand_more">
@@ -187,6 +223,7 @@ const norm = (s) => (s ?? '')
 /* ---------- UI header ---------- */
 const leftDrawerOpen = ref(false)
 const pendingCount   = ref(0)
+const pending   = ref({})
 const pendingLoading = ref(false)
 
 /* ---------- Super Admin SOLO por ÁREA ---------- */
@@ -239,13 +276,12 @@ const linksList = [
 
   // SLAM
   { title: 'Nuevo SLAM', icon: 'add_circle', link: '/slams/nuevofisica',
-    onlyAreas: ['SLAM'],
     childrens: [
-      { title: 'Denuncia Física', icon: 'person_add',  link: '/slams/nuevofisica',   onlyAreas: ['SLAM'] },
-      { title: 'Apoyo Integral',  icon: 'diversity_1', link: '/slams/nuevointegral', onlyAreas: ['SLAM'] },
+      { title: 'Denuncia Física', icon: 'person_add',  link: '/slams/nuevofisica' },
+      { title: 'Apoyo Integral',  icon: 'diversity_1', link: '/slams/nuevointegral' },
     ]
   },
-  { title: 'SLAMs', icon: 'folder_shared', link: '/slams', onlyAreas: ['SLAM'] },
+  { title: 'SLAMs', icon: 'folder_shared', link: '/slams' },
   // UMADIS
   { title: 'Nuevo UMADIS', icon: 'add_circle', link: '/umadis/nuevofisica',
     onlyAreas: ['UMADIS'],
@@ -303,7 +339,8 @@ async function fetchPendientesCount () {
   pendingLoading.value = true
   try {
     const { data } = await proxy.$axios.get('/slims/pendientes-resumen')
-    pendingCount.value = Number(data?.pendientes || 0)
+    pending.value = data
+    pendingCount.value = (data?.pendientesSlim || 0) + (data?.pendientesDna || 0) + (data?.pendientesSlam || 0) + (data?.pendientesUmadis || 0)
   } catch (e) {
     // opcional
   } finally {

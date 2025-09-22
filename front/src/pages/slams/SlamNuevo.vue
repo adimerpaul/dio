@@ -153,9 +153,19 @@
               <div class="col-6 col-md-2"><q-input v-model="f.paterno" dense outlined clearable label="Paterno"/></div>
               <div class="col-6 col-md-2"><q-input v-model="f.materno" dense outlined clearable label="Materno"/></div>
               <div class="col-6 col-md-2"><q-input v-model="f.parentesco" dense outlined clearable label="Parentesco"/></div>
-              <div class="col-3 col-md-1"><q-input v-model.number="f.edad" type="number" dense outlined label="Edad"/></div>
-              <div class="col-3 col-md-1"><q-input v-model="f.sexo" dense outlined clearable label="Sexo"/></div>
+              <div class="col-3 col-md-2"><q-input v-model.number="f.edad" type="number" dense outlined label="Edad"/></div>
+<!--              <div class="col-3 col-md-1"><q-input v-model="f.sexo" dense outlined clearable label="Sexo"/></div>-->
               <div class="col-12 col-md-2"><q-input v-model="f.telefono" dense outlined clearable label="Teléfono"/></div>
+              <div class="col-3 col-md-2">
+                <q-select v-model="f.estado_civil" dense outlined clearable
+                          :options="['Soltero/a','Casado/a','Divorciado/a','Viudo/a','Unión libre','Otro']"
+                          label="Estado civil"/>
+              </div>
+              <div class="col-3 col-md-2">
+                <q-select v-model="f.ocupacion" dense outlined clearable
+                          :options="['Desempleado/a','Empleado/a','Comerciante','Estudiante','Ama de casa','Otro']"
+                          label="Ocupación"/>
+              </div>
 
               <div class="col-auto q-mt-sm">
                 <q-btn dense round flat color="negative" icon="delete" @click="removeFamiliar(idx)"/>
@@ -239,9 +249,9 @@
             <div class="col-12 col-md-2">
               <q-checkbox v-model="slam.doc_frontal_denunciante" label="Foto frontal denunciante"/>
             </div>
-            <div class="col-12 col-md-2">
-              <q-checkbox v-model="slam.doc_croquis" label="Croquis del hecho"/>
-            </div>
+<!--            <div class="col-12 col-md-2">-->
+<!--              <q-checkbox v-model="slam.doc_croquis" label="Croquis del hecho"/>-->
+<!--            </div>-->
           </div>
         </q-card-section>
       </q-card>
