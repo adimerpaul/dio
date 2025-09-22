@@ -33,11 +33,7 @@
             :loading="pendingLoading"
             aria-label="Pendientes"
           >
-            <q-badge
-              v-if="pendingCount > 0"
-              color="red" text-color="white"
-              floating
-            >
+            <q-badge v-if="pendingCount > 0" color="red" text-color="white" floating>
               {{ pendingCount }}
             </q-badge>
             <q-tooltip v-if="pendingCount > 0">
@@ -148,7 +144,7 @@
         </q-item-label>
 
         <!-- Menú filtrado -->
-        <template v-for="link in filteredLinks" :key="link.title">
+        <template v-for="link in filteredLinks" :key="link.link">
           <q-item
             v-if="!link.childrens || !link.childrens.length"
             clickable :to="link.link" exact dense
@@ -170,7 +166,7 @@
           >
             <q-list>
               <q-item
-                v-for="sublink in link.childrens" :key="sublink.title"
+                v-for="sublink in link.childrens" :key="sublink.link"
                 clickable :to="sublink.link" exact dense
                 active-class="menu-active" v-close-popup
                 :inset-level="0.3"
@@ -251,13 +247,13 @@ const linksList = [
 
   // SLIM
   { title: 'Nuevo SLIM', icon: 'add_circle', link: '/slims/nuevofisica',
-    onlyAreas: ['SLIM'],
+    onlyAreas: ['ALL'],
     childrens: [
-      { title: 'Denuncia Física', icon: 'person_add',  link: '/slims/nuevofisica',   onlyAreas: ['SLIM'] },
-      { title: 'Apoyo Integral',  icon: 'diversity_1', link: '/slims/nuevointegral', onlyAreas: ['SLIM'] },
+      { title: 'Denuncia Física', icon: 'person_add',  link: '/slims/nuevofisica',   onlyAreas: ['ALL'] },
+      { title: 'Apoyo Integral',  icon: 'diversity_1', link: '/slims/nuevointegral', onlyAreas: ['ALL'] },
     ]
   },
-  { title: 'SLIMs', icon: 'folder_shared', link: '/slims', onlyAreas: ['SLIM'] },
+  { title: 'SLIMs', icon: 'folder_shared', link: '/slims', onlyAreas: ['ALL'] },
 
   // DNA
   {
@@ -266,10 +262,10 @@ const linksList = [
     link: '/dnas/nuevo-penal',
     onlyAreas: ['DNA'],
     childrens: [
-      { title: 'Procesos Penales',              icon: 'balance',           link: '/dnas/nuevo-penal',     onlyAreas: ['DNA'] },
-      { title: 'Procesos Familiares',           icon: 'family_restroom',   link: '/dnas/nuevo-familiar',  onlyAreas: ['DNA'] },
-      { title: 'Procesos Niñez y Adolescencia', icon: 'child_care',        link: '/dnas/nuevo-nna',       onlyAreas: ['DNA'] },
-      { title: 'Apoyos Integrales',             icon: 'diversity_1',       link: '/dnas/nuevo-apoyo',     onlyAreas: ['DNA'] },
+      { title: 'Procesos Penales',              icon: 'balance',         link: '/dnas/nuevo-penal',    onlyAreas: ['DNA'] },
+      { title: 'Procesos Familiares',           icon: 'family_restroom', link: '/dnas/nuevo-familiar', onlyAreas: ['DNA'] },
+      { title: 'Procesos Niñez y Adolescencia', icon: 'child_care',      link: '/dnas/nuevo-nna',      onlyAreas: ['DNA'] },
+      { title: 'Apoyos Integrales',             icon: 'diversity_1',     link: '/dnas/nuevo-apoyo',    onlyAreas: ['DNA'] },
     ]
   },
   { title: 'DNA (Casos)', icon: 'folder_shared', link: '/dnas', onlyAreas: ['DNA'] },
@@ -282,6 +278,7 @@ const linksList = [
     ]
   },
   { title: 'SLAMs', icon: 'folder_shared', link: '/slams' },
+
   // UMADIS
   { title: 'Nuevo UMADIS', icon: 'add_circle', link: '/umadis/nuevofisica',
     onlyAreas: ['UMADIS'],
@@ -290,15 +287,17 @@ const linksList = [
       { title: 'Apoyo Integral',  icon: 'diversity_1', link: '/umadis/nuevointegral', onlyAreas: ['UMADIS'] },
     ]
   },
-  { title: 'PROPREMIs', icon: 'folder_shared', link: '/umadis', onlyAreas: ['PROPREMI'] },
-  { title: 'Nuevo PROPREMI', icon: 'add_circle', link: '/umadis/nuevofisica',
+  { title: 'UMADIS', icon: 'folder_shared', link: '/umadis', onlyAreas: ['UMADIS'] },
+
+  // PROPREMI (rutas separadas para evitar duplicados)
+  { title: 'Nuevo PROPREMI', icon: 'add_circle', link: '/propremis/nuevofisica',
     onlyAreas: ['PROPREMI'],
     childrens: [
-      { title: 'Denuncia Física', icon: 'person_add',  link: '/umadis/nuevofisica',   onlyAreas: ['PROPREMI'] },
-      { title: 'Apoyo Integral',  icon: 'diversity_1', link: '/umadis/nuevointegral', onlyAreas: ['PROPREMI'] },
+      { title: 'Denuncia Física', icon: 'person_add',  link: '/propremis/nuevofisica',   onlyAreas: ['PROPREMI'] },
+      { title: 'Apoyo Integral',  icon: 'diversity_1', link: '/propremis/nuevointegral', onlyAreas: ['PROPREMI'] },
     ]
   },
-  { title: 'PROPREMIs', icon: 'folder_shared', link: '/umadis', onlyAreas: ['PROPREMI'] },
+  { title: 'PROPREMIs', icon: 'folder_shared', link: '/propremis', onlyAreas: ['PROPREMI'] },
 
   // Otros
   { title: 'Agenda',           icon: 'event',       link: '/agenda',        canPerm: 'Agenda' },
@@ -311,22 +310,43 @@ const filteredLinks = computed(() => {
   const area  = norm(proxy.$store.user?.area)
   const admin = isSuperAdmin()
 
-  const matchPerm = (item) =>
-    admin ? true : (Array.isArray(item.canPerm) ? hasAnyPerm(item.canPerm) : hasPerm(item.canPerm))
+  // Chequea permisos (sin sombreamiento de hasPerm)
+  const checkPerm = (item) => {
+    if (admin) return true
+    const p = item?.canPerm
+    if (!p) return true
+    return Array.isArray(p) ? hasAnyPerm(p) : hasPerm(p)
+  }
 
   const matchArea = (item) => {
-    if (admin) return true                       // ADMIN (área) ve todo
-    if (item.onlyArea || item.onlyAreas) {
-      if (!area) return false                    // si requiere área y no hay, ocultar
-      if (item.onlyArea)  return norm(item.onlyArea) === area
-      if (item.onlyAreas) return item.onlyAreas.some(a => norm(a) === area)
+    if (admin) return true
+
+    const includesALL = (oa) => {
+      if (!oa) return false
+      if (Array.isArray(oa)) return oa.map(norm).includes('ALL')
+      return norm(oa) === 'ALL'
+    }
+
+    // Si declara ALL, visible
+    if (includesALL(item.onlyAreas) || includesALL(item.onlyArea)) return true
+
+    // Restringe por área específica
+    if (item.onlyArea) {
+      if (!area) return false
+      return norm(item.onlyArea) === area
+    }
+    if (item.onlyAreas) {
+      if (!area) return false
+      const arr = Array.isArray(item.onlyAreas) ? item.onlyAreas : [item.onlyAreas]
+      return arr.map(norm).includes(area)
     }
     return true
   }
 
-  const passes = (item) => matchArea(item) && matchPerm(item)
+  const passes = (item) => !!item && matchArea(item) && checkPerm(item)
 
   return linksList
+    .filter(Boolean)
     .filter(passes)
     .map(link => link.childrens
       ? ({ ...link, childrens: (link.childrens || []).filter(passes) })
@@ -334,7 +354,7 @@ const filteredLinks = computed(() => {
     )
 })
 
-/* ---------- Pendientes (SLIM) ---------- */
+/* ---------- Pendientes ---------- */
 async function fetchPendientesCount () {
   pendingLoading.value = true
   try {

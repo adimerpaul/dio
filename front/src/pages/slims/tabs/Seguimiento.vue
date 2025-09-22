@@ -61,27 +61,27 @@
     </q-card>
 
     <!-- FILTROS -->
-    <q-card flat bordered class="q-pa-sm q-mb-sm">
-      <div class="row items-center q-col-gutter-sm">
-        <div class="col-12 col-md-4">
-          <q-input v-model="filters.q" dense outlined placeholder="Buscar (título, descripción, usuario)">
-            <template #append><q-icon name="search"/></template>
-          </q-input>
-        </div>
-        <div class="col-6 col-md-2">
-          <q-select v-model="filters.tipo" :options="tipos" dense outlined label="Tipo"/>
-        </div>
-        <div class="col-6 col-md-2">
-          <q-select v-model="filters.modulo" :options="modulos" dense outlined label="Módulo"/>
-        </div>
-        <div class="col-6 col-md-2">
-          <q-input v-model="filters.desde" type="date" dense outlined label="Desde"/>
-        </div>
-        <div class="col-6 col-md-2">
-          <q-input v-model="filters.hasta" type="date" dense outlined label="Hasta"/>
-        </div>
-      </div>
-    </q-card>
+<!--    <q-card flat bordered class="q-pa-sm q-mb-sm">-->
+<!--      <div class="row items-center q-col-gutter-sm">-->
+<!--        <div class="col-12 col-md-4">-->
+<!--          <q-input v-model="filters.q" dense outlined placeholder="Buscar (título, descripción, usuario)">-->
+<!--            <template #append><q-icon name="search"/></template>-->
+<!--          </q-input>-->
+<!--        </div>-->
+<!--        <div class="col-6 col-md-2">-->
+<!--          <q-select v-model="filters.tipo" :options="tipos" dense outlined label="Tipo"/>-->
+<!--        </div>-->
+<!--        <div class="col-6 col-md-2">-->
+<!--          <q-select v-model="filters.modulo" :options="modulos" dense outlined label="Módulo"/>-->
+<!--        </div>-->
+<!--        <div class="col-6 col-md-2">-->
+<!--          <q-input v-model="filters.desde" type="date" dense outlined label="Desde"/>-->
+<!--        </div>-->
+<!--        <div class="col-6 col-md-2">-->
+<!--          <q-input v-model="filters.hasta" type="date" dense outlined label="Hasta"/>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </q-card>-->
 
     <!-- TABLA -->
     <q-table
