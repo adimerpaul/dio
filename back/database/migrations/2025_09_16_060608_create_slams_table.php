@@ -20,6 +20,7 @@ return new class extends Migration {
             $table->string('am_extravio')->nullable();
             $table->string('am_medicina')->nullable();
             $table->string('am_fisioterapia')->nullable();
+            $table->string('am_domicilio', 160)->nullable();
 
             // Idiomas (checks)
             $table->boolean('am_idioma_castellano')->default(false);

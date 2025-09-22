@@ -546,6 +546,9 @@ class SlamController extends Controller
             $slamData['area'] = $user->area ?? 'Sin área';
             $slamData['user_id'] = $user->id;
 
+//            numero_caso
+            $lastSlam['numero_caso'] = $this->numeroCaso();
+
             $slam = Slam::create($slamData);
 
             // Crea N adultos (si llegan)
@@ -563,5 +566,11 @@ class SlamController extends Controller
         });
 
         return response()->json(['slam' => $slam], 201);
+    }
+    private function numeroCaso(): string
+    {
+        $year = date('Y');
+        $count = Slam::whereYear('created_at', $year)->count() + 1;
+        return str_pad($count, 3, '0', STR_PAD_LEFT) . '/' . substr($year, -2);
     }
 }

@@ -25,6 +25,7 @@ class Slam extends Model implements Auditable
         'am_extravio',
         'am_medicina',
         'am_fisioterapia',
+        'am_domicilio',
 
         // Idiomas (checks)
         'am_idioma_castellano',
