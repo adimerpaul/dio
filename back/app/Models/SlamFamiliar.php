@@ -17,6 +17,8 @@ class SlamFamiliar extends Model implements Auditable
         'slam_id',
         'nombre','paterno','materno',
         'parentesco','edad','sexo','telefono',
+        'estado_civil',
+        'ocupacion'
     ];
 
     protected $casts = [

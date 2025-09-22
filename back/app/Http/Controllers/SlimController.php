@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Slam;
 use App\Models\Slim;
 use App\Models\Psicologica;
 use App\Models\InformeLegal;
@@ -16,31 +17,48 @@ class SlimController extends Controller
 {
     public function pendientesResumen(Request $request)
     {
+//        error_log('PendientesResumen called');
         $user = $request->user();
-        $q = Slim::query();
+        $slim = Slim::query();
+        $slam = Slam::query();
 
-        switch ($user->role) {
-            case 'Psicologo':
-                $q->where('psicologica_user_id', $user->id)
-                    ->whereDoesntHave('psicologicas'); // sin primera sesión
-                break;
+        $slimCount = $slim->where(function ($query) use ($user) {
+            if ($user->role == 'Psicologo') {
+                $query->where('psicologica_user_id', $user->id)
+                      ->whereDoesntHave('psicologicas');
+            }
+//            elseif ($user->role == 'Social') {
+//                $query->where('trabajo_social_user_id', $user->id)
+//                      ->whereDoesntHave('problematica');
+//            }
+            elseif ($user->role == 'Abogado') {
+                $query->where('legal_user_id', $user->id)
+                      ->whereDoesntHave('informesLegales');
+            } else {
+                $query->whereRaw('1 = 0'); // No pendientes para otros roles
+            }
+        });
+        $slamCount = $slam->where(function ($query) use ($user) {
+            if ($user->role == 'Psicologo') {
+                $query->where('psicologica_user_id', $user->id)
+                      ->whereDoesntHave('psicologicas');
+            }
+//            elseif ($user->role == 'Social') {
+//                $query->where('trabajo_social_user_id', $user->id)
+//                      ->whereDoesntHave('problematica');
+//            }
+            elseif ($user->role == 'Abogado') {
+                $query->where('legal_user_id', $user->id)
+                      ->whereDoesntHave('informesLegales');
+            } else {
+                $query->whereRaw('1 = 0'); // No pendientes para otros roles
+            }
+        });
 
-            case 'Abogado':
-                $q->where('legal_user_id', $user->id)
-                    ->whereDoesntHave('informesLegales'); // sin primer informe legal
-                break;
-
-            case 'Social':
-                $q->where('trabajo_social_user_id', $user->id)
-                    // si a futuro tienes "informes sociales" como entidad propia polimórfica, aquí el whereDoesntHave
-                    ->whereDoesntHave('problematicas'); // placeholder: ajustar si usas otra entidad para Social
-                break;
-
-            default:
-                return response()->json(['pendientes' => 0]);
-        }
-
-        return response()->json(['pendientes' => $q->count()]);
+        return response()->json([
+            'pendientesSlim' => $slimCount->count(),
+            'pendientesSlam' => $slamCount->count(),
+        ]);
     }
 
     /**
