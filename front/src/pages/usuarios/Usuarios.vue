@@ -277,7 +277,37 @@ export default {
         const all = await this.$axios.get('permissions').then(r => r.data)              // [{id,name}]
         const userPermIds = await this.$axios.get(`users/${user.id}/permissions`).then(r => r.data) // [ids]
         // Solo los 6 permisos del seeder (por si hay otros en BD)
-        const valid = new Set(['Dashboard','Agenda','Casos','Usuarios','Documentos','Lineas de Tiempo','KPIs','Auditorias'])
+        // const valid = new Set(['Dashboard','Agenda','Casos','Usuarios','Documentos','Lineas de Tiempo','KPIs','Auditorias'])
+        // 'Dashboard',
+        //   'Usuarios',
+        //   'Lineas de Tiempo',
+        //   'Agenda',
+        //   'Crear SLIM',
+        //   'Ver SLIM',
+        //   'Crear DNA',
+        //   'Ver DNA',
+        //   'Crear SLAM',
+        //   'Ver SLAM',
+        //   'Crear UMADIS',
+        //   'Ver UMADIS',
+        //   'Crear PROMPREMIS',
+        //   'Ver PROMPREMIS',
+        const  valid = new Set([
+          'Dashboard',
+          'Usuarios',
+          'Lineas de Tiempo',
+          'Agenda',
+          'Crear SLIM',
+          'Ver SLIM',
+          'Crear DNA',
+          'Ver DNA',
+          'Crear SLAM',
+          'Ver SLAM',
+          'Crear UMADIS',
+          'Ver UMADIS',
+          'Crear PROMPREMIS',
+          'Ver PROMPREMIS',
+        ])
         this.permissions = all
           .filter(p => valid.has(p.name))
           .map(p => ({ ...p, checked: userPermIds.includes(p.id) }))
