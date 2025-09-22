@@ -251,14 +251,17 @@
           <div class="row q-col-gutter-md">
             <div class="col-12 col-md-4">
               <q-select v-model="form.psicologica_user_id" dense outlined emit-value map-options
+                        clearable
                         :options="optPsicologos" label="Área psicológica (responsable)" :readonly="!editing"/>
             </div>
             <div class="col-12 col-md-4">
               <q-select v-model="form.trabajo_social_user_id" dense outlined emit-value map-options
+                        clearable
                         :options="optSociales" label="Área social (responsable)" :readonly="!editing"/>
             </div>
             <div class="col-12 col-md-4">
               <q-select v-model="form.legal_user_id" dense outlined emit-value map-options
+                        clearable
                         :options="optAbogados" label="Área legal (responsable)" :readonly="!editing"/>
             </div>
           </div>

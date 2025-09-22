@@ -90,7 +90,7 @@
       <q-card>
         <q-bar class="bg-white text-dark">
           <div class="text-subtitle1">
-            {{ mode==='view' ? 'Ver informe' : (form.id ? 'Editar informe' : 'Nuevo informe') }}
+            {{ mode==='view' ? 'Ver informe' : (form.id ? 'Editar area de trabajo' : 'Nuevo area de trabajo') }}
           </div>
           <q-space/>
           <q-btn flat dense round icon="close" v-close-popup/>
@@ -99,7 +99,7 @@
         <q-separator/>
 
         <q-card-section class="q-gutter-md">
-          <div class="row q-col-gutter-md">
+          <div class="row">
             <div class="col-12 col-md-3">
               <q-input v-model="form.fecha" type="date" dense outlined label="Fecha" :readonly="mode==='view'"/>
             </div>

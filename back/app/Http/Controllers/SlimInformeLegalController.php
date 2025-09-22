@@ -53,6 +53,12 @@ class SlimInformeLegalController extends Controller
         $data['caseable_type'] = Slim::class;
         $data['user_id']       = $request->user()->id;
 
+        $slim = Slim::find($slim->id);
+        if (!$slim->fecha_derivacion_area_legal) {
+            $slim->fecha_derivacion_area_legal = now();
+            $slim->save();
+        }
+
         $item = InformeLegal::create($data);
 
         return response()->json($item->load('user:id,name,username'), 201);

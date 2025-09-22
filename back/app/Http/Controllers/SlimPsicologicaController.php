@@ -62,6 +62,12 @@ class SlimPsicologicaController extends Controller
         $data['caseable_type'] = Slim::class;
         $data['user_id']       = $request->user()->id;
 
+        $slim = Slim::find($slim->id);
+        if (!$slim->fecha_informe_area_psicologica) {
+            $slim->fecha_informe_area_psicologica = now();
+            $slim->save();
+        }
+
         $ps = Psicologica::create($data);
 
         return response()->json($ps->load('user:id,name,username'), 201);

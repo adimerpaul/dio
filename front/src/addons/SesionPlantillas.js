@@ -263,29 +263,18 @@ export const SesionHtml = {
   </table>
 
   <h5 style="margin:12px 0 4px 0;">3. MOTIVO DE CONSULTA</h5>
-  <p style="text-align:justify">${d(motivo, 'Evaluación psicológica para determinar los efectos emocionales y psicológicos en la evaluada.')}</p>
+
 
   <h5 style="margin:12px 0 4px 0;">4. ANTECEDENTES</h5>
-  <p style="text-align:justify">${d(antecedentes, 'Se resume el relato referido por la denunciante al momento de la apertura del caso, consignando fechas, lugares, actores involucrados y acciones observadas.')}</p>
+
 
   <h5 style="margin:12px 0 4px 0;">5. TÉCNICAS E INSTRUMENTOS EMPLEADOS</h5>
-  <ul style="margin:0 0 0 16px;">
-    <li>Entrevista clínica y observación conductual.</li>
-    <li>Escala de Ansiedad y Depresión de Goldberg (si aplica).</li>
-    <li>Inventario de Estrés Postraumático (IES-R) (si aplica).</li>
-    <li>Test de Autoestima de Rosenberg (si aplica).</li>
-    <li>${d(tecnicas)}</li>
-  </ul>
+
 
   <h5 style="margin:12px 0 4px 0;">6. CONCLUSIONES</h5>
-  <p style="text-align:justify">${d(conclusiones, 'Se evidencian afectación psicológica y reactividad emocional en relación a los hechos referidos, con impacto en autoestima y estabilidad emocional. No se observan signos de psicosis. Se recomienda seguimiento.')}</p>
+
 
   <h5 style="margin:12px 0 4px 0;">7. RECOMENDACIONES</h5>
-  <ol style="margin:0 0 0 16px;">
-    <li>Intervención psicológica: terapia de fortalecimiento emocional, manejo de ansiedad y estrés.</li>
-    <li>Evaluación legal: asesoramiento jurídico para evitar revictimización y garantizar protección.</li>
-    <li>${d(recomendaciones)}</li>
-  </ol>
 
   <p style="margin-top:12px">Se emite el presente informe en honor a la verdad para fines consiguientes.</p>
 

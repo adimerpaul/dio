@@ -210,15 +210,15 @@
 
 <table class="tbl tiny tight">
     <tr>
-        <th style="width: 23%;">4.1 Nombre(s)</th>
-        <th style="width: 23%;">Ap. Paterno</th>
-        <th style="width: 23%;">Ap. Materno</th>
+        <th style="width: 23%;">4.1 Nombre completo</th>
+{{--        <th style="width: 23%;">Ap. Paterno</th>--}}
+{{--        <th style="width: 23%;">Ap. Materno</th>--}}
         <th>Obs.</th>
     </tr>
     <tr>
-        <td class="clip">{{ d($caso->denunciado_nombres) }}</td>
-        <td class="clip">{{ d($caso->denunciado_paterno) }}</td>
-        <td class="clip">{{ d($caso->denunciado_materno) }}</td>
+        <td class="clip">{{ d($caso->denunciado_nombre_completo) }}</td>
+{{--        <td class="clip">{{ d($caso->denunciado_paterno) }}</td>--}}
+{{--        <td class="clip">{{ d($caso->denunciado_materno) }}</td>--}}
         <td></td>
     </tr>
 </table>
@@ -320,15 +320,15 @@
     <tbody>
     <tr>
         <td>PSICOLÓGICA</td>
-        <td class="clip">{{ d($caso->seguimiento_area) }}</td>
+        <td class="clip">{{ isset($caso->psicologica_user) ? d($caso->psicologica_user->name) : '' }}</td>
     </tr>
     <tr>
         <td>ÁREA SOCIAL</td>
-        <td class="clip">{{ d($caso->seguimiento_area_social) }}</td>
+        <td class="clip">{{ isset($caso->trabajo_social_user) ? d($caso->trabajo_social_user->name) : '' }}</td>
     </tr>
     <tr>
         <td>ÁREA LEGAL</td>
-        <td class="clip">{{ d($caso->seguimiento_area_legal) }}</td>
+        <td class="clip">{{ isset($caso->legal_user) ? d($caso->legal_user->name) : '' }}</td>
     </tr>
     </tbody>
 </table>

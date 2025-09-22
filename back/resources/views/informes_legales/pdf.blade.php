@@ -11,15 +11,15 @@
     </style>
 </head>
 <body>
-<div class="h1">SLIM · Informe #{{ $informe->id }}</div>
-<div class="muted">
-    SLIM: {{ $informe->caseable?->id }} · Usuario: {{ $informe->user?->name ?? $informe->user?->username }}
-</div>
-<hr>
+{{--<div class="h1">SLIM · Informe #{{ $informe->id }}</div>--}}
+{{--<div class="muted">--}}
+{{--    SLIM: {{ $informe->caseable?->id }} · Usuario: {{ $informe->user?->name ?? $informe->user?->username }}--}}
+{{--</div>--}}
+{{--<hr>--}}
 
-<p><b>Título:</b> {{ $informe->titulo }}</p>
-<p><b>Fecha:</b> {{ optional($informe->fecha)->format('Y-m-d') ?? '—' }}</p>
-<p><b>Número:</b> {{ $informe->numero ?: '—' }}</p>
+{{--<p><b>Título:</b> {{ $informe->titulo }}</p>--}}
+{{--<p><b>Fecha:</b> {{ optional($informe->fecha)->format('Y-m-d') ?? '—' }}</p>--}}
+{{--<p><b>Número:</b> {{ $informe->numero ?: '—' }}</p>--}}
 
 <div class="box">{!! $informe->contenido_html !!}</div>
 </body>

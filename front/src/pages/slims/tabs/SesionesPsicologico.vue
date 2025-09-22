@@ -91,14 +91,14 @@
       <q-card style="max-width: 900px; width: 95vw;">
         <q-card-section class="row items-center q-pb-none">
           <div class="text-subtitle1">
-            {{ mode==='view' ? 'Ver sesión' : (form.id ? 'Editar sesión' : 'Nueva sesión') }}
+            {{ mode==='view' ? 'Ver sesión' : (form.id ? 'Editar area de trabajo' : 'Area de trabajo nueva') }}
           </div>
           <q-space/>
           <q-btn flat round dense icon="close" v-close-popup/>
         </q-card-section>
 
         <q-card-section class="q-gutter-md">
-          <div class="row q-col-gutter-md">
+          <div class="row">
             <div class="col-12 col-md-3">
               <q-input v-model="form.fecha" type="date" dense outlined label="Fecha" :readonly="mode==='view'"/>
             </div>
