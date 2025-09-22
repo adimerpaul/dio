@@ -74,7 +74,7 @@ class UserController extends Controller{
 //        return response()->json($user);
         return [
           'user' => User::find($user->id),
-          'permissions' => $user->permissions->pluck('name')
+          'permissions' => $user->permissions
         ];
     }
     function index(){

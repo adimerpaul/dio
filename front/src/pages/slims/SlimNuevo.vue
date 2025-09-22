@@ -31,69 +31,91 @@
             </div>
 
             <div class="col-12 col-md-2">
-              <q-input v-model="f.denunciante_nombres" dense outlined clearable
+              <q-input v-model="f.denunciantes[0].denunciante_nombres" dense outlined clearable
                        label="Nombres *" :rules="[req]"/>
             </div>
             <div class="col-12 col-md-2">
-              <q-input v-model="f.denunciante_paterno" dense outlined clearable label="Apellido paterno"/>
+<!--              <q-input v-model="f.denunciante_paterno" dense outlined clearable label="Apellido paterno *"/>-->
+              <q-input v-model="f.denunciantes[0].denunciante_paterno" dense outlined clearable label="Apellido paterno *" :rules="[req]"/>
             </div>
             <div class="col-12 col-md-2">
-              <q-input v-model="f.denunciante_materno" dense outlined clearable label="Apellido materno"/>
+<!--              <q-input v-model="f.denunciante_materno" dense outlined clearable label="Apellido materno"/>-->
+              <q-input v-model="f.denunciantes[0].denunciante_materno" dense outlined clearable label="Apellido materno"/>
             </div>
 
             <div class="col-6 col-md-3">
-              <q-input v-model="f.denunciante_lugar_nacimiento" dense outlined clearable label="Lugar de nacimiento"/>
+<!--              <q-input v-model="f.denunciante_lugar_nacimiento" dense outlined clearable label="Lugar de nacimiento"/>-->
+              <q-input v-model="f.denunciantes[0].denunciante_lugar_nacimiento" dense outlined clearable label="Lugar de nacimiento"/>
             </div>
             <div class="col-6 col-md-3">
-              <q-input v-model="f.denunciante_fecha_nacimiento" type="date" dense outlined label="Fecha de nacimiento"
+<!--              <q-input v-model="f.denunciante_fecha_nacimiento" type="date" dense outlined label="Fecha de nacimiento"-->
+<!--                       @update:model-value="onBirthChange('denunciante')"/>-->
+              <q-input v-model="f.denunciantes[0].denunciante_fecha_nacimiento" type="date" dense outlined label="Fecha de nacimiento"
                        @update:model-value="onBirthChange('denunciante')"/>
             </div>
             <div class="col-6 col-md-3">
-              <q-input v-model.number="f.denunciante_edad" dense outlined type="number" label="Edad"/>
+<!--              <q-input v-model.number="f.denunciante_edad" dense outlined type="number" label="Edad"/>-->
+              <q-input v-model.number="f.denunciantes[0].denunciante_edad" dense outlined type="number" label="Edad"/>
             </div>
             <div class="col-6 col-md-3">
-              <q-input v-model="f.denunciante_telefono" dense outlined clearable label="Teléfono/Celular"/>
+<!--              <q-input v-model="f.denunciante_telefono" dense outlined clearable label="Teléfono/Celular"/>-->
+              <q-input v-model="f.denunciantes[0].denunciante_telefono" dense outlined clearable label="Teléfono/Celular"/>
             </div>
             <div class="col-6 col-md-3">
-              <q-input v-model="f.denunciante_grado" dense outlined clearable label="Grado de instrucción"/>
+<!--              <q-input v-model="f.denunciante_grado" dense outlined clearable label="Grado de instrucción"/>-->
+              <q-input v-model="f.denunciantes[0].denunciante_grado" dense outlined clearable label="Grado de instrucción"/>
             </div>
 
             <div class="col-6 col-md-3">
-              <q-select v-model="f.denunciante_documento" dense outlined emit-value map-options clearable
+<!--              <q-select v-model="f.denunciante_documento" dense outlined emit-value map-options clearable-->
+<!--                        :options="documentos" label="Documento"/>-->
+              <q-select v-model="f.denunciantes[0].denunciante_documento" dense outlined emit-value map-options clearable
                         :options="documentos" label="Documento"/>
             </div>
             <div class="col-6 col-md-3">
-              <q-input v-model="f.denunciante_nro" dense outlined clearable label="Nro documento"/>
+<!--              <q-input v-model="f.denunciante_nro" dense outlined clearable label="Nro documento"/>-->
+              <q-input v-model="f.denunciantes[0].denunciante_nro" dense outlined clearable label="Nro documento"/>
             </div>
 
             <div class="col-6 col-md-3">
-              <q-select v-model="f.denunciante_sexo" dense outlined emit-value map-options clearable
+<!--              <q-select v-model="f.denunciante_sexo" dense outlined emit-value map-options clearable-->
+<!--                        :options="sexos" label="Sexo"/>-->
+              <q-select v-model="f.denunciantes[0].denunciante_sexo" dense outlined emit-value map-options clearable
                         :options="sexos" label="Sexo"/>
             </div>
             <div class="col-6 col-md-3">
-              <q-select v-model="f.denunciante_estado_civil" dense outlined emit-value map-options clearable
+<!--              <q-select v-model="f.denunciante_estado_civil" dense outlined emit-value map-options clearable-->
+<!--                        :options="estadosCiviles" label="Estado civil"/>-->
+              <q-select v-model="f.denunciantes[0].denunciante_estado_civil" dense outlined emit-value map-options clearable
                         :options="estadosCiviles" label="Estado civil"/>
             </div>
             <div class="col-6 col-md-3">
-              <q-input v-model="f.denunciante_residencia" dense outlined clearable label="Residencia"/>
+<!--              <q-input v-model="f.denunciante_residencia" dense outlined clearable label="Residencia"/>-->
+              <q-input v-model="f.denunciantes[0].denunciante_residencia" dense outlined clearable label="Residencia"/>
             </div>
             <div class="col-6 col-md-3">
-              <q-select v-model="f.denunciante_idioma" dense outlined emit-value map-options clearable
+<!--              <q-select v-model="f.denunciante_idioma" dense outlined emit-value map-options clearable-->
+<!--                        :options="idiomas" label="Idioma"/>-->
+              <q-select v-model="f.denunciantes[0].denunciante_idioma" dense outlined emit-value map-options clearable
                         :options="idiomas" label="Idioma"/>
             </div>
 
             <div class="col-6 col-md-3">
-              <q-toggle v-model="f.denunciante_trabaja" label="Trabaja"/>
+<!--              <q-toggle v-model="f.denunciante_trabaja" label="Trabaja"/>-->
+              <q-toggle v-model="f.denunciantes[0].denunciante_trabaja" label="Trabaja"/>
             </div>
             <div class="col-6 col-md-3">
-              <q-input v-model="f.denunciante_ocupacion" dense outlined clearable label="Ocupación"/>
+<!--              <q-input v-model="f.denunciante_ocupacion" dense outlined clearable label="Ocupación"/>-->
+              <q-input v-model="f.denunciantes[0].denunciante_ocupacion" dense outlined clearable label="Ocupación"/>
             </div>
 
             <div class="col-10">
-              <q-input v-model="f.denunciante_domicilio_actual" dense outlined clearable label="Domicilio actual"/>
+<!--              <q-input v-model="f.denunciante_domicilio_actual" dense outlined clearable label="Domicilio actual"/>-->
+              <q-input v-model="f.denunciantes[0].denunciante_domicilio_actual" dense outlined clearable label="Domicilio actual"/>
             </div>
             <div class="col-2">
-              <q-btn label="Buscar" @click="$refs.denMap?.geocodeAndFly(f.denunciante_domicilio_actual)"/>
+<!--              <q-btn label="Buscar" @click="$refs.denMap?.geocodeAndFly(f.denunciante_domicilio_actual)"/>-->
+              <q-btn label="Buscar" @click="$refs.denMap?.geocodeAndFly(f.denunciantes[0].denunciante_domicilio_actual)"/>
             </div>
 
             <div class="col-12">
@@ -101,7 +123,7 @@
               <MapPicker
                 v-model="denunciantePos"
                 :center="oruroCenter"
-                :address="f.denunciante_domicilio_actual"
+                :address="f.denunciantes[0].denunciante_domicilio_actual"
                 country="bo"
                 ref="denMap"
               />
@@ -422,47 +444,125 @@ export default {
         numero_apoyo_integral: '',
         area: 'SLIM',
         zona: 'CENTRAL',
-        denunciante_nombre_completo: '',
-        denunciante_nombres: '',
-        denunciante_paterno: '',
-        denunciante_materno: '',
-        denunciante_lugar_nacimiento: '',
-        denunciante_fecha_nacimiento: '',
-        denunciante_edad: '',
-        denunciante_telefono: '',
-        denunciante_grado: '',
-        denunciante_documento: 'Carnet de identidad',
-        denunciante_nro: '',
-        denunciante_sexo: '',
-        denunciante_residencia: '',
-        denunciante_estado_civil: '',
-        denunciante_relacion: '',
-        denunciante_idioma: '',
-        denunciante_trabaja: false,
-        denunciante_ocupacion: '',
-        denunciante_domicilio_actual: '',
-        latitud: null,
-        longitud: null,
-        // Familiares
-        familiar1_nombre_completo: '', familiar1_edad: null, familiar1_parentesco: '', familiar1_celular: '',
-        familiar2_nombre_completo: '', familiar2_edad: null, familiar2_parentesco: '', familiar2_celular: '',
-        familiar3_nombre_completo: '', familiar3_edad: null, familiar3_parentesco: '', familiar3_celular: '',
-        familiar4_nombre_completo: '', familiar4_edad: null, familiar4_parentesco: '', familiar4_celular: '',
-        familiar5_nombre_completo: '', familiar5_edad: null, familiar5_parentesco: '', familiar5_celular: '',
-        // Denunciado
-        denunciado_nombre_completo: '',
-        denunciado_documento: '',
-        denunciado_nro: '',
-        denunciado_sexo: '',
-        denunciado_residencia: '',
-        denunciado_domicilio_actual: '',
-        denunciado_latitud: null,
-        denunciado_longitud: null,
-        denunciado_lugar_nacimiento: '',
-        denunciado_fecha_nacimiento: '',
-        denunciado_edad: '',
-        denunciado_telefono: '',
-        denunciado_grado: '',
+        denunciantes : [{
+          denunciante_nombres: '',
+          denunciante_paterno: '',
+          denunciante_materno: '',
+          denunciante_documento: 'Carnet de identidad',
+          denunciante_nro: '',
+          denunciante_sexo: '',
+          denunciante_lugar_nacimiento: '',
+          denunciante_fecha_nacimiento: '',
+          denunciante_edad: '',
+          denunciante_telefono: '',
+          denunciante_residencia: '',
+          denunciante_estado_civil: '',
+          denunciante_trabaja: false,
+          denunciante_relacion: '',
+          denunciante_grado: '',
+          latitud: null,
+          longitud: null,
+        }],
+        // denunciante_nombre_completo: '',
+        // denunciante_nombres: '',
+        // denunciante_paterno: '',
+        // denunciante_materno: '',
+        // denunciante_lugar_nacimiento: '',
+        // denunciante_fecha_nacimiento: '',
+        // denunciante_edad: '',
+        // denunciante_telefono: '',
+        // denunciante_grado: '',
+        // denunciante_documento: 'Carnet de identidad',
+        // denunciante_nro: '',
+        // denunciante_sexo: '',
+        // denunciante_residencia: '',
+        // denunciante_estado_civil: '',
+        // denunciante_relacion: '',
+        // denunciante_idioma: '',
+        // denunciante_trabaja: false,
+        // denunciante_ocupacion: '',
+        // denunciante_domicilio_actual: '',
+        // latitud: null,
+        // longitud: null,
+        // // Familiares
+        // familiar1_nombre_completo: '', familiar1_edad: null, familiar1_parentesco: '', familiar1_celular: '',
+        // familiar2_nombre_completo: '', familiar2_edad: null, familiar2_parentesco: '', familiar2_celular: '',
+        // familiar3_nombre_completo: '', familiar3_edad: null, familiar3_parentesco: '', familiar3_celular: '',
+        // familiar4_nombre_completo: '', familiar4_edad: null, familiar4_parentesco: '', familiar4_celular: '',
+        // familiar5_nombre_completo: '', familiar5_edad: null, familiar5_parentesco: '', familiar5_celular: '',
+        // // Denunciado
+        // denunciado_nombre_completo: '',
+        // denunciado_documento: '',
+        // denunciado_nro: '',
+        // denunciado_sexo: '',
+        // denunciado_residencia: '',
+        // denunciado_domicilio_actual: '',
+        // denunciado_latitud: null,
+        // denunciado_longitud: null,
+        // denunciado_lugar_nacimiento: '',
+        // denunciado_fecha_nacimiento: '',
+        // denunciado_edad: '',
+        // denunciado_telefono: '',
+        // denunciado_grado: '',
+    //     Schema::create('caso_denunciados', function (Blueprint $table) {
+    //   $table->id();
+    //   $table->string('denunciado_nombres', 120)->nullable();
+    //   $table->string('denunciado_paterno', 80)->nullable();
+    //   $table->string('denunciado_materno', 80)->nullable();
+    //   $table->string('denunciado_documento', 40)->nullable();
+    //   $table->string('denunciado_nro', 30)->nullable();
+    //   $table->string('denunciado_sexo', 15)->nullable();
+    //   $table->string('denunciado_lugar_nacimiento', 120)->nullable();
+    //   $table->date('denunciado_fecha_nacimiento')->nullable();
+    //   $table->string('denunciado_edad')->nullable();
+    //   $table->string('denunciado_telefono')->nullable();
+    //   $table->string('denunciado_residencia', 120)->nullable();
+    //   $table->string('denunciado_estado_civil', 40)->nullable();
+    //   $table->string('denunciado_relacion', 60)->nullable();
+    //   $table->string('denunciado_grado', 60)->nullable();
+    //   $table->string('denunciado_trabaja', 10)->nullable();       // o boolean si sabes que es SI/NO
+    //   $table->string('denunciado_prox', 120)->nullable();
+    //   $table->string('denunciado_ocupacion', 80)->nullable();
+    //   $table->string('denunciado_ocupacion_exacto', 120)->nullable();
+    //   $table->string('denunciado_idioma', 60)->nullable();
+    //   $table->string('denunciado_fijo', 30)->nullable();
+    //   $table->string('denunciado_movil', 30)->nullable();
+    //   $table->text('denunciado_domicilio_actual')->nullable();    // TEXT
+    //   $table->decimal('denunciado_latitud', 10, 7)->nullable();
+    //   $table->decimal('denunciado_longitud', 10, 7)->nullable();
+    //   $table->unsignedBigInteger('caso_id');
+    //   $table->foreign('caso_id')->references('id')->on('casos');
+    //   $table->softDeletes();
+    //   $table->timestamps();
+    // });
+        denunciado: [
+          {
+            denunciado_nombres: '',
+            denunciado_paterno: '',
+            denunciado_materno: '',
+            denunciado_documento: 'Carnet de identidad',
+            denunciado_nro: '',
+            denunciado_sexo: '',
+            denunciado_lugar_nacimiento: '',
+            denunciado_fecha_nacimiento: '',
+            denunciado_edad: '',
+            denunciado_telefono: '',
+            denunciado_residencia: '',
+            denunciado_estado_civil: '',
+            denunciado_relacion: '',
+            denunciado_grado: '',
+            denunciado_trabaja: 1,
+            denunciado_prox: '',
+            denunciado_ocupacion: '',
+            denunciado_ocupacion_exacto: '',
+            denunciado_idioma: '',
+            denunciado_fijo: '',
+            denunciado_movil: '',
+            denunciado_domicilio_actual: '',
+            denunciado_latitud: null,
+            denunciado_longitud: null,
+          }
+        ],
         // Caso
         caso_numero: '',
         caso_fecha_hecho: '',
@@ -526,12 +626,16 @@ export default {
   },
   computed: {
     denunciantePos: {
-      get () { return { latitud: this.f.latitud, longitud: this.f.longitud } },
-      set (v) { this.f.latitud = v.latitud; this.f.longitud = v.longitud }
+      // get () { return { latitud: this.f.latitud, longitud: this.f.longitud } },
+      // set (v) { this.f.latitud = v.latitud; this.f.longitud = v.longitud }
+      get () { return { latitud: this.f.denunciantes[0].latitud, longitud: this.f.denunciantes[0].longitud } },
+      set (v) { this.f.denunciantes[0].latitud = v.latitud; this.f.denunciantes[0].longitud = v.longitud }
     },
     denunciadoPos: {
-      get () { return { latitud: this.f.denunciado_latitud, longitud: this.f.denunciado_longitud } },
-      set (v) { this.f.denunciado_latitud = v.latitud; this.f.denunciado_longitud = v.longitud }
+      // get () { return { latitud: this.f.denunciado_latitud, longitud: this.f.denunciado_longitud } },
+      // set (v) { this.f.denunciado_latitud = v.latitud; this.f.denunciado_longitud = v.longitud }
+      get () { return { latitud: this.f.denunciado[0].denunciado_latitud, longitud: this.f.denunciado[0].denunciado_longitud } },
+      set (v) { this.f.denunciado[0].denunciado_latitud = v.latitud; this.f.denunciado[0].denunciado_longitud = v.longitud }
     }
   },
   methods: {
@@ -539,9 +643,11 @@ export default {
       const hoy = moment()
       const v = kind === 'denunciante' ? this.f.denunciante_fecha_nacimiento : this.f.denunciado_fecha_nacimiento
       if(kind ==='denunciante'){
-        this.f.denunciante_edad = v ? hoy.diff(moment(v), 'years') : ''
+        // this.f.denunciante_edad = v ? hoy.diff(moment(v), 'years') : ''
+        this.f.denunciantes[0].denunciante_edad = v ? hoy.diff(moment(v), 'years') : ''
       }else {
-        this.f.denunciado_edad = v ? hoy.diff(moment(v), 'years') : ''
+        // this.f.denunciado_edad = v ? hoy.diff(moment(v), 'years') : ''
+        this.f.denunciado[0].denunciado_edad = v ? hoy.diff(moment(v), 'years') : ''
       }
     },
     toggleRecognition(field) {
@@ -604,8 +710,8 @@ export default {
 .bg-grey-2 { min-height: 100%; }
 .toolbar {
   position: sticky;
-  top: 0;
-  z-index: 5;
+  top: 50px;
+  z-index: 500;
   border-radius: 12px;
 }
 .section-card {
