@@ -1,54 +1,5 @@
 <template>
   <q-page class="q-pa-md bg-grey-2">
-<!--    protected $fillable = [-->
-<!--    // ===== 1) DATOS DEL ADULTO MAYOR =====-->
-<!--    'fecha_registro',-->
-<!--    'numero_apoyo_integral',-->
-<!--    'numero_caso',-->
-<!--    'am_latitud',-->
-<!--    'am_longitud',-->
-<!--    'am_extravio',-->
-<!--    'am_medicina',-->
-<!--    'am_fisioterapia',-->
-
-<!--    // Idiomas (checks)-->
-<!--    'am_idioma_castellano',-->
-<!--    'am_idioma_quechua',-->
-<!--    'am_idioma_aymara',-->
-<!--    'am_idioma_otros',-->
-
-<!--    // Teléfonos de referencia-->
-<!--    'ref_tel_fijo',-->
-<!--    'ref_tel_movil',-->
-<!--    'ref_tel_movil_alt',-->
-
-<!--    // ===== 4) DATOS DEL DENUNCIADO/A =====-->
-<!--    'den_nombres',-->
-<!--    'den_paterno',-->
-<!--    'den_materno',-->
-<!--    'den_edad',-->
-<!--    'den_domicilio',-->
-<!--    'den_estado_civil',-->
-
-<!--    'den_idioma',          // p.ej. CASTELLANO-->
-<!--    'den_grado_instruccion', // p.ej. TÉCNICO-->
-<!--    'den_ocupacion',        // p.ej. MECÁNICO-->
-
-<!--    // ===== 5) BREVE CIRCUNSTANCIA DEL HECHO =====-->
-<!--    'hecho_descripcion',-->
-
-<!--    // ===== 6) TIPOLOGÍA (checks) =====-->
-<!--    'tip_violencia_fisica',-->
-<!--    'tip_violencia_psicologica',-->
-<!--    'tip_abandono',-->
-<!--    'tip_apoyo_integral',-->
-<!--    // Metadatos-->
-<!--    'user_id',-->
-<!--    'psicologica_user_id',-->
-<!--    'trabajo_social_user_id',-->
-<!--    'legal_user_id'-->
-<!--    ];-->
-    <!-- Toolbar -->
     <div class="toolbar q-pa-sm bg-white row items-center q-gutter-sm shadow-1">
       <div class="col">
         <div class="text-h6 text-weight-bold">Nuevo S.L.A.M.</div>
@@ -61,11 +12,60 @@
     </div>
 
     <q-form class="q-mt-lg" @submit.prevent="save">
-      <!-- 1) Datos del caso (Slam) -->
+      <!-- 1) Adultos (N) -->
+      <q-card flat bordered class="section-card">
+        <q-card-section class="row items-center">
+          <q-icon name="elderly" class="q-mr-sm"/>
+          <div class="text-subtitle1 text-weight-medium">1) Adultos (N)</div>
+          <q-space/>
+          <q-btn dense color="primary" flat icon="add" label="Agregar adulto" @click="addAdulto"/>
+        </q-card-section>
+        <q-separator/>
+        <q-card-section>
+          <div v-if="adultos.length === 0" class="text-grey-7 q-mb-md">
+            No hay adultos agregados. Usa “Agregar adulto”.
+          </div>
+          <div v-for="(a, idx) in adultos" :key="idx" class="q-mb-md">
+            <div class="row q-col-gutter-md items-center">
+              <div class="col-12 col-md-4">
+                <q-input v-model="a.nombre" dense outlined clearable :rules="[req]"
+                         label="Nombres *"/>
+              </div>
+              <div class="col-6 col-md-2"><q-input v-model="a.paterno" dense outlined clearable label="Paterno"/></div>
+              <div class="col-6 col-md-2"><q-input v-model="a.materno" dense outlined clearable label="Materno"/></div>
+
+              <div class="col-6 col-md-2">
+                <q-select v-model="a.denunciante_documento" dense outlined emit-value map-options clearable :options="$documentos" label="Documento"/>
+              </div>
+              <div class="col-6 col-md-2"><q-input v-model="a.documento_num" dense outlined clearable label="Doc. Nº"/></div>
+
+              <div class="col-6 col-md-3">
+                <q-input v-model="a.fecha_nacimiento" type="date" dense outlined label="Fecha nac."
+                         @update:model-value="a.edad = (a.fecha_nacimiento ? Math.floor((new Date().getTime() - new Date(a.fecha_nacimiento).getTime()) / (1000 * 60 * 60 * 24 * 365.25)) : '')"
+                />
+              </div>
+              <div class="col-6 col-md-3"><q-input v-model="a.lugar_nacimiento" dense outlined clearable label="Lugar nac."/></div>
+              <div class="col-6 col-md-2"><q-input v-model="a.edad" dense outlined clearable label="Edad"/></div>
+              <div class="col-12 col-md-4"><q-input v-model="a.domicilio" dense outlined clearable label="Domicilio"/></div>
+              <div class="col-6 col-md-3"><q-input v-model="a.estado_civil" dense outlined clearable label="Estado civil"/></div>
+
+              <div class="col-6 col-md-3"><q-input v-model="a.ocupacion_1" dense outlined clearable label="Ocupación 1"/></div>
+<!--              <div class="col-6 col-md-3"><q-input v-model="a.ocupacion_2" dense outlined clearable label="Ocupación 2"/></div>-->
+              <div class="col-12 col-md-3"><q-input v-model="a.ingresos" dense outlined clearable label="Ingresos"/></div>
+
+              <div class="col-auto q-mt-sm">
+                <q-btn dense round flat color="negative" icon="delete" @click="removeAdulto(idx)"/>
+              </div>
+            </div>
+            <q-separator spaced/>
+          </div>
+        </q-card-section>
+      </q-card>
+      <!-- 2) Datos del caso (Slam) -->
       <q-card flat bordered class="section-card">
         <q-card-section class="row items-center">
           <q-icon name="description" class="q-mr-sm"/>
-          <div class="text-subtitle1 text-weight-medium">1) Datos del caso (S.L.A.M.)</div>
+          <div class="text-subtitle1 text-weight-medium">2) Datos del caso (S.L.A.M.)</div>
         </q-card-section>
         <q-separator/>
         <q-card-section>
@@ -74,11 +74,11 @@
               <q-input v-model="slam.numero_apoyo_integral" dense outlined clearable
                        label="Nº Apoyo Integral" hint="Requerido si aplica"/>
             </div>
-            <div class="col-12 col-md-3">
-              <q-input v-model="slam.numero_caso" dense outlined clearable label="Nº de caso"/>
-            </div>
+<!--            <div class="col-12 col-md-3">-->
+<!--              <q-input v-model="slam.numero_caso" dense outlined clearable label="Nº de caso"/>-->
+<!--            </div>-->
 
-            <div class="col-12 text-subtitle2 q-mt-md">Idiomas (AM - marcadores generales)</div>
+<!--            <div class="col-12 text-subtitle2 q-mt-md">Idiomas (AM - marcadores generales)</div>-->
             <div class="col-6 col-md-2"><q-toggle v-model="slam.am_idioma_castellano" label="Castellano"/></div>
             <div class="col-6 col-md-2"><q-toggle v-model="slam.am_idioma_quechua" label="Quechua"/></div>
             <div class="col-6 col-md-2"><q-toggle v-model="slam.am_idioma_aymara" label="Aymara"/></div>
@@ -91,10 +91,19 @@
             <div class="col-12 col-md-4"><q-input v-model="slam.ref_tel_movil" dense outlined label="Tel. móvil"/></div>
             <div class="col-12 col-md-4"><q-input v-model="slam.ref_tel_movil_alt" dense outlined label="Tel. móvil (alt)"/></div>
 
-            <div class="col-12 text-subtitle2 q-mt-sm">Ubicación (lat/lng)</div>
+<!--            <div class="col-12 text-subtitle2 q-mt-sm">Ubicación (lat/lng)</div>-->
+            <div class="col-12 col-md-6">
+              <q-input v-model="slam.am_domicilio" dense outlined clearable label="Domicilio"/>
+            </div>
+            <div class="col-2">
+              <q-btn label="Buscar" @click="$refs.denMap?.geocodeAndFly(slam.am_domicilio)"
+              />
+            </div>
             <div class="col-12">
               <!-- Tu componente de mapa: pega la ruta correcta del archivo que me mandaste -->
-              <MapPicker v-model="mapModel" :center="defaultCenter" :zoom-init="13"/>
+              <MapPicker v-model="mapModel" :center="oruroCenter" :address = "slam.am_domicilio"
+                         country="bo"
+                         ref="denMap"/>
             </div>
 
 <!--            <div class="col-6 col-md-3">-->
@@ -121,52 +130,6 @@
 <!--            <div class="col-6 col-md-3"><q-toggle v-model="slam.seg_trabajo_legal" label="Trabajo legal"/></div>-->
 <!--            <div class="col-6 col-md-3"><q-toggle v-model="slam.seg_trabajo_social" label="Trabajo social"/></div>-->
 <!--            <div class="col-6 col-md-3"><q-toggle v-model="slam.seg_psicologico" label="Psicológico"/></div>-->
-          </div>
-        </q-card-section>
-      </q-card>
-
-      <!-- 2) Adultos (N) -->
-      <q-card flat bordered class="section-card">
-        <q-card-section class="row items-center">
-          <q-icon name="elderly" class="q-mr-sm"/>
-          <div class="text-subtitle1 text-weight-medium">2) Adultos (N)</div>
-          <q-space/>
-          <q-btn dense color="primary" flat icon="add" label="Agregar adulto" @click="addAdulto"/>
-        </q-card-section>
-        <q-separator/>
-        <q-card-section>
-          <div v-if="adultos.length === 0" class="text-grey-7 q-mb-md">
-            No hay adultos agregados. Usa “Agregar adulto”.
-          </div>
-          <div v-for="(a, idx) in adultos" :key="idx" class="q-mb-md">
-            <div class="row q-col-gutter-md items-center">
-              <div class="col-12 col-md-4">
-                <q-input v-model="a.nombre" dense outlined clearable :rules="[req]"
-                         label="Nombres *"/>
-              </div>
-              <div class="col-6 col-md-2"><q-input v-model="a.paterno" dense outlined clearable label="Paterno"/></div>
-              <div class="col-6 col-md-2"><q-input v-model="a.materno" dense outlined clearable label="Materno"/></div>
-
-              <div class="col-6 col-md-2">
-                  <q-select v-model="a.denunciante_documento" dense outlined emit-value map-options clearable :options="$documentos" label="Documento"/>
-              </div>
-              <div class="col-6 col-md-2"><q-input v-model="a.documento_num" dense outlined clearable label="Doc. Nº"/></div>
-
-              <div class="col-6 col-md-3"><q-input v-model="a.fecha_nacimiento" type="date" dense outlined label="Fecha nac."/></div>
-              <div class="col-6 col-md-3"><q-input v-model="a.lugar_nacimiento" dense outlined clearable label="Lugar nac."/></div>
-              <div class="col-6 col-md-2"><q-input v-model="a.edad" dense outlined clearable label="Edad"/></div>
-              <div class="col-12 col-md-4"><q-input v-model="a.domicilio" dense outlined clearable label="Domicilio"/></div>
-              <div class="col-6 col-md-3"><q-input v-model="a.estado_civil" dense outlined clearable label="Estado civil"/></div>
-
-              <div class="col-6 col-md-3"><q-input v-model="a.ocupacion_1" dense outlined clearable label="Ocupación 1"/></div>
-              <div class="col-6 col-md-3"><q-input v-model="a.ocupacion_2" dense outlined clearable label="Ocupación 2"/></div>
-              <div class="col-12 col-md-3"><q-input v-model="a.ingresos" dense outlined clearable label="Ingresos"/></div>
-
-              <div class="col-auto q-mt-sm">
-                <q-btn dense round flat color="negative" icon="delete" @click="removeAdulto(idx)"/>
-              </div>
-            </div>
-            <q-separator spaced/>
           </div>
         </q-card-section>
       </q-card>
@@ -305,12 +268,12 @@ export default {
       recognition: null,
       activeField: null,
       isListening: false,
-      defaultCenter: [-17.9667, -67.1167], // Oruro (ajústalo)
+      oruroCenter: [-17.9667, -67.1167], // Oruro (ajústalo)
       // ----- SLAM (cabecera) -----
       slam: {
         numero_apoyo_integral: '',
         numero_caso: '',
-        am_latitud: null, am_longitud: null,
+        am_latitud: null, am_longitud: null,am_domicilio:null,
         am_idioma_castellano: false, am_idioma_quechua: false, am_idioma_aymara: false, am_idioma_otros: '',
         ref_tel_fijo: '', ref_tel_movil: '', ref_tel_movil_alt: '',
         hecho_descripcion: '',
