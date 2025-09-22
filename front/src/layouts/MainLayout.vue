@@ -142,45 +142,234 @@
         <q-item-label header class="q-px-md text-grey-3 q-mt-sm">
           Módulos del Sistema
         </q-item-label>
+        <q-item dense to="/" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
+          <q-item-section avatar>
+            <q-icon name="analytics" class="text-white"/>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label class="text-white">Dashboard</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item dense to="/usuarios" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Usuarios')">
+          <q-item-section avatar>
+            <q-icon name="people" class="text-white"/>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label class="text-white">Usuarios</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item dense to="/lineas-tiempo" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Lineas de Tiempo')">
+          <q-item-section avatar>
+            <q-icon name="timeline" class="text-white"/>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label class="text-white">Líneas de Tiempo</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item dense to="/agenda" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Agenda')">
+          <q-item-section avatar>
+            <q-icon name="event" class="text-white"/>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label class="text-white">Agenda</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-expansion-item dense expand-separator icon="add_circle" label="Nuevo SLIM" active-class="menu-active" v-if="hasAnyPerm(['Crear SLIM'])">
+          <q-list>
+            <q-item :inset-level="0.3" dense to="/slims/nuevofisica" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
+              <q-item-section avatar>
+                <q-icon name="person_add" class="text-white"/>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label class="text-white">Nueva Denuncia Física</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item :inset-level="0.3" dense to="/slims/nuevointegral" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
+              <q-item-section avatar>
+                <q-icon name="diversity_1" class="text-white"/>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label class="text-white">Nuevo Apoyo Integral</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-expansion-item>
+        <q-item dense to="/slims" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Ver SLIM')">
+          <q-item-section avatar>
+            <q-icon name="folder_shared" class="text-white"/>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label class="text-white">SLIMs</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-expansion-item dense expand-separator icon="gavel" label="Nuevo DNA" active-class="menu-active" v-if="hasAnyPerm(['Crear DNA'])">
+          <q-list>
+            <q-item :inset-level="0.3" dense to="/dnas/nuevo-penal" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
+              <q-item-section avatar>
+                <q-icon name="balance" class="text-white"/>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label class="text-white">Nuevo Proceso Penal</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item dense to="/dnas/nuevo-familiar" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
+              <q-item-section avatar>
+                <q-icon name="family_restroom" class="text-white"/>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label class="text-white">Nuevo Proceso Familiar</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item dense to="/dnas/nuevo-nna" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
+              <q-item-section avatar>
+                <q-icon name="child_care" class="text-white"/>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label class="text-white">Nuevo Proceso Niñez y Adolescencia</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item dense to="/dnas/nuevo-apoyo" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
+              <q-item-section avatar>
+                <q-icon name="diversity_1" class="text-white"/>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label class="text-white">Nuevo Apoyo Integral</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-expansion-item>
+        <q-item dense to="/dnas" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Ver DNA')">
+          <q-item-section avatar>
+            <q-icon name="folder_shared" class="text-white"/>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label class="text-white">DNA (Casos)</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-expansion-item dense expand-separator icon="add_circle" label="Nuevo SLAM" active-class="menu-active" v-if="hasAnyPerm(['Crear SLAM'])">
+          <q-list>
+            <q-item :inset-level="0.3" dense to="/slams/nuevofisica" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
+              <q-item-section avatar>
+                <q-icon name="person_add" class="text-white"/>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label class="text-white">Nueva Denuncia Física</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item dense to="/slams/nuevointegral" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
+              <q-item-section avatar>
+                <q-icon name="diversity_1" class="text-white"/>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label class="text-white">Nuevo Apoyo Integral</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-expansion-item>
+        <q-item dense to="/slams" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Ver SLAM')">
+          <q-item-section avatar>
+            <q-icon name="folder_shared" class="text-white"/>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label class="text-white">SLAMs</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-expansion-item dense expand-separator icon="add_circle" label="Nuevo UMADIS" active-class="menu-active" v-if="hasAnyPerm(['Crear UMADIS'])">
+          <q-list>
+            <q-item :inset-level="0.3" dense to="/umadis/nuevofisica" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
+              <q-item-section avatar>
+                <q-icon name="person_add" class="text-white"/>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label class="text-white">Nueva Denuncia Física</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item dense to="/umadis/nuevointegral" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
+              <q-item-section avatar>
+                <q-icon name="diversity_1" class="text-white"/>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label class="text-white">Nuevo Apoyo Integral</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-expansion-item>
+        <q-item dense to="/umadis" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Ver UMADIS')">
+          <q-item-section avatar>
+            <q-icon name="folder_shared" class="text-white"/>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label class="text-white">UMADIS</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-expansion-item dense expand-separator icon="add_circle" label="Nuevo PROPREMI" active-class="menu-active" v-if="hasAnyPerm(['Crear PROPREMIS'])">
+          <q-list>
+            <q-item :inset-level="0.3" dense to="/propremis/nuevofisica" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
+              <q-item-section avatar>
+                <q-icon name="person_add" class="text-white"/>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label class="text-white">Nueva Denuncia Física</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item dense to="/propremis/nuevointegral" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
+              <q-item-section avatar>
+                <q-icon name="diversity_1" class="text-white"/>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label class="text-white">Nuevo Apoyo Integral</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-expansion-item>
+        <q-item dense to="/propremis" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Ver PROPREMIS')">
+          <q-item-section avatar>
+            <q-icon name="folder_shared" class="text-white"/>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label class="text-white">PROPREMIs</q-item-label>
+          </q-item-section>
+        </q-item>
+<!--        <pre>{{$store.permissions}}</pre>-->
 
         <!-- Menú filtrado -->
-        <template v-for="link in filteredLinks" :key="link.link">
-          <q-item
-            v-if="!link.childrens || !link.childrens.length"
-            clickable :to="link.link" exact dense
-            class="menu-item" active-class="menu-active" v-close-popup
-          >
-            <q-item-section avatar>
-              <q-icon :name="link.icon" class="text-white"/>
-            </q-item-section>
-            <q-item-section>
-              <q-item-label class="text-white">{{ link.title }}</q-item-label>
-            </q-item-section>
-          </q-item>
+<!--        <template v-for="link in filteredLinks" :key="link.link">-->
+<!--          <q-item-->
+<!--            v-if="!link.childrens || !link.childrens.length"-->
+<!--            clickable :to="link.link" exact dense-->
+<!--            class="menu-item" active-class="menu-active" v-close-popup-->
+<!--          >-->
+<!--            <q-item-section avatar>-->
+<!--              <q-icon :name="link.icon" class="text-white"/>-->
+<!--            </q-item-section>-->
+<!--            <q-item-section>-->
+<!--              <q-item-label class="text-white">{{ link.title }}</q-item-label>-->
+<!--            </q-item-section>-->
+<!--          </q-item>-->
 
-          <q-expansion-item
-            v-else
-            :label="link.title" :icon="link.icon"
-            expand-separator dense
-            active-class="menu-active"
-          >
-            <q-list>
-              <q-item
-                v-for="sublink in link.childrens" :key="sublink.link"
-                clickable :to="sublink.link" exact dense
-                active-class="menu-active" v-close-popup
-                :inset-level="0.3"
-              >
-                <q-item-section avatar>
-                  <q-icon :name="sublink.icon" class="text-white"/>
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label class="text-white">{{ sublink.title }}</q-item-label>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-expansion-item>
-        </template>
+<!--          <q-expansion-item-->
+<!--            v-else-->
+<!--            :label="link.title" :icon="link.icon"-->
+<!--            expand-separator dense-->
+<!--            active-class="menu-active"-->
+<!--          >-->
+<!--            <q-list>-->
+<!--              <q-item-->
+<!--                v-for="sublink in link.childrens" :key="sublink.link"-->
+<!--                clickable :to="sublink.link" exact dense-->
+<!--                active-class="menu-active" v-close-popup-->
+<!--                :inset-level="0.3"-->
+<!--              >-->
+<!--                <q-item-section avatar>-->
+<!--                  <q-icon :name="sublink.icon" class="text-white"/>-->
+<!--                </q-item-section>-->
+<!--                <q-item-section>-->
+<!--                  <q-item-label class="text-white">{{ sublink.title }}</q-item-label>-->
+<!--                </q-item-section>-->
+<!--              </q-item>-->
+<!--            </q-list>-->
+<!--          </q-expansion-item>-->
+<!--        </template>-->
 
         <q-separator color="white" class="q-mt-md" />
 
@@ -231,9 +420,9 @@ function isSuperAdmin () {
 
 /* ---------- Permisos "clásicos" ---------- */
 function hasPerm (perm) {
-  if (!perm) return true
-  if (isSuperAdmin()) return true
-  return (proxy.$store.permissions || []).includes(perm)
+  let permisosUser = proxy.$store.permissions || []
+  let include = permisosUser.includes(perm)
+  return include
 }
 function hasAnyPerm (perms = []) {
   if (isSuperAdmin()) return true
