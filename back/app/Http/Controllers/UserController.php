@@ -71,7 +71,11 @@ class UserController extends Controller{
     function me(Request $request){
         $user = $request->user();
         $user->load('permissions:id,name');
-        return response()->json($user);
+//        return response()->json($user);
+        return [
+          'user' => User::find($user->id),
+          'permissions' => $user->permissions->pluck('name')
+        ];
     }
     function index(){
         return User::where('id', '!=', 0)
