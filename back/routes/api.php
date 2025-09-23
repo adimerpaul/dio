@@ -41,6 +41,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put ('/informes-legales/{informe}',     [\App\Http\Controllers\CasoController::class, 'legalUpdate']);
     Route::delete('/informes-legales/{informe}', [\App\Http\Controllers\CasoController::class, 'legalDestroy']);
 
+    Route::post('/casos/{caso}/informes-sociales', [\App\Http\Controllers\CasoController::class, 'socialStore']);
+    Route::put ('/informes-sociales/{informe}',     [\App\Http\Controllers\CasoController::class, 'socialUpdate']);
+    Route::delete('/informes-sociales/{informe}', [\App\Http\Controllers\CasoController::class, 'socialDestroy']);
+
 
 
 

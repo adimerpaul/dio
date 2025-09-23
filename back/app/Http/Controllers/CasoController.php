@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Caso;
 use App\Models\InformeLegal;
+use App\Models\InformesSocial;
 use App\Models\Psicologica;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -402,8 +403,8 @@ class CasoController extends Controller
                 }
             }
             if($request->has('denunciados')){
-                foreach ($request->denunciado as $denunciado){
-                    $caso->denunciado()->create($denunciado);
+                foreach ($request->denunciados as $denunciado){
+                    $caso->denunciados()->create($denunciado);
                 }
             }
 
@@ -437,7 +438,6 @@ class CasoController extends Controller
             'documentos.user:id,name',
             'fotografias.user:id,name',
              'informesSociales.user:id,name',
-
             ]
         )
             ->find($caso->id);
@@ -524,5 +524,31 @@ class CasoController extends Controller
     function legalDestroy(InformeLegal $informe){
         $informe->delete();
         return response()->json(['message' => 'Informe legal eliminado']);
+    }
+//Route::post('/casos/{caso}/informes-sociales', [\App\Http\Controllers\CasoController::class, 'socialStore']);
+//Route::put ('/informes-sociales/{informe}',     [\App\Http\Controllers\CasoController::class, 'socialUpdate']);
+//Route::delete('/informes-sociales/{informe}', [\App\Http\Controllers\CasoController::class, 'socialDestroy']);
+    function socialStore(Request $request, Caso $caso)
+    {
+        $user = $request->user();
+        //        actulizar caso [sgicologica/] fecha_derivacion_psicologica
+        if (!$caso->fecha_derivacion_social) {
+            $caso->fecha_informe_trabajo_social = date('Y-m-d');
+            $caso->save();
+        }
+        $request['caso_id'] = $caso->id;
+        $request['user_id'] = $user->id;
+        $request['caseable_type'] = Caso::class;
+        $request['caseable_id'] = $caso->id;
+        $informe = InformesSocial::create($request->all());
+        return $informe;
+    }
+    function socialUpdate(Request $request, InformesSocial $informe){
+        $informe->update($request->all());
+        return $informe;
+    }
+    function socialDestroy(InformesSocial $informe){
+        $informe->delete();
+        return response()->json(['message' => 'Informe social eliminado']);
     }
 }
