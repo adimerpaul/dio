@@ -173,15 +173,16 @@ export const SesionHtml = {
               }) {
     const d = (v, fallback = '—') => (v == null || v === '' ? fallback : v)
 
+    console.log(familiares)
     const familiaresRows = (familiares && familiares.length
         ? familiares
         : [{ nombre:'', edad:'', estado_civil:'', parentesco:'', ocupacion:'' }]
     ).map(f => `
     <tr>
-      <td>${d(f.nombre)}</td>
-      <td style="text-align:center">${d(f.edad)}</td>
-      <td style="text-align:center">${d(f.estado_civil)}</td>
-      <td style="text-align:center">${d(f.parentesco)}</td>
+      <td>${d(f.familiar_nombre_completo)}</td>
+      <td style="text-align:center">${d(f.familiar_edad)}</td>
+      <td style="text-align:center">${d(f.familiar_estado_civil)}</td>
+      <td style="text-align:center">${d(f.familiar_parentesco)}</td>
       <td style="text-align:center">${d(f.ocupacion)}</td>
     </tr>
   `).join('')

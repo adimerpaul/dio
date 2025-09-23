@@ -1,6 +1,7 @@
 <template>
   <div>
     <!-- BLOQUE SUPERIOR: cabecera estilo ficha -->
+    <pre>{{caso}}</pre>
     <q-card flat bordered class="q-pa-sm q-mb-md">
       <div class="row items-start q-col-gutter-sm">
         <div class="col-12 col-md-8">
@@ -134,7 +135,10 @@
 <script>
 export default {
   name: 'Seguimiento',
-  props: { caseId: { type: [String, Number], required: true } },
+  props: {
+    // caseId: { type: [String, Number], required: true }
+    caso: { type: Object, required: true }
+  },
   data () {
     return {
       loading: false,
@@ -188,7 +192,7 @@ export default {
     }
   },
   mounted () {
-    this.fetch()
+    // this.fetch()
   },
   methods: {
     async fetch () {
