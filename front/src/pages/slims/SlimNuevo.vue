@@ -138,56 +138,42 @@
                           label="2) Grupo Familiar" header-class="text-subtitle1">
           <q-card>
             <q-card-section>
-              <div class="row q-col-gutter-md">
-                <div class="col-12 col-md-6">
-                  <q-input v-model="f.familiar1_nombre_completo" dense outlined clearable label="Familiar 1: Nombres y apellidos"/>
-                </div>
-                <div class="col-6 col-md-2">
-                  <q-input v-model.number="f.familiar1_edad" dense outlined type="number" label="Edad"/>
-                </div>
-                <div class="col-6 col-md-2">
-                  <q-input v-model="f.familiar1_parentesco" dense outlined clearable label="Parentesco"/>
-                </div>
-                <div class="col-12 col-md-2">
-                  <q-input v-model="f.familiar1_celular" dense outlined clearable label="Celular"/>
-                </div>
-              </div>
+<!--              boton agregar familiar-->
+              <q-btn label="Agregar familiar" color="primary" icon="add" @click="familiares.push({ nombre_completo: '', edad: null, parentesco: '', celular: '' })" class="q-mb-md"/>
 
-              <q-separator spaced/>
 
-              <div class="row q-col-gutter-md">
-                <div class="col-12 col-md-6"><q-input v-model="f.familiar2_nombre_completo" dense outlined clearable label="Familiar 2: Nombres y apellidos"/></div>
-                <div class="col-6 col-md-2"><q-input v-model.number="f.familiar2_edad" dense outlined type="number" label="Edad"/></div>
-                <div class="col-6 col-md-2"><q-input v-model="f.familiar2_parentesco" dense outlined clearable label="Parentesco"/></div>
-                <div class="col-12 col-md-2"><q-input v-model="f.familiar2_celular" dense outlined clearable label="Celular"/></div>
-              </div>
-
-              <q-separator spaced/>
-
-              <div class="row q-col-gutter-md">
-                <div class="col-12 col-md-6"><q-input v-model="f.familiar3_nombre_completo" dense outlined clearable label="Familiar 3: Nombres y apellidos"/></div>
-                <div class="col-6 col-md-2"><q-input v-model.number="f.familiar3_edad" dense outlined type="number" label="Edad"/></div>
-                <div class="col-6 col-md-2"><q-input v-model="f.familiar3_parentesco" dense outlined clearable label="Parentesco"/></div>
-                <div class="col-12 col-md-2"><q-input v-model="f.familiar3_celular" dense outlined clearable label="Celular"/></div>
-              </div>
-
-              <q-separator spaced/>
-
-              <div class="row q-col-gutter-md">
-                <div class="col-12 col-md-6"><q-input v-model="f.familiar4_nombre_completo" dense outlined clearable label="Familiar 4: Nombres y apellidos"/></div>
-                <div class="col-6 col-md-2"><q-input v-model.number="f.familiar4_edad" dense outlined type="number" label="Edad"/></div>
-                <div class="col-6 col-md-2"><q-input v-model="f.familiar4_parentesco" dense outlined clearable label="Parentesco"/></div>
-                <div class="col-12 col-md-2"><q-input v-model="f.familiar4_celular" dense outlined clearable label="Celular"/></div>
-              </div>
-
-              <q-separator spaced/>
-
-              <div class="row q-col-gutter-md">
-                <div class="col-12 col-md-6"><q-input v-model="f.familiar5_nombre_completo" dense outlined clearable label="Familiar 5: Nombres y apellidos"/></div>
-                <div class="col-6 col-md-2"><q-input v-model.number="f.familiar5_edad" dense outlined type="number" label="Edad"/></div>
-                <div class="col-6 col-md-2"><q-input v-model="f.familiar5_parentesco" dense outlined clearable label="Parentesco"/></div>
-                <div class="col-12 col-md-2"><q-input v-model="f.familiar5_celular" dense outlined clearable label="Celular"/></div>
-              </div>
+<!--                <div class="col-12 col-md-6">-->
+<!--                  <q-input v-model="f.familiar1_nombre_completo" dense outlined clearable label="Familiar 1: Nombres y apellidos"/>-->
+<!--                </div>-->
+<!--                <div class="col-6 col-md-2">-->
+<!--                  <q-input v-model.number="f.familiar1_edad" dense outlined type="number" label="Edad"/>-->
+<!--                </div>-->
+<!--                <div class="col-6 col-md-2">-->
+<!--                  <q-input v-model="f.familiar1_parentesco" dense outlined clearable label="Parentesco"/>-->
+<!--                </div>-->
+<!--                <div class="col-12 col-md-2">-->
+<!--                  <q-input v-model="f.familiar1_celular" dense outlined clearable label="Celular"/>-->
+<!--                </div>-->
+                <template v-for="(fam, index) in familiares" :key="index">
+                  <div class="row q-col-gutter-md">
+                    <div class="col-12 col-md-5" >
+                      <q-input v-model="fam.nombre_completo" dense outlined clearable :label="`Familiar ${index + 1}: Nombres y apellidos`"/>
+                    </div>
+                    <div class="col-6 col-md-2">
+                      <q-input v-model.number="fam.edad" dense outlined type="number" label="Edad"/>
+                    </div>
+                    <div class="col-6 col-md-2">
+                      <q-input v-model="fam.parentesco" dense outlined clearable label="Parentesco"/>
+                    </div>
+                    <div class="col-12 col-md-2">
+                      <q-input v-model="fam.celular" dense outlined clearable label="Celular"/>
+                    </div>
+<!--                    btn elimnar familiar-->
+                    <div class="col-12 col-md-1">
+                      <q-btn color="negative" icon="delete" dense flat @click="familiares.splice(index, 1)"/>
+                    </div>
+                  </div>
+                </template>
             </q-card-section>
           </q-card>
         </q-expansion-item>
@@ -204,51 +190,67 @@
         <q-card-section>
           <div class="row q-col-gutter-md">
             <div class="col-12 col-md-6">
-              <q-input v-model="f.denunciado_nombre_completo" dense outlined clearable label="Nombre completo"/>
+<!--              <q-input v-model="f.denunciado_nombre_completo" dense outlined clearable label="Nombre completo"/>-->
+              <q-input v-model="f.denunciado[0].denunciado_nombres" dense outlined clearable label="Nombres"/>
             </div>
             <div class="col-6 col-md-3">
-              <q-select v-model="f.denunciado_documento" dense outlined emit-value map-options clearable
+<!--              <q-select v-model="f.denunciado_documento" dense outlined emit-value map-options clearable-->
+<!--                        :options="documentos" label="Documento"/>-->
+              <q-select v-model="f.denunciado[0].denunciado_documento" dense outlined emit-value map-options clearable
                         :options="documentos" label="Documento"/>
+
             </div>
             <div class="col-6 col-md-3">
-              <q-input v-model="f.denunciado_nro" dense outlined clearable label="Nro documento"/>
+<!--              <q-input v-model="f.denunciado_nro" dense outlined clearable label="Nro documento"/>-->
+              <q-input v-model="f.denunciado[0].denunciado_nro" dense outlined clearable label="Nro documento"/>
             </div>
 
             <div class="col-6 col-md-3">
-              <q-select v-model="f.denunciado_sexo" dense outlined emit-value map-options clearable
+<!--              <q-select v-model="f.denunciado_sexo" dense outlined emit-value map-options clearable-->
+<!--                        :options="sexos" label="Sexo"/>-->
+              <q-select v-model="f.denunciado[0].denunciado_sexo" dense outlined emit-value map-options clearable
                         :options="sexos" label="Sexo"/>
             </div>
             <div class="col-6 col-md-3">
-              <q-input v-model="f.denunciado_lugar_nacimiento" dense outlined clearable label="Lugar de nacimiento"/>
+<!--              <q-input v-model="f.denunciado_lugar_nacimiento" dense outlined clearable label="Lugar de nacimiento"/>-->
+              <q-input v-model="f.denunciado[0].denunciado_lugar_nacimiento" dense outlined clearable label="Lugar de nacimiento"/>
             </div>
             <div class="col-6 col-md-3">
-              <q-input v-model="f.denunciado_fecha_nacimiento" type="date" dense outlined
+<!--              <q-input v-model="f.denunciado_fecha_nacimiento" type="date" dense outlined-->
+<!--                       label="Fecha de nacimiento" @update:model-value="onBirthChange('denunciado')"/>-->
+              <q-input v-model="f.denunciado[0].denunciado_fecha_nacimiento" type="date" dense outlined
                        label="Fecha de nacimiento" @update:model-value="onBirthChange('denunciado')"/>
             </div>
             <div class="col-6 col-md-3">
-              <q-input v-model.number="f.denunciado_edad" dense outlined type="number" label="Edad"/>
+<!--              <q-input v-model.number="f.denunciado_edad" dense outlined type="number" label="Edad"/>-->
+              <q-input v-model.number="f.denunciado[0].denunciado_edad" dense outlined type="number" label="Edad"/>
             </div>
             <div class="col-6 col-md-3">
-              <q-input v-model="f.denunciado_telefono" dense outlined clearable label="Teléfono/Celular"/>
+<!--              <q-input v-model="f.denunciado_telefono" dense outlined clearable label="Teléfono/Celular"/>-->
+              <q-input v-model="f.denunciado[0].denunciado_telefono" dense outlined clearable label="Teléfono/Celular"/>
             </div>
             <div class="col-6 col-md-3">
-              <q-input v-model="f.denunciado_grado" dense outlined clearable label="Grado de instrucción"/>
+<!--              <q-input v-model="f.denunciado_grado" dense outlined clearable label="Grado de instrucción"/>-->
+              <q-input v-model="f.denunciado[0].denunciado_grado" dense outlined clearable label="Grado de instrucción"/>
             </div>
             <div class="col-6 col-md-3">
-              <q-input v-model="f.denunciado_residencia" dense outlined clearable label="Residencia"/>
+<!--              <q-input v-model="f.denunciado_residencia" dense outlined clearable label="Residencia"/>-->
+              <q-input v-model="f.denunciado[0].denunciado_residencia" dense outlined clearable label="Residencia"/>
             </div>
 
             <div class="col-10">
-              <q-input v-model="f.denunciado_domicilio_actual" dense outlined clearable label="Domicilio actual"/>
+<!--              <q-input v-model="f.denunciado_domicilio_actual" dense outlined clearable label="Domicilio actual"/>-->
+              <q-input v-model="f.denunciado[0].denunciado_domicilio_actual" dense outlined clearable label="Domicilio actual"/>
             </div>
             <div class="col-2">
-              <q-btn label="Buscar" @click="$refs.denunMap?.geocodeAndFly(f.denunciado_domicilio_actual)"/>
+<!--              <q-btn label="Buscar" @click="$refs.denunMap?.geocodeAndFly(f.denunciado_domicilio_actual)"/>-->
+              <q-btn label="Buscar" @click="$refs.denunMap?.geocodeAndFly(f.denunciado[0].denunciado_domicilio_actual)"/>
             </div>
 
             <div class="col-12">
               <div class="text-caption text-grey-7 q-mb-xs">Ubicación (denunciado)</div>
               <MapPicker v-model="denunciadoPos" :center="oruroCenter"
-                         :address="f.denunciado_domicilio_actual"
+                         :address="f.denunciado[0].denunciado_domicilio_actual"
                          country="bo"
                          ref="denunMap"/>
             </div>
@@ -440,6 +442,9 @@ export default {
         { label: 'Otro', value: 'Otro' }
       ],
       oruroCenter: [-17.9667, -67.1167],
+      familiares : [
+        { nombre_completo: '', edad: null, parentesco: '', celular: '' }
+      ],
       f: {
         numero_apoyo_integral: '',
         area: 'SLIM',
@@ -463,78 +468,6 @@ export default {
           latitud: null,
           longitud: null,
         }],
-        // denunciante_nombre_completo: '',
-        // denunciante_nombres: '',
-        // denunciante_paterno: '',
-        // denunciante_materno: '',
-        // denunciante_lugar_nacimiento: '',
-        // denunciante_fecha_nacimiento: '',
-        // denunciante_edad: '',
-        // denunciante_telefono: '',
-        // denunciante_grado: '',
-        // denunciante_documento: 'Carnet de identidad',
-        // denunciante_nro: '',
-        // denunciante_sexo: '',
-        // denunciante_residencia: '',
-        // denunciante_estado_civil: '',
-        // denunciante_relacion: '',
-        // denunciante_idioma: '',
-        // denunciante_trabaja: false,
-        // denunciante_ocupacion: '',
-        // denunciante_domicilio_actual: '',
-        // latitud: null,
-        // longitud: null,
-        // // Familiares
-        // familiar1_nombre_completo: '', familiar1_edad: null, familiar1_parentesco: '', familiar1_celular: '',
-        // familiar2_nombre_completo: '', familiar2_edad: null, familiar2_parentesco: '', familiar2_celular: '',
-        // familiar3_nombre_completo: '', familiar3_edad: null, familiar3_parentesco: '', familiar3_celular: '',
-        // familiar4_nombre_completo: '', familiar4_edad: null, familiar4_parentesco: '', familiar4_celular: '',
-        // familiar5_nombre_completo: '', familiar5_edad: null, familiar5_parentesco: '', familiar5_celular: '',
-        // // Denunciado
-        // denunciado_nombre_completo: '',
-        // denunciado_documento: '',
-        // denunciado_nro: '',
-        // denunciado_sexo: '',
-        // denunciado_residencia: '',
-        // denunciado_domicilio_actual: '',
-        // denunciado_latitud: null,
-        // denunciado_longitud: null,
-        // denunciado_lugar_nacimiento: '',
-        // denunciado_fecha_nacimiento: '',
-        // denunciado_edad: '',
-        // denunciado_telefono: '',
-        // denunciado_grado: '',
-    //     Schema::create('caso_denunciados', function (Blueprint $table) {
-    //   $table->id();
-    //   $table->string('denunciado_nombres', 120)->nullable();
-    //   $table->string('denunciado_paterno', 80)->nullable();
-    //   $table->string('denunciado_materno', 80)->nullable();
-    //   $table->string('denunciado_documento', 40)->nullable();
-    //   $table->string('denunciado_nro', 30)->nullable();
-    //   $table->string('denunciado_sexo', 15)->nullable();
-    //   $table->string('denunciado_lugar_nacimiento', 120)->nullable();
-    //   $table->date('denunciado_fecha_nacimiento')->nullable();
-    //   $table->string('denunciado_edad')->nullable();
-    //   $table->string('denunciado_telefono')->nullable();
-    //   $table->string('denunciado_residencia', 120)->nullable();
-    //   $table->string('denunciado_estado_civil', 40)->nullable();
-    //   $table->string('denunciado_relacion', 60)->nullable();
-    //   $table->string('denunciado_grado', 60)->nullable();
-    //   $table->string('denunciado_trabaja', 10)->nullable();       // o boolean si sabes que es SI/NO
-    //   $table->string('denunciado_prox', 120)->nullable();
-    //   $table->string('denunciado_ocupacion', 80)->nullable();
-    //   $table->string('denunciado_ocupacion_exacto', 120)->nullable();
-    //   $table->string('denunciado_idioma', 60)->nullable();
-    //   $table->string('denunciado_fijo', 30)->nullable();
-    //   $table->string('denunciado_movil', 30)->nullable();
-    //   $table->text('denunciado_domicilio_actual')->nullable();    // TEXT
-    //   $table->decimal('denunciado_latitud', 10, 7)->nullable();
-    //   $table->decimal('denunciado_longitud', 10, 7)->nullable();
-    //   $table->unsignedBigInteger('caso_id');
-    //   $table->foreign('caso_id')->references('id')->on('casos');
-    //   $table->softDeletes();
-    //   $table->timestamps();
-    // });
         denunciado: [
           {
             denunciado_nombres: '',
@@ -641,7 +574,7 @@ export default {
   methods: {
     onBirthChange(kind) {
       const hoy = moment()
-      const v = kind === 'denunciante' ? this.f.denunciante_fecha_nacimiento : this.f.denunciado_fecha_nacimiento
+      const v = kind === 'denunciante' ? this.f.denunciantes[0].denunciante_fecha_nacimiento : this.f.denunciado[0].denunciado_fecha_nacimiento
       if(kind ==='denunciante'){
         // this.f.denunciante_edad = v ? hoy.diff(moment(v), 'years') : ''
         this.f.denunciantes[0].denunciante_edad = v ? hoy.diff(moment(v), 'years') : ''
@@ -686,16 +619,16 @@ export default {
         this.$alert.error('El número de apoyo integral es obligatorio')
         return
       }
-      if (!this.f.denunciante_nombres) {
+      if (!this.f.denunciantes[0].denunciante_nombres) {
         this.$alert.error('El/Los nombre(s) del denunciante es obligatorio')
         return
       }
       this.loading = true
+      this.f.tipo = 'SLIM'
       try {
-        const res = await this.$axios.post('/slims', this.f)
+        const res = await this.$axios.post('/casos', this.f)
         this.$alert.success('SLIM creado')
-        this.$router.push(`/slims/${res.data.slim.id}`)
-        this.resetForm()
+        this.$router.push(`/caso/${res.data.id}`)
       } catch (e) {
         this.$alert.error(e?.response?.data?.message || 'No se pudo crear el SLIM')
       } finally {
