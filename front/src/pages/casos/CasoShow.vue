@@ -4,7 +4,7 @@
     <!-- Header -->
     <div class="row items-center q-mb-md">
       <div class="col">
-        <div class="text-h6 text-weight-bold">Caso #{{ caso?.id || '...' }}</div>
+        <div class="text-h6 text-weight-bold">{{caso?.tipo}} {{ caso?.caso_numero || '...' }}</div>
         <div class="text-caption text-grey-7">Detalle y gestión integral</div>
       </div>
       <div class="col-auto row q-gutter-sm">
@@ -77,7 +77,7 @@
     <q-tab-panels v-model="tab" animated keep-alive>
       <!-- 1) Información General -->
       <q-tab-panel name="info">
-        <InfoGeneral :case-id="caseId"/>
+        <SlimNuevo :casoId="caso.id" :showNumeroApoyoIntegral="caso?.numero_apoyo_integral" :editable="true" v-if="caso"/>
       </q-tab-panel>
       <q-tab-panel name="seguimiento">
         <Seguimiento :case-id="caseId"/>
@@ -131,10 +131,12 @@ import DocumentosGeneral from './tabs/DocumentosGeneral.vue'
 import Fotografias       from './tabs/Fotografias.vue'
 import HojaRuta from "pages/casos/tabs/HojaRuta.vue";
 import Seguimiento from "pages/casos/tabs/Seguimiento.vue";
+import SlimNuevo from "pages/slims/SlimNuevo.vue";
 
 export default {
   name: 'CasoDetalle',
   components: {
+    SlimNuevo,
     Seguimiento,
     HojaRuta,
     InfoGeneral, Problematica, SesionesPsicologico, InformesLegal, ApoyoIntegral, DocumentosGeneral, Fotografias
