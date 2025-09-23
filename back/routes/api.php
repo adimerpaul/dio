@@ -37,6 +37,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put ('/sesiones-psicologicas/{psicologica}', [\App\Http\Controllers\CasoController::class, 'psicoUpdate']);
     Route::delete('/sesiones-psicologicas/{psicologica}', [\App\Http\Controllers\CasoController::class, 'psicoDestroy']);
 
+    Route::post('/casos/{caso}/informes-legales', [\App\Http\Controllers\CasoController::class, 'legalStore']);
+    Route::put ('/informes-legales/{informe}',     [\App\Http\Controllers\CasoController::class, 'legalUpdate']);
+    Route::delete('/informes-legales/{informe}', [\App\Http\Controllers\CasoController::class, 'legalDestroy']);
+
+
 
 
     Route::get ('/slims/pendientes-resumen', [SlimController::class, 'pendientesResumen']);

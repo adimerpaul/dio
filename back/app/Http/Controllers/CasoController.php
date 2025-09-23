@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Caso;
+use App\Models\InformeLegal;
 use App\Models\Psicologica;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -497,5 +498,31 @@ class CasoController extends Controller
     function psicoDestroy(Psicologica $psicologica){
         $psicologica->delete();
         return response()->json(['message' => 'Sesión psicológica eliminada']);
+    }
+//Route::post('/casos/{caso}/informes-legales', [\App\Http\Controllers\CasoController::class, 'legalStore']);
+//Route::put ('/informes-legales/{informe}',     [\App\Http\Controllers\CasoController::class, 'legalUpdate']);
+//Route::delete('/informes-legales/{informe}', [\App\Http\Controllers\CasoController::class, 'legalDestroy']);
+    function legalStore(Request $request, Caso $caso)
+    {
+        $user = $request->user();
+        //        actulizar caso [sgicologica/] fecha_derivacion_psicologica
+        if (!$caso->fecha_derivacion_legal) {
+            $caso->fecha_derivacion_area_legal = date('Y-m-d');
+            $caso->save();
+        }
+        $request['caso_id'] = $caso->id;
+        $request['user_id'] = $user->id;
+        $request['caseable_type'] = Caso::class;
+        $request['caseable_id'] = $caso->id;
+        $informe = InformeLegal::create($request->all());
+        return $informe;
+    }
+    function legalUpdate(Request $request, InformeLegal $informe){
+        $informe->update($request->all());
+        return $informe;
+    }
+    function legalDestroy(InformeLegal $informe){
+        $informe->delete();
+        return response()->json(['message' => 'Informe legal eliminado']);
     }
 }
