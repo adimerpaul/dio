@@ -81,6 +81,7 @@
         <CasoNuevoDNA :casoId="caso.id" :showNumeroApoyoIntegral="caso?.numero_apoyo_integral" :editable="true" v-else-if="caso?.tipo==='DNA'"/>
         <CasoNuevoSLAM :casoId="caso.id" :showNumeroApoyoIntegral="caso?.numero_apoyo_integral" :editable="true" v-else-if="caso?.tipo==='SLAM'"/>
         <CasoNuevoUMADIS :casoId="caso.id" :showNumeroApoyoIntegral="caso?.numero_apoyo_integral" :editable="true" v-else-if="caso?.tipo==='UMADIS'"/>
+        <CasoNuevoPROPREMI :casoId="caso.id" :showNumeroApoyoIntegral="caso?.numero_apoyo_integral" :editable="true" v-else-if="caso?.tipo==='PROPREMI'"/>
       </q-tab-panel>
       <q-tab-panel name="seguimiento">
         <Seguimiento :caso="caso"/>
@@ -143,10 +144,12 @@ import SocialInformes from "pages/casos/tabs/Social.vue";
 import CasoNuevoDNA from "pages/dnas/DnaNuevo.vue";
 import CasoNuevoSLAM from "pages/slams/SlamNuevo.vue";
 import CasoNuevoUMADIS from "pages/umadis/UmadisNuevo.vue";
+import CasoNuevoPROPREMI from "pages/propremis/PropremisNuevo.vue";
 
 export default {
   name: 'CasoDetalle',
   components: {
+    CasoNuevoPROPREMI,
     CasoNuevoUMADIS,
     CasoNuevoSLAM,
     CasoNuevoDNA,

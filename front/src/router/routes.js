@@ -27,6 +27,9 @@ const routes = [
       // { path: '/umadis/:id', component: () => import('pages/umadis/UmadisShow.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
 
       { path: '/propremis', component: () => import('pages/propremis/Propremis.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
+      // http://localhost:9011/propremis/nuevofisica
+      { path: '/propremis/nuevofisica', component: () => import('pages/propremis/PropremisNuevoFisico.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
+      { path: '/propremis/nuevointegral', component: () => import('pages/propremis/PropremisNuevoIntegral.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
 
 
       { path: '/dnas',              component: () => import('pages/dnas/Dnas.vue'),              meta: { requiresAuth: true } },

@@ -253,7 +253,7 @@ export default {
       this.$axios.get('/casos', {
         params: {
           q: this.search || '',
-          tipo : 'PROPREMIS',
+          tipo : 'PROPREMI',
           page: this.page,
           per_page: this.perPage,
           only_pendientes: this.onlyPendientes ? 1 : 0
