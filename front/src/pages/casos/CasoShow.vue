@@ -103,7 +103,7 @@
       </q-tab-panel>
 <!--      <q-tab name="social"       label="6 Área Social"           icon="people"          no-caps v-if="role === 'Administrador' || role === 'Social'"/>-->
       <q-tab-panel name="social">
-        <SocialInformes :caso="caso" :isSocial="true" @refresh="fetchCaso" :case-id="caseId"/>
+        <SocialInformes :caso="caso" @refresh="fetchCaso" :case-id="caseId"/>
       </q-tab-panel>
 
       <!-- 5) Apoyo Integral -->
@@ -113,12 +113,12 @@
 
       <!-- 6) Documentos General -->
       <q-tab-panel name="docs">
-        <DocumentosGeneral :case-id="caseId"/>
+        <DocumentosGeneral :case-id="caseId" :caso="caso" @refresh="fetchCaso"/>
       </q-tab-panel>
 
       <!-- 7) Fotografías -->
       <q-tab-panel name="fotos">
-        <Fotografias :case-id="caseId"/>
+        <Fotografias :case-id="caseId" :caso="caso" @refresh="fetchCaso"/>
       </q-tab-panel>
     </q-tab-panels>
   </q-page>

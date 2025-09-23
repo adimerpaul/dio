@@ -21,7 +21,7 @@
     <q-separator />
 
     <div class="row q-col-gutter-md q-mt-sm">
-      <div v-for="f in rows.data" :key="f.id" class="col-6 col-sm-4 col-md-3">
+      <div v-for="f in caso.fotografias" :key="f.id" class="col-6 col-sm-4 col-md-3">
         <q-card flat bordered>
           <q-img
             :src="toPublicUrl(f.thumb_url || f.url)"
@@ -40,19 +40,22 @@
       </div>
     </div>
 
-    <q-pagination
-      v-model="page"
-      :max="rows.last_page || 1"
-      @input="fetchRows"
-      class="q-mt-md flex justify-end"
-    />
+<!--    <q-pagination-->
+<!--      v-model="page"-->
+<!--      :max="rows.last_page || 1"-->
+<!--      @input="fetchRows"-->
+<!--      class="q-mt-md flex justify-end"-->
+<!--    />-->
   </q-card>
 </template>
 
 <script>
 export default {
   name: 'Fotografias',
-  props: { caseId: { type: [String, Number], required: true } },
+  props: {
+    caseId: { type: [String, Number], required: true },
+    caso: { type: Object, required: false }
+  },
   data () {
     return {
       rows: { data: [], last_page: 1 },
@@ -62,7 +65,7 @@ export default {
       uploading: false
     }
   },
-  created () { this.fetchRows() },
+  // created () { this.fetchRows() },
   methods: {
     // Convierte '/storage/...' a 'http://localhost:8000/storage/...'
     toPublicUrl (url) {
@@ -72,19 +75,19 @@ export default {
       return `${basePublic}${url}`
     },
 
-    async fetchRows () {
-      this.loading = true
-      try {
-        const res = await this.$axios.get(`/casos/${this.caseId}/fotografias`, {
-          params: { page: this.page, per_page: this.perPage }
-        })
-        this.rows = res.data || { data: [], last_page: 1 }
-      } catch (e) {
-        this.$q.notify({ type: 'negative', message: e?.response?.data?.message || 'Error cargando fotos' })
-      } finally {
-        this.loading = false
-      }
-    },
+    // async fetchRows () {
+    //   this.loading = true
+    //   try {
+    //     const res = await this.$axios.get(`/casos/${this.caseId}/fotografias`, {
+    //       params: { page: this.page, per_page: this.perPage }
+    //     })
+    //     this.rows = res.data || { data: [], last_page: 1 }
+    //   } catch (e) {
+    //     this.$q.notify({ type: 'negative', message: e?.response?.data?.message || 'Error cargando fotos' })
+    //   } finally {
+    //     this.loading = false
+    //   }
+    // },
 
     pickFile () { this.$refs.file.click() },
 
@@ -99,7 +102,8 @@ export default {
           headers: { 'Content-Type': 'multipart/form-data' }
         })
         this.$q.notify({ type: 'positive', message: 'Foto subida' })
-        this.fetchRows()
+        // this.fetchRows()
+        this.$emit('refresh')
       } catch (e) {
         this.$q.notify({ type: 'negative', message: e?.response?.data?.message || 'No se pudo subir' })
       } finally {
@@ -113,7 +117,8 @@ export default {
       try {
         await this.$axios.delete(`/fotografias/${f.id}`)
         this.$q.notify({ type: 'positive', message: 'Eliminada' })
-        this.fetchRows()
+        // this.fetchRows()
+        this.$emit('refresh')
       } catch (e) {
         this.$q.notify({ type: 'negative', message: e?.response?.data?.message || 'No se pudo eliminar' })
       }

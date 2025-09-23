@@ -17,6 +17,7 @@
 
     <q-separator/>
 
+<!--    <pre>{{caso}}</pre>-->
     <!-- Tabla -->
     <q-markup-table dense flat bordered wrap-cells class="q-mt-sm">
       <thead>
@@ -31,7 +32,7 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="it in rows.data" :key="it.id">
+      <tr v-for="it in caso.documentos" :key="it.id">
         <td>#{{ it.id }}</td>
         <td>
           <q-btn-dropdown dense color="primary" size="sm" label="Opciones" no-caps>
@@ -60,7 +61,7 @@
         <td>{{ it.mime || it.extension }}</td>
         <td>{{ it.user?.name || it.user?.username || '—' }}</td>
       </tr>
-      <tr v-if="!rows.data.length && !loading">
+      <tr v-if="!caso.documentos.length && !loading">
         <td colspan="7" class="text-center text-grey">Sin registros</td>
       </tr>
       </tbody>
@@ -116,7 +117,10 @@
 <script>
 export default {
   name: 'DocumentosGeneral',
-  props: { caseId: { type:[String,Number], required:true } },
+  props: {
+    caseId: { type:[String,Number], required:true },
+    caso: { type:Object, default:()=>({}) },
+  },
   data(){
     return {
       loading:false, saving:false,
@@ -132,24 +136,24 @@ export default {
       dlgEdit:false, edit:{}, editingId:null,
     }
   },
-  watch:{
-    caseId(){ this.page=1; this.fetchRows() },
-    search(){ this.page=1; this.fetchRows() }
-  },
-  created(){ this.fetchRows() },
+  // watch:{
+  //   caseId(){ this.page=1; this.fetchRows() },
+  //   search(){ this.page=1; this.fetchRows() }
+  // },
+  // created(){ this.fetchRows() },
   methods:{
-    async fetchRows(){
-      if(!this.caseId) return
-      this.loading=true
-      try{
-        const res = await this.$axios.get(`/casos/${this.caseId}/documentos`, {
-          params:{ q:this.search, page:this.page, per_page:this.perPage }
-        })
-        this.rows = res.data || { data:[], last_page:1 }
-      }catch(e){
-        this.$q.notify({ type:'negative', message: e?.response?.data?.message || 'Error cargando documentos' })
-      }finally{ this.loading=false }
-    },
+    // async fetchRows(){
+    //   if(!this.caseId) return
+    //   this.loading=true
+    //   try{
+    //     const res = await this.$axios.get(`/casos/${this.caseId}/documentos`, {
+    //       params:{ q:this.search, page:this.page, per_page:this.perPage }
+    //     })
+    //     this.rows = res.data || { data:[], last_page:1 }
+    //   }catch(e){
+    //     this.$q.notify({ type:'negative', message: e?.response?.data?.message || 'Error cargando documentos' })
+    //   }finally{ this.loading=false }
+    // },
 
     openUpload(){ this.file=null; this.meta={titulo:'',categoria:'',descripcion:''}; this.dlgUpload=true },
 
@@ -168,7 +172,8 @@ export default {
         })
         this.$q.notify({ type:'positive', message:'Archivo subido' })
         this.dlgUpload=false
-        this.fetchRows()
+        // this.fetchRows()
+        this.$emit('refresh')
       }catch(e){
         this.$q.notify({ type:'negative', message: e?.response?.data?.message || 'No se pudo subir' })
       }finally{ this.saving=false }
@@ -194,7 +199,8 @@ export default {
         await this.$axios.put(`/documentos/${this.editingId}`, this.edit)
         this.$q.notify({ type:'positive', message:'Actualizado' })
         this.dlgEdit=false
-        this.fetchRows()
+        // this.fetchRows()
+        this.$emit('refresh')
       }catch(e){
         this.$q.notify({ type:'negative', message: e?.response?.data?.message || 'No se pudo actualizar' })
       }finally{ this.saving=false }
@@ -205,7 +211,8 @@ export default {
         try{
           await this.$axios.delete(`/documentos/${it.id}`)
           this.$q.notify({ type:'positive', message:'Eliminado' })
-          this.fetchRows()
+          // this.fetchRows()
+          this.$emit('refresh')
         }catch(e){
           this.$q.notify({ type:'negative', message: e?.response?.data?.message || 'No se pudo eliminar' })
         }

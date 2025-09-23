@@ -99,12 +99,12 @@
             icon="psychology"
             :color="form.fecha_derivacion_psicologica ? 'primary' : 'grey-5'"
           />
-          <q-timeline-entry
-            title="Informe área psicológica"
-            :subtitle="format(form.fecha_informe_area_psicologica)"
-            icon="assignment_turned_in"
-            :color="form.fecha_informe_area_psicologica ? 'primary' : 'grey-5'"
-          />
+<!--          <q-timeline-entry-->
+<!--            title="Informe área psicológica"-->
+<!--            :subtitle="format(form.fecha_informe_area_psicologica)"-->
+<!--            icon="assignment_turned_in"-->
+<!--            :color="form.fecha_informe_area_psicologica ? 'primary' : 'grey-5'"-->
+<!--          />-->
           <q-timeline-entry
             title="Entrega trabajo social"
             :subtitle="format(form.fecha_informe_trabajo_social)"
