@@ -322,7 +322,7 @@
             </q-item>
           </q-list>
         </q-expansion-item>
-        <q-item dense to="/propremis" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Ver PROPREMIS')">
+        <q-item dense to="/propremis" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Ver PROMPREMIS')">
           <q-item-section avatar>
             <q-icon name="folder_shared" class="text-white"/>
           </q-item-section>

@@ -65,78 +65,78 @@
         <td class="text-no-wrap">{{ c.caso_numero || '—' }}</td>
         <td class="text-no-wrap">{{ $filters.date(c.fecha_apertura_caso) }}</td>
         <td>
-          <!--          <div class="text-weight-medium">{{ c.denunciante_nombre_completo }}</div>-->
-          <!--          <div class="text-caption text-grey-7" v-if="c.denunciante_nro">CI: {{ c.denunciante_nro }}</div>-->
-          <!--          "denunciados": [-->
-          <!--          {-->
-          <!--          "id": 3,-->
-          <!--          "denunciado_nombres": null,-->
-          <!--          "denunciado_paterno": null,-->
-          <!--          "denunciado_materno": null,-->
-          <!--          "denunciado_documento": "Carnet de identidad",-->
-          <!--          "denunciado_nro": null,-->
-          <!--          "denunciado_sexo": null,-->
-          <!--          "denunciado_lugar_nacimiento": null,-->
-          <!--          "denunciado_fecha_nacimiento": null,-->
-          <!--          "denunciado_edad": null,-->
-          <!--          "denunciado_telefono": null,-->
-          <!--          "denunciado_residencia": null,-->
-          <!--          "denunciado_estado_civil": null,-->
-          <!--          "denunciado_relacion": null,-->
-          <!--          "denunciado_grado": null,-->
-          <!--          "denunciado_trabaja": "1",-->
-          <!--          "denunciado_prox": null,-->
-          <!--          "denunciado_ocupacion": null,-->
-          <!--          "denunciado_ocupacion_exacto": null,-->
-          <!--          "denunciado_idioma": null,-->
-          <!--          "denunciado_fijo": null,-->
-          <!--          "denunciado_movil": null,-->
-          <!--          "denunciado_domicilio_actual": null,-->
-          <!--          "denunciado_latitud": null,-->
-          <!--          "denunciado_longitud": null,-->
-          <!--          "caso_id": 4-->
-          <!--          }-->
-          <!--          <template v-if="c.denunciantes">-->
-          <div class="text-weight-medium">{{ c.denunciantes[0].denunciante_nombres == null ? '—' : (c.denunciantes[0].denunciante_nombres + ' ' + (c.denunciantes[0].denunciante_paterno || '') + ' ' + (c.denunciantes[0].denunciante_materno || '') ) }}</div>
-          <div class="text-caption text-grey-7" v-if="c.denunciantes[0].denunciante_nro">CI: {{ c.denunciantes[0].denunciante_nro }}</div>
-          <!--          </template>-->
+<!--          <div class="text-weight-medium">{{ c.denunciante_nombre_completo }}</div>-->
+<!--          <div class="text-caption text-grey-7" v-if="c.denunciante_nro">CI: {{ c.denunciante_nro }}</div>-->
+<!--          "denunciados": [-->
+<!--          {-->
+<!--          "id": 3,-->
+<!--          "denunciado_nombres": null,-->
+<!--          "denunciado_paterno": null,-->
+<!--          "denunciado_materno": null,-->
+<!--          "denunciado_documento": "Carnet de identidad",-->
+<!--          "denunciado_nro": null,-->
+<!--          "denunciado_sexo": null,-->
+<!--          "denunciado_lugar_nacimiento": null,-->
+<!--          "denunciado_fecha_nacimiento": null,-->
+<!--          "denunciado_edad": null,-->
+<!--          "denunciado_telefono": null,-->
+<!--          "denunciado_residencia": null,-->
+<!--          "denunciado_estado_civil": null,-->
+<!--          "denunciado_relacion": null,-->
+<!--          "denunciado_grado": null,-->
+<!--          "denunciado_trabaja": "1",-->
+<!--          "denunciado_prox": null,-->
+<!--          "denunciado_ocupacion": null,-->
+<!--          "denunciado_ocupacion_exacto": null,-->
+<!--          "denunciado_idioma": null,-->
+<!--          "denunciado_fijo": null,-->
+<!--          "denunciado_movil": null,-->
+<!--          "denunciado_domicilio_actual": null,-->
+<!--          "denunciado_latitud": null,-->
+<!--          "denunciado_longitud": null,-->
+<!--          "caso_id": 4-->
+<!--          }-->
+<!--          <template v-if="c.denunciantes">-->
+            <div class="text-weight-medium">{{ c.denunciantes[0].denunciante_nombres == null ? '—' : (c.denunciantes[0].denunciante_nombres + ' ' + (c.denunciantes[0].denunciante_paterno || '') + ' ' + (c.denunciantes[0].denunciante_materno || '') ) }}</div>
+            <div class="text-caption text-grey-7" v-if="c.denunciantes[0].denunciante_nro">CI: {{ c.denunciantes[0].denunciante_nro }}</div>
+<!--          </template>-->
         </td>
         <td>
-          <!--          <div class="text-weight-medium">{{ c.denunciado_nombre_completo || '—' }}</div>-->
-          <!--          <div class="text-caption text-grey-7" v-if="c.denunciado_nro">CI: {{ c.denunciado_nro }}</div>-->
-          <!--          "denunciados": [-->
-          <!--          {-->
-          <!--          "id": 4,-->
-          <!--          "denunciado_nombres": null,-->
-          <!--          "denunciado_paterno": null,-->
-          <!--          "denunciado_materno": null,-->
-          <!--          "denunciado_documento": "Carnet de identidad",-->
-          <!--          "denunciado_nro": null,-->
-          <!--          "denunciado_sexo": null,-->
-          <!--          "denunciado_lugar_nacimiento": null,-->
-          <!--          "denunciado_fecha_nacimiento": null,-->
-          <!--          "denunciado_edad": null,-->
-          <!--          "denunciado_telefono": null,-->
-          <!--          "denunciado_residencia": null,-->
-          <!--          "denunciado_estado_civil": null,-->
-          <!--          "denunciado_relacion": null,-->
-          <!--          "denunciado_grado": null,-->
-          <!--          "denunciado_trabaja": "1",-->
-          <!--          "denunciado_prox": null,-->
-          <!--          "denunciado_ocupacion": null,-->
-          <!--          "denunciado_ocupacion_exacto": null,-->
-          <!--          "denunciado_idioma": null,-->
-          <!--          "denunciado_fijo": null,-->
-          <!--          "denunciado_movil": null,-->
-          <!--          "denunciado_domicilio_actual": null,-->
-          <!--          "denunciado_latitud": null,-->
-          <!--          "denunciado_longitud": null,-->
-          <!--          "caso_id": 5-->
-          <!--          }-->
-          <!--          ]-->
-          <!--          <template v-if="c.denunciados">-->
-          <div class="text-weight-medium">{{ c.denunciados[0]?.denunciado_nombres == null ? '—' : (c.denunciados[0]?.denunciado_nombres + ' ' + (c.denunciados[0]?.denunciado_paterno || '') + ' ' + (c.denunciados[0]?.denunciado_materno || '') ) }}</div>
-          <div class="text-caption text-grey-7" v-if="c.denunciados[0]?.denunciado_nro">CI: {{ c.denunciados[0]?.denunciado_nro }}</div>
+<!--          <div class="text-weight-medium">{{ c.denunciado_nombre_completo || '—' }}</div>-->
+<!--          <div class="text-caption text-grey-7" v-if="c.denunciado_nro">CI: {{ c.denunciado_nro }}</div>-->
+<!--          "denunciados": [-->
+<!--          {-->
+<!--          "id": 4,-->
+<!--          "denunciado_nombres": null,-->
+<!--          "denunciado_paterno": null,-->
+<!--          "denunciado_materno": null,-->
+<!--          "denunciado_documento": "Carnet de identidad",-->
+<!--          "denunciado_nro": null,-->
+<!--          "denunciado_sexo": null,-->
+<!--          "denunciado_lugar_nacimiento": null,-->
+<!--          "denunciado_fecha_nacimiento": null,-->
+<!--          "denunciado_edad": null,-->
+<!--          "denunciado_telefono": null,-->
+<!--          "denunciado_residencia": null,-->
+<!--          "denunciado_estado_civil": null,-->
+<!--          "denunciado_relacion": null,-->
+<!--          "denunciado_grado": null,-->
+<!--          "denunciado_trabaja": "1",-->
+<!--          "denunciado_prox": null,-->
+<!--          "denunciado_ocupacion": null,-->
+<!--          "denunciado_ocupacion_exacto": null,-->
+<!--          "denunciado_idioma": null,-->
+<!--          "denunciado_fijo": null,-->
+<!--          "denunciado_movil": null,-->
+<!--          "denunciado_domicilio_actual": null,-->
+<!--          "denunciado_latitud": null,-->
+<!--          "denunciado_longitud": null,-->
+<!--          "caso_id": 5-->
+<!--          }-->
+<!--          ]-->
+<!--          <template v-if="c.denunciados">-->
+            <div class="text-weight-medium">{{ c.denunciados[0]?.denunciado_nombres == null ? '—' : (c.denunciados[0]?.denunciado_nombres + ' ' + (c.denunciados[0]?.denunciado_paterno || '') + ' ' + (c.denunciados[0]?.denunciado_materno || '') ) }}</div>
+            <div class="text-caption text-grey-7" v-if="c.denunciados[0]?.denunciado_nro">CI: {{ c.denunciados[0]?.denunciado_nro }}</div>
         </td>
         <td>{{ c.caso_tipologia || '—' }}</td>
         <td>{{ c.zona || '—' }}</td>
@@ -253,7 +253,7 @@ export default {
       this.$axios.get('/casos', {
         params: {
           q: this.search || '',
-          tipo : 'DNA',
+          tipo : 'PROPREMIS',
           page: this.page,
           per_page: this.perPage,
           only_pendientes: this.onlyPendientes ? 1 : 0
