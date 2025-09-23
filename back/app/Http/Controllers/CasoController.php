@@ -391,7 +391,7 @@ class CasoController extends Controller
     {
         if($caso->tipo == 'SLIM'){
             $caso = Caso::with(['denunciantes','denunciados','familiares','menores','psicologica_user:id,name','trabajo_social_user:id,name','legal_user:id,name','user:id,name'])->find($caso->id);
-            return response()->json($caso);
+//            return response()->json($caso);
             $pdf = Pdf::loadView('casos.pdf', [
                 'caso' => $caso,
             ])->setPaper('A4', 'portrait');
@@ -403,6 +403,19 @@ class CasoController extends Controller
             $download = (int) $request->query('download', 0) === 1;
 
             $filename = 'SLIM_Caso_'.$caso->id.'.pdf';
+            return $download ? $pdf->download($filename) : $pdf->stream($filename);
+        }
+//        dna
+        if ($caso->tipo == 'DNA') {
+            $caso = Caso::with(['denunciantes', 'denunciados', 'familiares', 'menores', 'psicologica_user:id,name', 'trabajo_social_user:id,name', 'legal_user:id,name', 'user:id,name'])->find($caso->id);
+            $pdf = Pdf::loadView('pdf.dna.pdf', [
+                'caso' => $caso,
+            ])->setPaper('A4', 'portrait');
+            // Para acentos: usar DejaVu Sans
+            $pdf->getDomPDF()->getOptions()->set('defaultFont', 'DejaVu Sans');
+            // ?download=1 para descargar, 0 para ver en el navegador
+            $download = (int)$request->query('download', 0) === 1;
+            $filename = 'DNA_Caso_' . $caso->id . '.pdf';
             return $download ? $pdf->download($filename) : $pdf->stream($filename);
         }
     }
