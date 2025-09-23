@@ -389,19 +389,22 @@ class CasoController extends Controller
     }
     public function pdf(Request $request, Caso $caso)
     {
-        // Opciones extra para mejor render
-        $pdf = Pdf::loadView('casos.pdf', [
-            'caso' => $caso,
-        ])->setPaper('A4', 'portrait');
+        if($caso->tipo == 'SLIM'){
+            $caso = Caso::with(['denunciantes','denunciados','familiares','menores','psicologica_user:id,name','trabajo_social_user:id,name','legal_user:id,name','user:id,name'])->find($caso->id);
+            return response()->json($caso);
+            $pdf = Pdf::loadView('casos.pdf', [
+                'caso' => $caso,
+            ])->setPaper('A4', 'portrait');
 
-        // Para acentos: usar DejaVu Sans
-        $pdf->getDomPDF()->getOptions()->set('defaultFont', 'DejaVu Sans');
+            // Para acentos: usar DejaVu Sans
+            $pdf->getDomPDF()->getOptions()->set('defaultFont', 'DejaVu Sans');
 
-        // ?download=1 para descargar, 0 para ver en el navegador
-        $download = (int) $request->query('download', 0) === 1;
+            // ?download=1 para descargar, 0 para ver en el navegador
+            $download = (int) $request->query('download', 0) === 1;
 
-        $filename = 'SLIM_Caso_'.$caso->id.'.pdf';
-        return $download ? $pdf->download($filename) : $pdf->stream($filename);
+            $filename = 'SLIM_Caso_'.$caso->id.'.pdf';
+            return $download ? $pdf->download($filename) : $pdf->stream($filename);
+        }
     }
     /**
      * GET /casos?q=texto&page=1&per_page=10

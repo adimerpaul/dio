@@ -193,8 +193,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/umadis/fotografias/{fotografia}', [\App\Http\Controllers\UmadiController::class, 'fotoDestroy']);
 
 });
-
-//http://localhost:8000/api/documentos/1/view
+Route::get   ('/casos/{caso}/pdf',  [CasoController::class, 'pdf']);
 Route::get   ('/documentos/{documento}/view',     [\App\Http\Controllers\CasoController::class, 'docView']);
 Route::get   ('/documentos/{documento}/download', [\App\Http\Controllers\CasoController::class, 'docDownload']);
 
