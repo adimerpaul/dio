@@ -1,4 +1,5 @@
-<!doctype html>
+{{-- resources/views/pdf/slam/pdf.blade.php --}}
+    <!doctype html>
 <html lang="es">
 <head>
     <meta charset="utf-8">
@@ -32,12 +33,77 @@
 </head>
 <body>
 @php
-    // helpers rápidos
-    $v = fn($x) => (isset($x) && $x !== '') ? $x : '—';
-    $x = fn($b) => ($b===1 || $b===true || $b==='1') ? 'X' : '';
-    // imagenes locales (puedes cambiar nombres/rutas)
+    // helpers
+    $v = fn($x) => (isset($x) && $x !== '' && $x !== null) ? $x : '—';
+    $x = fn($b) => ($b===1 || $b===true || $b==='1' || $b==='SI' || $b==='Si' || $b==='si') ? 'X' : '';
+
+    // Alias: en tus controladores pasas 'caso', aquí lo tratamos como $slam por comodidad
+    $slam = $caso ?? null;
+
+    // Logos opcionales
     $logoLeft  = public_path('img/escudo_gob.png');
     $logoRight = public_path('img/logo_muni.png');
+
+    // Colecciones seguras
+    $denunciantes = collect($slam->denunciantes ?? []);
+    $denunciados  = collect($slam->denunciados ?? []);
+    $familiares   = collect($slam->familiares ?? []);
+    $menores      = collect($slam->menores ?? []);
+
+    // Adultos (propios de SLAM). Si no existen, tratamos al 1er denunciante como “adulto” para llenar filas.
+    $adultos = collect($slam->adultos ?? []);
+    if ($adultos->isEmpty() && $denunciantes->isNotEmpty()) {
+        $d = $denunciantes->first();
+        $adultos = collect([ (object) [
+            'nombre'            => $d->denunciante_nombres ?? null,
+            'paterno'           => $d->denunciante_paterno ?? null,
+            'materno'           => $d->denunciante_materno ?? null,
+            'fecha_nacimiento'  => $d->denunciante_fecha_nacimiento ?? null,
+            'edad'              => $d->denunciante_edad ?? null,
+            'documento_tipo'    => $d->denunciante_documento ?? null,
+            'documento_num'     => $d->denunciante_nro ?? null,
+            'lugar_nacimiento'  => $d->denunciante_lugar_nacimiento ?? null,
+            'domicilio'         => $d->denunciante_domicilio_actual ?? null,
+            'estado_civil'      => $d->denunciante_estado_civil ?? null,
+            'ocupacion_1'       => $d->denunciante_ocupacion ?? null,
+            'ocupacion_2'       => null,
+            'ingresos'          => null,
+        ] ]);
+    }
+
+    // Teléfonos de referencia (si el esquema SLAM existe)
+    $telFijo     = $slam->ref_tel_fijo      ?? null;
+    $telMovil    = $slam->ref_tel_movil     ?? ($denunciantes->first()->denunciante_telefono ?? null);
+    $telMovilAlt = $slam->ref_tel_movil_alt ?? null;
+
+    // Idiomas (si existe esquema SLAM)
+    $idioma_es = $slam->am_idioma_castellano ?? null;
+    $idioma_qh = $slam->am_idioma_quechua    ?? null;
+    $idioma_ay = $slam->am_idioma_aymara     ?? null;
+    $idioma_ot = $slam->am_idioma_otros      ?? null;
+
+    // Denunciado (usamos el primero para mantener el layout de 1 fila)
+    $den = $denunciados->first();
+    $denNombre  = $den ? trim(($den->denunciado_nombres ?? '').' '.($den->denunciado_paterno ?? '').' '.($den->denunciado_materno ?? '')) : null;
+
+    // Denunciado, campos
+    $den_edad   = $den->denunciado_edad ?? null;
+    $den_est_c  = $den->denunciado_estado_civil ?? null;
+    $den_dom    = $den->denunciado_domicilio_actual ?? null;
+    $den_idioma = $den->denunciado_idioma ?? null;
+    $den_grado  = $den->denunciado_grado ?? null;
+    $den_ocup   = $den->denunciado_ocupacion ?? null;
+
+    // Tipologías/violencias (caen a los de Caso si no hay campos específicos SLAM)
+    $tip_viol_fis = $slam->tip_violencia_fisica      ?? $slam->violencia_fisica      ?? 0;
+    $tip_viol_ps  = $slam->tip_violencia_psicologica ?? $slam->violencia_psicologica ?? 0;
+    $tip_aband    = $slam->tip_abandono              ?? 0;
+    $tip_apoyo    = $slam->tip_apoyo_integral        ?? 0;
+
+    // Seguimiento responsables
+    $resp_legal  = optional($slam->legal_user)->name            ?? '—';
+    $resp_social = optional($slam->trabajo_social_user)->name   ?? '—';
+    $resp_psico  = optional($slam->psicologica_user)->name      ?? '—';
 @endphp
 
     <!-- ====== ENCABEZADO ====== -->
@@ -63,10 +129,10 @@
 
 <table class="table mb-6">
     <tr>
-        <td style="width:35%"><span class="label">Fecha de registro:</span> {{ $v($slam->fecha_registro) }}</td>
+        <td style="width:35%"><span class="label">Fecha de registro:</span> {{ $v($slam->fecha_registro ?? $slam->fecha_apertura_caso) }}</td>
         <td style="width:25%"><span class="label">Área:</span> {{ $v($slam->area) }}</td>
         <td style="width:20%"><span class="label">Zona:</span> {{ $v($slam->zona) }}</td>
-        <td style="width:20%"><span class="label">N° de caso:</span> <span class="b">{{ $v($slam->numero_caso) }}</span></td>
+        <td style="width:20%"><span class="label">N° de caso:</span> <span class="b">{{ $v($slam->numero_caso ?? $slam->caso_numero) }}</span></td>
     </tr>
 </table>
 
@@ -81,12 +147,17 @@
         <th style="width:16%">Fecha nac.</th>
         <th style="width:16%">Edad</th>
     </tr>
-    @forelse($slam->adultos as $a)
+    @forelse($adultos as $a)
         <tr>
             <td>{{ $v($a->nombre) }}</td>
             <td>{{ $v($a->paterno) }}</td>
             <td>{{ $v($a->materno) }}</td>
-            <td>{{ $a->fecha_nacimiento ? \Illuminate\Support\Carbon::parse($a->fecha_nacimiento)->format('d/m/Y') : '—' }}</td>
+            <td>
+                @php
+                    $fnac = $a->fecha_nacimiento ?? null;
+                @endphp
+                {{ $fnac ? \Illuminate\Support\Carbon::parse($fnac)->format('d/m/Y') : '—' }}
+            </td>
             <td>{{ $v($a->edad) }}</td>
         </tr>
     @empty
@@ -100,7 +171,7 @@
         <th style="width:30%">Lugar de nacimiento</th>
         <th style="width:45%">Domicilio</th>
     </tr>
-    @forelse($slam->adultos as $a)
+    @forelse($adultos as $a)
         <tr>
             <td>{{ trim(($a->documento_tipo ? $a->documento_tipo.': ' : '').$v($a->documento_num)) }}</td>
             <td>{{ $v($a->lugar_nacimiento) }}</td>
@@ -118,7 +189,7 @@
         <th style="width:25%">Ocupación 2</th>
         <th style="width:25%">Ingresos</th>
     </tr>
-    @forelse($slam->adultos as $a)
+    @forelse($adultos as $a)
         <tr>
             <td>{{ $v($a->estado_civil) }}</td>
             <td>{{ $v($a->ocupacion_1) }}</td>
@@ -137,15 +208,15 @@
     </tr>
     <tr>
         <td>
-            <div>C<span class="xs">ASTELLANO</span>: <span class="box">{{ $x($slam->am_idioma_castellano) }}</span></div>
-            <div>Q<span class="xs">UECHUA</span>: <span class="box">{{ $x($slam->am_idioma_quechua) }}</span></div>
-            <div>A<span class="xs">YMARA</span>: <span class="box">{{ $x($slam->am_idioma_aymara) }}</span></div>
-            <div>O<span class="xs">TROS</span>: {{ $v($slam->am_idioma_otros) }}</div>
+            <div>C<span class="xs">ASTELLANO</span>: <span class="box">{{ $x($idioma_es) }}</span></div>
+            <div>Q<span class="xs">UECHUA</span>: <span class="box">{{ $x($idioma_qh) }}</span></div>
+            <div>A<span class="xs">YMARA</span>: <span class="box">{{ $x($idioma_ay) }}</span></div>
+            <div>O<span class="xs">TROS</span>: {{ $v($idioma_ot) }}</div>
         </td>
         <td>
-            <div><span class="label">N° fijo:</span> {{ $v($slam->ref_tel_fijo) }}</div>
-            <div><span class="label">N° móvil:</span> {{ $v($slam->ref_tel_movil) }}</div>
-            <div><span class="label">N° móvil (alt):</span> {{ $v($slam->ref_tel_movil_alt) }}</div>
+            <div><span class="label">N° fijo:</span> {{ $v($telFijo) }}</div>
+            <div><span class="label">N° móvil:</span> {{ $v($telMovil) }}</div>
+            <div><span class="label">N° móvil (alt):</span> {{ $v($telMovilAlt) }}</div>
         </td>
     </tr>
 </table>
@@ -160,13 +231,17 @@
         <th style="width:12%">Sexo</th>
         <th style="width:22%">Teléfono</th>
     </tr>
-    @forelse($slam->familiares as $f)
+    @forelse($familiares as $f)
+        @php
+            $nombreFam = $f->familiar_nombre_completo
+                ?? trim(($f->familiar_nombres ?? '').' '.($f->familiar_paterno ?? '').' '.($f->familiar_materno ?? ''));
+        @endphp
         <tr>
-            <td>{{ trim($v($f->nombre).' '.$v($f->paterno).' '.$v($f->materno)) }}</td>
-            <td>{{ $v($f->edad) }}</td>
-            <td>{{ $v($f->parentesco) }}</td>
-            <td>{{ $v($f->sexo) }}</td>
-            <td>{{ $v($f->telefono) }}</td>
+            <td>{{ $v($nombreFam) }}</td>
+            <td>{{ $v($f->familiar_edad ?? '') }}</td>
+            <td>{{ $v($f->familiar_parentesco ?? '') }}</td>
+            <td>{{ $v($f->familiar_sexo ?? '') }}</td>
+            <td>{{ $v($f->familiar_telefono ?? '') }}</td>
         </tr>
     @empty
         <tr><td colspan="5" class="text-center muted">— Sin familiares —</td></tr>
@@ -186,11 +261,11 @@
         <th style="width:20%">Estado civil</th>
     </tr>
     <tr>
-        <td>{{ $v($slam->den_nombres) }}</td>
-        <td>{{ $v($slam->den_paterno) }}</td>
-        <td>{{ $v($slam->den_materno) }}</td>
-        <td>{{ $v($slam->den_edad) }}</td>
-        <td>{{ $v($slam->den_estado_civil) }}</td>
+        <td>{{ $v($den->denunciado_nombres ?? '') }}</td>
+        <td>{{ $v($den->denunciado_paterno ?? '') }}</td>
+        <td>{{ $v($den->denunciado_materno ?? '') }}</td>
+        <td>{{ $v($den_edad) }}</td>
+        <td>{{ $v($den_est_c) }}</td>
     </tr>
 </table>
 
@@ -202,10 +277,10 @@
         <th style="width:20%">Ocupación</th>
     </tr>
     <tr>
-        <td>{{ $v($slam->den_domicilio) }}</td>
-        <td>{{ $v($slam->den_idioma) }}</td>
-        <td>{{ $v($slam->den_grado_instruccion) }}</td>
-        <td>{{ $v($slam->den_ocupacion) }}</td>
+        <td>{{ $v($den_dom) }}</td>
+        <td>{{ $v($den_idioma) }}</td>
+        <td>{{ $v($den_grado) }}</td>
+        <td>{{ $v($den_ocup) }}</td>
     </tr>
 </table>
 
@@ -214,7 +289,7 @@
 <table class="table grid mb-4">
     <tr>
         <td style="height:140px;">
-            {!! nl2br(e($slam->hecho_descripcion ?? '')) !!}
+            {!! nl2br(e($slam->hecho_descripcion ?? $slam->caso_descripcion ?? '')) !!}
         </td>
     </tr>
 </table>
@@ -228,15 +303,15 @@
         <th style="width:20%">Abandono</th>
     </tr>
     <tr>
-        <td><span class="box">{{ $x($slam->tip_violencia_fisica) }}</span></td>
-        <td><span class="box">{{ $x($slam->tip_violencia_psicologica) }}</span></td>
-        <td><span class="box">{{ $x($slam->tip_abandono) }}</span></td>
+        <td><span class="box">{{ $x($tip_viol_fis) }}</span></td>
+        <td><span class="box">{{ $x($tip_viol_ps) }}</span></td>
+        <td><span class="box">{{ $x($tip_aband) }}</span></td>
     </tr>
     <tr>
         <th colspan="3">Apoyo integral</th>
     </tr>
     <tr>
-        <td colspan="3"><span class="box">{{ $x($slam->tip_apoyo_integral) }}</span></td>
+        <td colspan="3"><span class="box">{{ $x($tip_apoyo) }}</span></td>
     </tr>
 </table>
 
@@ -251,15 +326,15 @@
     <tr>
         <td>
             <div><span class="box">{{ $slam->legal_user_id ? 'X' : '' }}</span>
-                <span class="small muted"> Responsable:</span> {{ $slam->legal_user->name ?? '—' }}</div>
+                <span class="small muted"> Responsable:</span> {{ $resp_legal }}</div>
         </td>
         <td>
             <div><span class="box">{{ $slam->trabajo_social_user_id ? 'X' : '' }}</span>
-                <span class="small muted"> Responsable:</span> {{ $slam->trabajo_social_user->name ?? '—' }}</div>
+                <span class="small muted"> Responsable:</span> {{ $resp_social }}</div>
         </td>
         <td>
             <div><span class="box">{{ $slam->psicologica_user_id ? 'X' : '' }}</span>
-                <span class="small muted"> Responsable:</span> {{ $slam->psicologica_user->name ?? '—' }}</div>
+                <span class="small muted"> Responsable:</span> {{ $resp_psico }}</div>
         </td>
     </tr>
 </table>

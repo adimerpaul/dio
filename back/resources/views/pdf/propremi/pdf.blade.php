@@ -1,9 +1,9 @@
-{{-- resources/views/pdf/dna/pdf.blade.php --}}
+{{-- resources/views/pdf/propremi/pdf.blade.php --}}
     <!doctype html>
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <title>Registro de Atención y/o Denuncia</title>
+    <title>Registro de Atención y/o Denuncia — PROPREMI</title>
     <style>
         @page { margin: 16mm 14mm 18mm 14mm; }
         * { font-family: DejaVu Sans, sans-serif; color:#222; }
@@ -33,30 +33,40 @@
 </head>
 <body>
 @php
-    // Helpers seguros
+    // helpers
     $v = fn($x) => (isset($x) && $x !== '' && $x !== null) ? $x : '—';
     $x = fn($b) => ($b===1 || $b===true || $b==='1' || $b==='SI' || $b==='Si' || $b==='si') ? 'X' : '';
     $fmtDate = function($d) {
-        try { return $d ? \Illuminate\Support\Carbon::parse($d)->format('d/m/Y') : '—'; }
-        catch (\Throwable $e) { return $d ?: '—'; }
+      try { return $d ? \Illuminate\Support\Carbon::parse($d)->format('d/m/Y') : '—'; }
+      catch (\Throwable $e) { return $d ?: '—'; }
     };
 
-    // Tomamos primeros elementos cuando el diseño pide solo 1 registro
-    $denunciante = ($caso->denunciantes[0] ?? null);
-    $denunciado  = ($caso->denunciados[0] ?? null);
+    // alias
+    $prop = $caso ?? null;
 
-    // Domicilio/Teléfono generales (se usa del denunciante si existe)
-    $domicilio = $denunciante->denunciante_domicilio_actual ?? null;
-    $telefono  = $denunciante->denunciante_telefono ?? null;
+    // colecciones
+    $menores    = collect($prop->menores ?? []);         // afectados
+    $familiares = collect($prop->familiares ?? []);
+    $denunciado = ($prop->denunciados[0] ?? null);
+    $denunciante = ($prop->denunciantes[0] ?? null);
 
-    // Nombre completo helpers
-    $nombreDenunciante = $denunciante
-        ? trim(($denunciante->denunciante_nombres ?? '').' '.($denunciante->denunciante_paterno ?? '').' '.($denunciante->denunciante_materno ?? ''))
-        : null;
+    // nombres completos
+    $denunciadoNombre = $denunciado
+      ? trim(($denunciado->denunciado_nombres ?? '').' '.($denunciado->denunciado_paterno ?? '').' '.($denunciado->denunciado_materno ?? ''))
+      : null;
+    $denuncianteNombre = $denunciante
+      ? trim(($denunciante->denunciante_nombres ?? '').' '.($denunciante->denunciante_paterno ?? '').' '.($denunciante->denunciante_materno ?? ''))
+      : null;
 
-    $nombreDenunciado = $denunciado
-        ? trim(($denunciado->denunciado_nombres ?? '').' '.($denunciado->denunciado_paterno ?? '').' '.($denunciado->denunciado_materno ?? ''))
-        : null;
+    // domicilio/teléfono de referencia (tomamos del denunciante si no hay otros campos)
+    $domicilioRef = $denunciante->denunciante_domicilio_actual ?? null;
+    $telefonoRef  = $denunciante->denunciante_telefono ?? null;
+
+    // mapeos tipología (si tu caso usa violencia_* en raíz)
+    $viol_fis = $prop->violencia_fisica ?? 0;
+    $viol_ps  = $prop->violencia_psicologica ?? 0;
+    $viol_sex = $prop->violencia_sexual ?? 0;
+    $viol_econ= $prop->violencia_economica ?? 0;
 @endphp
 
 {{-- ====== CABECERA ====== --}}
@@ -64,52 +74,42 @@
     <tr>
         <th style="width:36%; text-align:center;">
             <div class="b">+SID</div>
-            <div class="small">Sistema de Información<br>de Defensorías</div>
+            <div class="small">Sistema<br>de Información<br>de Defensorías</div>
         </th>
         <th style="width:44%; text-align:center;">
             <div class="b upper" style="font-size:14px;">Registro de Atención y/o Denuncia</div>
         </th>
         <th style="width:20%;">
-            <div><span class="label">Fecha:</span> {{ $fmtDate($caso->fecha_apertura_caso ?? now()) }}</div>
-            <div><span class="label">Código:</span> {{ $v($caso->caso_numero ?? $caso->id) }}</div>
-            <div><span class="label">Nº Atención:</span> {{ $v($caso->id) }}</div>
+            <div><span class="label">Fecha:</span> {{ $fmtDate($prop->fecha_apertura_caso ?? now()) }}</div>
+            <div><span class="label">Código:</span> {{ $v($prop->caso_numero ?? $prop->id) }}</div>
+            <div><span class="label">Nro. Caso:</span> {{ $v($prop->caso_numero ?? $prop->id) }}</div>
         </th>
     </tr>
 </table>
 
 {{-- ====== 1. DATOS GENERALES ====== --}}
 <div class="section upper">1.- Datos Generales</div>
-<table class="table mb-3">
+<table class="table mb-2">
     <tr>
-        <th style="width:14%;">Principal :</th>
-        <td>{{ $v($caso->principal ?? $caso->tipo) }}</td>
-    </tr>
-    <tr>
-        <th>Lugar del hecho :</th>
-        <td>{{ $v($caso->caso_lugar_hecho) }}</td>
-    </tr>
-    <tr>
-        <th>Fecha del hecho :</th>
-        <td>{{ $fmtDate($caso->caso_fecha_hecho ?? '') }}</td>
+        <th style="width:22%;">U.E. / Colegio :</th>
+        <td>{{ $v($prop->ue_colegio ?? '') }}</td>
     </tr>
 </table>
 
-{{-- ====== MENORES (mismo bloque/estilo) ====== --}}
+<div class="section upper">Datos Afectado(s) :</div>
 <table class="table mb-3">
     <tr>
         <th style="width:4%;">N°</th>
-        <th style="width:24%;">Nombres y Apellidos<br><span class="xs">(del menor)</span></th>
-        <th style="width:7%;">Gestante</th>
-        <th style="width:10%;">Edad</th>
-        <th style="width:8%;">Sexo</th>
-        <th style="width:8%;">C. Nac</th>
-        <th style="width:8%;">Estudia</th>
-        <th style="width:11%;">Último curso</th>
-        <th style="width:20%;">Tipo de trabajo</th>
+        <th style="width:28%;">Nombres y Apellidos</th>
+        <th style="width:16%;">EDAD</th>
+        <th style="width:10%;">SEXO</th>
+        <th style="width:10%;">C. Nac</th>
+        <th style="width:10%;">ESTUDIA</th>
+        <th style="width:12%;">ÚLTIMO CURSO</th>
+        <th style="width:10%;">TIPO DE TRABAJO</th>
     </tr>
-    @forelse($caso->menores as $i => $m)
+    @forelse($menores as $i => $m)
         @php
-            // Soporte flexible de campos posibles
             $nomMenor = $m->nombre ?? trim(($m->nombres ?? '').' '.($m->paterno ?? '').' '.($m->materno ?? ''));
             $edadA = $m->edad_anios ?? $m->edad ?? null;
             $edadM = $m->edad_meses ?? null;
@@ -118,17 +118,13 @@
         <tr>
             <td class="text-center">{{ $i+1 }}</td>
             <td>{{ $v($nomMenor) }}</td>
-            <td class="text-center">
-                <span class="box">{{ $x($m->gestante_si ?? 0) }}</span> <span class="xs">SI</span>
-                <span class="box">{{ $x(isset($m->gestante_no) ? $m->gestante_no : (empty($m->gestante_si) ? 1:0)) }}</span> <span class="xs">NO</span>
-            </td>
             <td>
                 <div><span class="xs">AÑOS:</span> {{ $v($edadA) }}</div>
                 <div><span class="xs">MESES:</span> {{ $v($edadM) }}</div>
             </td>
             <td class="text-center">
-                <span class="box">{{ ($sexo==='M') ? 'X' : '' }}</span> <span class="xs">M</span>
                 <span class="box">{{ ($sexo==='F') ? 'X' : '' }}</span> <span class="xs">F</span>
+                <span class="box">{{ ($sexo==='M') ? 'X' : '' }}</span> <span class="xs">M</span>
             </td>
             <td class="text-center">
                 <span class="box">{{ $x($m->cert_nac ?? 0) }}</span> <span class="xs">SI</span>
@@ -142,22 +138,40 @@
             <td>{{ $v($m->tipo_trabajo ?? '') }}</td>
         </tr>
     @empty
-        <tr><td colspan="9" class="text-center muted">— Sin menores registrados —</td></tr>
+        @for($i=1;$i<=3;$i++)
+            <tr>
+                <td class="text-center">{{ $i }}</td>
+                <td>—</td><td>—</td>
+                <td class="text-center">
+                    <span class="box"></span> <span class="xs">F</span>
+                    <span class="box"></span> <span class="xs">M</span>
+                </td>
+                <td class="text-center">
+                    <span class="box"></span> <span class="xs">SI</span>
+                    <span class="box"></span> <span class="xs">NO</span>
+                </td>
+                <td class="text-center">
+                    <span class="box"></span> <span class="xs">SI</span>
+                    <span class="box"></span> <span class="xs">NO</span>
+                </td>
+                <td>—</td><td>—</td>
+            </tr>
+        @endfor
     @endforelse
 </table>
 
 <table class="table mb-4">
     <tr>
-        <th style="width:12%;">Domicilio:</th>
-        <td style="width:58%">{{ $v($domicilio) }}</td>
-        <th style="width:12%;">Teléfono:</th>
-        <td style="width:18%">{{ $v($telefono) }}</td>
+        <th style="width:14%;">Domicilio:</th>
+        <td style="width:56%">{{ $v($domicilioRef) }}</td>
+        <th style="width:16%;">Teléfono de Ref.:</th>
+        <td style="width:14%">{{ $v($telefonoRef) }}</td>
     </tr>
 </table>
 
 {{-- ====== 3. DATOS DEL GRUPO FAMILIAR ====== --}}
 <div class="section upper">3.- Datos del Grupo Familiar</div>
-<table class="table mb-4">
+<table class="table mb-6">
     <tr>
         <th style="width:6%;">N°</th>
         <th style="width:34%;">Nombres y Apellidos</th>
@@ -167,10 +181,10 @@
         <th style="width:14%;">G. Instrucción</th>
         <th style="width:12%;">Ocupación</th>
     </tr>
-    @forelse($caso->familiares as $i => $f)
+    @forelse($familiares as $i => $f)
         @php
             $nombreFam = $f->familiar_nombre_completo
-                ?? trim(($f->familiar_nombres ?? '').' '.($f->familiar_paterno ?? '').' '.($f->familiar_materno ?? ''));
+              ?? trim(($f->familiar_nombres ?? '').' '.($f->familiar_paterno ?? '').' '.($f->familiar_materno ?? ''));
         @endphp
         <tr>
             <td class="text-center">{{ $i+1 }}</td>
@@ -182,80 +196,123 @@
             <td>{{ $v($f->familiar_ocupacion ?? '') }}</td>
         </tr>
     @empty
-        <tr><td colspan="7" class="text-center muted">— Sin familiares registrados —</td></tr>
+        @for($i=1;$i<=3;$i++)
+            <tr>
+                <td class="text-center">{{ $i }}</td>
+                <td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>
+            </tr>
+        @endfor
     @endforelse
 </table>
 
-{{-- ====== 5. DATOS DEL DENUNCIADO (primer denunciado para mantener el formato) ====== --}}
-<div class="section upper">5.- Datos del Denunciado</div>
+<div class="page-break"></div>
+
+{{-- ====== 5. DATOS DEL DENUNCIADO ====== --}}
+<div class="section upper">5.- Datos del Denunciado <span class="small muted">(Especificar la institución si corresponde)</span></div>
 <table class="table mb-4">
     <tr>
-        <th style="width:24%;">Nombres y Apellidos</th>
-        <td style="width:40%">{{ $v($nombreDenunciado) }}</td>
-        <th style="width:8%;">Sexo</th>
-        <td style="width:8%">{{ $v($denunciado->denunciado_sexo ?? '') }}</td>
-        <th style="width:8%;">Edad</th>
-        <td style="width:12%">{{ $v($denunciado->denunciado_edad ?? '') }}</td>
+        <th style="width:22%;">Nombres y Apellidos</th>
+        <td style="width:78%">{{ $v($denunciadoNombre) }}</td>
     </tr>
     <tr>
-        <th>Parentesco o tipo de relación</th>
+        <th>Sexo:</th>
+        <td>{{ $v($denunciado->denunciado_sexo ?? '') }}</td>
+    </tr>
+    <tr>
+        <th>Parentesco o tipo de relación:</th>
         <td>{{ $v($denunciado->denunciado_relacion ?? '') }}</td>
-        <th>C.I.</th>
-        <td colspan="3">{{ $v(($denunciado->denunciado_documento ?? '').' '.($denunciado->denunciado_nro ?? '')) }}</td>
     </tr>
     <tr>
-        <th>Domicilio (zona/comunidad)</th>
+        <th>C.I.:</th>
+        <td>{{ $v(($denunciado->denunciado_documento ?? '').' '.($denunciado->denunciado_nro ?? '')) }}</td>
+    </tr>
+    <tr>
+        <th>Domicilio (zona/comunidad):</th>
         <td>{{ $v($denunciado->denunciado_domicilio_actual ?? '') }}</td>
-        <th>Teléfono</th>
+    </tr>
+    <tr>
+        <th>Teléfono:</th>
         <td>{{ $v($denunciado->denunciado_telefono ?? '') }}</td>
-        <th>Lugar de Trabajo</th>
+    </tr>
+    <tr>
+        <th>Lugar de Trabajo:</th>
         <td>{{ $v($denunciado->denunciado_lugar_trabajo ?? '') }}</td>
     </tr>
     <tr>
-        <th>Ocupación</th>
-        <td colspan="5">{{ $v($denunciado->denunciado_ocupacion ?? '') }}</td>
+        <th>Ocupación:</th>
+        <td>{{ $v($denunciado->denunciado_ocupacion ?? '') }}</td>
     </tr>
 </table>
 
-{{-- ====== DATOS DEL DENUNCIANTE (primer denunciante para mantener el formato) ====== --}}
-<div class="section upper">Datos del Denunciante</div>
-<table class="table mb-4">
+{{-- ====== DATOS DEL DENUNCIANTE ====== --}}
+<div class="section upper">Datos del Denunciante <span class="small muted">(Especificar la institución si corresponde)</span></div>
+<table class="table mb-6">
     <tr>
-        <th style="width:24%;">Nombre y Apellido</th>
-        <td style="width:40%">{{ $v($nombreDenunciante) }}</td>
-        <th style="width:8%;">Sexo</th>
-        <td style="width:8%">{{ $v($denunciante->denunciante_sexo ?? '') }}</td>
-        <th style="width:8%;">Edad</th>
-        <td style="width:12%">{{ $v($denunciante->denunciante_edad ?? '') }}</td>
+        <th style="width:22%;">Nombre y Apellido</th>
+        <td style="width:78%">{{ $v($denuncianteNombre) }}</td>
     </tr>
     <tr>
-        <th>C.I.</th>
-        <td>{{ $v(($denunciante->denunciante_documento ?? '').' '.($denunciante->denunciante_nro ?? '')) }}</td>
-        <th>Domicilio</th>
-        <td colspan="3">{{ $v($denunciante->denunciante_domicilio_actual ?? '') }}</td>
+        <th>Sexo:</th>
+        <td>{{ $v($denunciante->denunciante_sexo ?? '') }}</td>
     </tr>
     <tr>
-        <th>Teléfono</th>
+        <th>Parentesco tipo:</th>
+        <td>{{ $v($denunciante->denunciante_relacion ?? '') }}</td>
+    </tr>
+    <tr>
+        <th>Domicilio:</th>
+        <td>{{ $v($denunciante->denunciante_domicilio_actual ?? '') }}</td>
+    </tr>
+    <tr>
+        <th>Teléfono:</th>
         <td>{{ $v($denunciante->denunciante_telefono ?? '') }}</td>
-        <th>Lugar de Trabajo</th>
+    </tr>
+    <tr>
+        <th>C.I.:</th>
+        <td>{{ $v(($denunciante->denunciante_documento ?? '').' '.($denunciante->denunciante_nro ?? '')) }}</td>
+    </tr>
+    <tr>
+        <th>Lugar de Trabajo:</th>
         <td>{{ $v($denunciante->denunciante_lugar_trabajo ?? '') }}</td>
-        <th>Ocupación</th>
+    </tr>
+    <tr>
+        <th>Ocupación:</th>
         <td>{{ $v($denunciante->denunciante_ocupacion ?? '') }}</td>
     </tr>
 </table>
 
 {{-- ====== 6. DESCRIPCIÓN DE LA DENUNCIA ====== --}}
 <div class="section upper">6.- Descripción de la denuncia</div>
-<table class="table mb-6">
+<table class="table mb-4">
     <tr>
-        <td style="height:160px;">
-            {!! nl2br(e($caso->caso_descripcion ?? '')) !!}
+        <td style="height:200px;">
+            {!! nl2br(e($prop->caso_descripcion ?? '')) !!}
+        </td>
+    </tr>
+</table>
+
+{{-- ====== TIPOLOGÍA DE VIOLENCIA ====== --}}
+<table class="table mb-4">
+    <tr>
+        <th>Tipología de violencia:</th>
+    </tr>
+    <tr>
+        <td>
+            <div class="small">
+                PSICOLÓGICA <span class="box">{{ $x($viol_ps) }}</span> ·
+                FÍSICA <span class="box">{{ $x($viol_fis) }}</span> ·
+                SEXUAL <span class="box">{{ $x($viol_sex) }}</span> ·
+                ECONÓMICA <span class="box">{{ $x($viol_econ) }}</span> ·
+                VERBAL · BULLYING · VIOLENCIA DE GÉNERO ·
+                VIOLENCIA DE DISCRIMINACIÓN · VIOLENCIA CIBERNÉTICA ·
+                OTRO: __________________________
+            </div>
         </td>
     </tr>
 </table>
 
 {{-- ====== FIRMAS ====== --}}
-<table class="table no-border">
+<table class="table no-border mb-3">
     <tr>
         <td style="width:50%; padding-right:20px;">
             <div class="hr"></div>
@@ -272,7 +329,7 @@
     </tr>
 </table>
 
-<table class="table no-border" style="margin-top:26px;">
+<table class="table no-border">
     <tr>
         <td style="width:50%; padding-right:20px;">
             <div class="small b">ABOGADO ASIGNADO AL CASO:</div>
@@ -285,6 +342,10 @@
         </td>
     </tr>
 </table>
+
+<div class="small" style="margin-top:14px;">
+    <b>PSICÓLOGO ASIGNADO :</b> {{ optional($prop->psicologica_user)->name ?? '—' }}
+</div>
 
 </body>
 </html>

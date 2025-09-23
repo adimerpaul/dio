@@ -418,6 +418,45 @@ class CasoController extends Controller
             $filename = 'DNA_Caso_' . $caso->id . '.pdf';
             return $download ? $pdf->download($filename) : $pdf->stream($filename);
         }
+        if ($caso->tipo == 'SLAM') {
+            $caso = Caso::with(['denunciantes', 'denunciados', 'familiares', 'menores', 'psicologica_user:id,name', 'trabajo_social_user:id,name', 'legal_user:id,name', 'user:id,name'])->find($caso->id);
+            $pdf = Pdf::loadView('pdf.slam.pdf', [
+                'caso' => $caso,
+            ])->setPaper('A4', 'portrait');
+            // Para acentos: usar DejaVu Sans
+            $pdf->getDomPDF()->getOptions()->set('defaultFont', 'DejaVu Sans');
+            // ?download=1 para descargar, 0 para ver en el navegador
+            $download = (int)$request->query('download', 0) === 1;
+            $filename = 'DNA_Caso_' . $caso->id . '.pdf';
+            return $download ? $pdf->download($filename) : $pdf->stream($filename);
+        }
+//        umadis
+//        Propremis
+        if ($caso->tipo == 'UMADIS') {
+            $caso = Caso::with(['denunciantes', 'denunciados', 'familiares', 'menores', 'psicologica_user:id,name', 'trabajo_social_user:id,name', 'legal_user:id,name', 'user:id,name'])->find($caso->id);
+            $pdf = Pdf::loadView('pdf.umadi.pdf', [
+                'caso' => $caso,
+            ])->setPaper('A4', 'portrait');
+            // Para acentos: usar DejaVu Sans
+            $pdf->getDomPDF()->getOptions()->set('defaultFont', 'DejaVu Sans');
+            // ?download=1 para descargar, 0 para ver en el navegador
+            $download = (int)$request->query('download', 0) === 1;
+            $filename = 'UMADIS_Caso_' . $caso->id . '.pdf';
+            return $download ? $pdf->download($filename) : $pdf->stream($filename);
+        }
+
+        if ($caso->tipo == 'PROPREMI') {
+            $caso = Caso::with(['denunciantes', 'denunciados', 'familiares', 'menores', 'psicologica_user:id,name', 'trabajo_social_user:id,name', 'legal_user:id,name', 'user:id,name'])->find($caso->id);
+            $pdf = Pdf::loadView('pdf.propremi.pdf', [
+                'caso' => $caso,
+            ])->setPaper('A4', 'portrait');
+            // Para acentos: usar DejaVu Sans
+            $pdf->getDomPDF()->getOptions()->set('defaultFont', 'DejaVu Sans');
+            // ?download=1 para descargar, 0 para ver en el navegador
+            $download = (int)$request->query('download', 0) === 1;
+            $filename = 'PROPREMIS_Caso_' . $caso->id . '.pdf';
+            return $download ? $pdf->download($filename) : $pdf->stream($filename);
+        }
     }
     /**
      * GET /casos?q=texto&page=1&per_page=10

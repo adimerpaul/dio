@@ -1,272 +1,237 @@
-<!doctype html>
+{{-- resources/views/pdf/umadis/pdf.blade.php --}}
+    <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <title>UMADIS – Registro de Denuncias</title>
+    <title>UMADIS · Registro de Denuncias</title>
     <style>
-        @page { margin: 16mm 14mm 18mm 14mm; }
-        * { font-family: DejaVu Sans, sans-serif; color:#222; }
-        body { font-size: 12px; }
-        .w-100{width:100%} .b{font-weight:700} .upper{text-transform:uppercase}
-        .muted{color:#555} .small{font-size:11px} .xs{font-size:10px}
-        .text-center{text-align:center} .text-right{text-align:right}
-        .mb-4{margin-bottom:12px} .mb-6{margin-bottom:18px}
-        .table{width:100%; border-collapse:collapse}
-        .table th,.table td{border:1px solid #444; padding:5px 6px; vertical-align:top}
-        .table th{background:#f6f6f6}
-        .grid td{padding:6px 6px}
-        .section{font-weight:700; margin:10px 0 6px}
-        .logos td{border:none}
-        .box{display:inline-block; width:12px; height:12px; border:1px solid #444; line-height:12px; text-align:center; font-weight:700}
-        .line{height:22px; border:1px solid #444}
-        .sign{height:70px}
+        /* Dompdf usa el font que le pases desde el controller (DejaVu Sans recomendado) */
+        *{ box-sizing: border-box; }
+        body{ font-family: DejaVu Sans, sans-serif; font-size: 12px; color:#111; }
+        h1,h2,h3{ margin:0 0 6px 0; }
+        .mb-2{ margin-bottom:8px; } .mb-3{ margin-bottom:12px; } .mb-4{ margin-bottom:16px; }
+        .fw-700{ font-weight:700; } .ta-c{ text-align:center; } .ta-r{ text-align:right; }
+        .small{ font-size: 11px; } .xs{ font-size:10px; }
+        table{ border-collapse: collapse; width:100%; }
+        th,td{ padding:6px 8px; vertical-align: top; }
+        .b{ border:1px solid #000; } .bt{ border-top:1px solid #000; } .bb{ border-bottom:1px solid #000; }
+        .bl{ border-left:1px solid #000; } .br{ border-right:1px solid #000; }
+        .section-title{ background:#eee; border:1px solid #000; padding:6px 8px; font-weight:700; }
+        .row{ display:flex; gap:8px; } .col{ flex:1; }
+        .box{ border:1px solid #000; padding:6px 8px; }
+        .line{ height:24px; border:1px solid #000; }
+        .label{ color:#444; font-weight:700; }
+        .hr{ height:1px; background:#000; margin:8px 0; }
+        .muted{ color:#555; }
     </style>
 </head>
 <body>
 @php
-    $v = fn($x) => (isset($x) && $x !== '') ? $x : '—';
-    $d = fn($x) => ($x ? \Illuminate\Support\Carbon::parse($x)->format('d/m/Y') : '—');
-    $siNo = fn($b) => ($b===1 || $b===true || $b==='1') ? 'SI' : 'NO';
-    $logoLeft  = public_path('img/escudo_gob.png');   // opcional
-    $logoRight = public_path('img/logo_muni.png');    // opcional
+    $den = optional($caso->denunciantes->first());
+    $denuNombre = trim(($den->denunciante_nombres ?? '').' '.($den->denunciante_paterno ?? '').' '.($den->denunciante_materno ?? ''));
+    $denun = optional($caso->denunciados->first());
+    $denunNombre = trim(($denun->denunciado_nombres ?? '').' '.($denun->denunciado_paterno ?? '').' '.($denun->denunciado_materno ?? ''));
+    $familiares = $caso->familiares ?? collect();
+    function v($x){ return ($x!==null && $x!=='') ? $x : '—'; }
 @endphp
 
-    <!-- ====== ENCABEZADO ====== -->
-<table class="w-100 logos" style="margin-bottom:6px;">
+{{-- ENCABEZADO --}}
+<table class="mb-4">
     <tr>
-        <td style="width:18%; text-align:left;">
-            @if(is_file($logoLeft)) <img src="{{ $logoLeft }}" style="height:48px;"> @endif
+        <td class="b" style="width:70%;padding:10px">
+            <div class="fw-700" style="font-size:16px">SERVICIO LEGAL INTEGRAL MUNICIPAL (UMADIS)</div>
+            <div class="fw-700" style="font-size:15px">REGISTRO DE DENUNCIAS</div>
+            <div class="small muted">Zona / Módulo: <b>{{ v($caso->zona ?: $caso->area) }}</b></div>
         </td>
-        <td style="width:64%; text-align:center;">
-            <div class="b upper" style="font-size:14px;">SERVICIO LEGAL INTEGRAL MUNICIPAL (UMADIS)</div>
-            <div class="b upper" style="font-size:14px;">REGISTRO DE DENUNCIAS</div>
-        </td>
-        <td style="width:18%; text-align:right;">
-            @if(is_file($logoRight)) <img src="{{ $logoRight }}" style="height:48px;"> @endif
+        <td class="b" style="width:30%;padding:10px">
+            <div><span class="label">Caso N°:</span> <b>{{ v($caso->caso_numero) }}</b></div>
+            <div><span class="label">Fecha de registro:</span> {{ v(optional($caso->caso_fecha_hecho)->format('Y-m-d') ?? $caso->caso_fecha_hecho) }}</div>
+            <div><span class="label">Registrado por:</span> {{ optional($caso->user)->name }}</div>
         </td>
     </tr>
 </table>
 
-<table class="table mb-4">
+{{-- 1) NOMBRE DEL DENUNCIANTE --}}
+<div class="section-title">1.- Nombre del/la Denunciante</div>
+<div class="box mb-3">{{ v($denuNombre) }}</div>
+
+{{-- 2) DATOS DEL/LA DENUNCIANTE --}}
+<div class="section-title">2.- Datos del/la Denunciante</div>
+<table class="b mb-3">
     <tr>
-        <td style="width:30%"><span class="b">Fecha de registro:</span> {{ $d($umadi->fecha_registro) }}</td>
-        <td style="width:20%"><span class="b">Área:</span> {{ $v($umadi->area) }}</td>
-        <td style="width:20%"><span class="b">Zona/Módulo:</span> {{ $v($umadi->zona) }}</td>
-        <td style="width:30%" class="text-right"><span class="b">CASO:</span> <span class="b">{{ $v($umadi->numero_caso) }}</span></td>
+        <td class="b" style="width:34%">
+            <div class="label">2.1 Identificación</div>
+            <div>Nombre(s): {{ v($den->denunciante_nombres) }}</div>
+            <div>Ap. Paterno: {{ v($den->denunciante_paterno) }}</div>
+            <div>Ap. Materno: {{ v($den->denunciante_materno) }}</div>
+        </td>
+        <td class="b" style="width:33%">
+            <div class="label">2.2 Documento de identidad</div>
+            <div>{{ v($den->denunciante_documento) }} &nbsp; N° {{ v($den->denunciante_nro) }}</div>
+            <div class="label">2.3 Sexo</div>
+            <div>{{ v($den->denunciante_sexo) }}</div>
+            <div class="label">2.4 Lugar de nacimiento</div>
+            <div>{{ v($den->denunciante_lugar_nacimiento) }}</div>
+        </td>
+        <td class="b" style="width:33%">
+            <div class="label">2.5 Fecha de nacimiento</div>
+            <div>{{ v($den->denunciante_fecha_nacimiento) }}</div>
+            <div class="label">2.6 Edad</div>
+            <div>{{ v($den->denunciante_edad) }}</div>
+            <div class="label">2.7 Residencia habitual</div>
+            <div>{{ v($den->denunciante_residencia) }}</div>
+        </td>
+    </tr>
+    <tr>
+        <td class="b">
+            <div class="label">2.8 Estado civil</div>
+            <div>{{ v($den->denunciante_estado_civil) }}</div>
+            <div class="label">2.9 Relación con el denunciado</div>
+            <div>{{ v($den->denunciante_relacion) }}</div>
+        </td>
+        <td class="b">
+            <div class="label">2.10 Grado de instrucción</div>
+            <div>{{ v($den->denunciante_grado) }}</div>
+            <div class="label">2.11 Ocupación</div>
+            <div>{{ v($den->denunciante_ocupacion) }}</div>
+        </td>
+        <td class="b">
+            <div class="label">2.12 Trabaja</div>
+            <div>{{ ($den->denunciante_trabaja ?? false) ? 'SI' : 'NO' }}</div>
+            <div class="label">2.13 Idioma</div>
+            <div>{{ v($den->denunciante_idioma) }}</div>
+        </td>
+    </tr>
+    <tr>
+        <td class="b">
+            <div class="label">2.14 Teléfonos de referencia</div>
+            <div>{{ v($den->denunciante_telefono) }}</div>
+        </td>
+        <td class="b" colspan="2">
+            <div class="label">2.15 Domicilio actual</div>
+            <div>{{ v($den->denunciante_domicilio_actual) }}</div>
+        </td>
     </tr>
 </table>
 
-<!-- ====== 1. NOMBRE DEL DENUNCIANTE ====== -->
-<div class="section upper">1.- Nombre del Denunciante</div>
-<table class="table grid mb-4">
+{{-- 3) GRUPO FAMILIAR --}}
+<div class="section-title">3.- Grupo familiar</div>
+<table class="b mb-3">
+    <thead>
     <tr>
-        <th style="width:34%">Nombre(s)</th>
-        <th style="width:33%">Ap. Paterno</th>
-        <th style="width:33%">Ap. Materno</th>
+        <th class="b">N°</th>
+        <th class="b">Nombres y Apellidos</th>
+        <th class="b">Edad</th>
+        <th class="b">Parentesco</th>
+        <th class="b">Estado civil</th>
+        <th class="b">Ocupación</th>
+        <th class="b">Celular</th>
     </tr>
-    <tr>
-        <td>{{ $v($umadi->nombres) }}</td>
-        <td>{{ $v($umadi->paterno) }}</td>
-        <td>{{ $v($umadi->materno) }}</td>
-    </tr>
-</table>
-
-<!-- ====== 2. DATOS DEL DENUNCIANTE ====== -->
-<div class="section upper">2.- Datos del Denunciante</div>
-
-<table class="table grid mb-4">
-    <tr>
-        <th style="width:26%">2.1 Documento</th>
-        <th style="width:14%">Nro.</th>
-        <th style="width:14%">2.3 Sexo</th>
-        <th style="width:22%">2.4 Lugar de nacimiento</th>
-        <th style="width:24%">2.5 Fecha de nacimiento</th>
-    </tr>
-    <tr>
-        <td>{{ $v($umadi->tipo_documento) }}</td>
-        <td>{{ $v($umadi->numero_documento) }}</td>
-        <td>{{ $v($umadi->sexo) }}</td>
-        <td>{{ $v($umadi->lugar_nacimiento) }}</td>
-        <td>{{ $d($umadi->fecha_nacimiento) }}</td>
-    </tr>
-</table>
-
-<table class="table grid mb-4">
-    <tr>
-        <th style="width:10%">2.6 Edad</th>
-        <th style="width:32%">2.7 Residencia habitual</th>
-        <th style="width:16%">2.8 Estado civil</th>
-        <th style="width:22%">2.9 Relación con el denunciado</th>
-        <th style="width:20%">2.10 Grado de instrucción</th>
-    </tr>
-    <tr>
-        <td>{{ $v($umadi->edad) }}</td>
-        <td>{{ $v($umadi->direccion) }}</td>
-        <td>{{ $v($umadi->estado_civil) }}</td>
-        <td>{{ $v($umadi->relacion_denunciado) }}</td>
-        <td>{{ $v($umadi->grado_instruccion) }}</td>
-    </tr>
-</table>
-
-<table class="table grid mb-4">
-    <tr>
-        <th style="width:12%">2.11 Trabaja</th>
-        <th style="width:28%">Ocupación</th>
-        <th style="width:15%">Aprox.</th>
-        <th style="width:15%">Exacto</th>
-        <th style="width:30%">2.13 Idioma</th>
-    </tr>
-    <tr>
-        <td>{{ $siNo($umadi->trabaja) }}</td>
-        <td>{{ $v($umadi->ocupacion) }}</td>
-        <td>{{ $v($umadi->edad_aprox) }}</td>
-        <td>{{ $v($umadi->edada_exacto) }}</td>
-        <td>{{ $v($umadi->idioma) }}</td>
-    </tr>
-</table>
-
-<table class="table grid mb-4">
-    <tr>
-        <th colspan="2" style="width:50%">2.14 Teléfonos de referencia</th>
-        <th style="width:50%">2.15 Domicilio actual</th>
-    </tr>
-    <tr>
-        <td style="width:25%">L. fija 1: {{ $v($umadi->telefono_fijo1) }}</td>
-        <td style="width:25%">L. fija 2 / Esposo(a): {{ $v($umadi->telefono_fijo2) }}</td>
-        <td rowspan="2">{{ $v($umadi->direccion_actual) }}</td>
-    </tr>
-    <tr>
-        <td>Móvil 1: {{ $v($umadi->celular1) }}</td>
-        <td>Móvil 2: {{ $v($umadi->celular2) }}</td>
-    </tr>
-</table>
-
-<!-- ====== 3. GRUPO FAMILIAR ====== -->
-<div class="section upper">3.- Grupo Familiar</div>
-<table class="table grid mb-6">
-    <tr>
-        <th style="width:44%">Nombres y apellidos</th>
-        <th style="width:10%">Edad</th>
-        <th style="width:18%">Parentesco</th>
-        <th style="width:10%">Sexo</th>
-        <th style="width:18%">Celular / Teléfono</th>
-    </tr>
-    @forelse($umadi->familiares as $f)
+    </thead>
+    <tbody>
+    @forelse($familiares as $i=>$f)
         <tr>
-            <td>{{ trim($v($f->nombre).' '.$v($f->paterno).' '.$v($f->materno)) }}</td>
-            <td>{{ $v($f->edad) }}</td>
-            <td>{{ $v($f->parentesco) }}</td>
-            <td>{{ $v($f->sexo) }}</td>
-            <td>{{ $v($f->telefono) }}</td>
+            <td class="b" style="text-align:center">{{ $i+1 }}</td>
+            <td class="b">
+                {{ trim(($f->familiar_nombres ?? '').' '.($f->familiar_paterno ?? '').' '.($f->familiar_materno ?? '')) ?: '—' }}
+            </td>
+            <td class="b" style="text-align:center">{{ v($f->familiar_edad) }}</td>
+            <td class="b">{{ v($f->familiar_parentesco) }}</td>
+            <td class="b">{{ v($f->familiar_estado_civil) }}</td>
+            <td class="b">{{ v($f->familiar_ocupacion) }}</td>
+            <td class="b">{{ v($f->familiar_telefono) }}</td>
         </tr>
     @empty
-        <tr><td colspan="5" class="text-center muted">— Sin familiares —</td></tr>
+        <tr><td class="b" colspan="7" style="text-align:center">Sin registros</td></tr>
     @endforelse
+    </tbody>
 </table>
 
-<!-- ====== 4. DATOS DE LA PERSONA DENUNCIADA ====== -->
-<div class="section upper">4.- Datos de la Persona Denunciada</div>
-
-<table class="table grid mb-4">
+{{-- 4) DATOS DE LA PERSONA DENUNCIADA --}}
+<div class="section-title">4.- Datos de la persona denunciada</div>
+<table class="b mb-3">
     <tr>
-        <th style="width:34%">4.1 Nombre(s)</th>
-        <th style="width:33%">Ap. Paterno</th>
-        <th style="width:33%">Ap. Materno</th>
+        <td class="b" style="width:34%">
+            <div class="label">4.1 Identificación</div>
+            <div>Nombre(s): {{ v($denun->denunciado_nombres) }}</div>
+            <div>Ap. Paterno: {{ v($denun->denunciado_paterno) }}</div>
+            <div>Ap. Materno: {{ v($denun->denunciado_materno) }}</div>
+        </td>
+        <td class="b" style="width:33%">
+            <div class="label">4.2 Documento de identidad</div>
+            <div>{{ v($denun->denunciado_documento) }} &nbsp; N° {{ v($denun->denunciado_nro) }}</div>
+            <div class="label">4.3 Sexo</div>
+            <div>{{ v($denun->denunciado_sexo) }}</div>
+            <div class="label">4.4 Lugar de nacimiento</div>
+            <div>{{ v($denun->denunciado_lugar_nacimiento) }}</div>
+        </td>
+        <td class="b" style="width:33%">
+            <div class="label">4.5 Fecha de nacimiento</div>
+            <div>{{ v($denun->denunciado_fecha_nacimiento) }}</div>
+            <div class="label">4.6 Edad</div>
+            <div>{{ v($denun->denunciado_edad) }}</div>
+            <div class="label">4.7 Idioma</div>
+            <div>{{ v($denun->denunciado_idioma) }}</div>
+        </td>
     </tr>
     <tr>
-        <td>{{ $v($umadi->denunciado_nombres) }}</td>
-        <td>{{ $v($umadi->denunciado_paterno) }}</td>
-        <td>{{ $v($umadi->denunciado_materno) }}</td>
-    </tr>
-</table>
-
-<table class="table grid mb-4">
-    <tr>
-        <th style="width:18%">4.2 C.I.</th>
-        <th style="width:16%">4.3 Sexo</th>
-        <th style="width:22%">4.4 Lugar de nacimiento</th>
-        <th style="width:22%">4.5 Fecha de nacimiento</th>
-        <th style="width:10%">4.6 Edad</th>
-        <th style="width:12%">4.7 Idioma</th>
+        <td class="b">
+            <div class="label">4.8 Grado de instrucción</div>
+            <div>{{ v($denun->denunciado_grado) }}</div>
+        </td>
+        <td class="b">
+            <div class="label">4.9 Ocupación</div>
+            <div>{{ v($denun->denunciado_ocupacion) }}</div>
+        </td>
+        <td class="b">
+            <div class="label">4.10 Ingreso económico</div>
+            <div>{{ v($denun->denunciado_prox) }}</div>
+        </td>
     </tr>
     <tr>
-        <td>{{ $v($umadi->denunciado_ci) }}</td>
-        <td>{{ $v($umadi->denunciado_sexo) }}</td>
-        <td>{{ $v($umadi->denunciado_lugar_nacimiento ?: $umadi->denunciado_ciudad_nacimiento) }}</td>
-        <td>{{ $d($umadi->denunciado_fecha_nacimiento) }}</td>
-        <td>{{ $v($umadi->denunciado_edad) }}</td>
-        <td>{{ $v($umadi->denunciado_idioma) }}</td>
-    </tr>
-</table>
-
-<table class="table grid mb-4">
-    <tr>
-        <th style="width:26%">4.8 Grado de instrucción</th>
-        <th style="width:26%">4.9 Ocupación</th>
-        <th style="width:48%">4.10 Ingreso económico</th>
-    </tr>
-    <tr>
-        <td>{{ $v($umadi->denunciado_grado_instruccion) }}</td>
-        <td>{{ $v($umadi->denunciado_ocupacion) }}</td>
-        <td></td>
-    </tr>
-</table>
-
-<table class="table grid mb-4">
-    <tr>
-        <th style="width:32%">4.11 Relación con la denunciante</th>
-        <th style="width:68%">Dirección actual</th>
-    </tr>
-    <tr>
-        <td>{{ $v($umadi->relacion_denunciante) }}</td>
-        <td>{{ $v($umadi->denunciado_direccion_actual ?: $umadi->denunciado_direccion) }}</td>
-    </tr>
-</table>
-
-<!-- ====== 5. BREVE CIRCUNSTANCIA ====== -->
-<div class="section upper">5.- Breve circunstancia del hecho o denuncia</div>
-<table class="table grid mb-4">
-    <tr>
-        <td style="height:140px;">
-            {!! nl2br(e($umadi->descripcion_hecho ?? '')) !!}
+        <td class="b">
+            <div class="label">4.11 Relación con la denunciante</div>
+            <div>{{ v($denun->denunciado_relacion) }}</div>
+        </td>
+        <td class="b" colspan="2">
+            <div class="label">Dirección actual</div>
+            <div>{{ v($denun->denunciado_domicilio_actual) }}</div>
         </td>
     </tr>
 </table>
 
-<!-- ====== 6. TIPOLOGÍA DEL HECHO PRINCIPAL ====== -->
-<div class="section upper">6.- Tipología del Hecho Principal</div>
-<div class="line mb-6"></div>
+{{-- 5) BREVE CIRCUNSTANCIA DEL HECHO --}}
+<div class="section-title">5.- Breve circunstancia del hecho o denuncia</div>
+<div class="box mb-3" style="min-height:90px">{{ v($caso->caso_descripcion) }}</div>
 
-<!-- ====== SEGUIMIENTO DEL CASO ====== -->
-<div class="section upper">Seguimiento del caso</div>
-<table class="table grid mb-6">
+{{-- 6) TIPOLOGÍA DEL HECHO PRINCIPAL --}}
+<div class="section-title">6.- Tipología del hecho principal</div>
+<div class="box mb-4" style="min-height:36px">{{ v($caso->principal ?: $caso->caso_tipologia) }}</div>
+
+{{-- 7) SEGUIMIENTO DEL CASO --}}
+<div class="section-title">Seguimiento del caso</div>
+<table class="b">
     <tr>
-        <th style="width:33%">Área Psicológica</th>
-        <th style="width:33%">Área Social</th>
-        <th style="width:34%">Área Legal</th>
-    </tr>
-    <tr>
-        <td><span class="box">{{ $umadi->psicologica_user_id ? 'X' : '' }}</span>
-            <span class="small muted"> Responsable:</span> {{ $umadi->psicologica_user->name ?? '—' }}</td>
-        <td><span class="box">{{ $umadi->trabajo_social_user_id ? 'X' : '' }}</span>
-            <span class="small muted"> Responsable:</span> {{ $umadi->trabajo_social_user->name ?? '—' }}</td>
-        <td><span class="box">{{ $umadi->legal_user_id ? 'X' : '' }}</span>
-            <span class="small muted"> Responsable:</span> {{ $umadi->legal_user->name ?? '—' }}</td>
+        <td class="b" style="width:33%"><b>Área psicológica:</b> {{ optional($caso->psicologica_user)->name ?: '—' }}</td>
+        <td class="b" style="width:33%"><b>Área social:</b> {{ optional($caso->trabajo_social_user)->name ?: '—' }}</td>
+        <td class="b" style="width:34%"><b>Área legal:</b> {{ optional($caso->legal_user)->name ?: '—' }}</td>
     </tr>
 </table>
 
-<!-- ====== FIRMAS ====== -->
-<table class="w-100">
+<div class="mb-4"></div>
+
+{{-- Firmas --}}
+<table>
     <tr>
-        <td style="width:60%"></td>
-        <td class="text-center">
-            <div class="sign"></div>
-            <div class="xs">Firma del denunciante</div>
-            <div class="xs">{{ trim(($umadi->nombres ?? '').' '.($umadi->paterno ?? '').' '.($umadi->materno ?? '')) }}</div>
-            <div class="xs">Doc.: {{ $v($umadi->tipo_documento) }} {{ $v($umadi->numero_documento) }}</div>
+        <td class="ta-c">
+            <div class="hr"></div>
+            <div class="small">Firma / Huella del denunciante</div>
+        </td>
+        <td class="ta-c">
+            <div class="hr"></div>
+            <div class="small">Firma del Abogado (UMADIS)</div>
         </td>
     </tr>
 </table>
-
 </body>
 </html>

@@ -33,13 +33,30 @@
 </head>
 <body>
 @php
-    // helpers
-    $v = fn($x) => (isset($x) && $x !== '') ? $x : '—';
+    // Helpers seguros
+    $v = fn($x) => (isset($x) && $x !== '' && $x !== null) ? $x : '—';
     $x = fn($b) => ($b===1 || $b===true || $b==='1' || $b==='SI' || $b==='Si' || $b==='si') ? 'X' : '';
     $fmtDate = function($d) {
         try { return $d ? \Illuminate\Support\Carbon::parse($d)->format('d/m/Y') : '—'; }
         catch (\Throwable $e) { return $d ?: '—'; }
     };
+
+    // Tomamos primeros elementos cuando el diseño pide solo 1 registro
+    $denunciante = ($caso->denunciantes[0] ?? null);
+    $denunciado  = ($caso->denunciados[0] ?? null);
+
+    // Domicilio/Teléfono generales (se usa del denunciante si existe)
+    $domicilio = $denunciante->denunciante_domicilio_actual ?? null;
+    $telefono  = $denunciante->denunciante_telefono ?? null;
+
+    // Nombre completo helpers
+    $nombreDenunciante = $denunciante
+        ? trim(($denunciante->denunciante_nombres ?? '').' '.($denunciante->denunciante_paterno ?? '').' '.($denunciante->denunciante_materno ?? ''))
+        : null;
+
+    $nombreDenunciado = $denunciado
+        ? trim(($denunciado->denunciado_nombres ?? '').' '.($denunciado->denunciado_paterno ?? '').' '.($denunciado->denunciado_materno ?? ''))
+        : null;
 @endphp
 
 {{-- ====== CABECERA ====== --}}
@@ -53,9 +70,9 @@
             <div class="b upper" style="font-size:14px;">Registro de Atención y/o Denuncia</div>
         </th>
         <th style="width:20%;">
-            <div><span class="label">Fecha:</span> {{ $fmtDate($dna->fecha_atencion ?? now()) }}</div>
-            <div><span class="label">Código:</span> {{ $v($dna->codigo ?? $dna->id) }}</div>
-            <div><span class="label">Nº Atención:</span> {{ $v($dna->id) }}</div>
+            <div><span class="label">Fecha:</span> {{ $fmtDate($caso->fecha_apertura_caso ?? now()) }}</div>
+            <div><span class="label">Código:</span> {{ $v($caso->caso_numero ?? $caso->id) }}</div>
+            <div><span class="label">Nº Atención:</span> {{ $v($caso->id) }}</div>
         </th>
     </tr>
 </table>
@@ -65,11 +82,19 @@
 <table class="table mb-3">
     <tr>
         <th style="width:14%;">Principal :</th>
-        <td>{{ $v($dna->principal ?? $dna->tipo_proceso) }}</td>
+        <td>{{ $v($caso->principal ?? $caso->tipo) }}</td>
+    </tr>
+    <tr>
+        <th>Lugar del hecho :</th>
+        <td>{{ $v($caso->caso_lugar_hecho) }}</td>
+    </tr>
+    <tr>
+        <th>Fecha del hecho :</th>
+        <td>{{ $fmtDate($caso->caso_fecha_hecho ?? '') }}</td>
     </tr>
 </table>
 
-{{-- ====== MENORES (como en el bloque central de la planilla) ====== --}}
+{{-- ====== MENORES (mismo bloque/estilo) ====== --}}
 <table class="table mb-3">
     <tr>
         <th style="width:4%;">N°</th>
@@ -82,21 +107,28 @@
         <th style="width:11%;">Último curso</th>
         <th style="width:20%;">Tipo de trabajo</th>
     </tr>
-    @forelse($dna->menores as $i => $m)
+    @forelse($caso->menores as $i => $m)
+        @php
+            // Soporte flexible de campos posibles
+            $nomMenor = $m->nombre ?? trim(($m->nombres ?? '').' '.($m->paterno ?? '').' '.($m->materno ?? ''));
+            $edadA = $m->edad_anios ?? $m->edad ?? null;
+            $edadM = $m->edad_meses ?? null;
+            $sexo  = $m->sexo ?? null;
+        @endphp
         <tr>
             <td class="text-center">{{ $i+1 }}</td>
-            <td>{{ $v($m->nombre ?? '') }}</td>
+            <td>{{ $v($nomMenor) }}</td>
             <td class="text-center">
                 <span class="box">{{ $x($m->gestante_si ?? 0) }}</span> <span class="xs">SI</span>
                 <span class="box">{{ $x(isset($m->gestante_no) ? $m->gestante_no : (empty($m->gestante_si) ? 1:0)) }}</span> <span class="xs">NO</span>
             </td>
             <td>
-                <div><span class="xs">AÑOS:</span> {{ $v($m->edad_anios ?? $m->edad ?? '') }}</div>
-                <div><span class="xs">MESES:</span> {{ $v($m->edad_meses ?? '') }}</div>
+                <div><span class="xs">AÑOS:</span> {{ $v($edadA) }}</div>
+                <div><span class="xs">MESES:</span> {{ $v($edadM) }}</div>
             </td>
             <td class="text-center">
-                <span class="box">{{ ($m->sexo ?? '')==='M' ? 'X' : '' }}</span> <span class="xs">M</span>
-                <span class="box">{{ ($m->sexo ?? '')==='F' ? 'X' : '' }}</span> <span class="xs">F</span>
+                <span class="box">{{ ($sexo==='M') ? 'X' : '' }}</span> <span class="xs">M</span>
+                <span class="box">{{ ($sexo==='F') ? 'X' : '' }}</span> <span class="xs">F</span>
             </td>
             <td class="text-center">
                 <span class="box">{{ $x($m->cert_nac ?? 0) }}</span> <span class="xs">SI</span>
@@ -117,9 +149,9 @@
 <table class="table mb-4">
     <tr>
         <th style="width:12%;">Domicilio:</th>
-        <td style="width:58%">{{ $v($dna->domicilio) }}</td>
+        <td style="width:58%">{{ $v($domicilio) }}</td>
         <th style="width:12%;">Teléfono:</th>
-        <td style="width:18%">{{ $v($dna->telefono) }}</td>
+        <td style="width:18%">{{ $v($telefono) }}</td>
     </tr>
 </table>
 
@@ -135,76 +167,80 @@
         <th style="width:14%;">G. Instrucción</th>
         <th style="width:12%;">Ocupación</th>
     </tr>
-    @forelse($dna->familiares as $i => $f)
+    @forelse($caso->familiares as $i => $f)
+        @php
+            $nombreFam = $f->familiar_nombre_completo
+                ?? trim(($f->familiar_nombres ?? '').' '.($f->familiar_paterno ?? '').' '.($f->familiar_materno ?? ''));
+        @endphp
         <tr>
             <td class="text-center">{{ $i+1 }}</td>
-            <td>{{ trim(($f->nombre ?? '').' '.($f->paterno ?? '').' '.($f->materno ?? '')) ?: '—' }}</td>
-            <td>{{ $v($f->parentesco ?? '') }}</td>
-            <td>{{ $v($f->edad ?? '') }}</td>
-            <td>{{ $v($f->sexo ?? '') }}</td>
-            <td>{{ $v($f->grado_instruccion ?? '') }}</td>
-            <td>{{ $v($f->ocupacion ?? '') }}</td>
+            <td>{{ $v($nombreFam) }}</td>
+            <td>{{ $v($f->familiar_parentesco ?? '') }}</td>
+            <td>{{ $v($f->familiar_edad ?? '') }}</td>
+            <td>{{ $v($f->familiar_sexo ?? '') }}</td>
+            <td>{{ $v($f->familiar_grado ?? '') }}</td>
+            <td>{{ $v($f->familiar_ocupacion ?? '') }}</td>
         </tr>
     @empty
         <tr><td colspan="7" class="text-center muted">— Sin familiares registrados —</td></tr>
     @endforelse
 </table>
 
-{{-- ====== 5. DATOS DEL DENUNCIADO ====== --}}
+{{-- ====== 5. DATOS DEL DENUNCIADO (primer denunciado para mantener el formato) ====== --}}
 <div class="section upper">5.- Datos del Denunciado</div>
 <table class="table mb-4">
     <tr>
         <th style="width:24%;">Nombres y Apellidos</th>
-        <td style="width:40%">{{ $v($dna->denunciado_nombre) }}</td>
+        <td style="width:40%">{{ $v($nombreDenunciado) }}</td>
         <th style="width:8%;">Sexo</th>
-        <td style="width:8%">{{ $v($dna->denunciado_sexo) }}</td>
+        <td style="width:8%">{{ $v($denunciado->denunciado_sexo ?? '') }}</td>
         <th style="width:8%;">Edad</th>
-        <td style="width:12%">{{ $v($dna->denunciado_edad) }}</td>
+        <td style="width:12%">{{ $v($denunciado->denunciado_edad ?? '') }}</td>
     </tr>
     <tr>
         <th>Parentesco o tipo de relación</th>
-        <td>{{ $v($dna->denunciado_relacion) }}</td>
+        <td>{{ $v($denunciado->denunciado_relacion ?? '') }}</td>
         <th>C.I.</th>
-        <td colspan="3">{{ $v($dna->denunciado_ci) }}</td>
+        <td colspan="3">{{ $v(($denunciado->denunciado_documento ?? '').' '.($denunciado->denunciado_nro ?? '')) }}</td>
     </tr>
     <tr>
         <th>Domicilio (zona/comunidad)</th>
-        <td>{{ $v($dna->denunciado_domicilio) }}</td>
+        <td>{{ $v($denunciado->denunciado_domicilio_actual ?? '') }}</td>
         <th>Teléfono</th>
-        <td>{{ $v($dna->denunciado_telefono) }}</td>
+        <td>{{ $v($denunciado->denunciado_telefono ?? '') }}</td>
         <th>Lugar de Trabajo</th>
-        <td>{{ $v($dna->denunciado_lugar_trabajo) }}</td>
+        <td>{{ $v($denunciado->denunciado_lugar_trabajo ?? '') }}</td>
     </tr>
     <tr>
         <th>Ocupación</th>
-        <td colspan="5">{{ $v($dna->denunciado_ocupacion) }}</td>
+        <td colspan="5">{{ $v($denunciado->denunciado_ocupacion ?? '') }}</td>
     </tr>
 </table>
 
-{{-- ====== DATOS DEL DENUNCIANTE ====== --}}
+{{-- ====== DATOS DEL DENUNCIANTE (primer denunciante para mantener el formato) ====== --}}
 <div class="section upper">Datos del Denunciante</div>
 <table class="table mb-4">
     <tr>
         <th style="width:24%;">Nombre y Apellido</th>
-        <td style="width:40%">{{ $v($dna->denunciante_nombre) }}</td>
+        <td style="width:40%">{{ $v($nombreDenunciante) }}</td>
         <th style="width:8%;">Sexo</th>
-        <td style="width:8%">{{ $v($dna->denunciante_sexo) }}</td>
+        <td style="width:8%">{{ $v($denunciante->denunciante_sexo ?? '') }}</td>
         <th style="width:8%;">Edad</th>
-        <td style="width:12%">{{ $v($dna->denunciante_edad) }}</td>
+        <td style="width:12%">{{ $v($denunciante->denunciante_edad ?? '') }}</td>
     </tr>
     <tr>
         <th>C.I.</th>
-        <td>{{ $v($dna->denunciante_ci) }}</td>
+        <td>{{ $v(($denunciante->denunciante_documento ?? '').' '.($denunciante->denunciante_nro ?? '')) }}</td>
         <th>Domicilio</th>
-        <td colspan="3">{{ $v($dna->denunciante_domicilio) }}</td>
+        <td colspan="3">{{ $v($denunciante->denunciante_domicilio_actual ?? '') }}</td>
     </tr>
     <tr>
         <th>Teléfono</th>
-        <td>{{ $v($dna->denunciante_telefono) }}</td>
+        <td>{{ $v($denunciante->denunciante_telefono ?? '') }}</td>
         <th>Lugar de Trabajo</th>
-        <td>{{ $v($dna->denunciante_lugar_trabajo) }}</td>
+        <td>{{ $v($denunciante->denunciante_lugar_trabajo ?? '') }}</td>
         <th>Ocupación</th>
-        <td>{{ $v($dna->denunciante_ocupacion) }}</td>
+        <td>{{ $v($denunciante->denunciante_ocupacion ?? '') }}</td>
     </tr>
 </table>
 
@@ -213,7 +249,7 @@
 <table class="table mb-6">
     <tr>
         <td style="height:160px;">
-            {!! nl2br(e($dna->descripcion ?? '')) !!}
+            {!! nl2br(e($caso->caso_descripcion ?? '')) !!}
         </td>
     </tr>
 </table>
