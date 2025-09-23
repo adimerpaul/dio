@@ -54,6 +54,7 @@ return new class extends Migration
 
             $table->date('fecha_apertura_caso')->nullable();
             $table->date('fecha_derivacion_psicologica')->nullable();
+            $table->date('fecha_informe_area_social')->nullable();
             $table->date('fecha_informe_area_psicologica')->nullable();
             $table->date('fecha_informe_trabajo_social')->nullable();
             $table->date('fecha_derivacion_area_legal')->nullable();
