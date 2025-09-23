@@ -212,7 +212,7 @@
                 <q-item-label class="text-white">Nuevo Proceso Penal</q-item-label>
               </q-item-section>
             </q-item>
-            <q-item dense to="/dnas/nuevo-familiar" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
+            <q-item :inset-level="0.3" dense to="/dnas/nuevo-familiar" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
               <q-item-section avatar>
                 <q-icon name="family_restroom" class="text-white"/>
               </q-item-section>
@@ -220,7 +220,7 @@
                 <q-item-label class="text-white">Nuevo Proceso Familiar</q-item-label>
               </q-item-section>
             </q-item>
-            <q-item dense to="/dnas/nuevo-nna" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
+            <q-item :inset-level="0.3" dense to="/dnas/nuevo-nna" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
               <q-item-section avatar>
                 <q-icon name="child_care" class="text-white"/>
               </q-item-section>
@@ -228,7 +228,7 @@
                 <q-item-label class="text-white">Nuevo Proceso Niñez y Adolescencia</q-item-label>
               </q-item-section>
             </q-item>
-            <q-item dense to="/dnas/nuevo-apoyo" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
+            <q-item :inset-level="0.3" dense to="/dnas/nuevo-apoyo" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
               <q-item-section avatar>
                 <q-icon name="diversity_1" class="text-white"/>
               </q-item-section>
