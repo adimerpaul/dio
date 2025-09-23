@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Caso;
+use App\Models\Psicologica;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
@@ -472,5 +473,29 @@ class CasoController extends Controller
             DB::rollBack();
             return response()->json(['message' => 'Error al actualizar el caso', 'error' => $e->getMessage()], 500);
         }
+    }
+    function psicoStore(Request $request, Caso $caso){
+        $user = $request->user();
+
+//        actulizar caso [sgicologica/] fecha_derivacion_psicologica
+        if(!$caso->fecha_derivacion_psicologica){
+            $caso->fecha_derivacion_psicologica = date('Y-m-d');
+            $caso->save();
+        }
+
+        $request['caso_id'] = $caso->id;
+        $request['user_id'] = $user->id;
+        $request['caseable_type'] = Caso::class;
+        $request['caseable_id'] = $caso->id;
+        $sesion = Psicologica::create($request->all());
+        return $sesion;
+    }
+    function psicoUpdate(Request $request, Psicologica $psicologica){
+        $psicologica->update($request->all());
+        return $psicologica;
+    }
+    function psicoDestroy(Psicologica $psicologica){
+        $psicologica->delete();
+        return response()->json(['message' => 'Sesión psicológica eliminada']);
     }
 }
