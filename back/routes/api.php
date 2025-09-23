@@ -193,6 +193,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/umadis/fotografias/{fotografia}', [\App\Http\Controllers\UmadiController::class, 'fotoDestroy']);
 
 });
+
+Route::get('/casos/{caso}/pdf/hoja-ruta', [CasoController::class, 'pdfHojaRuta']);
+
 Route::get   ('/casos/{caso}/pdf',  [CasoController::class, 'pdf']);
 Route::get   ('/documentos/{documento}/view',     [\App\Http\Controllers\CasoController::class, 'docView']);
 Route::get   ('/documentos/{documento}/download', [\App\Http\Controllers\CasoController::class, 'docDownload']);
