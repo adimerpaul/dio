@@ -99,7 +99,7 @@
 
       <!-- 4) Informes Legal -->
       <q-tab-panel name="legal">
-        <InformesLegal :case-id="caseId"/>
+        <InformesLegal :case-id="caseId" :caso="caso" @refresh="fetchCaso"/>
       </q-tab-panel>
 
       <!-- 5) Apoyo Integral -->
