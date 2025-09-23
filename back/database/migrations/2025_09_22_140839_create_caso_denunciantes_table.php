@@ -27,8 +27,12 @@ return new class extends Migration
             $table->string('denunciante_estado_civil', 40)->nullable();
             $table->string('denunciante_relacion', 60)->nullable();
             $table->string('denunciante_grado', 60)->nullable();
+            $table->string('denunciante_domicilio_actual')->nullable();
             $table->decimal('latitud', 10, 7)->nullable();
             $table->decimal('longitud', 10, 7)->nullable();
+            $table->string('denunciante_idioma', 80)->nullable();
+            $table->boolean('denunciante_trabaja')->default(false);
+            $table->string('denunciante_ocupacion', 120)->nullable();
             $table->unsignedBigInteger('caso_id');
             $table->foreign('caso_id')->references('id')->on('casos');
             $table->softDeletes();

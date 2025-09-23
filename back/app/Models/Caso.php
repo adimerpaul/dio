@@ -73,14 +73,14 @@ class Caso extends Model implements AuditableContract
     public function user(){ return $this->belongsTo(User::class); }
 //    denunciantes
     public function denunciantes(){ return $this->hasMany(CasoDenunciante::class); }
-    public function denunciado(){ return $this->hasOne(CasoDenunciado::class); }
+    public function denunciados(){ return $this->hasMany(CasoDenunciado::class); }
     public function familiares(){ return $this->hasMany(CasoFamiliares::class); }
     public function psicologica_user(){ return $this->belongsTo(User::class, 'psicologica_user_id'); }
     public function trabajo_social_user(){ return $this->belongsTo(User::class, 'trabajo_social_user_id'); }
     public function legal_user(){ return $this->belongsTo(User::class, 'legal_user_id');}
-
-    public function sesionesPsicologicas(){ return $this->hasMany(SesionPsicologica::class); }
-    public function informes(){ return $this->hasMany(Informe::class); }
-    public function documentos(){ return $this->hasMany(Documento::class); }
-    public function fotografias(){ return $this->hasMany(Fotografia::class); }
+    public function psicologicas()   { return $this->morphMany(Psicologica::class,  'caseable'); }
+    public function informesLegales(){ return $this->morphMany(InformeLegal::class,'caseable'); }
+    public function documentos()     { return $this->morphMany(Documento::class,    'caseable'); }
+    public function fotografias()    { return $this->morphMany(Fotografia::class,   'caseable'); }
+    public function informesSociales(){ return $this->morphMany(InformesSocial::class,'caseable'); }
 }

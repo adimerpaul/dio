@@ -29,6 +29,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/users/{user}/permissions', [App\Http\Controllers\UserController::class, 'syncPermissions']);
 
     Route::post('/casos',        [\App\Http\Controllers\CasoController::class, 'store']);
+    Route::get ('/casos',        [\App\Http\Controllers\CasoController::class, 'index']);
+    Route::get ('/casos/{caso}', [\App\Http\Controllers\CasoController::class, 'show']);
+    Route::put ('/casos/{caso}', [\App\Http\Controllers\CasoController::class, 'update']);
 
     Route::get ('/slims/pendientes-resumen', [SlimController::class, 'pendientesResumen']);
     Route::get ('/slims',        [SlimController::class, 'index']);
