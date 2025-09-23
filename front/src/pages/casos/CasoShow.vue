@@ -77,8 +77,8 @@
     <q-tab-panels v-model="tab" animated keep-alive>
       <!-- 1) Información General -->
       <q-tab-panel name="info">
-        <SlimNuevo :casoId="caso.id" :showNumeroApoyoIntegral="caso?.numero_apoyo_integral" :editable="true" v-if="caso.tipo==='SLIM'"/>
-        <CasoNuevoDNA :casoId="caso.id" :editable="true" v-else-if="caso.tipo==='DNA'"/>
+        <SlimNuevo :casoId="caso.id" :showNumeroApoyoIntegral="caso?.numero_apoyo_integral" :editable="true" v-if="caso?.tipo==='SLIM'"/>
+        <CasoNuevoDNA :casoId="caso.id" :showNumeroApoyoIntegral="caso?.numero_apoyo_integral" :editable="true" v-else-if="caso?.tipo==='DNA'"/>
       </q-tab-panel>
       <q-tab-panel name="seguimiento">
         <Seguimiento :caso="caso"/>

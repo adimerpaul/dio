@@ -578,8 +578,8 @@ export default {
             longitud: null,
           }]
         }
-        if (!this.f.denunciado || this.f.denunciado.length === 0) {
-          this.f.denunciado = [
+        if (!this.f.denunciados || this.f.denunciados.length === 0) {
+          this.f.denunciados = [
             {
               denunciado_nombres: '',
               denunciado_paterno: '',
