@@ -18,6 +18,7 @@ class Caso extends Model implements AuditableContract
         'tipo',
         'area',
         'zona',
+        'principal',
         'numero_apoyo_integral',
         'caso_numero',
         'caso_fecha_hecho',
@@ -76,6 +77,7 @@ class Caso extends Model implements AuditableContract
     public function denunciantes(){ return $this->hasMany(CasoDenunciante::class); }
     public function denunciados(){ return $this->hasMany(CasoDenunciado::class); }
     public function familiares(){ return $this->hasMany(CasoFamiliares::class); }
+    public function menores(){ return $this->hasMany(CasoMenor::class); }
     public function psicologica_user(){ return $this->belongsTo(User::class, 'psicologica_user_id'); }
     public function trabajo_social_user(){ return $this->belongsTo(User::class, 'trabajo_social_user_id'); }
     public function legal_user(){ return $this->belongsTo(User::class, 'legal_user_id');}

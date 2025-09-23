@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('zona', 80)->nullable();
             $table->string('numero_apoyo_integral', 80)->nullable();
             $table->string('tipo', 80)->nullable();
+            $table->string('principal', 255)->nullable();
 
             // ===== Caso =====
             $table->string('caso_numero', 40)->nullable()->index();

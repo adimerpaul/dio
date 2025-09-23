@@ -562,6 +562,16 @@ class CasoController extends Controller
                     $caso->denunciados()->create($denunciado);
                 }
             }
+            if($request->has('familiares')){
+                foreach ($request->familiares as $familiar){
+                    $caso->familiares()->create($familiar);
+                }
+            }
+            if($request->has('menores')){
+                foreach ($request->menores as $menor){
+                    $caso->menores()->create($menor);
+                }
+            }
 
 
             DB::commit();
@@ -586,6 +596,7 @@ class CasoController extends Controller
             'legal_user:id,name,celular',
             'user:id,name,celular',
             'denunciantes',
+            'menores',
             'denunciados',
              'familiares',
             'psicologicas.user:id,name',
@@ -616,11 +627,17 @@ class CasoController extends Controller
                     $caso->denunciantes()->create($denunciante);
                 }
             }
-            error_log(json_encode($caso->denunciados));
+//            error_log(json_encode($caso->denunciados));
             if($request->has('denunciados')){
                 $caso->denunciados()->delete();
                 foreach ($request->denunciados as $denunciado){
                     $caso->denunciados()->create($denunciado);
+                }
+            }
+            if($request->has('menores')){
+                $caso->menores()->delete();
+                foreach ($request->menores as $menor){
+                    $caso->menores()->create($menor);
                 }
             }
             DB::commit();
