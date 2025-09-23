@@ -16,9 +16,9 @@ const routes = [
       { path: '/casos/:id', component: () => import('pages/casos/CasoShow.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
       // { path: '/slims/:id', component: () => import('pages/slims/SlimShow.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
       //
-      // { path: '/slams', component: () => import('pages/slams/Slams.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
-      // { path: '/slams/nuevofisica', component: () => import('pages/slams/SlamNuevoFisico.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
-      // { path: '/slams/nuevointegral', component: () => import('pages/slams/SlamNuevoIntegral.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
+      { path: '/slams', component: () => import('pages/slams/Slams.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
+      { path: '/slams/nuevofisica', component: () => import('pages/slams/SlamNuevoFisico.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
+      { path: '/slams/nuevointegral', component: () => import('pages/slams/SlamNuevoIntegral.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
       // { path: '/slams/:id', component: () => import('pages/slams/SlamShow.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
       //
       { path: '/umadis', component: () => import('pages/umadis/Umadis.vue'), meta: { requiresAuth: true, perm: 'Casos' } },

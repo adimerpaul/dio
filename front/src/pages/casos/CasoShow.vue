@@ -79,6 +79,7 @@
       <q-tab-panel name="info">
         <SlimNuevo :casoId="caso.id" :showNumeroApoyoIntegral="caso?.numero_apoyo_integral" :editable="true" v-if="caso?.tipo==='SLIM'"/>
         <CasoNuevoDNA :casoId="caso.id" :showNumeroApoyoIntegral="caso?.numero_apoyo_integral" :editable="true" v-else-if="caso?.tipo==='DNA'"/>
+        <CasoNuevoSLAM :casoId="caso.id" :showNumeroApoyoIntegral="caso?.numero_apoyo_integral" :editable="true" v-else-if="caso?.tipo==='SLAM'"/>
       </q-tab-panel>
       <q-tab-panel name="seguimiento">
         <Seguimiento :caso="caso"/>
@@ -139,10 +140,12 @@ import Seguimiento from "pages/casos/tabs/Seguimiento.vue";
 import SlimNuevo from "pages/slims/SlimNuevo.vue";
 import SocialInformes from "pages/casos/tabs/Social.vue";
 import CasoNuevoDNA from "pages/dnas/DnaNuevo.vue";
+import CasoNuevoSLAM from "pages/slams/SlamNuevo.vue";
 
 export default {
   name: 'CasoDetalle',
   components: {
+    CasoNuevoSLAM,
     CasoNuevoDNA,
     SocialInformes,
     SlimNuevo,

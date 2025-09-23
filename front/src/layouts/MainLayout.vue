@@ -256,7 +256,7 @@
                 <q-item-label class="text-white">Nueva Denuncia Física</q-item-label>
               </q-item-section>
             </q-item>
-            <q-item dense to="/slams/nuevointegral" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
+            <q-item :inset-level="0.3" dense to="/slams/nuevointegral" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
               <q-item-section avatar>
                 <q-icon name="diversity_1" class="text-white"/>
               </q-item-section>
@@ -284,7 +284,7 @@
                 <q-item-label class="text-white">Nueva Denuncia Física</q-item-label>
               </q-item-section>
             </q-item>
-            <q-item dense to="/umadis/nuevointegral" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
+            <q-item :inset-level="0.3" dense to="/umadis/nuevointegral" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
               <q-item-section avatar>
                 <q-icon name="diversity_1" class="text-white"/>
               </q-item-section>
@@ -312,7 +312,7 @@
                 <q-item-label class="text-white">Nueva Denuncia Física</q-item-label>
               </q-item-section>
             </q-item>
-            <q-item dense to="/propremis/nuevointegral" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
+            <q-item :inset-level="0.3" dense to="/propremis/nuevointegral" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
               <q-item-section avatar>
                 <q-icon name="diversity_1" class="text-white"/>
               </q-item-section>

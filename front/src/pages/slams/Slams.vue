@@ -97,8 +97,8 @@
           <!--          "caso_id": 4-->
           <!--          }-->
           <!--          <template v-if="c.denunciantes">-->
-          <div class="text-weight-medium">{{ c.denunciantes[0].denunciante_nombres == null ? '—' : (c.denunciantes[0].denunciante_nombres + ' ' + (c.denunciantes[0].denunciante_paterno || '') + ' ' + (c.denunciantes[0].denunciante_materno || '') ) }}</div>
-          <div class="text-caption text-grey-7" v-if="c.denunciantes[0].denunciante_nro">CI: {{ c.denunciantes[0].denunciante_nro }}</div>
+          <div class="text-weight-medium">{{ c.denunciantes[0]?.denunciante_nombres == null ? '—' : (c.denunciantes[0]?.denunciante_nombres + ' ' + (c.denunciantes[0]?.denunciante_paterno || '') + ' ' + (c.denunciantes[0]?.denunciante_materno || '') ) }}</div>
+          <div class="text-caption text-grey-7" v-if="c.denunciantes[0]?.denunciante_nro">CI: {{ c.denunciantes[0]?.denunciante_nro }}</div>
           <!--          </template>-->
         </td>
         <td>
