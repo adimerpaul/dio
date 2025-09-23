@@ -11,17 +11,17 @@
     </style>
 </head>
 <body>
-<div class="h1">SLIM · Sesión psicológica #{{ $sesion->id }}</div>
-<div class="muted">
-    SLIM: {{ $sesion->caseable?->id }} · Usuario: {{ $sesion->user?->name ?? $sesion->user?->username }}
-</div>
-<hr>
+{{--<div class="h1">SLIM · Sesión psicológica #{{ $sesion->id }}</div>--}}
+{{--<div class="muted">--}}
+{{--    SLIM: {{ $sesion->caseable?->id }} · Usuario: {{ $sesion->user?->name ?? $sesion->user?->username }}--}}
+{{--</div>--}}
+{{--<hr>--}}
 
-<p><b>Título:</b> {{ $sesion->titulo }}</p>
-<p><b>Fecha:</b> {{ optional($sesion->fecha)->format('Y-m-d') ?? '—' }}</p>
-<p><b>Duración:</b> {{ $sesion->duracion_min ? $sesion->duracion_min.' min' : '—' }}</p>
-<p><b>Tipo:</b> {{ $sesion->tipo ?: '—' }}</p>
-<p><b>Lugar:</b> {{ $sesion->lugar ?: '—' }}</p>
+{{--<p><b>Título:</b> {{ $sesion->titulo }}</p>--}}
+{{--<p><b>Fecha:</b> {{ optional($sesion->fecha)->format('Y-m-d') ?? '—' }}</p>--}}
+{{--<p><b>Duración:</b> {{ $sesion->duracion_min ? $sesion->duracion_min.' min' : '—' }}</p>--}}
+{{--<p><b>Tipo:</b> {{ $sesion->tipo ?: '—' }}</p>--}}
+{{--<p><b>Lugar:</b> {{ $sesion->lugar ?: '—' }}</p>--}}
 
 <div class="box">{!! $sesion->contenido_html !!}</div>
 </body>

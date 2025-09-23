@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CasoController;
 use App\Http\Controllers\DnaController;
 use App\Http\Controllers\SlamController;
 use App\Http\Controllers\SlimDocumentoController;
@@ -44,6 +45,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/casos/{caso}/informes-sociales', [\App\Http\Controllers\CasoController::class, 'socialStore']);
     Route::put ('/informes-sociales/{informe}',     [\App\Http\Controllers\CasoController::class, 'socialUpdate']);
     Route::delete('/informes-sociales/{informe}', [\App\Http\Controllers\CasoController::class, 'socialDestroy']);
+
+    Route::post('/casos/{caso}/documentos', [\App\Http\Controllers\CasoController::class, 'docStore']);
+    Route::put ('/documentos/{documento}', [\App\Http\Controllers\CasoController::class, 'docUpdate']);
+    Route::delete('/documentos/{documento}', [\App\Http\Controllers\CasoController::class, 'docDestroy']);
+
+    Route::post('/casos/{caso}/fotografias', [\App\Http\Controllers\CasoController::class, 'fotoStore']);
+    Route::delete('/fotografias/{fotografia}', [\App\Http\Controllers\CasoController::class, 'fotoDestroy']);
+
 
 
 
@@ -184,6 +193,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/umadis/fotografias/{fotografia}', [\App\Http\Controllers\UmadiController::class, 'fotoDestroy']);
 
 });
+
+//http://localhost:8000/api/documentos/1/view
+Route::get   ('/documentos/{documento}/view',     [\App\Http\Controllers\CasoController::class, 'docView']);
+Route::get   ('/documentos/{documento}/download', [\App\Http\Controllers\CasoController::class, 'docDownload']);
+
+//http://localhost:8000/api/sesiones-psicologicas/1/pdf
+Route::get   ('/sesiones-psicologicas/{psicologica}/pdf',  [CasoController::class, 'psicoPdf']);
+Route::get   ('/informes/{informe}/pdf', [CasoController::class, 'legalPdf']);
 
 Route::get   ('/slims/documentos/{documento}/view',   [SlimDocumentoController::class, 'view']);
 

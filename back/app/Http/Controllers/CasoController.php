@@ -3,18 +3,173 @@
 namespace App\Http\Controllers;
 
 use App\Models\Caso;
+use App\Models\Documento;
+use App\Models\Fotografia;
 use App\Models\InformeLegal;
 use App\Models\InformesSocial;
 use App\Models\Psicologica;
+use App\Models\Slam;
+use App\Models\Slim;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use App\Models\Informe;
 use App\Models\SesionPsicologica;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 
 class CasoController extends Controller
 {
+    public function fotoStore(Request $request, Caso $caso)
+    {
+        $request->validate([
+            'file'        => ['required','image','mimes:jpg,jpeg,png,webp','max:10240'], // 10 MB
+            'titulo'      => ['nullable','string','max:255'],
+            'descripcion' => ['nullable','string'],
+        ]);
+
+        $disk = 'public';                // <- FORZAR PUBLIC
+        $dir  = "caso/{$caso->id}/fotos";
+
+        $file         = $request->file('file');
+        $originalName = $file->getClientOriginalName();
+        $nameNoExt    = pathinfo($originalName, PATHINFO_FILENAME);
+        $extLower     = strtolower($file->getClientOriginalExtension() ?: 'jpg');
+
+        // Nombre base único
+        $base = Str::slug($nameNoExt) . '-' . Str::random(6);
+
+        $manager = new ImageManager(new Driver());
+
+        // ==== Imagen principal (máx 2000px) ====
+        $img = $manager->read($file->getPathname());
+        $img->resizeDown(width: 2000, height: 2000);
+
+        // Normalizamos extensión de salida
+        $storedExt = in_array($extLower, ['jpg','jpeg','png','webp']) ? ($extLower === 'jpeg' ? 'jpg' : $extLower) : 'jpg';
+        $storedName = "{$base}.{$storedExt}";
+        $path       = "{$dir}/{$storedName}";
+
+        if ($storedExt === 'jpg') {
+            Storage::disk($disk)->put($path, (string) $img->toJpeg(quality: 85));
+            $mime = 'image/jpeg';
+        } elseif ($storedExt === 'png') {
+            Storage::disk($disk)->put($path, (string) $img->toPng());
+            $mime = 'image/png';
+        } else { // webp
+            Storage::disk($disk)->put($path, (string) $img->toWebp(quality: 80));
+            $mime = 'image/webp';
+        }
+
+        // ==== Miniatura (máx 480px) ====
+        $thumb = $manager->read($file->getPathname());
+        $thumb->resizeDown(width: 480, height: 480);
+
+        $thumbName = "{$base}-thumb.{$storedExt}";
+        $thumbPath = "{$dir}/{$thumbName}";
+
+        if ($storedExt === 'jpg') {
+            Storage::disk($disk)->put($thumbPath, (string) $thumb->toJpeg(quality: 80));
+        } elseif ($storedExt === 'png') {
+            Storage::disk($disk)->put($thumbPath, (string) $thumb->toPng());
+        } else {
+            Storage::disk($disk)->put($thumbPath, (string) $thumb->toWebp(quality: 75));
+        }
+
+        // URLs públicas relativas (/storage/...)
+        $url      = Storage::url($path);
+        $thumbUrl = Storage::url($thumbPath);
+
+        $bytes  = Storage::disk($disk)->size($path);
+        $width  = $img->width();
+        $height = $img->height();
+
+        $foto = Fotografia::create([
+            'caseable_id'   => $caso->id,
+            'caseable_type' => Caso::class,
+            'user_id'       => $request->user()->id,
+
+            'titulo'        => $request->string('titulo')->toString() ?: $nameNoExt,
+            'descripcion'   => $request->get('descripcion'),
+
+            'original_name' => $originalName,
+            'stored_name'   => $storedName,
+            'extension'     => $storedExt,
+            'mime'          => $mime,
+            'size_bytes'    => $bytes,
+
+            'disk'          => $disk,
+            'path'          => $path,
+            'url'           => $url,
+
+            'thumb_path'    => $thumbPath,
+            'thumb_url'     => $thumbUrl,
+
+            'width'         => $width,
+            'height'        => $height,
+        ]);
+
+        return response()->json($foto->load('user:id,name,username'), 201);
+    }
+
+    /** DELETE /api/slims/fotografias/{fotografia} */
+    public function fotoDestroy(Fotografia $fotografia)
+    {
+        // Asegura que la foto pertenece a un SLIM (polimórfico)
+        if ($fotografia->caseable_type !== Caso::class) abort(404);
+
+        try {
+            if ($fotografia->path && Storage::disk($fotografia->disk)->exists($fotografia->path)) {
+                Storage::disk($fotografia->disk)->delete($fotografia->path);
+            }
+            if ($fotografia->thumb_path && Storage::disk($fotografia->disk)->exists($fotografia->thumb_path)) {
+                Storage::disk($fotografia->disk)->delete($fotografia->thumb_path);
+            }
+        } catch (\Throwable $e) {
+            // opcional: \Log::warning($e->getMessage());
+        }
+
+        $fotografia->delete();
+
+        return response()->json(['message' => 'Fotografía eliminada']);
+    }
+    function legalPdf(Request $request, InformeLegal $informe)
+    {
+        // Opciones extra para mejor render
+        $pdf = Pdf::loadView('informes_legales.pdf', [
+            'informe' => $informe,
+        ])->setPaper('A4', 'portrait');
+
+        // Para acentos: usar DejaVu Sans
+        $pdf->getDomPDF()->getOptions()->set('defaultFont', 'DejaVu Sans');
+
+        // ?download=1 para descargar, 0 para ver en el navegador
+        $download = (int) $request->query('download', 0) === 1;
+
+        $filename = 'SLIM_InformeLegal_'.$informe->id.'.pdf';
+        return $download ? $pdf->download($filename) : $pdf->stream($filename);
+
+    }
+    function psicoPdf(Request $request, Psicologica $psicologica)
+    {
+        // Opciones extra para mejor render
+        $pdf = Pdf::loadView('psicologicas.pdf', [
+            'sesion' => $psicologica,
+        ])->setPaper('A4', 'portrait');
+
+        // Para acentos: usar DejaVu Sans
+        $pdf->getDomPDF()->getOptions()->set('defaultFont', 'DejaVu Sans');
+
+        // ?download=1 para descargar, 0 para ver en el navegador
+        $download = (int) $request->query('download', 0) === 1;
+
+        $filename = 'SLIM_SesionPsicologica_'.$psicologica->id.'.pdf';
+        return $download ? $pdf->download($filename) : $pdf->stream($filename);
+    }
     public function pendientesResumen(Request $request)
     {
         $user = $request->user();
@@ -551,4 +706,81 @@ class CasoController extends Controller
         $informe->delete();
         return response()->json(['message' => 'Informe social eliminado']);
     }
+    function docStore(Request $request, Caso $caso){
+        $payload = [
+            'caseable_id'   => $caso->id,
+            'caseable_type' => Caso::class,
+            'user_id'       => $request->user()?->id,
+            'titulo'        => $request['titulo'] ?? null,
+            'categoria'     => $request['categoria'] ?? null,
+            'descripcion'   => $request['descripcion'] ?? null,
+        ];
+        if ($request->hasFile('file')) {
+            $file        = $request->file('file');
+            $ext         = strtolower($file->getClientOriginalExtension());
+            $storedName  = Str::uuid()->toString().'.'.$ext;
+            $path        = $file->storeAs("caso/{$caso->id}/documentos", $storedName, 'public');
+            $url         = Storage::disk('public')->url($path);
+
+            $payload += [
+                'original_name' => $file->getClientOriginalName(),
+                'stored_name'   => $storedName,
+                'extension'     => $ext,
+                'mime'          => $file->getClientMimeType(),
+                'size_bytes'    => $file->getSize(),
+                'disk'          => 'public',
+                'path'          => $path,
+                'url'           => $url,
+            ];
+        }
+        $documento = Documento::create($payload);
+        return response()->json(['documento' => $documento], 201);
+        return $documento;
+    }
+    function docDownload($doc)
+    {
+        $doc = Documento::where('id', $doc)->first();
+        if ($doc && $doc->path && Storage::disk($doc->disk)->exists($doc->path)) {
+            return Storage::disk($doc->disk)->download($doc->path, $doc->original_name);
+        } else {
+            return response()->json(['message' => 'Documento no encontrado'], 404);
+        }
+    }
+    function docView($doc)
+    {
+        $doc = Documento::where('id', $doc)->first();
+        if ($doc && $doc->path && Storage::disk($doc->disk)->exists($doc->path)) {
+            $fileContent = Storage::disk($doc->disk)->get($doc->path);
+            $mimeType = $doc->mime ?? 'application/octet-stream';
+            return response($fileContent, 200)->header('Content-Type', $mimeType);
+        } else {
+            return response()->json(['message' => 'Documento no encontrado'], 404);
+        }
+    }
+    function docUpdate(Request $request, $doc)
+    {
+        $data = $request->only(['titulo', 'categoria', 'descripcion']);
+        $doc = Documento::where('id', $doc)->first();
+        if ($doc) {
+            $doc->update($data);
+            return response()->json(['documento' => $doc]);
+        } else {
+            return response()->json(['message' => 'Documento no encontrado'], 404);
+        }
+    }
+    function docDestroy($doc)
+    {
+        $doc = Documento::where('id', $doc)->first();
+        if ($doc) {
+            // Elimina el archivo físico si existe
+            if ($doc->path && Storage::disk($doc->disk)->exists($doc->path)) {
+                Storage::disk($doc->disk)->delete($doc->path);
+            }
+            $doc->delete();
+            return response()->json(['message' => 'Documento eliminado']);
+        } else {
+            return response()->json(['message' => 'Documento no encontrado'], 404);
+        }
+    }
+
 }
