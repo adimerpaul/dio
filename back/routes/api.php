@@ -28,7 +28,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/users/{user}/permissions', [App\Http\Controllers\UserController::class, 'getPermissions']);
     Route::put('/users/{user}/permissions', [App\Http\Controllers\UserController::class, 'syncPermissions']);
 
-    // ======== SLIMS (antes CASOS) ========
+    Route::post('/casos',        [\App\Http\Controllers\CasoController::class, 'store']);
+
     Route::get ('/slims/pendientes-resumen', [SlimController::class, 'pendientesResumen']);
     Route::get ('/slims',        [SlimController::class, 'index']);
     Route::post('/slims',        [SlimController::class, 'store']);   // CREACIÓN

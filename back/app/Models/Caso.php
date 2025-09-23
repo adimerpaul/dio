@@ -15,6 +15,7 @@ class Caso extends Model implements AuditableContract
     protected $table = 'casos';
 
     protected $fillable = [
+        'tipo',
         'area',
         'zona',
         'numero_apoyo_integral',
@@ -69,24 +70,11 @@ class Caso extends Model implements AuditableContract
         'violencia_economica'   => 'boolean',
     ];
     public function problematicas(){ return $this->hasMany(Problematica::class); }
-//    protected static function boot()
-//    {
-//        parent::boot();
-//
-//        static::saving(function ($model) {
-//            // Denunciante
-//            $model->denunciante_nombre_completo = trim(
-//                "{$model->denunciante_nombres} {$model->denunciante_paterno} {$model->denunciante_materno}"
-//            );
-//
-//            // Denunciado
-////            $model->denunciado_nombre_completo = trim(
-////                "{$model->denunciado_nombres} {$model->denunciado_paterno} {$model->denunciado_materno}"
-////            );
-//        });
-//    }
-//    user
     public function user(){ return $this->belongsTo(User::class); }
+//    denunciantes
+    public function denunciantes(){ return $this->hasMany(CasoDenunciante::class); }
+    public function denunciado(){ return $this->hasOne(CasoDenunciado::class); }
+    public function familiares(){ return $this->hasMany(CasoFamiliares::class); }
     public function psicologica_user(){ return $this->belongsTo(User::class, 'psicologica_user_id'); }
     public function trabajo_social_user(){ return $this->belongsTo(User::class, 'trabajo_social_user_id'); }
     public function legal_user(){ return $this->belongsTo(User::class, 'legal_user_id');}

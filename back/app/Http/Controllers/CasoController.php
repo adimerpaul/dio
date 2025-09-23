@@ -8,6 +8,8 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use App\Models\Informe;
 use App\Models\SesionPsicologica;
+use Illuminate\Support\Facades\DB;
+
 class CasoController extends Controller
 {
     public function pendientesResumen(Request $request)
@@ -362,113 +364,41 @@ class CasoController extends Controller
         ]);
     }
 
-    public function store(Request $request)
-    {
-        // Validación básica (ajusta a gusto)
-        $data = $request->validate([
-            // Denunciante
-//            'denunciante_nombre_completo'  => ['required','string','max:255'],
-//            'area'          => ['nullable','string','max:255'],
-//            'zona'          => ['nullable','string','max:255'],
-            'denunciante_nombres'          => ['nullable','string','max:255'],
-            'denunciante_paterno'          => ['nullable','string','max:255'],
-            'denunciante_materno'          => ['nullable','string','max:255'],
-            'denunciante_documento'        => ['nullable','string','max:100'],
-            'denunciante_nro'              => ['nullable','string','max:100'],
-            'denunciante_sexo'             => ['nullable','string','max:30'],
-            'denunciante_lugar_nacimiento' => ['nullable','string','max:255'],
-            'denunciante_fecha_nacimiento' => ['nullable','date'],
-            'denunciante_edad'             => ['nullable','integer','min:0','max:120'],
-            'denunciante_telefono'             => ['nullable','string','min:0','max:120'],
-            'denunciante_residencia'       => ['nullable','string','max:255'],
-            'denunciante_estado_civil'     => ['nullable','string','max:100'],
-            'denunciante_relacion'         => ['nullable','string','max:100'],
-            'denunciante_grado'            => ['nullable','string','max:100'],
-            'latitud'                      => ['nullable','numeric','between:-90,90'],
-            'longitud'                     => ['nullable','numeric','between:-180,180'],
-            'denunciante_trabaja'          => ['nullable','boolean'],
-            'denunciante_prox'             => ['nullable','string','max:255'],
-            'denunciante_ocupacion'        => ['nullable','string','max:255'],
-            'denunciante_ocupacion_exacto' => ['nullable','string','max:255'],
-            'denunciante_idioma'           => ['nullable','string','max:100'],
-            'denunciante_fijo'             => ['nullable','string','max:100'],
-            'denunciante_movil'            => ['nullable','string','max:100'],
-            'denunciante_domicilio_actual' => ['nullable','string','max:255'],
+    public function store(Request $request){
+//{"numero_apoyo_integral":"","area":"SLIM","zona":"CENTRAL","denunciantes":[{"denunciante_nombres":"adimer","denunciante_paterno":"","denunciante_materno":"","denunciante_documento":"Carnet de identidad","denunciante_nro":"","denunciante_sexo":"","denunciante_lugar_nacimiento":"","denunciante_fecha_nacimiento":"2000-09-19","denunciante_edad":25,"denunciante_telefono":"","denunciante_residencia":"","denunciante_estado_civil":"","denunciante_trabaja":false,"denunciante_relacion":"","denunciante_grado":"","latitud":null,"longitud":null}],"denunciado":[{"denunciado_nombres":"","denunciado_paterno":"","denunciado_materno":"","denunciado_documento":"Carnet de identidad","denunciado_nro":"","denunciado_sexo":"","denunciado_lugar_nacimiento":"","denunciado_fecha_nacimiento":"","denunciado_edad":"","denunciado_telefono":"","denunciado_residencia":"","denunciado_estado_civil":"","denunciado_relacion":"","denunciado_grado":"","denunciado_trabaja":1,"denunciado_prox":"","denunciado_ocupacion":"","denunciado_ocupacion_exacto":"","denunciado_idioma":"","denunciado_fijo":"","denunciado_movil":"","denunciado_domicilio_actual":"","denunciado_latitud":null,"denunciado_longitud":null}],"caso_numero":"","caso_fecha_hecho":"","caso_lugar_hecho":"","caso_tipologia":"","caso_modalidad":"","caso_descripcion":"","violencia_fisica":false,"violencia_psicologica":false,"violencia_sexual":false,"violencia_economica":false,"psicologica_user_id":"","trabajo_social_user_id":"","legal_user_id":"","documento_fotocopia_carnet_denunciante":false,"documento_fotocopia_carnet_denunciado":false,"documento_placas_fotograficas_domicilio_denunciante":false,"documento_croquis_direccion_denunciado":false,"documento_placas_fotograficas_domicilio_denunciado":false,"documento_ciudadania_digital":false}
+        DB::beginTransaction();
+        try {
+            $user = $request->user();
+            $request['caso_numero'] = $this->numeroCaso($request->tipo);
+            $request['user_id'] = $user->id;
+            $request['fecha_apertura_caso'] = date('Y-m-d');
+            $request['area'] = $user->area;
+            $request['zona'] = $user->zona;
+            $caso = Caso::create($request->all());
 
-            // Familiares (solo primero como ejemplo)
-            'familiar1_nombre_completo'    => ['nullable','string','max:255'],
-            'familiar1_edad'               => ['nullable','integer','min:0','max:120'],
-            'familiar1_parentesco'         => ['nullable','string','max:100'],
-            'familiar1_celular'            => ['nullable','string','max:100'],
-
-            // Denunciado
-            'denunciado_nombre_completo'   => ['nullable','string','max:255'],
-            'denunciado_nombres'           => ['nullable','string','max:255'],
-            'denunciado_paterno'           => ['nullable','string','max:255'],
-            'denunciado_materno'           => ['nullable','string','max:255'],
-            'denunciado_documento'         => ['nullable','string','max:100'],
-            'denunciado_nro'               => ['nullable','string','max:100'],
-            'denunciado_sexo'              => ['nullable','string','max:30'],
-            'denunciado_lugar_nacimiento'  => ['nullable','string','max:255'],
-            'denunciado_fecha_nacimiento'  => ['nullable','date'],
-            'denunciado_edad'              => ['nullable','integer','min:0','max:120'],
-            'denunciado_telefono'              => ['nullable','string','min:0','max:120'],
-            'denunciado_residencia'        => ['nullable','string','max:255'],
-            'denunciado_estado_civil'      => ['nullable','string','max:100'],
-            'denunciado_relacion'          => ['nullable','string','max:100'],
-            'denunciado_grado'             => ['nullable','string','max:100'],
-            'denunciado_trabaja'           => ['nullable','boolean'],
-            'denunciado_prox'              => ['nullable','string','max:255'],
-            'denunciado_ocupacion'         => ['nullable','string','max:255'],
-            'denunciado_ocupacion_exacto'  => ['nullable','string','max:255'],
-            'denunciado_idioma'            => ['nullable','string','max:100'],
-            'denunciado_fijo'              => ['nullable','string','max:100'],
-            'denunciado_movil'             => ['nullable','string','max:100'],
-            'denunciado_domicilio_actual'  => ['nullable','string','max:255'],
-            'denunciado_latitud'           => ['nullable','numeric','between:-90,90'],
-            'denunciado_longitud'          => ['nullable','numeric','between:-180,180'],
-
-            // Caso
-            'caso_numero'                  => ['nullable','string','max:50'],
-            'caso_fecha_hecho'             => ['nullable','date'],
-            'caso_lugar_hecho'             => ['nullable','string','max:255'],
-            'caso_zona'                    => ['nullable','string','max:255'],
-            'caso_direccion'               => ['nullable','string','max:255'],
-            'caso_descripcion'             => ['nullable','string','max:2000'],
-            'caso_tipologia'               => ['nullable','string','max:255'],
-            'caso_modalidad'               => ['nullable','string','max:255'],
-
-            // Violencias (booleanos)
-            'violencia_fisica'             => ['nullable','boolean'],
-            'violencia_psicologica'        => ['nullable','boolean'],
-            'violencia_sexual'             => ['nullable','boolean'],
-            'violencia_economica'          => ['nullable','boolean'],
-
-            // Seguimiento
-//            'seguimiento_area'             => ['nullable','string','max:255'],
-//            'seguimiento_area_social'      => ['nullable','string','max:255'],
-//            'seguimiento_area_legal'       => ['nullable','string','max:255'],
-        ]);
-
-        $numero_casos = $this->numeroCaso();
-        $request['caso_numero'] = $numero_casos;
-        $request['fecha_apertura_caso'] = date('Y-m-d');
-        $user = $request->user();
-        $request['user_id'] = $user->id;
-        $request['area'] = $user->area;
-        $request['zona'] = $user->zona;
+//            $caso->asynccon denunciante
+            if($request->has('denunciantes')){
+                foreach ($request->denunciantes as $denunciante){
+                    $caso->denunciantes()->create($denunciante);
+                }
+            }
+            if($request->has('denunciado')){
+                foreach ($request->denunciado as $denunciado){
+                    $caso->denunciado()->create($denunciado);
+                }
+            }
 
 
-        $caso = Caso::create($request->all());
-
-        return response()->json([
-            'message' => 'Caso creado con éxito',
-            'caso'    => $caso,
-        ], 201);
+            DB::commit();
+            return $caso;
+        }catch (\Illuminate\Database\QueryException $e){
+            DB::rollBack();
+            return response()->json(['message' => 'Error al crear el caso', 'error' => $e->getMessage()], 500);
+        }
     }
-    function numeroCaso(){
+    function numeroCaso($tipo){
         $year = date('Y');
-        $count = Caso::whereYear('created_at', $year)->count() + 1;
+        $count = Caso::where('tipo', $tipo)->whereYear('created_at', $year)->count() + 1;
         $numero = str_pad($count, 3, '0', STR_PAD_LEFT) . '/' . substr($year, -2);
         return $numero;
     }
