@@ -60,7 +60,7 @@
         <td>{{ it.numero || '—' }}</td>
         <td>{{ it.user?.name || it.user?.username || '—' }}</td>
       </tr>
-      <tr v-if="!rows.data.length && !loading">
+      <tr v-if="!caso.informes_legales.length">
         <td colspan="7" class="text-center text-grey">Sin registros</td>
       </tr>
       </tbody>

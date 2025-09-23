@@ -58,7 +58,7 @@
         <td>{{ it.user?.name || it.user?.username || '—' }}</td>
       </tr>
 
-      <tr v-if="!rows.data.length && !loading">
+      <tr v-if="!caso.psicologicas || caso.psicologicas.length===0">
         <td colspan="6" class="text-center text-grey">Sin registros</td>
       </tr>
       </tbody>

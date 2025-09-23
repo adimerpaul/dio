@@ -31,7 +31,7 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="it in caso.informes_legales" :key="it.id">
+      <tr v-for="it in caso.informes_sociales" :key="it.id">
         <td>#{{ it.id }}</td>
         <td>
           <q-btn-dropdown dense color="primary" size="sm" label="Opciones" no-caps>
@@ -60,7 +60,7 @@
         <td>{{ it.numero || '—' }}</td>
         <td>{{ it.user?.name || it.user?.username || '—' }}</td>
       </tr>
-      <tr v-if="!caso.informes_legales.length">
+      <tr v-if="!caso.informes_sociales.length">
         <td colspan="7" class="text-center text-grey">Sin registros</td>
       </tr>
       </tbody>
@@ -142,7 +142,7 @@
 import { InformeHtml } from 'src/addons/InformePlantillas.js'
 
 export default {
-  name: 'Informes',
+  name: 'SocialInformes',
   props: {
     caseId: { type:[String,Number], required:true },
     caso: { type:Object, default:null }  // opcional, para usar en plantillas
@@ -265,8 +265,11 @@ export default {
       if(!this.form.contenido_html) return this.$q.notify({type:'negative', message:'El contenido está vacío'})
       this.saving = true
       try{
-        if(this.form.id) await this.$axios.put(`/informes-legales/${this.form.id}`, this.form)
-        else await this.$axios.post(`/casos/${this.caseId}/informes-legales`, this.form)
+        // Route::post('/casos/{caso}/informes-sociales', [\App\Http\Controllers\CasoController::class, 'socialStore']);
+        // Route::put ('/informes-sociales/{informe}',     [\App\Http\Controllers\CasoController::class, 'socialUpdate']);
+        // Route::delete('/informes-sociales/{informe}', [\App\Http\Controllers\CasoController::class, 'socialDestroy']);
+        if(this.form.id) await this.$axios.put(`/informes-sociales/${this.form.id}`, this.form)
+        else await this.$axios.post(`/casos/${this.caseId}/informes-sociales`, this.form)
         this.$q.notify({ type:'positive', message:'Guardado' })
         this.$emit('refresh')
         this.dialog = false
@@ -277,7 +280,7 @@ export default {
 
     removeIt(it){
       const go = async ()=> {
-        try{ await this.$axios.delete(`/informes-legales/${it.id}`); this.$q.notify({type:'positive', message:'Eliminado'}); this.$emit('refresh') }
+        try{ await this.$axios.delete(`/informes-sociales/${it.id}`); this.$q.notify({type:'positive', message:'Eliminado'}); this.$emit('refresh') }
         catch(e){ this.$q.notify({type:'negative', message:e?.response?.data?.message || 'No se pudo eliminar'}) }
       }
       if(this.$alert?.dialog) this.$alert.dialog('¿Eliminar el informe?').onOk(go)

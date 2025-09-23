@@ -7,10 +7,10 @@
         <div class="text-caption text-grey-7">Gestión de adjuntos del caso #{{ caseId }}</div>
       </div>
       <div class="col-auto row items-center q-gutter-sm">
-        <q-input dense outlined v-model="search" placeholder="Buscar..." style="width:260px">
-          <template #append><q-icon name="search" /></template>
-        </q-input>
-        <q-btn flat color="primary" icon="refresh" :loading="loading" @click="fetchRows"/>
+<!--        <q-input dense outlined v-model="search" placeholder="Buscar..." style="width:260px">-->
+<!--          <template #append><q-icon name="search" /></template>-->
+<!--        </q-input>-->
+        <q-btn flat color="primary" icon="refresh" :loading="loading" @click="$emit('refresh')"/>
         <q-btn color="green" icon="upload" no-caps label="Subir archivo" @click="openUpload"/>
       </div>
     </div>
@@ -66,9 +66,9 @@
       </tbody>
     </q-markup-table>
 
-    <div class="row justify-end q-mt-sm">
-      <q-pagination v-model="page" :max="rows.last_page || 1" boundary-numbers direction-links @input="fetchRows"/>
-    </div>
+<!--    <div class="row justify-end q-mt-sm">-->
+<!--      <q-pagination v-model="page" :max="rows.last_page || 1" boundary-numbers direction-links @input="fetchRows"/>-->
+<!--    </div>-->
 
     <!-- Subida -->
     <q-dialog v-model="dlgUpload" persistent>

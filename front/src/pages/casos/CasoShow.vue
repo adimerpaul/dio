@@ -101,6 +101,10 @@
       <q-tab-panel name="legal">
         <InformesLegal :case-id="caseId" :caso="caso" @refresh="fetchCaso"/>
       </q-tab-panel>
+<!--      <q-tab name="social"       label="6 Área Social"           icon="people"          no-caps v-if="role === 'Administrador' || role === 'Social'"/>-->
+      <q-tab-panel name="social">
+        <SocialInformes :caso="caso" :isSocial="true" @refresh="fetchCaso" :case-id="caseId"/>
+      </q-tab-panel>
 
       <!-- 5) Apoyo Integral -->
       <q-tab-panel name="apoyo">
@@ -132,10 +136,12 @@ import Fotografias       from './tabs/Fotografias.vue'
 import HojaRuta from "pages/casos/tabs/HojaRuta.vue";
 import Seguimiento from "pages/casos/tabs/Seguimiento.vue";
 import SlimNuevo from "pages/slims/SlimNuevo.vue";
+import SocialInformes from "pages/casos/tabs/Social.vue";
 
 export default {
   name: 'CasoDetalle',
   components: {
+    SocialInformes,
     SlimNuevo,
     Seguimiento,
     HojaRuta,
