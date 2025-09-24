@@ -285,12 +285,45 @@
         </q-card-section>
         <q-separator/>
         <q-card-section>
-          <q-input
-            v-model="f.descripcion"
-            type="textarea" autogrow outlined dense clearable
-            label="Descripción"
-            maxlength="5000" counter
-          />
+          <div class="row q-col-gutter-md">
+            <div class="col-12 col-md-3">
+              <q-input v-model="f.caso_fecha_hecho" type="date" dense outlined label="Fecha del hecho"/>
+            </div>
+            <div class="col-6 col-md-3">
+              <q-input v-model="f.denunciante_relacion" dense outlined clearable label="Relación con el denunciante"/>
+            </div>
+            <div class="col-12 col-md-6">
+              <q-input v-model="f.caso_lugar_hecho" dense outlined clearable label="Lugar del hecho"/>
+            </div>
+
+            <div class="col-12 col-md-4">
+              <q-input v-model="f.caso_tipologia" dense outlined clearable label="Tipología"/>
+            </div>
+            <div class="col-12">
+              <q-input
+                v-model="f.caso_descripcion"
+                type="textarea"
+                autogrow
+                outlined
+                dense
+                clearable
+                label="Descripción del hecho"
+                counter
+                maxlength="3000"
+              >
+                <template v-slot:append>
+                  <q-btn
+                    flat
+                    round
+                    dense
+                    :icon="isListening && activeField==='caso_descripcion' ? 'mic_off' : 'mic'"
+                    :color="isListening && activeField==='caso_descripcion' ? 'negative' : 'primary'"
+                    @click="toggleRecognition('caso_descripcion')"
+                  />
+                </template>
+              </q-input>
+            </div>
+          </div>
         </q-card-section>
       </q-card>
 
@@ -600,6 +633,9 @@ export default {
   },
   data () {
     return {
+      recognition: null,
+      activeField: null,
+      isListening: false,
       loading: false,
       oruroCenter: [-17.9667, -67.1167],
       abogados: [],
@@ -709,6 +745,30 @@ export default {
     }
   },
   mounted () {
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+      this.recognition = new SpeechRecognition()
+      this.recognition.lang = 'es-ES'
+      this.recognition.interimResults = false
+      this.recognition.continuous = false
+
+      this.recognition.onstart = () => { this.isListening = true }
+      this.recognition.onend = () => { this.isListening = false; this.activeField = null }
+      this.recognition.onresult = (event) => {
+        const text = event.results[0][0].transcript
+        if (this.activeField === 'caso_descripcion') {
+          this.f.caso_descripcion = (this.f.caso_descripcion ? (this.f.caso_descripcion + ' ') : '') + text
+        }
+      }
+      this.recognition.onerror = (event) => {
+        console.error('Error de reconocimiento de voz:', event.error)
+        this.$q.notify({ color: 'negative', message: 'Error de micrófono: ' + event.error })
+        this.isListening = false
+        this.activeField = null
+      }
+    } else {
+      console.warn('Reconocimiento de voz no soportado en este navegador.')
+    }
     if (this.tipoProceso === 'PROCESO_PENAL') {
       this.tipologias = [
         'VIOLACION', 'ESTUPRO', 'ABUSO SEXUAL', 'ACOSO SEXUAL', 'INFANTICIDIO', 'RAPTO', 'CORRUPCION',
@@ -746,6 +806,21 @@ export default {
       .catch(() => { this.$alert?.error?.('No se pudo cargar abogados') })
   },
   methods: {
+    toggleRecognition(field) {
+      if (!this.recognition) {
+        this.$q.notify({ color: 'negative', message: 'El navegador no soporta reconocimiento de voz.' })
+        return
+      }
+      if (this.isListening && this.activeField === field) {
+        try { this.recognition.stop() } catch (e) {}
+        return
+      }
+      if (this.isListening && this.activeField !== field) {
+        try { this.recognition.stop() } catch (e) {}
+      }
+      this.activeField = field
+      try { this.recognition.start() } catch (e) { console.warn('No se pudo iniciar el reconocimiento:', e) }
+    },
     show (v) {
       if (v === null || v === undefined || v === '') return '—'
       return String(v)

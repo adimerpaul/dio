@@ -60,7 +60,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
 
-    Route::get ('/slims/pendientes-resumen', [SlimController::class, 'pendientesResumen']);
+    Route::get ('/casos-pendientes-resumen', [CasoController::class, 'pendientesResumen']);
     Route::get ('/slims',        [SlimController::class, 'index']);
     Route::post('/slims',        [SlimController::class, 'store']);   // CREACIÓN
     Route::get ('/slims/{slim}', [SlimController::class, 'show']);

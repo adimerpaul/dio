@@ -38,9 +38,9 @@
             <div class="col-6 col-md-3">
               <q-input v-model="f.caso_lugar_hecho" dense outlined clearable label="U.E. / Colegio"/>
             </div>
-            <div class="col-6 col-md-2">
-              <q-input v-model="f.caso_numero" dense outlined clearable label="N° de caso" readonly/>
-            </div>
+<!--            <div class="col-6 col-md-2">-->
+<!--              <q-input v-model="f.caso_numero" dense outlined clearable label="N° de caso" readonly/>-->
+<!--            </div>-->
 
             <div class="col-12 col-md-8">
               <q-input v-model="f.caso_direccion" dense outlined clearable label="Domicilio / Dirección (para hoja de ruta)"/>

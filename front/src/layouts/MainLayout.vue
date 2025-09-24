@@ -26,6 +26,7 @@
         <!-- Perfil -->
         <div class="row items-center q-gutter-sm">
           <!-- Badge de pendientes -->
+<!--          <pre>{{pendingCount}}</pre>-->
           <q-btn
             flat round dense
             :icon="pendingCount > 0 ? 'notifications_active' : 'notifications_none'"
@@ -41,37 +42,23 @@
             </q-tooltip>
             <q-menu>
               <q-list style="min-width: 250px">
-                <q-item v-if="pending.pendientesSlim > 0" clickable @click="irPendientes" v-close-popup>
-                  <q-item-section avatar><q-icon name="person_add" /></q-item-section>
+                <q-item v-if="pending" v-for="(p,i) in pending" :key="i" clickable @click="irPendientes" v-close-popup>
                   <q-item-section>
-                    <q-item-label>Denuncias Físicas (SLIM)</q-item-label>
-                    <q-item-label caption>{{ pending.pendientesSlim }} pendiente(s)</q-item-label>
+                    <q-item-label>
+                      <div>
+                        <strong>{{ p.tipo }} {{ p.caso_numero }}</strong> - {{ p.caso_fecha_hecho }}
+                      </div>
+                      <div class="text-caption">
+                        {{ p.caso_direccion || 'Sin dirección' }}
+                      </div>
+                    </q-item-label>
                   </q-item-section>
                 </q-item>
-                <q-item v-if="pending.pendientesDna > 0" clickable @click="irPendientes" v-close-popup>
-                  <q-item-section avatar><q-icon name="gavel" /></q-item-section>
+                <q-item v-if="!pendingCount && !pendingLoading">
                   <q-item-section>
-                    <q-item-label>Procesos (DNA)</q-item-label>
-                    <q-item-label caption>{{ pending.pendientesDna }} pendiente(s)</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item v-if="pending.pendientesSlam > 0" clickable @click="irPendientes" v-close-popup>
-                  <q-item-section avatar><q-icon name="person_add" /></q-item-section>
-                  <q-item-section>
-                    <q-item-label>Denuncias Físicas (SLAM)</q-item-label>
-                    <q-item-label caption>{{ pending.pendientesSlam }} pendiente(s)</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item v-if="pending.pendientesUmadis > 0" clickable @click="irPendientes" v-close-popup>
-                  <q-item-section avatar><q-icon name="person_add" /></q-item-section>
-                  <q-item-section>
-                    <q-item-label>Denuncias Físicas (UMADIS/PROPREMI)</q-item-label>
-                    <q-item-label caption>{{ pending.pendientesUmadis }} pendiente(s)</q-item-label>
-                  </q-item-section>
-                </q-item>
-                <q-item v-if="!pendingCount && !pendingLoading" disabled>
-                  <q-item-section>
-                    <q-item-label>No tienes pendientes</q-item-label>
+                    <q-item-label>
+                      No tienes pendientes
+                    </q-item-label>
                   </q-item-section>
                 </q-item>
               </q-list>
@@ -549,9 +536,96 @@ const filteredLinks = computed(() => {
 async function fetchPendientesCount () {
   pendingLoading.value = true
   try {
-    const { data } = await proxy.$axios.get('/slims/pendientes-resumen')
+    const { data } = await proxy.$axios.get('/casos-pendientes-resumen')
+    // {
+    //   "pendientes": [
+    //   {
+    //     "id": 12,
+    //     "area": "ADMIN",
+    //     "zona": "CENTRAL",
+    //     "numero_apoyo_integral": null,
+    //     "tipo": "DNA",
+    //     "principal": "principal",
+    //     "caso_numero": "011\/25",
+    //     "caso_fecha_hecho": "2025-09-04",
+    //     "caso_lugar_hecho": null,
+    //     "caso_zona": null,
+    //     "caso_direccion": "aaaaa",
+    //     "caso_descripcion": null,
+    //     "caso_tipologia": "ASISTENCIA FAMILIAR",
+    //     "caso_modalidad": null,
+    //     "violencia_fisica": null,
+    //     "violencia_psicologica": null,
+    //     "violencia_sexual": null,
+    //     "violencia_economica": null,
+    //     "violencia_patrimonial": null,
+    //     "violencia_simbolica": null,
+    //     "violencia_institucional": null,
+    //     "psicologica_user_id": 3,
+    //     "trabajo_social_user_id": 5,
+    //     "legal_user_id": 4,
+    //     "documento_fotocopia_carnet_denunciante": "1",
+    //     "documento_fotocopia_carnet_denunciado": "1",
+    //     "documento_placas_fotograficas_domicilio_denunciante": "1",
+    //     "documento_croquis_direccion_denunciado": "1",
+    //     "documento_placas_fotograficas_domicilio_denunciado": "0",
+    //     "documento_ciudadania_digital": "0",
+    //     "documento_otros": null,
+    //     "documento_otros_detalle": null,
+    //     "fecha_apertura_caso": "2025-09-23",
+    //     "fecha_derivacion_psicologica": null,
+    //     "fecha_informe_area_social": null,
+    //     "fecha_informe_area_psicologica": null,
+    //     "fecha_informe_trabajo_social": null,
+    //     "fecha_derivacion_area_legal": null,
+    //     "user_id": 1
+    //   },
+    //   {
+    //     "id": 17,
+    //     "area": "ADMIN",
+    //     "zona": "CENTRAL",
+    //     "numero_apoyo_integral": null,
+    //     "tipo": "PROPREMI",
+    //     "principal": "asdas",
+    //     "caso_numero": "003\/25",
+    //     "caso_fecha_hecho": "2025-09-27",
+    //     "caso_lugar_hecho": "asdsa",
+    //     "caso_zona": null,
+    //     "caso_direccion": null,
+    //     "caso_descripcion": null,
+    //     "caso_tipologia": null,
+    //     "caso_modalidad": null,
+    //     "violencia_fisica": false,
+    //     "violencia_psicologica": false,
+    //     "violencia_sexual": true,
+    //     "violencia_economica": false,
+    //     "violencia_patrimonial": "0",
+    //     "violencia_simbolica": "0",
+    //     "violencia_institucional": "1",
+    //     "psicologica_user_id": 3,
+    //     "trabajo_social_user_id": 5,
+    //     "legal_user_id": 10,
+    //     "documento_fotocopia_carnet_denunciante": "0",
+    //     "documento_fotocopia_carnet_denunciado": "1",
+    //     "documento_placas_fotograficas_domicilio_denunciante": "1",
+    //     "documento_croquis_direccion_denunciado": "0",
+    //     "documento_placas_fotograficas_domicilio_denunciado": null,
+    //     "documento_ciudadania_digital": null,
+    //     "documento_otros": null,
+    //     "documento_otros_detalle": null,
+    //     "fecha_apertura_caso": "2025-09-24",
+    //     "fecha_derivacion_psicologica": null,
+    //     "fecha_informe_area_social": null,
+    //     "fecha_informe_area_psicologica": null,
+    //     "fecha_informe_trabajo_social": null,
+    //     "fecha_derivacion_area_legal": null,
+    //     "user_id": 1
+    //   }
+    // ]
+    // }
+    // console.log(data)
     pending.value = data
-    pendingCount.value = (data?.pendientesSlim || 0) + (data?.pendientesDna || 0) + (data?.pendientesSlam || 0) + (data?.pendientesUmadis || 0)
+    pendingCount.value = data.length
   } catch (e) {
     // opcional
   } finally {

@@ -304,28 +304,24 @@ class CasoController extends Controller
         switch ($user->role) {
             case 'Psicologo':
                 $q->where('psicologica_user_id', $user->id)
-                    ->whereDoesntHave('sesionesPsicologicas'); // sin la primera sesión
+                    ->whereDoesntHave('psicologicas'); // sin la primera sesión
                 break;
 
             case 'Abogado':
                 $q->where('legal_user_id', $user->id)
-                    ->whereDoesntHave('informes', function ($s) {
-                        $s->where('area', 'Legal'); // sin el primer informe legal
-                    });
+                    ->whereDoesntHave('informesLegales'); // sin el primer informe legal
                 break;
 
             case 'Social':
                 $q->where('trabajo_social_user_id', $user->id)
-                    ->whereDoesntHave('informes', function ($s) {
-                        $s->where('area', 'Social'); // sin el primer informe social
-                    });
+                    ->whereDoesntHave('informesSociales'); // sin el primer informe social
                 break;
 
             default:
                 return response()->json(['pendientes' => 0]);
         }
 
-        return response()->json(['pendientes' => $q->count()]);
+        return $q->get();
     }
 
     public function seguimiento(\Illuminate\Http\Request $request, \App\Models\Caso $caso)
