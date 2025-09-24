@@ -476,20 +476,23 @@ class CasoController extends Controller
 
         // Coordenadas por tipo
         if ($tipo === 'denunciado') {
-            $lat = is_numeric($caso->denunciado_latitud)  ? (float)$caso->denunciado_latitud  : null;
-            $lng = is_numeric($caso->denunciado_longitud) ? (float)$caso->denunciado_longitud : null;
-            $nombre    = $caso->denunciado_nombre_completo ?: trim("{$caso->denunciado_nombres} {$caso->denunciado_paterno} {$caso->denunciado_materno}");
-            $telefono  = $caso->denunciado_telefono ?: ($caso->denunciado_movil ?: $caso->denunciado_fijo);
-            $direccion = $caso->denunciado_domicilio_actual ?: '—';
-            $zona      = $caso->caso_zona ?: $caso->zona; // si tienes zona específica del denunciado, cámbialo aquí
+            $denunciado = $caso->denunciados;
+            $nombre    = $denunciado->isNotEmpty() ? trim("{$denunciado->first()->denunciado_nombres} {$denunciado->first()->denunciado_paterno} {$denunciado->first()->denunciado_materno}") : '—';
+            $lat = is_numeric($denunciado->first()->denunciado_latitud) ? (float)$denunciado->first()->denunciado_latitud : null;
+            $lng = is_numeric($denunciado->first()->denunciado_longitud) ? (float)$denunciado->first()->denunciado_longitud : null;
+            $telefono  = $denunciado->first()->denunciado_telefono ?: ($denunciado->first()->denunciado_movil ?: $denunciado->first()->denunciado_fijo);
+            $direccion = $denunciado->first()->denunciado_domicilio_actual ?: ($caso->caso_direccion ?: '—');
+            $zona      = $caso->caso_zona ?: $caso->zona;
             $tituloPersona = 'Denunciado';
         } else {
             // denunciante
-            $lat = is_numeric($caso->latitud)  ? (float)$caso->latitud  : null;
-            $lng = is_numeric($caso->longitud) ? (float)$caso->longitud : null;
-            $nombre    = $caso->denunciante_nombre_completo ?: trim("{$caso->denunciante_nombres} {$caso->denunciante_paterno} {$caso->denunciante_materno}");
-            $telefono  = $caso->denunciante_telefono ?: ($caso->denunciante_movil ?: $caso->denunciante_fijo);
-            $direccion = $caso->denunciante_domicilio_actual ?: ($caso->caso_direccion ?: '—');
+            $denunciantes = $caso->denunciantes;
+            $nombre    = $denunciantes->isNotEmpty() ? trim("{$denunciantes->first()->denunciante_nombres} {$denunciantes->first()->denunciante_paterno} {$denunciantes->first()->denunciante_materno}") : '—';
+            $lat = is_numeric($denunciantes->first()->latitud) ? (float)$denunciantes->first()->latitud : null;
+            $lng = is_numeric($denunciantes->first()->longitud) ? (float)$denunciantes->first()->longitud : null;
+
+            $telefono  = $denunciantes->first()->denunciante_telefono ?: ($denunciantes->first()->denunciante_movil ?: $denunciantes->first()->denunciante_fijo);
+            $direccion = $denunciantes->first()->denunciante_domicilio_actual ?: ($caso->caso_direccion ?: '—');
             $zona      = $caso->caso_zona ?: $caso->zona;
             $tituloPersona = 'Denunciante';
         }
@@ -499,7 +502,6 @@ class CasoController extends Controller
         $LNG = $lng ?? -67.116700;
         $HAS = is_numeric($lat) && is_numeric($lng);
 
-        // Pasamos todo a la vista
         return view('casos.pdfHojaRuta', [
             'caso'          => $caso,
             'tipo'          => $tipo,
