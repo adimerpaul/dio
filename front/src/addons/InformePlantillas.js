@@ -55,46 +55,136 @@ export const InformeHtml = {
 </div>
     `;
   },
+legal(caso) {
+  // ===== Helpers =====
+  const fmt = (v) => (v === null || v === undefined || v === '') ? '—' : String(v);
+  const yesNo = (v) => (v === true || v === 1 || v === '1') ? 'Sí' : (v === false || v === 0 || v === '0') ? 'No' : '—';
+  const fmtDate = (v) => {
+    if (!v) return '—';
+    const d = new Date(v);
+    if (isNaN(d.getTime())) return fmt(v);
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,'0');
+    const day = String(d.getDate()).padStart(2,'0');
+    return `${y}-${m}-${day}`;
+  };
+  const todayBo = () => {
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,'0');
+    const day = String(d.getDate()).padStart(2,'0');
+    return `${day}/${m}/${y}`;
+  };
+  const fullNameDenunciante = (d = {}) =>
+    [d.denunciante_nombres, d.denunciante_paterno, d.denunciante_materno].filter(Boolean).join(' ') || '—';
+  const fullNameDenunciado = (d = {}) =>
+    [d.denunciado_nombres, d.denunciado_paterno, d.denunciado_materno].filter(Boolean).join(' ') || '—';
 
-  legal({ casoId, fecha, titulo, numero }) {
-    return `
-<div style="border:1px solid #333;border-radius:6px;padding:12px;margin-bottom:12px;font-size:12px">
-  <div style="display:flex;justify-content:space-between">
-    <div><div style="font-weight:700">D.I.O. — ÁREA LEGAL</div></div>
-    <div style="text-align:right;font-size:11px;color:#555">
-      <div><b>Caso:</b> ${casoId}</div>
-      <div><b>Fecha:</b> ${fecha}</div>
-      <div><b>Nro. Informe:</b> ${numero || '—'}</div>
-    </div>
+  // ===== Datos base =====
+  const denunciante = (caso?.denunciantes && caso.denunciantes[0]) ? caso.denunciantes[0] : {};
+  const denunciado  = (caso?.denunciados   && caso.denunciados[0])   ? caso.denunciados[0]   : {};
+
+  const motivo = fmt(caso?.principal || caso?.caso_tipologia);
+  const ciudadaniaDigital = yesNo(caso?.documento_ciudadania_digital);
+
+  // Campos denunciante
+  const denNomAp = fullNameDenunciante(denunciante);
+  const denFNac  = fmtDate(denunciante?.denunciante_fecha_nacimiento);
+  const denLNac  = fmt(denunciante?.denunciante_lugar_nacimiento);
+  const denEdad  = fmt(denunciante?.denunciante_edad);
+  const denCI    = fmt(denunciante?.denunciante_nro);
+  const denECiv  = fmt(denunciante?.denunciante_estado_civil);
+  const denGrado = fmt(denunciante?.denunciante_grado);
+  const denDir   = fmt(denunciante?.denunciante_residencia || denunciante?.denunciante_domicilio_actual || caso?.caso_direccion);
+  const denOcu   = fmt(denunciante?.denunciante_ocupacion);
+  const denTel   = fmt(denunciante?.denunciante_telefono);
+  const denMail  = '—'; // no viene en tu JSON
+
+  // Campos denunciado
+  const demNomAp = fullNameDenunciado(denunciado);
+  const demFNac  = fmtDate(denunciado?.denunciado_fecha_nacimiento);
+  const demLNac  = fmt(denunciado?.denunciado_lugar_nacimiento);
+  const demEdad  = fmt(denunciado?.denunciado_edad);
+  const demCI    = fmt(denunciado?.denunciado_nro);
+  const demECiv  = fmt(denunciado?.denunciado_estado_civil);
+  const demGrado = fmt(denunciado?.denunciado_grado);
+  const demDir   = fmt(denunciado?.denunciado_residencia || denunciado?.denunciado_domicilio_actual);
+  const demOcu   = fmt(denunciado?.denunciado_ocupacion);
+  const demTel   = fmt(denunciado?.denunciado_telefono);
+  const demMail  = '—'; // no viene en tu JSON
+
+  // Encabezado (abogada/o responsable si existe)
+  const abogado = fmt(caso?.legal_user?.name ? `ABG. ${caso.legal_user.name}` : 'ABG.');
+
+  // ===== HTML =====
+  return `
+<div style="border:1px solid #333;border-radius:6px;padding:14px;margin-bottom:12px;font-size:13px; line-height:1.35">
+  <div style="text-align:center; font-weight:700; font-size:16px; margin-bottom:10px">INFORME LEGAL</div>
+
+  <div style="margin-bottom:10px">
+    <div><b>A :</b> SEÑOR REPRESENTANTE DEL MINISTERIO PUBLICO</div>
+    <div><b>DE :</b> ${abogado}</div>
+  </div>
+
+  <div style="margin:14px 0; font-weight:700">I. FORMULACION DE DENUNCIA</div>
+  <div style="margin:14px 0; font-weight:700">II. FUNDAMENTO DEL HECHO</div>
+  <div style="margin:14px 0; font-weight:700">III. FUNDAMENTO DE DERECHO</div>
+  <div style="margin:14px 0; font-weight:700">IV. PETITORIO</div>
+  <div style="margin:14px 0; font-weight:700">V. OTROSIS</div>
+
+  <div style="margin:18px 0; font-weight:700">I. FORMULA DENUNCIA POR EL MOTIVO DE :</div>
+  <div style="margin:6px 0 14px 0">${motivo}</div>
+
+  <div style="margin:10px 0; font-weight:700">DATOS GENERALES DEL DENUNCIANTE :</div>
+  <div><b>Nombres y Apellidos:</b> ${denNomAp}</div>
+  <div><b>Fecha de Nacimiento:</b> ${denFNac}</div>
+  <div><b>Lugar de Nacimiento:</b> ${denLNac}</div>
+  <div><b>Edad:</b> ${denEdad}</div>
+  <div><b>C.I.:</b> ${denCI}</div>
+  <div><b>Estado Civil:</b> ${denECiv}</div>
+  <div><b>Grado de Instrucción:</b> ${denGrado}</div>
+  <div><b>Dirección:</b> ${denDir}</div>
+  <div><b>Ocupación:</b> ${denOcu}</div>
+  <div><b>Teléfono Celular:</b> ${denTel}</div>
+  <div><b>Correo electrónico:</b> ${denMail}</div>
+  <div><b>Ciudadanía Digital:</b> ${ciudadaniaDigital}</div>
+
+  <div style="margin:16px 0; font-weight:700">DATOS DEL DEMANDADO</div>
+  <div><b>Nombres y Apellidos:</b> ${demNomAp}</div>
+  <div><b>Fecha de Nacimiento:</b> ${demFNac}</div>
+  <div><b>Lugar de Nacimiento:</b> ${demLNac}</div>
+  <div><b>Edad:</b> ${demEdad}</div>
+  <div><b>C.I.:</b> ${demCI}</div>
+  <div><b>Estado Civil:</b> ${demECiv}</div>
+  <div><b>Grado de Instrucción:</b> ${demGrado}</div>
+  <div><b>Dirección:</b> ${demDir}</div>
+  <div><b>Ocupación:</b> ${demOcu}</div>
+  <div><b>Teléfono Celular:</b> ${demTel}</div>
+  <div><b>Correo electrónico:</b> ${demMail}</div>
+
+  <div style="margin:18px 0; font-weight:700">II. FUNDAMENTO DEL HECHO</div>
+  <p style="margin:6px 0">...</p>
+
+  <div style="margin:18px 0; font-weight:700">III. FUNDAMENTO DE DERECHO</div>
+  <p style="margin:6px 0">...</p>
+
+  <div style="margin:18px 0; font-weight:700">IV. PETITORIO</div>
+  <p style="margin:6px 0">...</p>
+
+  <div style="margin:18px 0; font-weight:700">V. OTROSIS</div>
+  <p style="margin:6px 0">Por un derecho y protección a la Mujer…</p>
+
+  <div style="margin-top:24px;">Oruro, ${todayBo()}</div>
+
+  <div style="margin-top:36px;text-align:center">
+    __________________________<br>
+    ${abogado}
   </div>
 </div>
+  `;
+},
 
-<h4>${titulo || 'INFORME LEGAL'}</h4>
-
-<h5>I. Objeto</h5>
-<p>...</p>
-
-<h5>II. Fundamentación de hecho</h5>
-<p>Relación circunstanciada de los hechos...</p>
-
-<h5>III. Fundamentación de derecho</h5>
-<ul>
-  <li>Constitución Política del Estado — Art. 15 ...</li>
-  <li>Ley 348 — Art. 83 ...</li>
-  <li>Código Penal — Art. 312 (Abuso Sexual) ...</li>
-</ul>
-
-<h5>IV. Petitorio</h5>
-<p>...</p>
-
-<div style="margin-top:36px;text-align:center">
-  __________________________<br>
-  Abg. Responsable
-</div>
-    `;
-  },
-
-  social({ casoId, fecha, titulo, numero }) {
+social({ casoId, fecha, titulo, numero }) {
     return `
 <div style="border:1px solid #333;border-radius:6px;padding:12px;margin-bottom:12px;font-size:12px">
   <div style="display:flex;justify-content:space-between">

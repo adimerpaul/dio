@@ -33,9 +33,9 @@
             <div class="col-12 col-md-3">
               <q-input v-model="f.caso_fecha_hecho" type="date" dense outlined label="Fecha de atención"/>
             </div>
-            <div class="col-12 col-md-5">
-              <q-input v-model="f.principal" dense outlined clearable label="PRINCIPAL (p.ej. ASISTENCIA FAMILIAR) *" :rules="[req]"/>
-            </div>
+<!--            <div class="col-12 col-md-5">-->
+<!--              <q-input v-model="f.principal" dense outlined clearable label="PRINCIPAL (p.ej. ASISTENCIA FAMILIAR) *" :rules="[req]"/>-->
+<!--            </div>-->
             <div class="col-12 col-md-4">
               <q-select v-model="f.caso_tipologia" :options="tipologias" dense outlined emit-value map-options clearable
                         label="Tipología (catálogo DNA)"/>
@@ -52,7 +52,7 @@
 <!--            </div>-->
 
 <!--            <div class="row q-mt-xs">-->
-              <div class="col-12 col-md-10">
+              <div class="col-12 col-md-8">
                 <q-input v-model="f.caso_direccion" dense outlined clearable label="Buscar dirección en el mapa"/>
               </div>
               <div class="col-12 col-md-2">
@@ -203,6 +203,10 @@
 <!--              <q-input v-model="f.denunciado_domicilio" dense outlined clearable label="Domicilio"/>-->
               <q-input v-model="f.denunciados[0].denunciado_residencia" dense outlined clearable label="Domicilio"/>
             </div>
+            <div class="col-6 col-md-2">
+<!--              busncar btn-->
+              <q-btn outline label="Buscar" @click="$refs.denMap?.geocodeAndFly(f.denunciados[0].denunciado_residencia)" />
+            </div>
             <div class="col-6 col-md-3">
               <q-input v-model="f.denunciantes[0].denunciante_telefono" dense outlined clearable label="Teléfono"/>
             </div>
@@ -213,6 +217,16 @@
             <div class="col-6 col-md-3">
 <!--              <q-input v-model="f.denunciado_ocupacion" dense outlined clearable label="Ocupación"/>-->
               <q-input v-model="f.denunciados[0].denunciado_ocupacion" dense outlined clearable label="Ocupación"/>
+            </div>
+            <div class="col-12">
+              <div class="text-caption text-grey-7 q-mb-xs">Ubicación (para hoja de ruta)</div>
+              <MapPicker
+                v-model="denunciadoPos"
+                :center="oruroCenter"
+                :address="f.denunciados[0].denunciado_residencia"
+                country="bo"
+                ref="denMap"
+              />
             </div>
           </div>
         </q-card-section>

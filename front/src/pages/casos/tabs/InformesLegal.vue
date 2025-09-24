@@ -210,7 +210,7 @@ export default {
       }
 
       if (val === 'informe_psico')  this.form.contenido_html = InformeHtml.psicologico(baseMin)
-      if (val === 'informe_legal')  this.form.contenido_html = InformeHtml.legal(baseMin)
+      if (val === 'informe_legal')  this.form.contenido_html = InformeHtml.legal(this.caso)
       if (val === 'informe_social') this.form.contenido_html = InformeHtml.social(baseMin)
 
       if (val === 'denuncia_mp') {
