@@ -24,6 +24,132 @@ use Intervention\Image\ImageManager;
 
 class CasoController extends Controller
 {
+
+    public function lineaTiempo(Request $request)
+    {
+        $q            = trim((string) $request->get('q', ''));
+        $perPage      = (int) $request->get('per_page', 10);
+        $perPage      = max(5, min($perPage, 100));
+        // SLA configurable; por defecto 10 días exactos desde la apertura/creación
+        $deadlineDays = (int) $request->get('deadline_days', 10);
+
+        $query = Caso::orderByDesc('created_at');
+
+        if ($q !== '') {
+            $query->where(function ($s) use ($q) {
+                $like = "%{$q}%";
+                $s->orWhere('caso_numero', 'like', $like)
+                    ->orWhere('caso_tipologia', 'like', $like)
+                    ->orWhere('caso_zona', 'like', $like)
+                    ->orWhere('caso_direccion', 'like', $like)
+                    ->orWhere('caso_descripcion', 'like', $like);
+            });
+
+            $query->orWhereHas('denunciantes', function ($s) use ($q) {
+                $like = "%{$q}%";
+                $s->where(DB::raw("CONCAT_WS(' ', denunciante_nombres, denunciante_paterno, denunciante_materno)"), 'like', $like)
+                    ->orWhere('denunciante_nro', 'like', $like);
+            });
+
+            $query->orWhereHas('denunciados', function ($s) use ($q) {
+                $like = "%{$q}%";
+                $s->where(DB::raw("CONCAT_WS(' ', denunciado_nombres, denunciado_paterno, denunciado_materno)"), 'like', $like);
+            });
+        }
+
+        // Filtro por rol asignado (si aplica)
+        $user = $request->user();
+        if ($user?->role === 'Psicologo') { $query->where('psicologica_user_id', $user->id); }
+        if ($user?->role === 'Social')    { $query->where('trabajo_social_user_id', $user->id); }
+        if ($user?->role === 'Abogado')   { $query->where('legal_user_id', $user->id); }
+
+        // Relaciones mínimas necesarias
+        $query->with([
+            'user:id,name',
+            'denunciantes:id,denunciante_nombres,denunciante_paterno,denunciante_materno,denunciante_nro,caso_id',
+            'psicologicas:id,caseable_id,caseable_type,fecha,created_at',
+            'informesSociales:id,caseable_id,caseable_type,fecha,created_at',
+            'informesLegales:id,caseable_id,caseable_type,fecha,created_at',
+        ]);
+
+        $paginated = $query->paginate($perPage)->appends($request->query());
+        $now = Carbon::now();
+
+        // === Helper estado por área (corrige días restantes/vencidos) ===
+        $buildArea = function ($collection, Carbon $baseC, int $deadlineDays) use ($now) {
+
+            // Fecha límite exacta: base + N días (solo fecha, sin sorpresas por horas)
+            $baseDateOnly = Carbon::create($baseC->year, $baseC->month, $baseC->day, 0, 0, 0);
+            $deadline     = $baseDateOnly->copy()->addDays($deadlineDays);
+
+            if (!$collection || $collection->isEmpty()) {
+                $diasRest = $baseDateOnly->diffInDays($now, false); // negativo si ya pasó
+
+                return [
+                    'entregado'       => false,
+                    'creado_dmY'      => $baseDateOnly->format('d/m/Y'),
+                    'deadline_dmY'    => $deadline->format('d/m/Y'),
+                    'dias_restantes'  => round($diasRest),
+                    'vencido'         => $diasRest < 0,
+                ];
+            }
+
+            // Primera entrega por 'fecha' (fallback a created_at)
+            $first = $collection->sortBy(function ($x) {
+                return $x->fecha ?: $x->created_at;
+            })->first();
+
+            $f = $first->fecha ?: $first->created_at;
+            $entrega = Carbon::parse($f);
+            // Diferencia exacta en días entre base y entrega
+            $diasHastaEntrega = $baseDateOnly->diffInDays(Carbon::create(
+                $entrega->year, $entrega->month, $entrega->day, 0, 0, 0
+            ));
+
+            return [
+                'entregado'          => true,
+                'entrego_dmY'        => $entrega->format('d/m/Y'),
+                'dias_hasta_entrega' => $diasHastaEntrega,
+            ];
+        };
+
+        $rows = collect($paginated->items())->map(function (Caso $c) use ($now, $buildArea, $deadlineDays) {
+            $den = optional($c->denunciantes->first());
+            $denName = trim(collect([
+                $den?->denunciante_nombres, $den?->denunciante_paterno, $den?->denunciante_materno
+            ])->filter()->implode(' '));
+
+            // Base = fecha_apertura_caso o created_at
+            $base = $c->fecha_apertura_caso ?: $c->created_at;
+            $baseC = $base ? Carbon::parse($base) : $now;
+
+            return [
+                'id'                 => $c->id,
+                'tipo'               => $c->tipo,
+                'caso_numero'        => $c->caso_numero,
+                'caso_zona'          => $c->caso_zona ?: $c->zona,
+                'creado_dmY'         => $baseC->format('d/m/Y'),
+                'base_user'          => $c->user?->name,
+
+                'denunciante_nombre' => $denName ?: null,
+                'denunciante_nro'    => $den?->denunciante_nro,
+
+                'psico'  => $buildArea($c->psicologicas,     $baseC, $deadlineDays),
+                'social' => $buildArea($c->informesSociales, $baseC, $deadlineDays),
+                'legal'  => $buildArea($c->informesLegales,  $baseC, $deadlineDays),
+            ];
+        });
+
+        return response()->json([
+            'data'         => $rows,
+            'current_page' => $paginated->currentPage(),
+            'last_page'    => $paginated->lastPage(),
+            'per_page'     => $paginated->perPage(),
+            'total'        => $paginated->total(),
+            'from'         => $paginated->firstItem(),
+            'to'           => $paginated->lastItem(),
+        ]);
+    }
     public function fotoStore(Request $request, Caso $caso)
     {
         $request->validate([
