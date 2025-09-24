@@ -15,9 +15,9 @@
 
     <div v-if="editable" class="q-mb-sm text-right">
       <q-btn flat color="primary" icon="refresh" label="Recargar" @click="getCaso" class="q-mr-sm"/>
-      <q-btn color="primary" icon="save" label="Actualizar" :loading="loading" @click="update"/>
+      <q-btn color="primary" icon="save" label="Actualizar" :loading="loading" @click="update" v-if="$store.user?.role === 'Administrador' || $store.user?.role === 'Asistente'"/>
     </div>
-
+    <template v-if="$store.user?.role === 'Administrador' || $store.user?.role === 'Asistente'">
     <q-form class="q-mt-lg" @submit.prevent="save">
       <!-- 1) ENCABEZADO -->
       <q-card flat bordered class="section-card">
@@ -252,6 +252,147 @@
         <q-btn color="primary" icon="save" label="Actualizar" :loading="loading" @click="update" v-if="editable"/>
       </div>
     </q-form>
+    </template>
+    <template v-else>
+      <div class="q-pa-md">
+        <!-- CABECERA -->
+        <q-card flat bordered class="section-card">
+          <q-card-section class="row items-center q-col-gutter-sm">
+            <div class="col-12 col-md-8">
+              <div class="text-h6 text-weight-bold">
+                Detalle UMADIS · Caso
+                <span v-if="f.caso_numero">#{{ f.caso_numero }}</span>
+                <span v-else>#{{ f.id }}</span>
+              </div>
+              <div class="text-caption text-grey-7">
+                Registrado:
+                <q-chip dense color="indigo-1" text-color="indigo-9">
+                  {{ fmtDate(f.caso_fecha_hecho) || '—' }}
+                </q-chip>
+                · Por:
+                <q-chip dense color="grey-2" text-color="grey-9">
+                  {{ f.user?.name || '—' }}
+                </q-chip>
+              </div>
+            </div>
+            <div class="col-12 col-md-4 flex items-center justify-end">
+              <q-chip dense outline color="primary" text-color="primary">Tipo: {{ show(f.tipo || 'UMADIS') }}</q-chip>
+              <q-chip dense outline color="teal" text-color="teal">Zona: {{ show(f.zona) }}</q-chip>
+            </div>
+          </q-card-section>
+        </q-card>
+
+        <!-- DATOS DEL CASO -->
+        <q-card flat bordered class="section-card">
+          <q-card-section class="row items-center">
+            <q-icon name="assignment" class="q-mr-sm"/>
+            <div class="text-subtitle1 text-weight-medium">1) Datos del caso</div>
+          </q-card-section>
+          <q-separator/>
+          <q-card-section>
+            <div class="row q-col-gutter-md">
+              <div class="col-12 col-md-6">
+                <div class="text-caption text-grey-7">Tipología principal</div>
+                <div class="text-body1">{{ show(f.principal) }}</div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="text-caption text-grey-7">N° caso</div>
+                <div class="text-body1">{{ show(f.caso_numero) }}</div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="text-caption text-grey-7">Fecha de registro</div>
+                <div class="text-body1">{{ fmtDate(f.caso_fecha_hecho) || '—' }}</div>
+              </div>
+
+              <div class="col-12">
+                <div class="text-caption text-grey-7 q-mb-xs">Descripción</div>
+                <div class="q-pa-sm bg-grey-1" style="white-space: pre-wrap; border-radius: 10px;">
+                  {{ show(f.caso_descripcion) }}
+                </div>
+              </div>
+            </div>
+          </q-card-section>
+        </q-card>
+
+        <!-- RESPONSABLES -->
+        <q-card flat bordered class="section-card">
+          <q-card-section class="row items-center">
+            <q-icon name="people_alt" class="q-mr-sm" />
+            <div class="text-subtitle1 text-weight-medium">2) Responsables</div>
+          </q-card-section>
+          <q-separator />
+          <q-card-section>
+            <div class="row q-col-gutter-md">
+              <div class="col-12 col-md-4">
+                <div class="text-caption text-grey-7">Área Psicológica</div>
+                <div class="text-body1">
+                  {{ f.psicologica_user?.name || '—' }}
+                  <q-chip v-if="f.psicologica_user?.celular" dense color="blue-1" text-color="blue-9" class="q-ml-xs">
+                    {{ f.psicologica_user?.celular }}
+                  </q-chip>
+                </div>
+              </div>
+              <div class="col-12 col-md-4">
+                <div class="text-caption text-grey-7">Trabajo Social</div>
+                <div class="text-body1">
+                  {{ f.trabajo_social_user?.name || '—' }}
+                  <q-chip v-if="f.trabajo_social_user?.celular" dense color="blue-1" text-color="blue-9" class="q-ml-xs">
+                    {{ f.trabajo_social_user?.celular }}
+                  </q-chip>
+                </div>
+              </div>
+              <div class="col-12 col-md-4">
+                <div class="text-caption text-grey-7">Área Legal</div>
+                <div class="text-body1">
+                  {{ f.legal_user?.name || '—' }}
+                  <q-chip v-if="f.legal_user?.celular" dense color="blue-1" text-color="blue-9" class="q-ml-xs">
+                    {{ f.legal_user?.celular }}
+                  </q-chip>
+                </div>
+              </div>
+            </div>
+          </q-card-section>
+        </q-card>
+
+        <!-- FECHAS CLAVE (si tu backend las trae en Caso) -->
+        <q-card flat bordered class="section-card" v-if="f.fecha_apertura_caso || f.fecha_derivacion_psicologica || f.fecha_informe_area_psicologica || f.fecha_informe_area_social || f.fecha_informe_trabajo_social || f.fecha_derivacion_area_legal">
+          <q-card-section class="row items-center">
+            <q-icon name="event" class="q-mr-sm" />
+            <div class="text-subtitle1 text-weight-medium">3) Fechas clave</div>
+          </q-card-section>
+          <q-separator />
+          <q-card-section>
+            <div class="row q-col-gutter-md">
+              <div class="col-12 col-md-3" v-if="f.fecha_apertura_caso">
+                <div class="text-caption text-grey-7">Apertura</div>
+                <div class="text-body1">{{ fmtDate(f.fecha_apertura_caso) }}</div>
+              </div>
+              <div class="col-12 col-md-3" v-if="f.fecha_derivacion_psicologica">
+                <div class="text-caption text-grey-7">Derivación Psicológica</div>
+                <div class="text-body1">{{ fmtDate(f.fecha_derivacion_psicologica) }}</div>
+              </div>
+              <div class="col-12 col-md-3" v-if="f.fecha_informe_area_psicologica">
+                <div class="text-caption text-grey-7">Informe Psicología</div>
+                <div class="text-body1">{{ fmtDate(f.fecha_informe_area_psicologica) }}</div>
+              </div>
+              <div class="col-12 col-md-3" v-if="f.fecha_informe_area_social">
+                <div class="text-caption text-grey-7">Informe Social</div>
+                <div class="text-body1">{{ fmtDate(f.fecha_informe_area_social) }}</div>
+              </div>
+              <div class="col-12 col-md-3" v-if="f.fecha_informe_trabajo_social">
+                <div class="text-caption text-grey-7">Informe Trabajo Social</div>
+                <div class="text-body1">{{ fmtDate(f.fecha_informe_trabajo_social) }}</div>
+              </div>
+              <div class="col-12 col-md-3" v-if="f.fecha_derivacion_area_legal">
+                <div class="text-caption text-grey-7">Derivación Legal</div>
+                <div class="text-body1">{{ fmtDate(f.fecha_derivacion_area_legal) }}</div>
+              </div>
+            </div>
+          </q-card-section>
+        </q-card>
+      </div>
+    </template>
+
   </q-page>
 </template>
 
@@ -385,6 +526,24 @@ export default {
     this.getCaso()
   },
   methods: {
+    show (v) {
+      if (v === null || v === undefined || v === '') return '—'
+      return String(v)
+    },
+    yesNo (v) {
+      const on = (v === true) || (v === 1) || (v === '1')
+      return on ? 'Sí' : 'No'
+    },
+    fmtDate (v) {
+      if (!v) return ''
+      // Acepta 'YYYY-MM-DD' o ISO
+      const d = new Date(v)
+      if (isNaN(d.getTime())) return this.show(v)
+      const y = d.getFullYear()
+      const m = String(d.getMonth()+1).padStart(2,'0')
+      const day = String(d.getDate()).padStart(2,'0')
+      return `${y}-${m}-${day}`
+    },
     getCaso () {
       if (!this.editable || !this.casoId) return
       this.loading = true

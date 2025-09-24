@@ -16,11 +16,11 @@
       <div class="col-auto text-right">
 <!--        btoton refresh-->
         <q-btn flat color="primary" icon="refresh" label="Recargar" @click="getCaso" class="q-mr-sm"/>
-        <q-btn color="primary" icon="save" label="Actualizar" :loading="loading" @click="update"/>
+        <q-btn color="primary" icon="save" label="Actualizar" :loading="loading" @click="update" v-if="$store.user?.role === 'Administrador' || $store.user?.role === 'Asistente'"/>
       </div>
     </div>
-
-    <q-form class="q-mt-lg" @submit.prevent="save">
+    <template v-if="$store.user?.role === 'Administrador' || $store.user?.role === 'Asistente'">
+      <q-form class="q-mt-lg" @submit.prevent="save">
       <!-- 1) DATOS GENERALES -->
       <q-card flat bordered class="section-card">
         <q-card-section class="row items-center">
@@ -348,6 +348,227 @@
         <q-btn color="primary" icon="save" label="Actualizar" :loading="loading" @click="update" v-if="editable"/>
       </div>
     </q-form>
+    </template>
+    <div v-else class="q-pa-md">
+      <!-- CABECERA -->
+      <q-card flat bordered class="section-card">
+        <q-card-section class="row items-center q-col-gutter-sm">
+          <div class="col-12 col-md-8">
+            <div class="text-h6 text-weight-bold">
+              Detalle DNA · Caso <span v-if="f.caso_numero">#{{ f.caso_numero }}</span><span v-else>#{{ f.id }}</span>
+            </div>
+            <div class="text-caption text-grey-7">
+              Apertura:
+              <q-chip dense color="indigo-1" text-color="indigo-9">
+                {{ fmtDate(f.fecha_apertura_caso) || '—' }}
+              </q-chip>
+              · Registrado por:
+              <q-chip dense color="grey-2" text-color="grey-9">
+                {{ f.user?.name || '—' }}
+              </q-chip>
+            </div>
+          </div>
+          <div class="col-12 col-md-4 flex items-center justify-end">
+            <q-chip dense outline color="primary" text-color="primary">Tipo: {{ show(f.tipo || 'DNA') }}</q-chip>
+            <q-chip dense outline color="teal" text-color="teal">Área: {{ show(f.area) }}</q-chip>
+            <q-chip dense outline color="orange" text-color="orange">Zona: {{ show(f.zona) }}</q-chip>
+          </div>
+        </q-card-section>
+      </q-card>
+
+      <!-- DATOS GENERALES -->
+      <q-card flat bordered class="section-card">
+        <q-card-section class="row items-center">
+          <q-icon name="assignment" class="q-mr-sm"/>
+          <div class="text-subtitle1 text-weight-medium">1) Datos generales</div>
+        </q-card-section>
+        <q-separator/>
+        <q-card-section>
+          <div class="row q-col-gutter-md">
+            <div class="col-6 col-md-3">
+              <div class="text-caption text-grey-7">Fecha de atención</div>
+              <div class="text-body1">{{ fmtDate(f.caso_fecha_hecho) || '—' }}</div>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="text-caption text-grey-7">N° Apoyo Integral</div>
+              <div class="text-body1">{{ show(f.numero_apoyo_integral) }}</div>
+            </div>
+            <div class="col-12 col-md-6">
+              <div class="text-caption text-grey-7">Principal</div>
+              <div class="text-body1">{{ show(f.principal) }}</div>
+            </div>
+
+            <div class="col-12 col-md-4">
+              <div class="text-caption text-grey-7">Tipología</div>
+              <div class="text-body1">{{ show(f.caso_tipologia) }}</div>
+            </div>
+            <div class="col-12 col-md-4">
+              <div class="text-caption text-grey-7">N° Caso</div>
+              <div class="text-body1">{{ show(f.caso_numero) }}</div>
+            </div>
+            <div class="col-12 col-md-4">
+              <div class="text-caption text-grey-7">Dirección / Zona</div>
+              <div class="text-body1">
+                {{ show(f.caso_direccion) }}
+                <span v-if="f.caso_direccion && f.zona">·</span>
+                {{ show(f.zona) }}
+              </div>
+            </div>
+
+            <div class="col-12">
+              <div class="text-caption text-grey-7 q-mb-xs">Descripción</div>
+              <div class="q-pa-sm bg-grey-1" style="white-space: pre-wrap; border-radius: 10px;">
+                {{ show(f.descripcion || f.caso_descripcion) }}
+              </div>
+            </div>
+          </div>
+        </q-card-section>
+      </q-card>
+
+      <!-- RESPONSABLES -->
+      <q-card flat bordered class="section-card">
+        <q-card-section class="row items-center">
+          <q-icon name="people_alt" class="q-mr-sm" />
+          <div class="text-subtitle1 text-weight-medium">2) Responsables</div>
+        </q-card-section>
+        <q-separator />
+        <q-card-section>
+          <div class="row q-col-gutter-md">
+            <div class="col-12 col-md-4">
+              <div class="text-caption text-grey-7">Área Psicológica</div>
+              <div class="text-body1">
+                {{ f.psicologica_user?.name || '—' }}
+                <q-chip v-if="f.psicologica_user?.celular" dense color="blue-1" text-color="blue-9" class="q-ml-xs">
+                  {{ f.psicologica_user?.celular }}
+                </q-chip>
+              </div>
+            </div>
+            <div class="col-12 col-md-4">
+              <div class="text-caption text-grey-7">Trabajo Social</div>
+              <div class="text-body1">
+                {{ f.trabajo_social_user?.name || '—' }}
+                <q-chip v-if="f.trabajo_social_user?.celular" dense color="blue-1" text-color="blue-9" class="q-ml-xs">
+                  {{ f.trabajo_social_user?.celular }}
+                </q-chip>
+              </div>
+            </div>
+            <div class="col-12 col-md-4">
+              <div class="text-caption text-grey-7">Área Legal</div>
+              <div class="text-body1">
+                {{ f.legal_user?.name || '—' }}
+                <q-chip v-if="f.legal_user?.celular" dense color="blue-1" text-color="blue-9" class="q-ml-xs">
+                  {{ f.legal_user?.celular }}
+                </q-chip>
+              </div>
+            </div>
+          </div>
+        </q-card-section>
+      </q-card>
+
+      <!-- FECHAS CLAVE -->
+      <q-card flat bordered class="section-card">
+        <q-card-section class="row items-center">
+          <q-icon name="event" class="q-mr-sm" />
+          <div class="text-subtitle1 text-weight-medium">3) Fechas clave</div>
+        </q-card-section>
+        <q-separator />
+        <q-card-section>
+          <div class="row q-col-gutter-md">
+            <div class="col-12 col-md-3">
+              <div class="text-caption text-grey-7">Apertura</div>
+              <div class="text-body1">{{ fmtDate(f.fecha_apertura_caso) || '—' }}</div>
+            </div>
+            <div class="col-12 col-md-3">
+              <div class="text-caption text-grey-7">Derivación Psicológica</div>
+              <div class="text-body1">{{ fmtDate(f.fecha_derivacion_psicologica) || '—' }}</div>
+            </div>
+            <div class="col-12 col-md-3">
+              <div class="text-caption text-grey-7">Informe Psicología</div>
+              <div class="text-body1">{{ fmtDate(f.fecha_informe_area_psicologica) || '—' }}</div>
+            </div>
+            <div class="col-12 col-md-3">
+              <div class="text-caption text-grey-7">Informe Social</div>
+              <div class="text-body1">{{ fmtDate(f.fecha_informe_area_social) || '—' }}</div>
+            </div>
+            <div class="col-12 col-md-3">
+              <div class="text-caption text-grey-7">Informe Trabajo Social</div>
+              <div class="text-body1">{{ fmtDate(f.fecha_informe_trabajo_social) || '—' }}</div>
+            </div>
+            <div class="col-12 col-md-3">
+              <div class="text-caption text-grey-7">Derivación Legal</div>
+              <div class="text-body1">{{ fmtDate(f.fecha_derivacion_area_legal) || '—' }}</div>
+            </div>
+          </div>
+        </q-card-section>
+      </q-card>
+
+      <!-- DOCUMENTOS (checks) -->
+      <q-card flat bordered class="section-card q-mb-xl">
+        <q-card-section class="row items-center">
+          <q-icon name="task_alt" class="q-mr-sm" />
+          <div class="text-subtitle1 text-weight-medium">4) Documentación (checks)</div>
+        </q-card-section>
+        <q-separator />
+        <q-card-section>
+          <div class="row q-col-gutter-sm">
+            <div class="col-12 col-sm-6 col-md-4">
+              <q-item dense>
+                <q-item-section avatar>
+                  <q-icon :name="f.documento_fotocopia_carnet_denunciante==='1' ? 'check_circle' : 'cancel'"
+                          :color="f.documento_fotocopia_carnet_denunciante==='1' ? 'positive' : 'grey-5'"/>
+                </q-item-section>
+                <q-item-section>Fotocopia CI denunciante</q-item-section>
+              </q-item>
+            </div>
+            <div class="col-12 col-sm-6 col-md-4">
+              <q-item dense>
+                <q-item-section avatar>
+                  <q-icon :name="f.documento_fotocopia_carnet_denunciado==='1' ? 'check_circle' : 'cancel'"
+                          :color="f.documento_fotocopia_carnet_denunciado==='1' ? 'positive' : 'grey-5'"/>
+                </q-item-section>
+                <q-item-section>Fotocopia CI denunciado</q-item-section>
+              </q-item>
+            </div>
+            <div class="col-12 col-sm-6 col-md-4">
+              <q-item dense>
+                <q-item-section avatar>
+                  <q-icon :name="f.documento_placas_fotograficas_domicilio_denunciante==='1' ? 'check_circle' : 'cancel'"
+                          :color="f.documento_placas_fotograficas_domicilio_denunciante==='1' ? 'positive' : 'grey-5'"/>
+                </q-item-section>
+                <q-item-section>Placas dom. denunciante</q-item-section>
+              </q-item>
+            </div>
+            <div class="col-12 col-sm-6 col-md-4">
+              <q-item dense>
+                <q-item-section avatar>
+                  <q-icon :name="f.documento_croquis_direccion_denunciado==='1' ? 'check_circle' : 'cancel'"
+                          :color="f.documento_croquis_direccion_denunciado==='1' ? 'positive' : 'grey-5'"/>
+                </q-item-section>
+                <q-item-section>Croquis dirección denunciado</q-item-section>
+              </q-item>
+            </div>
+            <div class="col-12 col-sm-6 col-md-4">
+              <q-item dense>
+                <q-item-section avatar>
+                  <q-icon :name="f.documento_placas_fotograficas_domicilio_denunciado==='1' ? 'check_circle' : 'cancel'"
+                          :color="f.documento_placas_fotograficas_domicilio_denunciado==='1' ? 'positive' : 'grey-5'"/>
+                </q-item-section>
+                <q-item-section>Placas dom. denunciado</q-item-section>
+              </q-item>
+            </div>
+            <div class="col-12 col-sm-6 col-md-4">
+              <q-item dense>
+                <q-item-section avatar>
+                  <q-icon :name="f.documento_ciudadania_digital==='1' ? 'check_circle' : 'cancel'"
+                          :color="f.documento_ciudadania_digital==='1' ? 'positive' : 'grey-5'"/>
+                </q-item-section>
+                <q-item-section>Ciudadanía digital</q-item-section>
+              </q-item>
+            </div>
+          </div>
+        </q-card-section>
+      </q-card>
+    </div>
   </q-page>
 </template>
 
@@ -474,40 +695,6 @@ export default {
     }
   },
   mounted () {
-//     1.	PROCESOS PENALES
-//     TIPOLOGIAS
-// •	VIOLACION
-// •	ESTUPRO
-// •	ABUSO SEXUAL
-// •	ACOSO SEXUAL
-// •	INFANTICIDIO
-// •	RAPTO
-// •	CORRUPCION
-// •	PROXENETISMO
-// •	VIOLENCIA SEXUAL COMERCIAL
-// •	PORNOGRAFIA
-// •	TRAFICO DE PERSONAS
-// •	TRATA DE PERSONAS
-// •	LESIONES GRAVES Y LEVES
-// •	LESIONES GRAVISIMAS
-// •	SUSTRACCIÓN DE MENOR INCAPAZ
-// •	VIOLENCIA FAMILIAR O DOMESTICA (FISICA, PSICOLOGICA)
-// •	ABANDONO DE NIÑOS/AS
-// •	ABANDONO POR CAUSA DE HONOR
-// •	OTROS
-//
-//     2.	PROCESOS FAMILIARES
-//     TIPOLOGIA
-// •	ASISTENCIA FAMILIAR
-// •	OTROS
-//     3.	PROCESOS DE NIÑEZ Y ADOLECENCIA
-// •	ACOGIMIENTO CIRCUNSTANCIAL
-// •	INFRACCION POR VIOLENCIA
-// •	IRRESPONSABILIDAD PATERNA O MATERNA
-// •	OTROS
-//     4.	APOYOS INTEGRALES
-// •	INFORMES PSICOLOGICOS
-// •	INFORMES SOCIALES
     if (this.tipoProceso === 'PROCESO_PENAL') {
       this.tipologias = [
         'VIOLACION', 'ESTUPRO', 'ABUSO SEXUAL', 'ACOSO SEXUAL', 'INFANTICIDIO', 'RAPTO', 'CORRUPCION',
@@ -545,6 +732,24 @@ export default {
       .catch(() => { this.$alert?.error?.('No se pudo cargar abogados') })
   },
   methods: {
+    show (v) {
+      if (v === null || v === undefined || v === '') return '—'
+      return String(v)
+    },
+    yesNo (v) {
+      const on = (v === true) || (v === 1) || (v === '1')
+      return on ? 'Sí' : 'No'
+    },
+    fmtDate (v) {
+      if (!v) return ''
+      // Acepta 'YYYY-MM-DD' o ISO
+      const d = new Date(v)
+      if (isNaN(d.getTime())) return this.show(v)
+      const y = d.getFullYear()
+      const m = String(d.getMonth()+1).padStart(2,'0')
+      const day = String(d.getDate()).padStart(2,'0')
+      return `${y}-${m}-${day}`
+    },
     getCaso () {
       if (this.casoId) {
         this.loading = true

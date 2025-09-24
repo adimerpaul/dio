@@ -96,7 +96,9 @@
 
             <q-item clickable v-close-popup>
               <q-item-section>
-                <q-item-label class="text-grey-7">Permisos asignados</q-item-label>
+                <q-item-label class="text-grey-7">
+                  {{ $store.user?.name || $store.user?.username || 'Usuario' }}
+                </q-item-label>
                 <q-item-label caption class="q-mt-xs">
                   <div class="row q-col-gutter-xs" style="min-width:160px;max-width:260px;">
                     <q-chip
@@ -322,7 +324,7 @@
             </q-item>
           </q-list>
         </q-expansion-item>
-        <q-item dense to="/propremis" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Ver PROMPREMIS')">
+        <q-item dense to="/propremis" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Ver PROPREMIS')">
           <q-item-section avatar>
             <q-icon name="folder_shared" class="text-white"/>
           </q-item-section>

@@ -43,7 +43,7 @@
       <thead>
       <tr>
         <th style="width: 60px">#</th>
-        <th>Nº SLIM</th>
+        <th>Nº </th>
         <th>Fecha</th>
         <th>Denunciante</th>
         <th>Denunciado</th>
@@ -62,7 +62,7 @@
         class="cursor-pointer"
       >
         <td>{{ rowIndex(idx) }}</td>
-        <td class="text-no-wrap">{{ c.caso_numero || '—' }}</td>
+        <td class="text-no-wrap">{{c.tipo}} {{ c.caso_numero || '—' }}</td>
         <td class="text-no-wrap">{{ $filters.date(c.fecha_apertura_caso) }}</td>
         <td>
           <!--          <div class="text-weight-medium">{{ c.denunciante_nombre_completo }}</div>-->

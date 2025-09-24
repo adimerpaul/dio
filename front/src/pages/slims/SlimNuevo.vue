@@ -11,19 +11,15 @@
         <q-btn color="primary" icon="save" label="Guardar" :loading="loading" @click="save"/>
       </div>
     </div>
-<!--    bton actulizar al aderecha-->
     <div  v-if="editable">
-<!--      <div class="col">-->
-<!--        <div class="text-h6 text-weight-bold">Editar SLIM</div>-->
-<!--        <div class="text-caption text-grey-7">Actualización de denuncia</div>-->
-<!--      </div>-->
       <div class="col-auto text-right">
-<!--        <q-btn flat color="primary" icon="history" label="Limpiar" @click="resetForm"/>-->
-        <q-btn color="primary" icon="save" label="Actualizar" :loading="loading" @click="update"/>
+        <q-btn flat color="primary" icon="refresh" label="Refrescar" @click="getCaso" class="q-mr-sm"/>
+        <q-btn color="primary" icon="save" label="Actualizar" :loading="loading" @click="update" v-if="$store.user?.role === 'Administrador' || $store.user?.role === 'Asistente'"/>
       </div>
     </div>
-
-    <q-form class="q-mt-lg" @submit.prevent="save">
+<!--    <pre>{{editable}}</pre>-->
+    <template v-if="($store.user?.role === 'Administrador' || $store.user?.role === 'Asistente')">
+      <q-form class="q-mt-lg" @submit.prevent="save">
       <!-- Denunciante -->
       <q-card flat bordered class="section-card">
         <q-card-section class="row items-center">
@@ -113,7 +109,7 @@
 
             <div class="col-6 col-md-3">
 <!--              <q-toggle v-model="f.denunciante_trabaja" label="Trabaja"/>-->
-              <q-toggle v-model="f.denunciantes[0].denunciante_trabaja" label="Trabaja"/>
+              <q-toggle v-model="f.denunciantes[0].denunciante_trabaja" label="Trabaja" :true-value="1" :false-value="0"/>
             </div>
             <div class="col-6 col-md-3">
 <!--              <q-input v-model="f.denunciante_ocupacion" dense outlined clearable label="Ocupación"/>-->
@@ -421,6 +417,293 @@
         <q-btn color="primary" icon="save" label="Actualizar" :loading="loading" @click="update" v-if="editable"/>
       </div>
     </q-form>
+    </template>
+    <template v-else>
+      <div class="q-mt-md">
+
+        <!-- CABECERA -->
+        <q-card flat bordered class="section-card">
+          <q-card-section class="row items-center q-col-gutter-sm">
+            <div class="col-12 col-md-8">
+              <div class="text-h6 text-weight-bold">
+                Detalle SLIM · Caso <span v-if="f.caso_numero">#{{ f.caso_numero }}</span><span v-else>#{{ f.id }}</span>
+              </div>
+              <div class="text-caption text-grey-7">
+                Apertura:
+                <q-chip dense color="indigo-1" text-color="indigo-9">
+                  {{ fmtDate(f.fecha_apertura_caso) || '—' }}
+                </q-chip>
+                · Registrado por:
+                <q-chip dense color="grey-2" text-color="grey-9">
+                  {{ f.user?.name || '—' }}
+                </q-chip>
+              </div>
+            </div>
+            <div class="col-12 col-md-4 flex items-center justify-end">
+              <q-chip dense outline color="primary" text-color="primary">Tipo: {{ show(f.tipo) }}</q-chip>
+              <q-chip dense outline color="teal" text-color="teal">Área: {{ show(f.area) }}</q-chip>
+              <q-chip dense outline color="orange" text-color="orange">Zona: {{ show(f.zona) }}</q-chip>
+            </div>
+          </q-card-section>
+        </q-card>
+
+        <!-- DATOS DEL CASO -->
+        <q-card flat bordered class="section-card">
+          <q-card-section class="row items-center">
+            <q-icon name="description" class="q-mr-sm" />
+            <div class="text-subtitle1 text-weight-medium">Datos del caso</div>
+          </q-card-section>
+          <q-separator />
+          <q-card-section>
+            <div class="row q-col-gutter-md">
+
+              <div class="col-6 col-md-3">
+                <div class="text-caption text-grey-7">N° Apoyo Integral</div>
+                <div class="text-body1">{{ show(f.numero_apoyo_integral) }}</div>
+              </div>
+
+              <div class="col-6 col-md-3">
+                <div class="text-caption text-grey-7">N° Caso</div>
+                <div class="text-body1">{{ show(f.caso_numero) }}</div>
+              </div>
+
+              <div class="col-6 col-md-3">
+                <div class="text-caption text-grey-7">Fecha del hecho</div>
+                <div class="text-body1">{{ fmtDate(f.caso_fecha_hecho) || '—' }}</div>
+              </div>
+
+              <div class="col-12 col-md-3">
+                <div class="text-caption text-grey-7">Lugar del hecho</div>
+                <div class="text-body1">{{ show(f.caso_lugar_hecho) }}</div>
+              </div>
+
+              <div class="col-12 col-md-4">
+                <div class="text-caption text-grey-7">Tipología</div>
+                <div class="text-body1">{{ show(f.caso_tipologia) }}</div>
+              </div>
+
+              <div class="col-12 col-md-4">
+                <div class="text-caption text-grey-7">Modalidad</div>
+                <div class="text-body1">{{ show(f.caso_modalidad) }}</div>
+              </div>
+
+              <div class="col-12 col-md-4">
+                <div class="text-caption text-grey-7">Zona / Dirección</div>
+                <div class="text-body1">
+                  {{ show(f.caso_zona) }} <span v-if="f.caso_zona && f.caso_direccion">·</span> {{ show(f.caso_direccion) }}
+                </div>
+              </div>
+
+              <div class="col-12">
+                <div class="text-caption text-grey-7 q-mb-xs">Descripción del hecho</div>
+                <div class="q-pa-sm bg-grey-1" style="white-space: pre-wrap; border-radius: 10px;">
+                  {{ show(f.caso_descripcion) }}
+                </div>
+              </div>
+            </div>
+          </q-card-section>
+        </q-card>
+
+        <!-- TIPOS DE VIOLENCIA -->
+        <q-card flat bordered class="section-card">
+          <q-card-section class="row items-center">
+            <q-icon name="warning_amber" class="q-mr-sm" />
+            <div class="text-subtitle1 text-weight-medium">Tipos de violencia</div>
+          </q-card-section>
+          <q-separator />
+          <q-card-section>
+            <div class="row q-col-gutter-sm">
+              <div class="col-auto">
+                <q-chip :color="(f.violencia_fisica ? 'negative' : 'grey-3')" :text-color="(f.violencia_fisica ? 'white' : 'grey-8')" dense>
+                  Física: {{ yesNo(f.violencia_fisica) }}
+                </q-chip>
+              </div>
+              <div class="col-auto">
+                <q-chip :color="(f.violencia_psicologica ? 'negative' : 'grey-3')" :text-color="(f.violencia_psicologica ? 'white' : 'grey-8')" dense>
+                  Psicológica: {{ yesNo(f.violencia_psicologica) }}
+                </q-chip>
+              </div>
+              <div class="col-auto">
+                <q-chip :color="(f.violencia_sexual ? 'negative' : 'grey-3')" :text-color="(f.violencia_sexual ? 'white' : 'grey-8')" dense>
+                  Sexual: {{ yesNo(f.violencia_sexual) }}
+                </q-chip>
+              </div>
+              <div class="col-auto">
+                <q-chip :color="(f.violencia_economica ? 'negative' : 'grey-3')" :text-color="(f.violencia_economica ? 'white' : 'grey-8')" dense>
+                  Económica/Patrimonial: {{ yesNo(f.violencia_economica) }}
+                </q-chip>
+              </div>
+              <div class="col-auto" v-if="f.violencia_patrimonial !== null">
+                <q-chip :color="(!!Number(f.violencia_patrimonial) ? 'negative' : 'grey-3')" :text-color="(!!Number(f.violencia_patrimonial) ? 'white' : 'grey-8')" dense>
+                  Patrimonial: {{ yesNo(f.violencia_patrimonial) }}
+                </q-chip>
+              </div>
+              <div class="col-auto" v-if="f.violencia_simbolica !== null">
+                <q-chip :color="(!!Number(f.violencia_simbolica) ? 'negative' : 'grey-3')" :text-color="(!!Number(f.violencia_simbolica) ? 'white' : 'grey-8')" dense>
+                  Simbólica: {{ yesNo(f.violencia_simbolica) }}
+                </q-chip>
+              </div>
+              <div class="col-auto" v-if="f.violencia_institucional !== null">
+                <q-chip :color="(!!Number(f.violencia_institucional) ? 'negative' : 'grey-3')" :text-color="(!!Number(f.violencia_institucional) ? 'white' : 'grey-8')" dense>
+                  Institucional: {{ yesNo(f.violencia_institucional) }}
+                </q-chip>
+              </div>
+            </div>
+          </q-card-section>
+        </q-card>
+
+        <!-- RESPONSABLES -->
+        <q-card flat bordered class="section-card">
+          <q-card-section class="row items-center">
+            <q-icon name="people_alt" class="q-mr-sm" />
+            <div class="text-subtitle1 text-weight-medium">Responsables</div>
+          </q-card-section>
+          <q-separator />
+          <q-card-section>
+            <div class="row q-col-gutter-md">
+              <div class="col-12 col-md-4">
+                <div class="text-caption text-grey-7">Área Psicológica</div>
+                <div class="text-body1">
+                  {{ f.psicologica_user?.name || '—' }}
+                  <q-chip v-if="f.psicologica_user?.celular" dense color="blue-1" text-color="blue-9" class="q-ml-xs">
+                    {{ f.psicologica_user?.celular }}
+                  </q-chip>
+                </div>
+              </div>
+              <div class="col-12 col-md-4">
+                <div class="text-caption text-grey-7">Trabajo Social</div>
+                <div class="text-body1">
+                  {{ f.trabajo_social_user?.name || '—' }}
+                  <q-chip v-if="f.trabajo_social_user?.celular" dense color="blue-1" text-color="blue-9" class="q-ml-xs">
+                    {{ f.trabajo_social_user?.celular }}
+                  </q-chip>
+                </div>
+              </div>
+              <div class="col-12 col-md-4">
+                <div class="text-caption text-grey-7">Área Legal</div>
+                <div class="text-body1">
+                  {{ f.legal_user?.name || '—' }}
+                  <q-chip v-if="f.legal_user?.celular" dense color="blue-1" text-color="blue-9" class="q-ml-xs">
+                    {{ f.legal_user?.celular }}
+                  </q-chip>
+                </div>
+              </div>
+            </div>
+          </q-card-section>
+        </q-card>
+
+        <!-- FECHAS CLAVE -->
+        <q-card flat bordered class="section-card">
+          <q-card-section class="row items-center">
+            <q-icon name="event" class="q-mr-sm" />
+            <div class="text-subtitle1 text-weight-medium">Fechas clave</div>
+          </q-card-section>
+          <q-separator />
+          <q-card-section>
+            <div class="row q-col-gutter-md">
+              <div class="col-12 col-md-3">
+                <div class="text-caption text-grey-7">Apertura</div>
+                <div class="text-body1">{{ fmtDate(f.fecha_apertura_caso) || '—' }}</div>
+              </div>
+              <div class="col-12 col-md-3">
+                <div class="text-caption text-grey-7">Derivación Psicológica</div>
+                <div class="text-body1">{{ fmtDate(f.fecha_derivacion_psicologica) || '—' }}</div>
+              </div>
+              <div class="col-12 col-md-3">
+                <div class="text-caption text-grey-7">Informe Psicología</div>
+                <div class="text-body1">{{ fmtDate(f.fecha_informe_area_psicologica) || '—' }}</div>
+              </div>
+              <div class="col-12 col-md-3">
+                <div class="text-caption text-grey-7">Informe Social</div>
+                <div class="text-body1">{{ fmtDate(f.fecha_informe_area_social) || '—' }}</div>
+              </div>
+              <div class="col-12 col-md-3">
+                <div class="text-caption text-grey-7">Informe Trabajo Social</div>
+                <div class="text-body1">{{ fmtDate(f.fecha_informe_trabajo_social) || '—' }}</div>
+              </div>
+              <div class="col-12 col-md-3">
+                <div class="text-caption text-grey-7">Derivación Legal</div>
+                <div class="text-body1">{{ fmtDate(f.fecha_derivacion_area_legal) || '—' }}</div>
+              </div>
+            </div>
+          </q-card-section>
+        </q-card>
+
+        <!-- CHECK DOCUMENTOS (solo flags del CASO) -->
+        <q-card flat bordered class="section-card q-mb-xl">
+          <q-card-section class="row items-center">
+            <q-icon name="task_alt" class="q-mr-sm" />
+            <div class="text-subtitle1 text-weight-medium">Documentación (checks)</div>
+          </q-card-section>
+          <q-separator />
+          <q-card-section>
+            <div class="row q-col-gutter-sm">
+              <div class="col-12 col-sm-6 col-md-4">
+                <q-item dense>
+                  <q-item-section avatar>
+                    <q-icon :name="f.documento_fotocopia_carnet_denunciante==='1' ? 'check_circle' : 'cancel'"
+                            :color="f.documento_fotocopia_carnet_denunciante==='1' ? 'positive' : 'grey-5'"/>
+                  </q-item-section>
+                  <q-item-section>Fotocopia CI denunciante</q-item-section>
+                </q-item>
+              </div>
+
+              <div class="col-12 col-sm-6 col-md-4">
+                <q-item dense>
+                  <q-item-section avatar>
+                    <q-icon :name="f.documento_fotocopia_carnet_denunciado==='1' ? 'check_circle' : 'cancel'"
+                            :color="f.documento_fotocopia_carnet_denunciado==='1' ? 'positive' : 'grey-5'"/>
+                  </q-item-section>
+                  <q-item-section>Fotocopia CI denunciado</q-item-section>
+                </q-item>
+              </div>
+
+              <div class="col-12 col-sm-6 col-md-4">
+                <q-item dense>
+                  <q-item-section avatar>
+                    <q-icon :name="f.documento_placas_fotograficas_domicilio_denunciante==='1' ? 'check_circle' : 'cancel'"
+                            :color="f.documento_placas_fotograficas_domicilio_denunciante==='1' ? 'positive' : 'grey-5'"/>
+                  </q-item-section>
+                  <q-item-section>Placas dom. denunciante</q-item-section>
+                </q-item>
+              </div>
+
+              <div class="col-12 col-sm-6 col-md-4">
+                <q-item dense>
+                  <q-item-section avatar>
+                    <q-icon :name="f.documento_croquis_direccion_denunciado==='1' ? 'check_circle' : 'cancel'"
+                            :color="f.documento_croquis_direccion_denunciado==='1' ? 'positive' : 'grey-5'"/>
+                  </q-item-section>
+                  <q-item-section>Croquis dirección denunciado</q-item-section>
+                </q-item>
+              </div>
+
+              <div class="col-12 col-sm-6 col-md-4">
+                <q-item dense>
+                  <q-item-section avatar>
+                    <q-icon :name="f.documento_placas_fotograficas_domicilio_denunciado==='1' ? 'check_circle' : 'cancel'"
+                            :color="f.documento_placas_fotograficas_domicilio_denunciado==='1' ? 'positive' : 'grey-5'"/>
+                  </q-item-section>
+                  <q-item-section>Placas dom. denunciado</q-item-section>
+                </q-item>
+              </div>
+
+              <div class="col-12 col-sm-6 col-md-4">
+                <q-item dense>
+                  <q-item-section avatar>
+                    <q-icon :name="f.documento_ciudadania_digital==='1' ? 'check_circle' : 'cancel'"
+                            :color="f.documento_ciudadania_digital==='1' ? 'positive' : 'grey-5'"/>
+                  </q-item-section>
+                  <q-item-section>Ciudadanía digital</q-item-section>
+                </q-item>
+              </div>
+            </div>
+          </q-card-section>
+        </q-card>
+
+      </div>
+    </template>
+
   </q-page>
 </template>
 
@@ -552,66 +835,7 @@ export default {
     }
   },
   mounted() {
-    if (this.casoId) {
-      this.loading = true
-      this.$axios.get(`/casos/${this.casoId}`).then(res => {
-        this.f = res.data
-        // Asegurar que denunciantes y denunciado tengan al menos un objeto
-        if (!this.f.denunciantes || this.f.denunciantes.length === 0) {
-          this.f.denunciantes = [{
-            denunciante_nombres: '',
-            denunciante_paterno: '',
-            denunciante_materno: '',
-            denunciante_documento: 'Carnet de identidad',
-            denunciante_nro: '',
-            denunciante_sexo: '',
-            denunciante_lugar_nacimiento: '',
-            denunciante_fecha_nacimiento: '',
-            denunciante_edad: '',
-            denunciante_telefono: '',
-            denunciante_residencia: '',
-            denunciante_estado_civil: '',
-            denunciante_trabaja: false,
-            denunciante_relacion: '',
-            denunciante_grado: '',
-            latitud: null,
-            longitud: null,
-          }]
-        }
-        if (!this.f.denunciados || this.f.denunciados.length === 0) {
-          this.f.denunciados = [
-            {
-              denunciado_nombres: '',
-              denunciado_paterno: '',
-              denunciado_materno: '',
-              denunciado_documento: 'Carnet de identidad',
-              denunciado_nro: '',
-              denunciado_sexo: '',
-              denunciado_lugar_nacimiento: '',
-              denunciado_fecha_nacimiento: '',
-              denunciado_edad: '',
-              denunciado_telefono: '',
-              denunciado_residencia: '',
-              denunciado_estado_civil: '',
-              denunciado_relacion: '',
-              denunciado_grado: '',
-              denunciado_trabaja: 1,
-              denunciado_prox: '',
-              denunciado_ocupacion: '',
-              denunciado_ocupacion_exacto: '',
-              denunciado_idioma: '',
-              denunciado_fijo: '',
-              denunciado_movil: '',
-              denunciado_domicilio_actual: '',
-              denunciado_latitud: null,
-              denunciado_longitud: null,
-            }
-          ]
-        }
-      }).catch(() => {
-        this.$alert.error('No se pudo cargar el caso')
-      }).finally(() => { this.loading = false })
-    }
+    this.getCaso()
     this.$axios.get('/usuariosRole').then(res => {
       this.psicologos = res.data.psicologos
       this.abogados = res.data.abogados
@@ -661,6 +885,84 @@ export default {
     }
   },
   methods: {
+    show (v) {
+      // Muestra texto o rayita
+      if (v === null || v === undefined || v === '') return '—'
+      return String(v)
+    },
+    yesNo (v) {
+      // Acepta true/false, "1"/"0", 1/0
+      const on = (v === true) || (v === 1) || (v === '1')
+      return on ? 'Sí' : 'No'
+    },
+    fmtDate (v) {
+      if (!v) return ''
+      // Soporta "YYYY-MM-DD" o ISO
+      const m = moment(v, ['YYYY-MM-DD', moment.ISO_8601], true)
+      return m.isValid() ? m.format('YYYY-MM-DD') : this.show(v)
+    },
+    getCaso () {
+      if (this.casoId) {
+        this.loading = true
+        this.$axios.get(`/casos/${this.casoId}`).then(res => {
+          this.f = res.data
+          // Asegurar que denunciantes y denunciado tengan al menos un objeto
+          if (!this.f.denunciantes || this.f.denunciantes.length === 0) {
+            this.f.denunciantes = [{
+              denunciante_nombres: '',
+              denunciante_paterno: '',
+              denunciante_materno: '',
+              denunciante_documento: 'Carnet de identidad',
+              denunciante_nro: '',
+              denunciante_sexo: '',
+              denunciante_lugar_nacimiento: '',
+              denunciante_fecha_nacimiento: '',
+              denunciante_edad: '',
+              denunciante_telefono: '',
+              denunciante_residencia: '',
+              denunciante_estado_civil: '',
+              denunciante_trabaja: false,
+              denunciante_relacion: '',
+              denunciante_grado: '',
+              latitud: null,
+              longitud: null,
+            }]
+          }
+          if (!this.f.denunciados || this.f.denunciados.length === 0) {
+            this.f.denunciados = [
+              {
+                denunciado_nombres: '',
+                denunciado_paterno: '',
+                denunciado_materno: '',
+                denunciado_documento: 'Carnet de identidad',
+                denunciado_nro: '',
+                denunciado_sexo: '',
+                denunciado_lugar_nacimiento: '',
+                denunciado_fecha_nacimiento: '',
+                denunciado_edad: '',
+                denunciado_telefono: '',
+                denunciado_residencia: '',
+                denunciado_estado_civil: '',
+                denunciado_relacion: '',
+                denunciado_grado: '',
+                denunciado_trabaja: 1,
+                denunciado_prox: '',
+                denunciado_ocupacion: '',
+                denunciado_ocupacion_exacto: '',
+                denunciado_idioma: '',
+                denunciado_fijo: '',
+                denunciado_movil: '',
+                denunciado_domicilio_actual: '',
+                denunciado_latitud: null,
+                denunciado_longitud: null,
+              }
+            ]
+          }
+        }).catch(() => {
+          this.$alert.error('No se pudo cargar el caso')
+        }).finally(() => { this.loading = false })
+      }
+    },
     onBirthChange(kind) {
       const hoy = moment()
       const v = kind === 'denunciante' ? this.f.denunciantes[0].denunciante_fecha_nacimiento : this.f.denunciados[0].denunciado_fecha_nacimiento

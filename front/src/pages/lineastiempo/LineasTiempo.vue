@@ -159,7 +159,7 @@
         max-pages="10"
         boundary-numbers
         direction-links
-        @input="fetchRows"
+        @click="fetchRows"
       />
     </div>
 
