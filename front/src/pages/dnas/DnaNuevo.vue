@@ -361,6 +361,7 @@ export default {
     showNumeroApoyoIntegral: { type: Boolean, default: false },
     casoId: { type: [Number, String], default: null },
     editable: { type: Boolean, default: false },
+    tipoProceso: { type: String, default: 'PROCESO_FAMILIAR' } // PROCESO_PENAL, PROCESO_NNA, PROCESO_FAMILIAR, APOYO_INTEGRAL
   },
   data () {
     return {
@@ -375,7 +376,6 @@ export default {
         { label: 'Otro',      value: 'Otro'      },
       ],
       tipologias: [
-        // puedes ajustar según tu catálogo DNA
         'ASISTENCIA FAMILIAR', 'VIOLENCIA FAMILIAR O DOMÉSTICA', 'OTROS'
       ],
       f: {
@@ -474,6 +474,62 @@ export default {
     }
   },
   mounted () {
+//     1.	PROCESOS PENALES
+//     TIPOLOGIAS
+// •	VIOLACION
+// •	ESTUPRO
+// •	ABUSO SEXUAL
+// •	ACOSO SEXUAL
+// •	INFANTICIDIO
+// •	RAPTO
+// •	CORRUPCION
+// •	PROXENETISMO
+// •	VIOLENCIA SEXUAL COMERCIAL
+// •	PORNOGRAFIA
+// •	TRAFICO DE PERSONAS
+// •	TRATA DE PERSONAS
+// •	LESIONES GRAVES Y LEVES
+// •	LESIONES GRAVISIMAS
+// •	SUSTRACCIÓN DE MENOR INCAPAZ
+// •	VIOLENCIA FAMILIAR O DOMESTICA (FISICA, PSICOLOGICA)
+// •	ABANDONO DE NIÑOS/AS
+// •	ABANDONO POR CAUSA DE HONOR
+// •	OTROS
+//
+//     2.	PROCESOS FAMILIARES
+//     TIPOLOGIA
+// •	ASISTENCIA FAMILIAR
+// •	OTROS
+//     3.	PROCESOS DE NIÑEZ Y ADOLECENCIA
+// •	ACOGIMIENTO CIRCUNSTANCIAL
+// •	INFRACCION POR VIOLENCIA
+// •	IRRESPONSABILIDAD PATERNA O MATERNA
+// •	OTROS
+//     4.	APOYOS INTEGRALES
+// •	INFORMES PSICOLOGICOS
+// •	INFORMES SOCIALES
+    if (this.tipoProceso === 'PROCESO_PENAL') {
+      this.tipologias = [
+        'VIOLACION', 'ESTUPRO', 'ABUSO SEXUAL', 'ACOSO SEXUAL', 'INFANTICIDIO', 'RAPTO', 'CORRUPCION',
+        'PROXENETISMO', 'VIOLENCIA SEXUAL COMERCIAL', 'PORNOGRAFIA', 'TRAFICO DE PERSONAS', 'TRATA DE PERSONAS',
+        'LESIONES GRAVES Y LEVES', 'LESIONES GRAVISIMAS', 'SUSTRACCIÓN DE MENOR INCAPAZ',
+        'VIOLENCIA FAMILIAR O DOMESTICA (FISICA, PSICOLOGICA)', 'ABANDONO DE NIÑOS/AS', 'ABANDONO POR CAUSA DE HONOR',
+        'OTROS'
+      ]
+    } else if (this.tipoProceso === 'PROCESO_NNA') {
+      this.tipologias = [
+        'ACOGIMIENTO CIRCUNSTANCIAL', 'INFRACCION POR VIOLENCIA', 'IRRESPONSABILIDAD PATERNA O MATERNA', 'OTROS'
+      ]
+    } else if (this.tipoProceso === 'APOYO_INTEGRAL') {
+      this.tipologias = [
+        'INFORMES PSICOLOGICOS', 'INFORMES SOCIALES'
+      ]
+    } else {
+      this.tipologias = [
+        'ASISTENCIA FAMILIAR', 'VIOLENCIA FAMILIAR O DOMÉSTICA', 'OTROS'
+      ]
+    }
+
     this.$axios.get('/usuariosRole').then(res => {
       this.psicologos = res.data.psicologos
       this.abogados = res.data.abogados
