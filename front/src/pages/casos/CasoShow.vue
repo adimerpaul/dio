@@ -125,6 +125,11 @@
       <q-tab-panel name="fotos">
         <Fotografias :case-id="caseId" :caso="caso" @refresh="fetchCaso"/>
       </q-tab-panel>
+
+      <!-- 8) Códigos -->
+      <q-tab-panel name="codigo">
+        <Codigo :case-id="caseId" :caso="caso" @refresh="fetchCaso"/>
+      </q-tab-panel>
     </q-tab-panels>
   </q-page>
 </template>
@@ -146,10 +151,12 @@ import CasoNuevoDNA from "pages/dnas/DnaNuevo.vue";
 import CasoNuevoSLAM from "pages/slams/SlamNuevo.vue";
 import CasoNuevoUMADIS from "pages/umadis/UmadisNuevo.vue";
 import CasoNuevoPROPREMI from "pages/propremis/PropremisNuevo.vue";
+import Codigo from "pages/casos/tabs/Codigo.vue";
 
 export default {
   name: 'CasoDetalle',
   components: {
+    Codigo,
     CasoNuevoPROPREMI,
     CasoNuevoUMADIS,
     CasoNuevoSLAM,
