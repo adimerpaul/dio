@@ -24,6 +24,23 @@ use Intervention\Image\ImageManager;
 
 class CasoController extends Controller
 {
+    public function updateCodigos(\Illuminate\Http\Request $request, \App\Models\Caso $caso)
+    {
+        // Actualiza SOLO si vienen en el payload; si no vienen, no toca ese campo
+        if ($request->has('nurej')) {
+            $caso->nurej = $request->input('nurej');
+        }
+        if ($request->has('cud')) {
+            $caso->cud = $request->input('cud');
+        }
+
+        $caso->save();
+
+        return response()->json([
+            'message' => 'Códigos actualizados',
+            'caso'    => $caso->only(['id','nurej','cud']),
+        ]);
+    }
     public function reportesResumen(Request $request)
     {
         $start = $request->query('start'); // YYYY-MM-DD
