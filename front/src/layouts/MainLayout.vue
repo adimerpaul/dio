@@ -319,12 +319,12 @@
             <q-item-label class="text-white">PROPREMIs</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item dense to="/acogemiento" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Acogemiento')">
+        <q-item dense to="/acogimiento" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Acogimiento')">
           <q-item-section avatar>
             <q-icon name="home" class="text-white"/>
           </q-item-section>
           <q-item-section>
-            <q-item-label class="text-white">Acogemiento</q-item-label>
+            <q-item-label class="text-white">Acogimiento</q-item-label>
           </q-item-section>
         </q-item>
         <q-item dense to="/reportes" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Reportes')">

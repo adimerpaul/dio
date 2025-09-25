@@ -43,6 +43,8 @@ const routes = [
       { path: '/kpis', component: () => import('pages/kpis/Kpis.vue'), meta: { requiresAuth: true, perm: 'Kpis' } },
       { path: '/auditorias', component: () => import('pages/auditorias/Auditorias.vue'), meta: { requiresAuth: true, perm: 'Auditorias' } },
       { path: '/agenda', component: () => import('pages/agenda/Agenda.vue'), meta: { requiresAuth: true, perm: 'Agenda' } },
+      { path: '/acogimiento', component: () => import('pages/acogimiento/Acogimiento.vue'), meta: { requiresAuth: true, perm: 'Acogimientos' } },
+      { path: '/acogimiento/:id', component: () => import('pages/acogimiento/AcogimientoShow.vue'), meta: { requiresAuth: true, perm: 'Acogimientos' } },
 
       // reportes
       { path: '/reportes', component: () => import('pages/reportes/Reportes.vue'), meta: { requiresAuth: true, perm: 'Reportes' } },

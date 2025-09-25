@@ -308,7 +308,7 @@ export default {
           'Crear PROMPREMIS',
           'Ver PROMPREMIS',
           'Reportes',
-          'Acogemiento'
+          'Acogimiento'
         ])
         this.permissions = all
           .filter(p => valid.has(p.name))

@@ -927,10 +927,10 @@ export default {
       this.$q.notify({ type: 'info', message: 'Formulario reiniciado' })
     },
     async update(){
-      if (!this.f.principal) {
-        this.$alert?.error?.('El campo PRINCIPAL es obligatorio')
-        return
-      }
+      // if (!this.f.principal) {
+      //   this.$alert?.error?.('El campo PRINCIPAL es obligatorio')
+      //   return
+      // }
       // if (!this.f.denunciante_nombre) {
       //   this.$alert?.error?.('El nombre del denunciante es obligatorio')
       //   return
@@ -948,10 +948,10 @@ export default {
     },
 
     async save () {
-      if (!this.f.principal) {
-        this.$alert?.error?.('El campo PRINCIPAL es obligatorio')
-        return
-      }
+      // if (!this.f.principal) {
+      //   this.$alert?.error?.('El campo PRINCIPAL es obligatorio')
+      //   return
+      // }
       // if (!this.f.denunciante_nombre) {
       //   this.$alert?.error?.('El nombre del denunciante es obligatorio')
       //   return
