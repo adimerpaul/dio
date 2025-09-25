@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AcogimientoController;
 use App\Http\Controllers\CasoController;
 use App\Http\Controllers\DnaController;
 use App\Http\Controllers\SlamController;
@@ -197,6 +198,14 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/umadis/{umadi}/fotografias', [\App\Http\Controllers\UmadiController::class, 'fotoStore']);
     Route::delete('/umadis/fotografias/{fotografia}', [\App\Http\Controllers\UmadiController::class, 'fotoDestroy']);
+
+    Route::get('/search-nurej', [\App\Http\Controllers\AcogimientoController::class, 'searchNurej']);
+    Route::get('/acogimientos/{caso}', [\App\Http\Controllers\AcogimientoController::class, 'show']);
+    Route::get('/casos/{caso}/acogimiento', [AcogimientoController::class, 'showByCaso']);
+
+    // Crear o actualizar (upsert) por caso
+    Route::put('/casos/{caso}/acogimiento', [AcogimientoController::class, 'upsert']);
+
 
 });
 
