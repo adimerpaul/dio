@@ -319,6 +319,14 @@
             <q-item-label class="text-white">PROPREMIs</q-item-label>
           </q-item-section>
         </q-item>
+        <q-item dense to="/reportes" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Reportes')">
+          <q-item-section avatar>
+            <q-icon name="bar_chart" class="text-white"/>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label class="text-white">Reportes</q-item-label>
+          </q-item-section>
+        </q-item>
 <!--        <pre>{{$store.permissions}}</pre>-->
 
         <!-- Menú filtrado -->

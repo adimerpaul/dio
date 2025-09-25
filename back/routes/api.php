@@ -33,6 +33,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get ('/casos',        [\App\Http\Controllers\CasoController::class, 'index']);
     Route::get ('/casos/{caso}', [\App\Http\Controllers\CasoController::class, 'show']);
     Route::put ('/casos/{caso}', [\App\Http\Controllers\CasoController::class, 'update']);
+    Route::get('/reportes/casos-resumen', [\App\Http\Controllers\CasoController::class, 'reportesResumen']);
+
 
     Route::get ('/casos-linea-tiempo', [\App\Http\Controllers\CasoController::class, 'lineaTiempo']);
 

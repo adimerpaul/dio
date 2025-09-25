@@ -70,6 +70,7 @@
 <!--        <q-tab name="apoyo"        label="7 Apoyo Integral"        icon="diversity_1"     no-caps v-if="role === 'Administrador' || role === 'Social'"/>-->
         <q-tab name="docs"         label="7 Documentos General"    icon="folder"          no-caps/>
         <q-tab name="fotos"        label="8 Fotografías"           icon="photo_library"   no-caps/>
+        <q-tab name="codigo"        label="9 Codigos"               icon="code"   no-caps/>
       </q-tabs>
     </q-card>
 <!--    <pre>{{role}}</pre>-->

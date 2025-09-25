@@ -15,6 +15,8 @@ class Caso extends Model implements AuditableContract
     protected $table = 'casos';
 
     protected $fillable = [
+        'nurej',
+        'cud',
         'tipo',
         'area',
         'zona',

@@ -24,6 +24,90 @@ use Intervention\Image\ImageManager;
 
 class CasoController extends Controller
 {
+    public function reportesResumen(Request $request)
+    {
+        $start = $request->query('start'); // YYYY-MM-DD
+        $end   = $request->query('end');   // YYYY-MM-DD
+        $tipo  = $request->query('tipo');  // SLIM|DNA|SLAM|UMADIS|PROPREMIS
+        $area  = $request->query('area');
+        $zona  = $request->query('zona');
+
+        // UNA sola expresión de fecha:
+        // MySQL/MariaDB: DATE(COALESCE(fecha_apertura_caso, created_at))
+        // Postgres      : COALESCE(fecha_apertura_caso::date, created_at::date)
+        $dateSql = "DATE(COALESCE(fecha_apertura_caso, created_at))";
+
+        $q = \App\Models\Caso::query();
+
+        // Filtro por rango
+        if ($start && $end) {
+            $q->whereRaw("$dateSql BETWEEN ? AND ?", [$start, $end]);
+        } elseif ($start) {
+            $q->whereRaw("$dateSql >= ?", [$start]);
+        } elseif ($end) {
+            $q->whereRaw("$dateSql <= ?", [$end]);
+        }
+
+        if ($tipo) $q->where('tipo', $tipo);
+        if ($area) $q->where('area', $area);
+        if ($zona) $q->where('zona', $zona);
+
+        // Filtro por rol (como ya hacías)
+        if ($u = $request->user()) {
+            if ($u->role === 'Psicologo') $q->where('psicologica_user_id', $u->id);
+            if ($u->role === 'Social')    $q->where('trabajo_social_user_id', $u->id);
+            if ($u->role === 'Abogado')   $q->where('legal_user_id', $u->id);
+        }
+
+        $base  = (clone $q);
+        $total = (clone $base)->count();
+
+        $byTipo = (clone $base)
+            ->select('tipo', DB::raw('COUNT(*) AS total'))
+            ->groupBy('tipo')->orderByDesc('total')->get();
+
+        $byTipologia = (clone $base)
+            ->select('caso_tipologia', DB::raw('COUNT(*) AS total'))
+            ->groupBy('caso_tipologia')->orderByDesc('total')->get();
+
+        $byModalidad = (clone $base)
+            ->select('caso_modalidad', DB::raw('COUNT(*) AS total'))
+            ->groupBy('caso_modalidad')->orderByDesc('total')->get();
+
+        $byDia = (clone $base)
+            ->selectRaw("$dateSql AS dia, COUNT(*) AS total")
+            ->groupBy('dia')->orderBy('dia')->get();
+
+        $byZona = (clone $base)
+            ->select('caso_zona', DB::raw('COUNT(*) AS total'))
+            ->groupBy('caso_zona')->orderByDesc('total')->limit(10)->get();
+
+        $fmt = function($rows) {
+            $labels = [];
+            $series = [];
+            foreach ($rows as $r) {
+                if (isset($r->tipo))            { $label = $r->tipo; }
+                elseif (isset($r->caso_tipologia)) { $label = $r->caso_tipologia; }
+                elseif (isset($r->caso_modalidad)) { $label = $r->caso_modalidad; }
+                elseif (isset($r->caso_zona))      { $label = $r->caso_zona; }
+                else { $label = '—'; }
+
+                $labels[] = $label ?: '—';
+                $series[] = (int) ($r->total ?? 0);
+            }
+            return ['labels' => $labels, 'series' => $series];
+        };
+
+        return response()->json([
+            'total'      => $total,
+            'tipo'       => $fmt($byTipo),
+            'tipologia'  => $fmt($byTipologia),
+            'modalidad'  => $fmt($byModalidad),
+            'zona_top10' => $fmt($byZona),
+            'diario'     => $byDia, // [{dia:'YYYY-MM-DD', total: N}]
+        ]);
+    }
+
 
     public function lineaTiempo(Request $request)
     {

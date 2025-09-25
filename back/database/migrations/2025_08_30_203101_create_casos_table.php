@@ -14,6 +14,8 @@ return new class extends Migration
             // ===== Denunciante =====
             $table->string('area', 80)->nullable();
             $table->string('zona', 80)->nullable();
+            $table->string('nurej', 80)->nullable();
+            $table->string('cud', 80)->nullable();
             $table->string('numero_apoyo_integral', 80)->nullable();
             $table->string('tipo', 80)->nullable();
             $table->string('principal', 255)->nullable();
