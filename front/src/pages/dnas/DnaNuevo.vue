@@ -52,23 +52,31 @@
 <!--            </div>-->
 
 <!--            <div class="row q-mt-xs">-->
-              <div class="col-12 col-md-8">
-                <q-input v-model="f.caso_direccion" dense outlined clearable label="Buscar dirección en el mapa"/>
-              </div>
-              <div class="col-12 col-md-2">
-                <q-btn outline label="Buscar" @click="$refs.denMap?.geocodeAndFly(f.caso_direccion)" />
-              </div>
 <!--            </div>-->
 
             <div class="col-12">
-              <div class="text-caption text-grey-7 q-mb-xs">Ubicación (para hoja de ruta)</div>
-              <MapPicker
-                v-model="denunciantePos"
-                :center="oruroCenter"
-                :address="f.domicilio"
-                country="bo"
-                ref="denMap"
-              />
+              <q-input
+                v-model="f.caso_descripcion"
+                type="textarea"
+                autogrow
+                outlined
+                dense
+                clearable
+                label="Descripción del hecho"
+                counter
+                maxlength="3000"
+              >
+                <template v-slot:append>
+                  <q-btn
+                    flat
+                    round
+                    dense
+                    :icon="isListening && activeField==='caso_descripcion' ? 'mic_off' : 'mic'"
+                    :color="isListening && activeField==='caso_descripcion' ? 'negative' : 'primary'"
+                    @click="toggleRecognition('caso_descripcion')"
+                  />
+                </template>
+              </q-input>
             </div>
           </div>
         </q-card-section>
@@ -299,29 +307,45 @@
             <div class="col-12 col-md-4">
               <q-input v-model="f.caso_tipologia" dense outlined clearable label="Tipología"/>
             </div>
+<!--            <div class="col-12">-->
+<!--              <q-input-->
+<!--                v-model="f.caso_descripcion"-->
+<!--                type="textarea"-->
+<!--                autogrow-->
+<!--                outlined-->
+<!--                dense-->
+<!--                clearable-->
+<!--                label="Descripción del hecho"-->
+<!--                counter-->
+<!--                maxlength="3000"-->
+<!--              >-->
+<!--                <template v-slot:append>-->
+<!--                  <q-btn-->
+<!--                    flat-->
+<!--                    round-->
+<!--                    dense-->
+<!--                    :icon="isListening && activeField==='caso_descripcion' ? 'mic_off' : 'mic'"-->
+<!--                    :color="isListening && activeField==='caso_descripcion' ? 'negative' : 'primary'"-->
+<!--                    @click="toggleRecognition('caso_descripcion')"-->
+<!--                  />-->
+<!--                </template>-->
+<!--              </q-input>-->
+<!--            </div>-->
+            <div class="col-12 col-md-8">
+              <q-input v-model="f.caso_direccion" dense outlined clearable label="Buscar dirección en el mapa"/>
+            </div>
+            <div class="col-12 col-md-2">
+              <q-btn outline label="Buscar" @click="$refs.denMap?.geocodeAndFly(f.caso_direccion)" />
+            </div>
             <div class="col-12">
-              <q-input
-                v-model="f.caso_descripcion"
-                type="textarea"
-                autogrow
-                outlined
-                dense
-                clearable
-                label="Descripción del hecho"
-                counter
-                maxlength="3000"
-              >
-                <template v-slot:append>
-                  <q-btn
-                    flat
-                    round
-                    dense
-                    :icon="isListening && activeField==='caso_descripcion' ? 'mic_off' : 'mic'"
-                    :color="isListening && activeField==='caso_descripcion' ? 'negative' : 'primary'"
-                    @click="toggleRecognition('caso_descripcion')"
-                  />
-                </template>
-              </q-input>
+              <div class="text-caption text-grey-7 q-mb-xs">Ubicación (para hoja de ruta)</div>
+              <MapPicker
+                v-model="denunciantePos"
+                :center="oruroCenter"
+                :address="f.domicilio"
+                country="bo"
+                ref="denMap"
+              />
             </div>
           </div>
         </q-card-section>
