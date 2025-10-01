@@ -36,10 +36,10 @@
 <!--            <div class="col-12 col-md-5">-->
 <!--              <q-input v-model="f.principal" dense outlined clearable label="PRINCIPAL (p.ej. ASISTENCIA FAMILIAR) *" :rules="[req]"/>-->
 <!--            </div>-->
-            <div class="col-12 col-md-4">
-              <q-select v-model="f.caso_tipologia" :options="tipologias" dense outlined emit-value map-options clearable
-                        label="Tipología (catálogo DNA)"/>
-            </div>
+<!--            <div class="col-12 col-md-4">-->
+<!--              <q-select v-model="f.caso_tipologia" :options="tipologias" dense outlined emit-value map-options clearable-->
+<!--                        label="Tipología (catálogo DNA)"/>-->
+<!--            </div>-->
 
 <!--            <div class="col-12 col-md-8">-->
 <!--              <q-input v-model="f.domicilio" dense outlined clearable label="Domicilio"/>-->
@@ -54,30 +54,30 @@
 <!--            <div class="row q-mt-xs">-->
 <!--            </div>-->
 
-            <div class="col-12">
-              <q-input
-                v-model="f.caso_descripcion"
-                type="textarea"
-                autogrow
-                outlined
-                dense
-                clearable
-                label="Descripción del hecho"
-                counter
-                maxlength="3000"
-              >
-                <template v-slot:append>
-                  <q-btn
-                    flat
-                    round
-                    dense
-                    :icon="isListening && activeField==='caso_descripcion' ? 'mic_off' : 'mic'"
-                    :color="isListening && activeField==='caso_descripcion' ? 'negative' : 'primary'"
-                    @click="toggleRecognition('caso_descripcion')"
-                  />
-                </template>
-              </q-input>
-            </div>
+<!--            <div class="col-12">-->
+<!--              <q-input-->
+<!--                v-model="f.caso_descripcion"-->
+<!--                type="textarea"-->
+<!--                autogrow-->
+<!--                outlined-->
+<!--                dense-->
+<!--                clearable-->
+<!--                label="Descripción del hecho"-->
+<!--                counter-->
+<!--                maxlength="3000"-->
+<!--              >-->
+<!--                <template v-slot:append>-->
+<!--                  <q-btn-->
+<!--                    flat-->
+<!--                    round-->
+<!--                    dense-->
+<!--                    :icon="isListening && activeField==='caso_descripcion' ? 'mic_off' : 'mic'"-->
+<!--                    :color="isListening && activeField==='caso_descripcion' ? 'negative' : 'primary'"-->
+<!--                    @click="toggleRecognition('caso_descripcion')"-->
+<!--                  />-->
+<!--                </template>-->
+<!--              </q-input>-->
+<!--            </div>-->
           </div>
         </q-card-section>
       </q-card>
@@ -146,7 +146,7 @@
                   <th>Nombre y apellidos</th>
                   <th>Parentesco</th>
                   <th style="width:100px">Edad</th>
-                  <th style="width:120px">Sexo</th>
+<!--                  <th style="width:120px">Sexo</th>-->
                   <th>G. Instrucción</th>
                   <th>Ocupación</th>
                   <th style="width:60px"></th>
@@ -157,7 +157,7 @@
                   <td><q-input v-model="g.familiar_nombres" dense outlined/></td>
                   <td><q-input v-model="g.familiar_parentesco" dense outlined/></td>
                   <td><q-input v-model.number="g.familiar_edad" type="number" dense outlined/></td>
-                  <td><q-select v-model="g.familiar_sexo" :options="sexos" emit-value map-options dense outlined/></td>
+<!--                  <td><q-select v-model="g.familiar_sexo" :options="sexos" emit-value map-options dense outlined/></td>-->
                   <td><q-input v-model="g.familiar_ocupacion" dense outlined/></td>
                   <td><q-input v-model="g.familiar_ocupacion_exacto" dense outlined/></td>
                   <td class="text-center">
@@ -277,9 +277,25 @@
 <!--              <q-input v-model="f.denunciante_lugar_trabajo" dense outlined clearable label="Lugar de trabajo"/>-->
               <q-input v-model="f.denunciantes[0].denunciante_lugar_nacimiento" dense outlined clearable label="Lugar de nacimiento"/>
             </div>
-            <div class="col-6 col-md-3">
+            <div class="col-6 col-md-2">
 <!--              <q-input v-model="f.denunciante_ocupacion" dense outlined clearable label="Ocupación"/>-->
               <q-input v-model="f.denunciantes[0].denunciante_relacion" dense outlined clearable label="Parentesco / Tipo de relación"/>
+            </div>
+            <div class="col-12 col-md-8">
+              <q-input v-model="f.caso_direccion" dense outlined clearable label="Buscar dirección en el mapa"/>
+            </div>
+            <div class="col-12 col-md-2">
+              <q-btn outline label="Buscar" @click="$refs.denMap?.geocodeAndFly(f.caso_direccion)" />
+            </div>
+            <div class="col-12">
+              <div class="text-caption text-grey-7 q-mb-xs">Ubicación (para hoja de ruta)</div>
+              <MapPicker
+                v-model="denunciantePos"
+                :center="oruroCenter"
+                :address="f.domicilio"
+                country="bo"
+                ref="denMap"
+              />
             </div>
           </div>
         </q-card-section>
@@ -304,48 +320,36 @@
               <q-input v-model="f.caso_lugar_hecho" dense outlined clearable label="Lugar del hecho"/>
             </div>
 
-            <div class="col-12 col-md-4">
-              <q-input v-model="f.caso_tipologia" dense outlined clearable label="Tipología"/>
-            </div>
-<!--            <div class="col-12">-->
-<!--              <q-input-->
-<!--                v-model="f.caso_descripcion"-->
-<!--                type="textarea"-->
-<!--                autogrow-->
-<!--                outlined-->
-<!--                dense-->
-<!--                clearable-->
-<!--                label="Descripción del hecho"-->
-<!--                counter-->
-<!--                maxlength="3000"-->
-<!--              >-->
-<!--                <template v-slot:append>-->
-<!--                  <q-btn-->
-<!--                    flat-->
-<!--                    round-->
-<!--                    dense-->
-<!--                    :icon="isListening && activeField==='caso_descripcion' ? 'mic_off' : 'mic'"-->
-<!--                    :color="isListening && activeField==='caso_descripcion' ? 'negative' : 'primary'"-->
-<!--                    @click="toggleRecognition('caso_descripcion')"-->
-<!--                  />-->
-<!--                </template>-->
-<!--              </q-input>-->
+<!--            <div class="col-12 col-md-4">-->
+<!--              <q-input v-model="f.caso_tipologia" dense outlined clearable label="Tipología"/>-->
 <!--            </div>-->
-            <div class="col-12 col-md-8">
-              <q-input v-model="f.caso_direccion" dense outlined clearable label="Buscar dirección en el mapa"/>
-            </div>
-            <div class="col-12 col-md-2">
-              <q-btn outline label="Buscar" @click="$refs.denMap?.geocodeAndFly(f.caso_direccion)" />
+            <div class="col-12 col-md-4">
+              <q-select v-model="f.caso_tipologia" :options="tipologias" dense outlined emit-value map-options clearable
+                        label="Tipología (catálogo DNA)"/>
             </div>
             <div class="col-12">
-              <div class="text-caption text-grey-7 q-mb-xs">Ubicación (para hoja de ruta)</div>
-              <MapPicker
-                v-model="denunciantePos"
-                :center="oruroCenter"
-                :address="f.domicilio"
-                country="bo"
-                ref="denMap"
-              />
+              <q-input
+                v-model="f.caso_descripcion"
+                type="textarea"
+                autogrow
+                outlined
+                dense
+                clearable
+                label="Descripción del hecho"
+                counter
+                maxlength="3000"
+              >
+                <template v-slot:append>
+                  <q-btn
+                    flat
+                    round
+                    dense
+                    :icon="isListening && activeField==='caso_descripcion' ? 'mic_off' : 'mic'"
+                    :color="isListening && activeField==='caso_descripcion' ? 'negative' : 'primary'"
+                    @click="toggleRecognition('caso_descripcion')"
+                  />
+                </template>
+              </q-input>
             </div>
           </div>
         </q-card-section>
@@ -636,6 +640,29 @@
                 <q-item-section>Ciudadanía digital</q-item-section>
               </q-item>
             </div>
+<!--            'documento_fotocopia_carnet_denunciante',-->
+<!--            'documento_fotocopia_carnet_denunciado',-->
+<!--            'documento_placas_fotograficas_domicilio_denunciante',-->
+<!--            'documento_croquis_direccion_denunciado',-->
+<!--            'documento_placas_fotograficas_domicilio_denunciado',-->
+<!--            'documento_ciudadania_digital',-->
+<!--            'documento_certificado_nacimiento',-->
+<!--            'documento_certificado_matrimonio',-->
+<!--            'documento_tres_testigos',-->
+<!--            'documento_contrato_pago',-->
+<!--            'documento_libreta_notas',-->
+<!--            'documento_numero_cuenta',-->
+<!--            'documento_otros',-->
+<!--            'documento_otros_detalle',-->
+            <!--            <div class="col-12 col-sm-6 col-md-4">-->
+            <!--              <q-item dense>-->
+            <!--                <q-item-section avatar>-->
+            <!--                  <q-icon :name="f.documento_fotocopia_carnet_denunciante==='1' ? 'check_circle' : 'cancel'"-->
+            <!--                          :color="f.documento_fotocopia_carnet_denunciante==='1' ? 'positive' : 'grey-5'"/>-->
+            <!--                </q-item-section>-->
+            <!--                <q-item-section>Fotocopia CI denunciante</q-item-section>-->
+            <!--              </q-item>-->
+            <!--            </div>-->
           </div>
         </q-card-section>
       </q-card>
@@ -645,6 +672,7 @@
 
 <script>
 import MapPicker from 'components/MapPicker.vue'
+import moment from 'moment'
 
 export default {
   name: 'CasoNuevoDNA',
@@ -769,6 +797,10 @@ export default {
     }
   },
   mounted () {
+    // if crear
+    if (!this.f.caso_fecha_hecho) {
+      this.f.caso_fecha_hecho = moment().format('YYYY-MM-DD')
+    }
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
       this.recognition = new SpeechRecognition()
