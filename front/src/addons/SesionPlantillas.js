@@ -200,11 +200,11 @@ export const SesionHtml = {
     <table style="width:100%; border-collapse:collapse; font-size:12px">
       <tr>
         <td style="width:10%;"><b>A:</b></td>
-        <td> ${d(abogadoNombre, '________________________________________')} </td>
+        <td> </td>
       </tr>
       <tr>
         <td></td>
-        <td>ABOGADO/A DE LA DIRECCIÓN DE IGUALDAD DE OPORTUNIDADES</td>
+        <td></td>
       </tr>
       <tr><td colspan="2" style="height:8px"></td></tr>
       <tr>

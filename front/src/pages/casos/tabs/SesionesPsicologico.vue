@@ -9,7 +9,7 @@
       </div>
       <div class="col-auto row items-center q-gutter-sm">
         <q-btn flat color="primary" icon="refresh" :loading="loading" @click="$emit('refresh')"/>
-        <q-btn color="green" icon="add_circle_outline" no-caps label="Crear sesión" @click="openCreate"/>
+        <q-btn color="green" icon="add_circle_outline" no-caps label="Crear Informe" @click="openCreate"/>
       </div>
     </div>
 
@@ -176,8 +176,8 @@ export default {
         { label:'Consentimiento informado', value:'consentimiento'},
         { label:'Informe Psicológico (formato DIO)', value:'informe_dio' },
         { label:'Acta de sesión (DIO)', value:'acta' },
-        { label:'Informe breve (psicológico)', value:'informe' },
-        { label:'Constancia de asistencia', value:'constancia' },
+        // { label:'Informe breve (psicológico)', value:'informe' },
+        // { label:'Constancia de asistencia', value:'constancia' },
       ],
     }
   },
@@ -346,6 +346,9 @@ export default {
         conclusiones,
         recomendaciones,
       }
+      // { label:'Consentimiento informado', value:'consentimiento'},
+      // { label:'Informe Psicológico (formato DIO)', value:'informe_dio' },
+      // { label:'Acta de sesión (DIO)', value:'acta' },
 
       if (val === 'acta')               this.form.contenido_html = SesionHtml.acta(base)
       else if (val === 'informe')       this.form.contenido_html = SesionHtml.informe(base)
