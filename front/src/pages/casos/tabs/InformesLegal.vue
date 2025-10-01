@@ -11,7 +11,7 @@
           <template #append><q-icon name="search"/></template>
         </q-input>
         <q-btn flat color="primary" icon="refresh" :loading="loading" @click="$emit('refresh')"/>
-        <q-btn color="green" icon="add_circle_outline" no-caps label="Crear informe" @click="openCreate"/>
+        <q-btn color="green" icon="add_circle_outline" no-caps label="Crear Memorial" @click="openCreate"/>
       </div>
     </div>
 
@@ -156,12 +156,15 @@ export default {
       dialog:false, mode:'create',
       form:{ id:null, fecha:'', titulo:'', area:'psicologico', numero:'', contenido_html:'' },
 
-      plantilla: 'informe_psico',
+      plantilla: 'dirigido_mp',
       plantillasOptions: [
-        { label:'Informe Psicológico (formato SLIM)', value:'informe_psico' },
-        { label:'Informe Legal (fundamentos)',       value:'informe_legal' },
-        { label:'Informe Social (visita / entorno)', value:'informe_social' },
-        { label:'Denuncia penal — Ministerio Público (Abuso sexual)', value:'denuncia_mp' }
+        // { label:'Informe Psicológico (formato SLIM)', value:'informe_psico' },
+        // { label:'Informe Legal (fundamentos)',       value:'informe_legal' },
+        // { label:'Informe Social (visita / entorno)', value:'informe_social' },
+        // { label:'Denuncia penal — Ministerio Público (Abuso sexual)', value:'denuncia_mp' },
+        { label:'Dirigido a Ministerio Público', value:'dirigido_mp', disabled:true },
+        { label:'Dirigido a Juzgado', value:'dirigido_juzgado', disabled:true },
+        { label:'Dirigido a Otros', value:'dirigido_otros', disabled:true },
       ],
       areas: [
         { label:'Psicológico', value:'psicologico' },
@@ -201,63 +204,68 @@ export default {
     applyTemplate(val){
       if(this.mode==='view') return
 
-      const baseMin = {
-        casoId: this.caseId,
-        fecha: this.form.fecha || this.today(),
-        titulo: this.form.titulo || 'Informe',
-        area: this.form.area || 'psicologico',
-        numero: this.form.numero || ''
-      }
+      // const baseMin = {
+      //   casoId: this.caseId,
+      //   fecha: this.form.fecha || this.today(),
+      //   titulo: this.form.titulo || 'Informe',
+      //   area: this.form.area || 'psicologico',
+      //   numero: this.form.numero || ''
+      // }
+      // vaciar
+      this.form.contenido_html = ''
 
-      if (val === 'informe_psico')  this.form.contenido_html = InformeHtml.psicologico(baseMin)
-      if (val === 'informe_legal')  this.form.contenido_html = InformeHtml.legal(this.caso)
-      if (val === 'informe_social') this.form.contenido_html = InformeHtml.social(baseMin)
+      // if (val === 'informe_psico')  this.form.contenido_html = InformeHtml.psicologico(baseMin)
+      // if (val === 'informe_legal')  this.form.contenido_html = InformeHtml.legal(this.caso)
+      // if (val === 'informe_social') this.form.contenido_html = InformeHtml.social(baseMin)
+      if (val === 'dirigido_mp')  this.form.contenido_html = InformeHtml.dirigido_mp(this.caso)
+      if (val === 'dirigido_juzgado')  this.form.contenido_html = InformeHtml.dirigido_juzgado(this.caso)
+      if (val === 'dirigido_otros')  this.form.contenido_html = InformeHtml.dirigido_otros(this.caso)
 
-      if (val === 'denuncia_mp') {
-        // Si tienes el caso cargado en esta vista, úsalo aquí.
-        const c = this.caso || {}  // <-- pásalo como prop si puedes, similar a SesionesPsicologico
-        const denunciante = {
-          nombre: c.denunciante_nombre_completo,
-          ci: c.denunciante_nro,
-          fecha_nac: c.denunciante_fecha_nacimiento,
-          lugar_nac: c.denunciante_lugar_nacimiento,
-          edad: c.denunciante_edad,
-          ocupacion: c.denunciante_ocupacion_exacto || c.denunciante_ocupacion,
-          estado_civil: c.denunciante_estado_civil,
-          domicilio: c.denunciante_domicilio_actual || c.denunciante_residencia,
-          celular: c.denunciante_telefono || c.denunciante_movil,
-          correo: c.denunciante_correo // si lo tienes
-        }
-        const denunciado = {
-          nombre: c.denunciado_nombre_completo,
-          ci: c.denunciado_nro,
-          fecha_nac: c.denunciado_fecha_nacimiento,
-          nacionalidad: 'Boliviana',
-          ocupacion: c.denunciado_ocupacion_exacto || c.denunciado_ocupacion,
-          estado_civil: c.denunciado_estado_civil,
-          domicilio: c.denunciado_domicilio_actual || c.denunciado_residencia,
-          celular: c.denunciado_telefono || c.denunciado_movil,
-          correo: c.denunciado_correo // si lo tienes
-        }
-
-        const payload = {
-          ...baseMin,
-          ciudad: 'ORURO',
-          fiscaliaTitulo: 'SEÑOR REPRESENTANTE DEL MINISTERIO PÚBLICO DE LA CIUDAD DE ORURO',
-          titulo: 'Denuncia penal por Abuso Sexual',
-          denunciante,
-          denunciado,
-          ciudadania_digital_denunciante: c.documento_ciudadania_digital ? c.denunciante_nro : '',
-          relato: c.caso_descripcion || '',
-          abogado: {
-            nombre: c.legal_user?.name || '',
-            correo: c.legal_user?.correo || '',
-            whatsapp: c.legal_user?.celular || ''
-          }
-        }
-
-        this.form.contenido_html = InformeHtml.denuncia_mp(payload)
-      }
+      // if (val === 'denuncia_mp') {
+      //   // Si tienes el caso cargado en esta vista, úsalo aquí.
+      //   const c = this.caso || {}  // <-- pásalo como prop si puedes, similar a SesionesPsicologico
+      //   const denunciante = {
+      //     nombre: c.denunciante_nombre_completo,
+      //     ci: c.denunciante_nro,
+      //     fecha_nac: c.denunciante_fecha_nacimiento,
+      //     lugar_nac: c.denunciante_lugar_nacimiento,
+      //     edad: c.denunciante_edad,
+      //     ocupacion: c.denunciante_ocupacion_exacto || c.denunciante_ocupacion,
+      //     estado_civil: c.denunciante_estado_civil,
+      //     domicilio: c.denunciante_domicilio_actual || c.denunciante_residencia,
+      //     celular: c.denunciante_telefono || c.denunciante_movil,
+      //     correo: c.denunciante_correo // si lo tienes
+      //   }
+      //   const denunciado = {
+      //     nombre: c.denunciado_nombre_completo,
+      //     ci: c.denunciado_nro,
+      //     fecha_nac: c.denunciado_fecha_nacimiento,
+      //     nacionalidad: 'Boliviana',
+      //     ocupacion: c.denunciado_ocupacion_exacto || c.denunciado_ocupacion,
+      //     estado_civil: c.denunciado_estado_civil,
+      //     domicilio: c.denunciado_domicilio_actual || c.denunciado_residencia,
+      //     celular: c.denunciado_telefono || c.denunciado_movil,
+      //     correo: c.denunciado_correo // si lo tienes
+      //   }
+      //
+      //   const payload = {
+      //     ...baseMin,
+      //     ciudad: 'ORURO',
+      //     fiscaliaTitulo: 'SEÑOR REPRESENTANTE DEL MINISTERIO PÚBLICO DE LA CIUDAD DE ORURO',
+      //     titulo: 'Denuncia penal por Abuso Sexual',
+      //     denunciante,
+      //     denunciado,
+      //     ciudadania_digital_denunciante: c.documento_ciudadania_digital ? c.denunciante_nro : '',
+      //     relato: c.caso_descripcion || '',
+      //     abogado: {
+      //       nombre: c.legal_user?.name || '',
+      //       correo: c.legal_user?.correo || '',
+      //       whatsapp: c.legal_user?.celular || ''
+      //     }
+      //   }
+      //
+      //   this.form.contenido_html = InformeHtml.denuncia_mp(payload)
+      // }
     },
 
     async save(){
