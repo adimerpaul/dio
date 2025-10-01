@@ -54,6 +54,12 @@ return new class extends Migration
             $table->string('documento_ciudadania_digital', 10)->nullable();
             $table->string('documento_otros', 160)->nullable();
             $table->string('documento_otros_detalle', 160)->nullable();
+            $table->string('documento_certificado_nacimiento', 160)->nullable();
+            $table->string('documento_certificado_matrimonio', 160)->nullable();
+            $table->string('documento_tres_testigos', 160)->nullable();
+            $table->string('documento_contrato_pago', 160)->nullable();
+            $table->string('documento_libreta_notas', 160)->nullable();
+            $table->string('documento_numero_cuenta', 160)->nullable();
 
             $table->date('fecha_apertura_caso')->nullable();
             $table->date('fecha_derivacion_psicologica')->nullable();
