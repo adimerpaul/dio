@@ -3,7 +3,7 @@
 
     <!-- Header -->
     <div class="row items-center q-mb-md">
-      <div class="col">
+      <div class="col-12 col-md-4">
         <div class="text-h6 text-weight-bold">{{caso?.tipo}} {{ caso?.caso_numero || '...' }}</div>
         <div class="text-caption text-grey-7">Detalle y gestión integral</div>
       </div>
@@ -41,9 +41,7 @@
             <q-item clickable @click="printPdf" v-close-popup >
               <q-item-section>Ficha del Caso</q-item-section>
             </q-item>
-
             <q-separator/>
-
             <!-- NUEVO: hoja de ruta con dos variantes -->
             <q-item clickable @click="printPdfHojaRuta('denunciante')" v-close-popup >
               <q-item-section>Ubicacion (Denunciante)</q-item-section>
@@ -54,6 +52,8 @@
           </q-list>
         </q-btn-dropdown>
         <q-btn flat color="primary" icon="refresh" @click="fetchCaso" :loading="loading"/>
+<!--        btoton eliminar caso y se vava atras-->
+        <q-btn flat color="negative" icon="delete" label="Eliminar Caso" @click="eliminarCaso()" v-if="role === 'Administrador'" no-caps/>
       </div>
     </div>
 
@@ -187,6 +187,22 @@ export default {
     this.fetchCaso()
   },
   methods: {
+    eliminarCaso() {
+      this.$q.dialog({
+        title: 'Confirmar eliminación',
+        message: '¿Estás seguro de que deseas eliminar este caso? Esta acción no se puede deshacer.',
+        cancel: true,
+        persistent: true
+      }).onOk(async () => {
+        try {
+          await this.$axios.delete(`/casos/${this.caseId}`);
+          this.$q.notify({ type: 'positive', message: 'Caso eliminado exitosamente.' });
+          this.$router.back(); // Volver a la página anterior
+        } catch (e) {
+          this.$alert.error(e?.response?.data?.message || 'No se pudo eliminar el caso');
+        }
+      });
+    },
     normalizePhone (raw) {
       if (!raw) return ''
       // Solo dígitos

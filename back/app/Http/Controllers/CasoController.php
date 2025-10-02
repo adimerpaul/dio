@@ -24,6 +24,10 @@ use Intervention\Image\ImageManager;
 
 class CasoController extends Controller
 {
+    function destroy(Caso $caso){
+        $caso->delete();
+        return response()->json(['message' => 'Caso eliminado']);
+    }
     public function updateCodigos(\Illuminate\Http\Request $request, \App\Models\Caso $caso)
     {
         // Actualiza SOLO si vienen en el payload; si no vienen, no toca ese campo
@@ -725,6 +729,7 @@ class CasoController extends Controller
                     ->orWhere('denunciado_documento', 'like', $like)
                     ->orWhere('denunciado_residencia', 'like', $like);
             });
+            $query->orWhere('zona', 'like', '%'.$q.'%');
         }
 
         $user = $request->user();
