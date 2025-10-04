@@ -206,9 +206,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Crear o actualizar (upsert) por caso
     Route::put('/casos/{caso}/acogimiento', [AcogimientoController::class, 'upsert']);
+//    slim/imprimir
 
 
 });
+Route::get('/slimsImprimir', [SlimController::class, 'imprimir']);
 
 Route::get('/casos/{caso}/pdf/hoja-ruta', [CasoController::class, 'pdfHojaRuta']);
 

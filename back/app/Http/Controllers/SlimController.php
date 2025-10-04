@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Caso;
 use App\Models\Slam;
 use App\Models\Slim;
 use App\Models\Psicologica;
@@ -15,6 +16,56 @@ use Carbon\Carbon;
 
 class SlimController extends Controller
 {
+    function imprimir(Request $request)
+    {
+        $tipoCaso = $request->get('tipo', 'SLIM'); // ej. SLIM, DNA, SLAM, etc.
+        $from     = $request->get('from'); // 'YYYY-MM-DD'
+        $to       = $request->get('to');   // 'YYYY-MM-DD'
+        $apoyoIntegralExtraCol = filter_var($request->get('apoyo_integral', false), FILTER_VALIDATE_BOOL);
+
+        $q = Caso::query()
+            ->with([
+                'denunciantes:id,caso_id,denunciante_nombres,denunciante_paterno,denunciante_materno',
+                'denunciados:id,caso_id,denunciado_nombres,denunciado_paterno,denunciado_materno',
+                'psicologica_user:id,name',
+                'trabajo_social_user:id,name',
+                'legal_user:id,name',
+            ]);
+
+        // Si usas campo 'tipo' (lo mostraste en tu snippet de ejemplo):
+        if (!empty($tipoCaso)) {
+            $q->where('tipo', $tipoCaso);
+        }
+
+        // Rango de fechas (usa 'fecha_apertura_caso' como FECHA del reporte)
+        if ($from) {
+            $q->whereDate('fecha_apertura_caso', '>=', $from);
+        }
+        if ($to) {
+            $q->whereDate('fecha_apertura_caso', '<=', $to);
+        }
+
+        $casos = $q->orderBy('fecha_apertura_caso')->get();
+
+        // Título/metadata
+        $titulo = 'REPORTE DE CASOS';
+        $subtitulo = sprintf(
+            '%s%s',
+            $tipoCaso ? "Tipo de caso: {$tipoCaso}" : 'Todos',
+            ($from || $to) ? " | Rango: " . ($from ?: '—') . " a " . ($to ?: '—') : ''
+        );
+
+        $pdf = PDF::loadView('pdf.casos_reporte', [
+            'casos'                 => $casos,
+            'titulo'                => $titulo,
+            'subtitulo'             => $subtitulo,
+            'apoyoIntegralExtraCol' => $apoyoIntegralExtraCol,
+        ])
+            ->setPaper('letter', 'landscape'); // igual al ancho del formato de Word
+
+        // stream() para ver en el navegador, download() si deseas descarga directa
+        return $pdf->stream('reporte_casos.pdf');
+    }
     public function pendientesResumen(Request $request)
     {
 //        error_log('PendientesResumen called');

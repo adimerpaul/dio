@@ -36,6 +36,7 @@
 
       <div class="col-auto">
         <q-btn color="primary" icon="refresh" label="Actualizar" no-caps @click="fetchSlims()" :loading="loading"/>
+        <q-btn color="secondary" icon="print" label="Imprimir" no-caps @click="imprimir()" />
       </div>
     </div>
 
@@ -248,6 +249,19 @@ export default {
     }
   },
   methods: {
+    imprimir(){
+      this.$axios.get('/slimsImprimir',)
+        .then(res => {
+          // pdf
+          const blob = new Blob([res.data], { type: 'application/pdf' })
+          const link = document.createElement('a')
+          link.href = window.URL.createObjectURL(blob)
+          link.download = 'slims.pdf'
+          link.click()
+          window.URL.revokeObjectURL(link.href)
+        })
+        .catch(e => this.$alert.error(e.response?.data?.message || 'Error imprimiendo SLIMs'))
+    },
     fetchSlims () {
       this.loading = true
       this.$axios.get('/casos', {
