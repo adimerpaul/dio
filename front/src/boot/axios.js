@@ -24,7 +24,7 @@ export default boot(({ app, router }) => {
 
   // $areas = ['DNA', 'SLIM', 'SLAM', 'UMAGUIS', 'PROCENI'];
   // $zonas = ['CENTRAL', 'NORTE', 'SUR', 'ESTE', 'OESTE'];
-  app.config.globalProperties.$areas = ['DNA', 'SLIM', 'SLAM', 'UMAGUIS', 'PROCENI','UMADIS','ADMIN','PROPREMI','JUVENTUDES','ACOGIMIENTO Y ADOPCION','REFUGIO DE LA MUJER']
+  app.config.globalProperties.$areas = ['DNA','DNA/SLIM', 'SLIM', 'SLAM','UMADIS','ADMIN','PROPREMI','JUVENTUDES','ACOGIMIENTO Y ADOPCION','REFUGIO DE LA MUJER']
   app.config.globalProperties.$zonas = ['CENTRAL', 'NORTE', 'SUR', 'ESTE', 'OESTE','AURORA','VINTO']
   app.config.globalProperties.$documentos= [
     { label: 'Carnet de identidad', value: 'Carnet de identidad' },

@@ -693,106 +693,110 @@ class CasoController extends Controller
      */
     public function index(Request $request)
     {
-        $q        = trim((string) $request->get('q', ''));
-        $perPage  = (int) $request->get('per_page', 10);
-        $perPage  = max(5, min($perPage, 100));
+        $q       = trim((string) $request->get('q', ''));
+        $perPage = (int) $request->get('per_page', 10);
+        $perPage = max(5, min($perPage, 100));
         $tipo    = trim((string) $request->get('tipo', ''));
 
-        $query = Caso::orderByDesc('created_at')->where('tipo', $tipo);
+        $query = Caso::query()
+            ->orderByDesc('created_at')
+            ->when($tipo !== '', fn($qq) => $qq->where('tipo', $tipo));
 
         if ($q !== '') {
-            $query->where(function ($s) use ($q) {
-                $like = "%{$q}%";
-                $s->orWhere('caso_numero', 'like', $like)
-                    ->orWhere('caso_tipologia', 'like', $like)
-                    ->orWhere('caso_zona', 'like', $like)
-                    ->orWhere('caso_direccion', 'like', $like)
-                    ->orWhere('caso_descripcion', 'like', $like);
+            $like = "%{$q}%";
+
+            $query->where(function ($group) use ($like) {
+                // Campos directos del caso
+                $group->where(function ($s) use ($like) {
+                    $s->where('caso_numero', 'like', $like)
+                        ->orWhere('caso_tipologia', 'like', $like)
+                        ->orWhere('caso_zona', 'like', $like)
+                        ->orWhere('caso_direccion', 'like', $like)
+                        ->orWhere('caso_descripcion', 'like', $like)
+                        ->orWhere('zona', 'like', $like);
+                })
+                    // Denunciantes
+                    ->orWhereHas('denunciantes', function ($s) use ($like) {
+                        $s->whereRaw("CONCAT_WS(' ', denunciante_nombres, denunciante_paterno, denunciante_materno) LIKE ?", [$like])
+                            ->orWhere('denunciante_nro', 'like', $like)
+                            ->orWhere('denunciante_documento', 'like', $like)
+                            ->orWhere('denunciante_residencia', 'like', $like);
+                    })
+                    // Denunciados
+                    ->orWhereHas('denunciados', function ($s) use ($like) {
+                        $s->whereRaw("CONCAT_WS(' ', denunciado_nombres, denunciado_paterno, denunciado_materno) LIKE ?", [$like])
+                            ->orWhere('denunciado_nro', 'like', $like)
+                            ->orWhere('denunciado_documento', 'like', $like)
+                            ->orWhere('denunciado_residencia', 'like', $like);
+                    });
             });
-            $query->orWhereHas('denunciantes', function ($s) use ($q) {
-                $like = "%{$q}%";
-//                $s->where('denunciante_nombres', 'like', $like)
-//                    ->orWhere('denunciante_paterno', 'like', $like)
-//                    ->orWhere('denunciante_materno', 'like', $like)
-                $s->where(DB::raw("CONCAT_WS(' ', denunciante_nombres, denunciante_paterno, denunciante_materno)"), 'like', $like)
-                    ->orWhere('denunciante_nro', 'like', $like)
-                    ->orWhere('denunciante_documento', 'like', $like)
-                    ->orWhere('denunciante_residencia', 'like', $like);
-            });
-            $query->orWhereHas('denunciados', function ($s) use ($q) {
-                $like = "%{$q}%";
-//                $s->where('denunciado_nombres', 'like', $like)
-//                    ->orWhere('denunciado_paterno', 'like', $like)
-//                    ->orWhere('denunciado_materno', 'like', $like)
-                $s->where(DB::raw("CONCAT_WS(' ', denunciado_nombres, denunciado_paterno, denunciado_materno)"), 'like', $like)
-                    ->orWhere('denunciado_nro', 'like', $like)
-                    ->orWhere('denunciado_documento', 'like', $like)
-                    ->orWhere('denunciado_residencia', 'like', $like);
-            });
-            $query->orWhere('zona', 'like', '%'.$q.'%');
         }
 
         $user = $request->user();
 
-        // Mantén tus filtros por rol
-        if ($user->role == 'Psicologo')      { $query->where('psicologica_user_id', $user->id); }
-        if ($user->role == 'Social')         { $query->where('trabajo_social_user_id', $user->id); }
-        if ($user->role == 'Abogado')        { $query->where('legal_user_id', $user->id); }
+        // Filtros por rol (se mantienen como AND porque el bloque de búsqueda ya está agrupado)
+        if ($user->role === 'Psicologo') {
+            $query->where('psicologica_user_id', $user->id);
+        }
+        if ($user->role === 'Social') {
+            $query->where('trabajo_social_user_id', $user->id);
+        }
+        if ($user->role === 'Abogado') {
+            $query->where('legal_user_id', $user->id);
+        }
+        if ($user->role === 'Asistente') {
+            $query->where('zona', $user->zona);
+        }
+        if ($user->role === 'Auxiliar') {
+            $query->where('zona', $user->zona);
+        }
 
-        $query->with(['psicologica_user:id,name','trabajo_social_user:id,name','legal_user:id,name','user:id,name','denunciantes','denunciados']);
+        $query->with([
+            'psicologica_user:id,name',
+            'trabajo_social_user:id,name',
+            'legal_user:id,name',
+            'user:id,name',
+            'denunciantes',
+            'denunciados',
+        ]);
 
         $paginated = $query->paginate($perPage)->appends($request->query());
 
-        // === NUEVO: construir mi_estado por cada caso ===
-        $areaPorRol = [
-            'Psicologo' => 'Psicológico', // usa exactamente los valores que guardas en Informe.area
-            'Social'    => 'Social',
-            'Abogado'   => 'Legal',
-        ];
-
+        // === lo demás de tu lógica (mi_estado) se queda igual ===
         $items = $paginated->getCollection();
-        $now = Carbon::now();
+        $now = \Carbon\Carbon::now();
 
         $items->transform(function ($c) use ($user, $now) {
             $rolUsuario = $user->role;
 
-            // ¿estoy asignado a este caso?
             $meAsignado = (
                 ($rolUsuario === 'Psicologo' && (int)$c->psicologica_user_id === (int)$user->id) ||
                 ($rolUsuario === 'Social'    && (int)$c->trabajo_social_user_id === (int)$user->id) ||
                 ($rolUsuario === 'Abogado'   && (int)$c->legal_user_id === (int)$user->id)
             );
 
-            // ⬇️ FECHA BASE = fecha_apertura_caso (fallback a created_at y, si falta, ahora)
             $apertura = $c->fecha_apertura_caso
-                ? Carbon::parse($c->fecha_apertura_caso)
-                : ($c->created_at ? Carbon::parse($c->created_at) : $now);
+                ? \Carbon\Carbon::parse($c->fecha_apertura_caso)
+                : ($c->created_at ? \Carbon\Carbon::parse($c->created_at) : $now);
 
-            // Plazo 10 días desde apertura
             $deadline = $apertura->copy()->addDays(10);
-            $diasRest = $now->diffInDays($deadline, false); // negativo si vencido
+            $diasRest = $now->diffInDays($deadline, false);
             $atrasado = $diasRest < 0;
 
-            // por defecto
             $hecho = false;
             $labelListo = 'Primer informe listo';
 
             if ($meAsignado) {
                 switch ($rolUsuario) {
                     case 'Psicologo':
-                        // cuenta la primera sesión psicológica
                         $hecho = \App\Models\SesionPsicologica::where('caso_id', $c->id)->exists();
                         $labelListo = 'Primera sesión lista';
                         break;
-
                     case 'Abogado':
-                        // primer informe legal
                         $hecho = \App\Models\Informe::where('caso_id', $c->id)->where('area', 'Legal')->exists();
                         $labelListo = 'Primer informe (Legal) listo';
                         break;
-
                     case 'Social':
-                        // primer informe social
                         $hecho = \App\Models\Informe::where('caso_id', $c->id)->where('area', 'Social')->exists();
                         $labelListo = 'Primer informe (Social) listo';
                         break;
@@ -812,7 +816,6 @@ class CasoController extends Controller
             return $c;
         });
 
-        // respuesta "plana"
         return response()->json([
             'data'         => $items->values(),
             'current_page' => $paginated->currentPage(),

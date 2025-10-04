@@ -187,7 +187,7 @@ export default {
       loading: false,
       actionUser: '',
       filter: '',
-      roles: ['Administrador', 'Asistente', 'Psicologo', 'Abogado','Social'],
+      roles: ['Administrador', 'Asistente', 'Psicologo', 'Abogado','Social','Auxiliar'],
       columns: [
         { name: 'actions', label: 'Acciones', align: 'center' },
         { name: 'name', label: 'Nombre', align: 'left', field: 'name' },

@@ -18,7 +18,7 @@
       </div>
     </div>
 <!--    <pre>{{editable}}</pre>-->
-    <template v-if="($store.user?.role === 'Administrador' || $store.user?.role === 'Asistente')">
+    <template v-if="($store.user?.role === 'Administrador' || $store.user?.role === 'Asistente' || $store.user?.role === 'Auxiliar')">
       <q-form class="q-mt-lg" @submit.prevent="save">
       <!-- Denunciante -->
       <q-card flat bordered class="section-card">

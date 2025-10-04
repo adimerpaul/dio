@@ -5,7 +5,7 @@
         <q-input
           v-model="search"
           outlined dense debounce="400"
-          placeholder="Buscar por N° SLIM, denunciante, denunciado, tipología, zona…"
+          placeholder="Buscar por N° DNA, denunciante, denunciado, tipología, zona…"
           @update:model-value="onSearch"
         >
           <template #prepend><q-icon name="search" /></template>
