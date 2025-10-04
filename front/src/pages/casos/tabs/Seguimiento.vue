@@ -118,6 +118,7 @@
     </q-card>
 
     <!-- TABLA -->
+<!--    <pre>{{rowsFiltered}}</pre>-->
     <q-table
       flat bordered
       :rows="rowsFiltered"
@@ -127,6 +128,7 @@
       hide-bottom
       :rows-per-page-options="[0]"
       class="rounded-borders"
+      @rowClick="clickSeguimiento"
     >
       <template #body-cell-actividad="props">
         <q-td :props="props">
@@ -245,17 +247,17 @@ export default {
       ]
       hitos.forEach((h, idx) => {
         if (h.fecha) {
-          items.push({
-            uid: `hito-${idx}-${h.fecha}`,
-            tipo: 'Hito',
-            modulo: 'General',
-            titulo: h.titulo,
-            descripcion: `Fecha: ${h.fecha}`,
-            usuario: c.user?.name || '',
-            fecha: h.fecha,
-            icon: 'flag',
-            links: {}
-          })
+          // items.push({
+          //   uid: `hito-${idx}-${h.fecha}`,
+          //   tipo: 'Hito',
+          //   modulo: 'General',
+          //   titulo: h.titulo,
+          //   descripcion: `Fecha: ${h.fecha}`,
+          //   usuario: c.user?.name || '',
+          //   fecha: h.fecha,
+          //   icon: 'flag',
+          //   links: {}
+          // })
         }
       })
 
@@ -379,6 +381,33 @@ export default {
     }
   },
   methods: {
+    clickSeguimiento(event,row) {
+      // console.log('Fila clicada:', row)
+      if (row.tipo === 'Informe' && row.modulo === 'Social' && row.uid.startsWith('soc-')) {
+        const id = row.uid.split('-')[1]
+        const url = this.$axios.defaults.baseURL + `/informesSocial/${id}/pdf`
+        this.open(url)
+      }
+
+      if (row.tipo === 'Documento' && row.uid.startsWith('doc-')) {
+        const id = row.uid.split('-')[1]
+        const url = this.$axios.defaults.baseURL + `/documentos/${id}/view`
+        this.open(url)
+      }
+
+      if (row.tipo === 'Sesión' && row.modulo === 'Psicológico' && row.uid.startsWith('psi-')) {
+        const id = row.uid.split('-')[1]
+        const url = this.$axios.defaults.baseURL + `/sesiones-psicologicas/${id}/pdf`
+        this.open(url)
+      }
+      // si es legal
+      // http://localhost:8000/api/informes/2/pdf
+      if (row.tipo === 'Informe' && row.modulo === 'Legal' && row.uid.startsWith('leg-')) {
+        const id = row.uid.split('-')[1]
+        const url = this.$axios.defaults.baseURL + `/informes/${id}/pdf`
+        this.open(url)
+      }
+    },
     stripHtml (html) {
       const div = document.createElement('div')
       div.innerHTML = html || ''

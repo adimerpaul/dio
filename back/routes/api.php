@@ -223,6 +223,7 @@ Route::get   ('/documentos/{documento}/download', [\App\Http\Controllers\CasoCon
 //http://localhost:8000/api/sesiones-psicologicas/1/pdf
 Route::get   ('/sesiones-psicologicas/{psicologica}/pdf',  [CasoController::class, 'psicoPdf']);
 Route::get   ('/informes/{informe}/pdf', [CasoController::class, 'legalPdf']);
+Route::get   ('/informesSocial/{informe}/pdf', [CasoController::class, 'socialPdf']);
 
 Route::get   ('/slims/documentos/{documento}/view',   [SlimDocumentoController::class, 'view']);
 

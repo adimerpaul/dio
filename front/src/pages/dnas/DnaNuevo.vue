@@ -839,7 +839,7 @@ export default {
       ]
     } else if (this.tipoProceso === 'APOYO_INTEGRAL') {
       this.tipologias = [
-        'INFORMES PSICOLOGICOS', 'INFORMES SOCIALES'
+        'INFORMES PSICOLOGICOS', 'INFORMES SOCIALES', 'INFORMES PSICOSOCIALES'
       ]
     } else {
       this.tipologias = [

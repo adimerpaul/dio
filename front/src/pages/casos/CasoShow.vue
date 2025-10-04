@@ -3,6 +3,7 @@
 
     <!-- Header -->
     <div class="row items-center q-mb-md">
+<!--      <a href="myscan://open">Escanear ahora</a>-->
       <div class="col-12 col-md-4">
         <div class="text-h6 text-weight-bold">{{caso?.tipo}} {{ caso?.caso_numero || '...' }}</div>
 <!--          tiempo desde que de abri el caso con momnet y fecha_apertura_caso -->

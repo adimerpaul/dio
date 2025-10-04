@@ -368,6 +368,24 @@ class CasoController extends Controller
 
         return response()->json(['message' => 'Fotografía eliminada']);
     }
+
+    function socialPdf(Request $request, InformesSocial $informe)
+    {
+        // Opciones extra para mejor render
+        $pdf = Pdf::loadView('informes_legales.pdf', [
+            'informe' => $informe,
+        ])->setPaper('A4', 'portrait');
+
+        // Para acentos: usar DejaVu Sans
+        $pdf->getDomPDF()->getOptions()->set('defaultFont', 'DejaVu Sans');
+
+        // ?download=1 para descargar, 0 para ver en el navegador
+        $download = (int) $request->query('download', 0) === 1;
+
+        $filename = 'InformeLegal_'.$informe->id.'.pdf';
+        return $download ? $pdf->download($filename) : $pdf->stream($filename);
+
+    }
     function legalPdf(Request $request, InformeLegal $informe)
     {
         // Opciones extra para mejor render
@@ -381,7 +399,7 @@ class CasoController extends Controller
         // ?download=1 para descargar, 0 para ver en el navegador
         $download = (int) $request->query('download', 0) === 1;
 
-        $filename = 'SLIM_InformeLegal_'.$informe->id.'.pdf';
+        $filename = 'InformeLegal_'.$informe->id.'.pdf';
         return $download ? $pdf->download($filename) : $pdf->stream($filename);
 
     }
@@ -398,7 +416,7 @@ class CasoController extends Controller
         // ?download=1 para descargar, 0 para ver en el navegador
         $download = (int) $request->query('download', 0) === 1;
 
-        $filename = 'SLIM_SesionPsicologica_'.$psicologica->id.'.pdf';
+        $filename = 'SesionPsicologica_'.$psicologica->id.'.pdf';
         return $download ? $pdf->download($filename) : $pdf->stream($filename);
     }
     public function pendientesResumen(Request $request)
@@ -631,7 +649,7 @@ class CasoController extends Controller
             // ?download=1 para descargar, 0 para ver en el navegador
             $download = (int) $request->query('download', 0) === 1;
 
-            $filename = 'SLIM_Caso_'.$caso->id.'.pdf';
+            $filename = 'Caso_'.$caso->id.'.pdf';
             return $download ? $pdf->download($filename) : $pdf->stream($filename);
         }
 //        dna

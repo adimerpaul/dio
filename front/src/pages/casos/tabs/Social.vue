@@ -360,7 +360,7 @@ export default {
 
     printPdf(it){
       const base = this.$url || ''
-      window.open(`${base}/informes/${it.id}/pdf`, '_blank')
+      window.open(`${base}/informesSocial/${it.id}/pdf`, '_blank')
     }
   }
 }

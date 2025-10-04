@@ -42,7 +42,7 @@
             </q-tooltip>
             <q-menu>
               <q-list style="min-width: 250px">
-                <q-item v-if="pending" v-for="(p,i) in pending" :key="i" clickable @click="irPendientes" v-close-popup>
+                <q-item v-if="pending" v-for="(p,i) in pending" :key="i" clickable @click="irPendientes(p)" v-close-popup>
                   <q-item-section>
                     <q-item-label>
                       <div>
@@ -649,8 +649,9 @@ async function fetchPendientesCount () {
   }
 }
 
-function irPendientes () {
-  proxy.$router.push({ path: '/slims', query: { only_pendientes: 1 } })
+function irPendientes (p) {
+  // proxy.$router.push({ path: '/slims', query: { only_pendientes: 1 } })
+  proxy.$router.push(`/${p.tipo.toLowerCase()}s/`)
 }
 
 onMounted(() => { fetchPendientesCount() })
