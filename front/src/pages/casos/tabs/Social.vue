@@ -12,6 +12,7 @@
         </q-input>
         <q-btn flat color="primary" icon="refresh" :loading="loading" @click="$emit('refresh')"/>
         <q-btn color="green" icon="add_circle_outline" no-caps label="Crear informe" @click="openCreate"/>
+        <q-btn color="primary" icon="upload" no-caps label="Subir Informe" @click="openSubirInforme"/>
       </div>
     </div>
 
@@ -135,6 +136,33 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+    <!--    <q-dialog openSubirArchivo-->
+    <q-dialog v-model="openSubirArchivo" persistent>
+      <q-card style="max-width: 500px; width: 90vw;">
+        <q-card-section class="row items-center q-pb-none">
+          <div class="text-subtitle1">Subir informe</div>
+          <q-space/>
+          <q-btn flat round dense icon="close" v-close-popup/>
+        </q-card-section>
+
+        <q-card-section class="q-gutter-md">
+          <div class="text-body2 q-mb-sm">
+            Aquí puede subir un informe psicológico ya elaborado (PDF, Word, etc.) y vincularlo al caso.
+          </div>
+          <q-input v-model="form.titulo" dense outlined label="Título informe *" :rules="[v=>!!v||'Requerido']"/>
+          <q-file v-model="file" label="Seleccionar archivo" outlined dense @update:model-value="onFileChange"
+                  accept=".pdf,.doc,.docx,.odt,.png,.jpg,.jpeg"
+          />
+          <!--          bton guardar-->
+          <q-btn color="primary" label="Guardar" :disabled="!file || !form.titulo" @click="guardarInforme"/>
+        </q-card-section>
+
+        <q-separator/>
+        <q-card-actions align="right">
+          <q-btn flat label="Cerrar" v-close-popup/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-card>
 </template>
 
@@ -149,6 +177,8 @@ export default {
   },
   data(){
     return {
+      openSubirArchivo: false,
+      file: null,
       loading:false, saving:false,
       search:'', page:1, perPage:10,
       rows:{ data:[], total:0, last_page:1 },
@@ -191,6 +221,41 @@ export default {
     //     this.$q.notify({ type:'negative', message: e?.response?.data?.message || 'Error cargando informes' })
     //   }finally{ this.loading=false }
     // },
+    guardarInforme(){
+      if(!this.file){
+        this.$q.notify({ type:'negative', message:'Seleccione un archivo' })
+        return
+      }
+      if(!this.form.titulo){
+        this.$q.notify({ type:'negative', message:'El título es obligatorio' })
+        return
+      }
+      const formData = new FormData()
+      formData.append('titulo', this.form.titulo)
+      formData.append('file', this.file)
+
+      this.saving = true
+      this.$axios.post(`/casos/${this.caseId}/sesiones-psicologicas/upload`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      }).then(res=>{
+        this.$q.notify({ type:'positive', message:'Informe subido' })
+        this.openSubirArchivo = false
+        this.file = null
+        this.form.titulo = ''
+        this.$emit('refresh')
+      }).catch(e=>{
+        this.$q.notify({ type:'negative', message: e?.response?.data?.message || 'No se pudo subir el informe' })
+      }).finally(()=>{
+        this.saving = false
+      })
+    },
+    onFileChange(file){
+      this.file = file
+      if(!file) return
+    },
+    openSubirInforme(){
+      this.openSubirArchivo = true
+    },
     openCreate(){
       this.mode='create'
       this.form = { id:null, fecha:this.today(), titulo:'', area:'psicologico', numero:'', contenido_html:'' }

@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->string('lugar')->nullable();
             $table->string('tipo', 30)->nullable(); // individual/grupal/etc.
             $table->longText('contenido_html');
+            $table->string('archivo')->nullable();
 
             $table->timestamps();
             $table->softDeletes();

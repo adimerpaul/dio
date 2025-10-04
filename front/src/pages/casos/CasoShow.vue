@@ -5,7 +5,13 @@
     <div class="row items-center q-mb-md">
       <div class="col-12 col-md-4">
         <div class="text-h6 text-weight-bold">{{caso?.tipo}} {{ caso?.caso_numero || '...' }}</div>
-        <div class="text-caption text-grey-7">Detalle y gestión integral</div>
+<!--          tiempo desde que de abri el caso con momnet y fecha_apertura_caso -->
+          <div class="text-subtitle2 text-black-7">
+            <q-icon name="calendar_today" class="q-mr-sm"/>
+            Abierto {{ caso?.fecha_apertura_caso ? (new Date(caso.fecha_apertura_caso).toLocaleDateString()) : '...' }}
+            <span v-if="caso?.fecha_apertura_caso"> (hace {{ Math.floor((new Date() - new Date(caso.fecha_apertura_caso)) / (1000 * 60 * 60 * 24)) }} días)</span>
+          </div>
+<!--        <div class="text-caption text-grey-7">Detalle y gestión integral</div>-->
       </div>
       <div class="col-auto row q-gutter-sm">
         <q-btn-dropdown
@@ -63,7 +69,7 @@
               active-color="primary" indicator-color="primary" outside-arrows mobile-arrows>
         <q-tab name="info"         label="1 Información General"   icon="dashboard"       no-caps/>
         <q-tab name="seguimiento"  label="2 Seguimiento"           icon="track_changes"   no-caps/>
-        <q-tab name="hoja"         label="3 Hoja de Ruta"          icon="report_problem"  no-caps v-if="role === 'Administrador' || role === 'Asistente'"/>
+        <q-tab name="hoja"         label="3 Hoja de Ruta"          icon="report_problem"  no-caps />
         <q-tab name="psico"        label="4 Área Psicológico"      icon="psychology"      no-caps v-if="role === 'Administrador' || role === 'Psicologo'"/>
         <q-tab name="legal"        label="5 Área Legal"            icon="gavel"           no-caps v-if="role === 'Administrador' || role === 'Abogado'"/>
         <q-tab name="social"       label="6 Área Social"           icon="people"          no-caps v-if="role === 'Administrador' || role === 'Social'"/>

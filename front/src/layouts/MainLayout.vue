@@ -188,7 +188,7 @@
             <q-icon name="folder_shared" class="text-white"/>
           </q-item-section>
           <q-item-section>
-            <q-item-label class="text-white">SLIMs</q-item-label>
+            <q-item-label class="text-white">SLIM (Casos)</q-item-label>
           </q-item-section>
         </q-item>
         <q-expansion-item dense expand-separator icon="gavel" label="Nuevo DNA" active-class="menu-active" v-if="hasAnyPerm(['Crear DNA'])">
@@ -260,7 +260,7 @@
             <q-icon name="folder_shared" class="text-white"/>
           </q-item-section>
           <q-item-section>
-            <q-item-label class="text-white">SLAMs</q-item-label>
+            <q-item-label class="text-white">SLAM (Casos)</q-item-label>
           </q-item-section>
         </q-item>
         <q-expansion-item dense expand-separator icon="add_circle" label="Nuevo UMADIS" active-class="menu-active" v-if="hasAnyPerm(['Crear UMADIS'])">
@@ -288,7 +288,7 @@
             <q-icon name="folder_shared" class="text-white"/>
           </q-item-section>
           <q-item-section>
-            <q-item-label class="text-white">UMADIS</q-item-label>
+            <q-item-label class="text-white">UMADIS (Casos)</q-item-label>
           </q-item-section>
         </q-item>
         <q-expansion-item dense expand-separator icon="add_circle" label="Nuevo PROPREMI" active-class="menu-active" v-if="hasAnyPerm(['Crear PROPREMIS'])">
@@ -316,7 +316,7 @@
             <q-icon name="folder_shared" class="text-white"/>
           </q-item-section>
           <q-item-section>
-            <q-item-label class="text-white">PROPREMIs</q-item-label>
+            <q-item-label class="text-white">PROPREMI (Casos)</q-item-label>
           </q-item-section>
         </q-item>
         <q-item dense to="/acogimiento" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Acogimiento')">

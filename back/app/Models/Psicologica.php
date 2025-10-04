@@ -16,7 +16,7 @@ class Psicologica extends Model implements AuditableContract
 
     protected $fillable = [
         'caseable_id','caseable_type',
-        'user_id','fecha','titulo','duracion_min','lugar','tipo','contenido_html'
+        'user_id','fecha','titulo','duracion_min','lugar','tipo','contenido_html','archivo'
     ];
 
     protected $casts = [
