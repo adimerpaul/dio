@@ -24,6 +24,15 @@ use Intervention\Image\ImageManager;
 
 class CasoController extends Controller
 {
+    function aceptarLegal(Request $request, Caso $caso){
+        $user = $request->user();
+        if ($user->role !== 'Abogado') {
+            return response()->json(['message' => 'No autorizado'], 403);
+        }
+        $caso->fecha_aceptacion_area_legal = date('Y-m-d');
+        $caso->save();
+        return response()->json($caso);
+    }
     function uploadFile(Request $request){
 
         $request->validate([
@@ -903,6 +912,9 @@ class CasoController extends Controller
             $request['fecha_apertura_caso'] = date('Y-m-d');
             $request['area'] = $user->area;
             $request['zona'] = $user->zona;
+            if($request->has('legal_user_id') && $request->legal_user_id){
+                $request['fecha_derivacion_area_legal'] = date('Y-m-d');
+            }
             $caso = Caso::create($request->all());
 
 //            $caso->asynccon denunciante
@@ -967,6 +979,9 @@ class CasoController extends Controller
     public function update(Request $request, Caso $caso){
         DB::beginTransaction();
         try {
+            if($request->has('legal_user_id') && $request->legal_user_id && !$caso->fecha_derivacion_area_legal){
+                $request['fecha_derivacion_area_legal'] = date('Y-m-d');
+            }
             $caso->update($request->all());
 
             if($request->has('familiares')){
@@ -1032,10 +1047,10 @@ class CasoController extends Controller
     {
         $user = $request->user();
         //        actulizar caso [sgicologica/] fecha_derivacion_psicologica
-        if (!$caso->fecha_derivacion_legal) {
-            $caso->fecha_derivacion_area_legal = date('Y-m-d');
-            $caso->save();
-        }
+//        if (!$caso->fecha_derivacion_legal) {
+//            $caso->fecha_derivacion_area_legal = date('Y-m-d');
+//            $caso->save();
+//        }
         $request['caso_id'] = $caso->id;
         $request['user_id'] = $user->id;
         $request['caseable_type'] = Caso::class;
