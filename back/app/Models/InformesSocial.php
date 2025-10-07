@@ -14,7 +14,8 @@ class InformesSocial extends Model implements AuditableContract
 
     protected $fillable = [
         'caseable_id','caseable_type',
-        'user_id','fecha','titulo','numero','contenido_html'
+        'user_id','fecha','titulo','numero','contenido_html',
+        'archivo'
     ];
 
     protected $casts = [

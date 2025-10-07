@@ -24,6 +24,54 @@ use Intervention\Image\ImageManager;
 
 class CasoController extends Controller
 {
+    function uploadFile(Request $request){
+
+        $request->validate([
+            'titulo' => ['nullable','string','max:255'],
+            'file'   => ['required','file','max:51200'], // 50 MB
+            'case_id'=> ['required','integer','exists:casos,id'],
+            'tipo'   => ['required'],
+        ]);
+
+        $file = $request->file('file');
+        $caseId = $request->input('case_id');
+        $tipo = $request->input('tipo');
+        $fileName = time().'_'.$file->getClientOriginalName();
+        $filePath = "caso/{$caseId}/{$tipo}/".$fileName;
+        Storage::disk('public')->put($filePath, file_get_contents($file));
+        $url = Storage::url($filePath);
+        if ($tipo == 'psicologico') {
+            $informe = Psicologica::create([
+                'caseable_id'   => $caseId,
+                'caseable_type' => Caso::class,
+                'user_id'       => $request->user()->id,
+                'titulo'        => $request->string('titulo')->toString() ?: $file->getClientOriginalName(),
+                'contenido_html'=> "<p>Archivo adjunto: <a href=\"{$url}\" target=\"_blank\" rel=\"noopener\">{$file->getClientOriginalName()}</a></p>",
+                'archivo'       => $url,
+            ]);
+        } elseif ($tipo == 'social') {
+            $informe = InformesSocial::create([
+                'caseable_id' => $caseId,
+                'caseable_type' => Caso::class,
+                'user_id' => $request->user()->id,
+                'titulo'  => $request->string('titulo')->toString() ?: $file->getClientOriginalName(),
+                'contenido_html' => "<p>Archivo adjunto: <a href=\"{$url}\" target=\"_blank\" rel=\"noopener\">{$file->getClientOriginalName()}</a></p>",
+                'archivo' => $url,
+            ]);
+        } elseif ($tipo == 'legal') {
+            $informe = InformeLegal::create([
+                'caseable_id' => $caseId,
+                'caseable_type' => Caso::class,
+                'user_id' => $request->user()->id,
+                'titulo'  => $request->string('titulo')->toString() ?: $file->getClientOriginalName(),
+                'contenido_html' => "<p>Archivo adjunto: <a href=\"{$url}\" target=\"_blank\" rel=\"noopener\">{$file->getClientOriginalName()}</a></p>",
+                'archivo' => $url,
+            ]);
+        } else {
+            return response()->json(['message' => 'Tipo no válido'], 400);
+        }
+        return response()->json($informe->load('user:id,name,username'), 201);
+    }
     function destroy(Caso $caso){
         $caso->delete();
         return response()->json(['message' => 'Caso eliminado']);

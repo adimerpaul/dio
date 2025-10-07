@@ -205,12 +205,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/casos/{caso}/acogimiento', [AcogimientoController::class, 'showByCaso']);
 
     Route::put('/casos/{caso}/acogimiento', [AcogimientoController::class, 'upsert']);
-//    http://localhost:8000/api/casos/13/sesiones-psicologicas/upload
-//    Route::post('/casos/{caso}/sesiones-psicologicas/upload', [CasoController::class, 'psicoUpload']);
 
-
-
-
+    Route::post('/casos/{caso}/uploadFile', [CasoController::class, 'uploadFile']);
 });
 Route::get('/slimsImprimir', [SlimController::class, 'imprimir']);
 
