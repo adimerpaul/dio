@@ -300,7 +300,8 @@
             </div>
 
             <div class="col-12 col-md-4">
-              <q-input v-model="f.caso_tipologia" dense outlined clearable label="Tipología"/>
+              <q-select v-model="f.caso_tipologia" dense outlined emit-value map-options clearable
+                        :options="tipologias" label="Tipología"/>
             </div>
 
             <div class="col-12">
@@ -443,6 +444,162 @@
               <q-chip dense outline color="primary" text-color="primary">Tipo: {{ show(f.tipo) }}</q-chip>
               <q-chip dense outline color="teal" text-color="teal">Área: {{ show(f.area) }}</q-chip>
               <q-chip dense outline color="orange" text-color="orange">Zona: {{ show(f.zona) }}</q-chip>
+            </div>
+          </q-card-section>
+        </q-card>
+<!--        denunciante denunciado-->
+        <!-- DATOS DEL DENUNCIANTE -->
+        <q-card flat bordered class="section-card">
+          <q-card-section class="row items-center">
+            <q-icon name="assignment_ind" class="q-mr-sm" />
+            <div class="text-subtitle1 text-weight-medium">Datos del denunciante</div>
+          </q-card-section>
+          <q-separator />
+          <q-card-section>
+            <div class="row q-col-gutter-md">
+              <div class="col-6 col-md-3">
+                <div class="text-caption text-grey-7">Nombres</div>
+                <div class="text-body1">{{ show(f.denunciantes[0]?.denunciante_nombres) }}</div>
+              </div>
+
+              <div class="col-6 col-md-3">
+                <div class="text-caption text-grey-7">Apellido paterno</div>
+                <div class="text-body1">{{ show(f.denunciantes[0]?.denunciante_paterno) }}</div>
+              </div>
+
+              <div class="col-6 col-md-3">
+                <div class="text-caption text-grey-7">Apellido materno</div>
+                <div class="text-body1">{{ show(f.denunciantes[0]?.denunciante_materno) }}</div>
+              </div>
+
+              <div class="col-6 col-md-3">
+                <div class="text-caption text-grey-7">Documento</div>
+                <div class="text-body1">
+                  {{ show(f.denunciantes[0]?.denunciante_documento) }}
+                  <span v-if="f.denunciantes[0]?.denunciante_nro"> - {{ f.denunciantes[0]?.denunciante_nro }}</span>
+                </div>
+              </div>
+
+              <div class="col-6 col-md-3">
+                <div class="text-caption text-grey-7">Sexo</div>
+                <div class="text-body1">{{ show(f.denunciantes[0]?.denunciante_sexo) }}</div>
+              </div>
+
+              <div class="col-6 col-md-3">
+                <div class="text-caption text-grey-7">Fecha de nacimiento</div>
+                <div class="text-body1">{{ fmtDate(f.denunciantes[0]?.denunciante_fecha_nacimiento) || '—' }}</div>
+              </div>
+
+              <div class="col-6 col-md-3">
+                <div class="text-caption text-grey-7">Edad</div>
+                <div class="text-body1">{{ show(f.denunciantes[0]?.denunciante_edad) }}</div>
+              </div>
+
+              <div class="col-6 col-md-3">
+                <div class="text-caption text-grey-7">Teléfono/Celular</div>
+                <div class="text-body1">{{ show(f.denunciantes[0]?.denunciante_telefono) }}</div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="text-caption text-grey-7">Grado de instrucción</div>
+                <div class="text-body1">{{ show(f.denunciantes[0]?.denunciante_grado) }}</div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="text-caption text-grey-7">Residencia</div>
+                <div class="text-body1">{{ show(f.denunciantes[0]?.denunciante_residencia) }}</div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="text-caption text-grey-7">Idioma</div>
+                <div class="text-body1">{{ show(f.denunciantes[0]?.denunciante_idioma) }}</div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="text-caption text-grey-7">Trabaja</div>
+                <div class="text-body1">{{ yesNo(f.denunciantes[0]?.denunciante_trabaja) }}</div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="text-caption text-grey-7">Ocupación</div>
+                <div class="text-body1">{{ show(f.denunciantes[0]?.denunciante_ocupacion) }}</div>
+              </div>
+              <div class="col-12">
+                <div class="text-caption text-grey-7 q-mb-xs">Domicilio actual</div>
+                <div class="text-body1">{{ show(f.denunciantes[0]?.denunciante_domicilio_actual) }}</div>
+              </div>
+            </div>
+          </q-card-section>
+        </q-card>
+        <!-- DATOS DEL DENUNCIADO -->
+        <q-card flat bordered class="section-card">
+          <q-card-section class="row items-center">
+            <q-icon name="person_pin_circle" class="q-mr-sm" />
+            <div class="text-subtitle1 text-weight-medium">Datos del denunciado</div>
+          </q-card-section>
+          <q-separator />
+          <q-card-section>
+            <div class="row q-col-gutter-md">
+              <div class="col-6 col-md-3">
+                <div class="text-caption text-grey-7">Nombres</div>
+                <div class="text-body1">{{ show(f.denunciados[0]?.denunciado_nombres) }}</div>
+              </div>
+
+<!--              <div class="col-6 col-md-3">-->
+<!--                <div class="text-caption text-grey-7">Apellido paterno</div>-->
+<!--                <div class="text-body1">{{ show(f.denunciados[0]?.denunciado_paterno) }}</div>-->
+<!--              </div>-->
+
+<!--              <div class="col-6 col-md-3">-->
+<!--                <div class="text-caption text-grey-7">Apellido materno</div>-->
+<!--                <div class="text-body1">{{ show(f.denunciados[0]?.denunciado_materno) }}</div>-->
+<!--              </div>-->
+
+              <div class="col-6 col-md-3">
+                <div class="text-caption text-grey-7">Documento</div>
+                <div class="text-body1">
+                  {{ show(f.denunciados[0]?.denunciado_documento) }}
+                  <span v-if="f.denunciados[0]?.denunciado_nro"> - {{ f.denunciados[0]?.denunciado_nro }}</span>
+                </div>
+              </div>
+
+              <div class="col-6 col-md-3">
+                <div class="text-caption text-grey-7">Sexo</div>
+                <div class="text-body1">{{ show(f.denunciados[0]?.denunciado_sexo) }}</div>
+              </div>
+
+              <div class="col-6 col-md-3">
+                <div class="text-caption text-grey-7">Fecha de nacimiento</div>
+                <div class="text-body1">{{ fmtDate(f.denunciados[0]?.denunciado_fecha_nacimiento) || '—' }}</div>
+              </div>
+
+              <div class="col-6 col-md-3">
+                <div class="text-caption text-grey-7">Edad</div>
+                <div class="text-body1">{{ show(f.denunciados[0]?.denunciado_edad) }}</div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="text-caption text-grey-7">Teléfono/Celular</div>
+                <div class="text-body1">{{ show(f.denunciados[0]?.denunciado_telefono) }}</div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="text-caption text-grey-7">Grado de instrucción</div>
+                <div class="text-body1">{{ show(f.denunciados[0]?.denunciado_grado) }}</div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="text-caption text-grey-7">Residencia</div>
+                <div class="text-body1">{{ show(f.denunciados[0]?.denunciado_residencia) }}</div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="text-caption text-grey-7">Idioma</div>
+                <div class="text-body1">{{ show(f.denunciados[0]?.denunciado_idioma) }}</div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="text-caption text-grey-7">Trabaja</div>
+                <div class="text-body1">{{ yesNo(f.denunciados[0]?.denunciado_trabaja) }}</div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="text-caption text-grey-7">Ocupación</div>
+                <div class="text-body1">{{ show(f.denunciados[0]?.denunciado_ocupacion) }}</div>
+              </div>
+              <div class="col-12">
+                <div class="text-caption text-grey-7 q-mb-xs">Domicilio actual</div>
+                <div class="text-body1">{{ show(f.denunciados[0]?.denunciado_domicilio_actual) }}</div>
+              </div>
             </div>
           </q-card-section>
         </q-card>
@@ -720,6 +877,26 @@ export default {
   },
   data () {
     return {
+      tipologias : [
+        'Violencia Física',
+        'Violencia Feminicida',
+        'Violencia Psicológica',
+        'Violencia Mediática',
+        'Violencia Simbólica y/o Encubierta',
+        'Violencia Contra la Dignidad, la Honra y el Nombre',
+        'Violencia Sexual',
+        'Violencia Contra los Derechos Reproductivos',
+        'Violencia en Servicios de Salud',
+        'Violencia Patrimonial y Económica',
+        'Violencia Laboral',
+        'Violencia en el Sistema Educativo Plurinacional',
+        'Violencia en el Ejercicio Político y de Liderazgo de la Mujer',
+        'Violencia Institucional',
+        'Violencia en la Familia',
+        'Violencia Contra los Derechos y la Libertad Sexual',
+        'Tipologias Multiples',
+        'Otra'
+      ],
       recognition: null,
       activeField: null,
       isListening: false,

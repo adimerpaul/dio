@@ -10,6 +10,9 @@ const routes = [
       { path: '/slims', component: () => import('pages/slims/Slims.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
       { path: '/slims/nuevofisica', component: () => import('pages/slims/SlimNuevoFisico.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
       { path: '/slims/nuevointegral', component: () => import('pages/slims/SlimNuevoIntegral.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
+      { path: '/slims/nuevo-penal', component: () => import('pages/slims/SlimNuevoPenal.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
+      { path: '/slims/nuevo-familiar', component: () => import('pages/slims/SlimNuevoFamiliar.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
+      { path: '/slims/nuevo-apoyo', component: () => import('pages/slims/SlimNuevoApoyo.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
 
 
       // casos

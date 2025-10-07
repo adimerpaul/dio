@@ -137,9 +137,6 @@
             :color="form.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"
           />
 
-
-
-
           <q-timeline-entry
             title="Derivación área Psicologica"
             :subtitle="format(form.fecha_derivacion_area_legal)"

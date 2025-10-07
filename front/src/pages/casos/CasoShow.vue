@@ -42,14 +42,12 @@
             </q-item>
           </q-list>
         </q-btn-dropdown>
-<!--        <q-btn flat color="secondary" icon="print" label="Imprimir PDF" @click="printPdf" />-->
         <q-btn-dropdown flat color="secondary" icon="print" label="Imprimir PDF">
           <q-list>
             <q-item clickable @click="printPdf" v-close-popup >
               <q-item-section>Ficha del Caso</q-item-section>
             </q-item>
             <q-separator/>
-            <!-- NUEVO: hoja de ruta con dos variantes -->
             <q-item clickable @click="printPdfHojaRuta('denunciante')" v-close-popup >
               <q-item-section>Ubicacion (Denunciante)</q-item-section>
             </q-item>
@@ -58,9 +56,12 @@
             </q-item>
           </q-list>
         </q-btn-dropdown>
+        <q-space/>
         <q-btn flat color="primary" icon="refresh" @click="fetchCaso" :loading="loading"/>
-<!--        btoton eliminar caso y se vava atras-->
         <q-btn flat color="negative" icon="delete" label="Eliminar Caso" @click="eliminarCaso()" v-if="role === 'Administrador'" no-caps/>
+        <div v-if="role === 'Abogado' && caso?.legal_user_id === $store.user?.id && !caso?.fecha_aceptacion_area_legal">
+          <q-btn color="red" icon="check_circle" label="Aceptar Caso Legal" @click="aceptarCasoLegal()" no-caps size="10px"/>
+        </div>
       </div>
     </div>
 
@@ -194,6 +195,27 @@ export default {
     this.fetchCaso()
   },
   methods: {
+    aceptarCasoLegal(){
+      this.$q.dialog({
+        title: 'Confirmar aceptación',
+        html: true,
+        message: 'Confirma que deseas <b>ACEPTAR </b> el CASO: <b>' + (this.caso?.tipo || '')+' '+(this.caso?.caso_numero || '') + '</b><br><br>'+
+          '<span style="font-weight: bold">Denunciante: </span>' +(this.caso?.denunciantes[0]?.denunciante_nombres || '') + ' ' + (this.caso?.denunciantes[0]?.denunciante_paterno || '') + ' ' + (this.caso?.denunciantes[0]?.denunciante_materno || '') +'<br>'+
+          '<span style="font-weight: bold">Tipologia: </span>' + (this.caso?.caso_tipologia || '') +
+          '',
+        persistent: true,
+        ok: { label: 'Aceptar Caso', color: 'positive' },
+        cancel: { label: 'Cancelar', color: 'red' }
+      }).onOk(async () => {
+        try {
+          await this.$axios.post(`/casos/${this.caseId}/aceptar-legal`);
+          this.$q.notify({ type: 'positive', message: 'Caso legal aceptado exitosamente.' });
+          this.fetchCaso();
+        } catch (e) {
+          this.$alert.error(e?.response?.data?.message || 'No se pudo aceptar el caso legal');
+        }
+      });
+    },
     eliminarCaso() {
       this.$q.dialog({
         title: 'Confirmar eliminación',
