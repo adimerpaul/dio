@@ -34,19 +34,29 @@
         <td class="text-grey-8">#{{ it.id }}</td>
         <td>
           <q-btn-dropdown dense color="primary" size="sm" label="Opciones" no-caps>
-            <q-item clickable v-close-popup @click="openView(it)">
-              <q-item-section avatar><q-icon name="visibility"/></q-item-section>
-              <q-item-section>Ver</q-item-section>
-            </q-item>
-            <q-item clickable v-close-popup @click="printPdf(it)">
-              <q-item-section avatar><q-icon name="print"/></q-item-section>
-              <q-item-section>Imprimir</q-item-section>
-            </q-item>
-            <q-separator/>
-            <q-item clickable v-close-popup @click="openEdit(it)">
-              <q-item-section avatar><q-icon name="edit"/></q-item-section>
-              <q-item-section>Editar</q-item-section>
-            </q-item>
+            <template v-if="!it.archivo">
+              <q-item clickable v-close-popup @click="openView(it)">
+                <q-item-section avatar><q-icon name="visibility"/></q-item-section>
+                <q-item-section>Ver</q-item-section>
+              </q-item>
+              <q-item clickable v-close-popup @click="printPdf(it)">
+                <q-item-section avatar><q-icon name="print"/></q-item-section>
+                <q-item-section>Imprimir</q-item-section>
+              </q-item>
+              <q-separator/>
+              <q-item clickable v-close-popup @click="openEdit(it)">
+                <q-item-section avatar><q-icon name="edit"/></q-item-section>
+                <q-item-section>Editar</q-item-section>
+              </q-item>
+            </template>
+            <template v-else>
+              <q-item clickable v-close-popup @click="openFile(it)" >
+                <q-item-section avatar><q-icon name="download"/></q-item-section>
+                <q-item-section>
+                  Descargar informe
+                </q-item-section>
+              </q-item>
+            </template>
             <q-item clickable v-close-popup @click="remove(it)">
               <q-item-section avatar><q-icon name="delete" color="negative"/></q-item-section>
               <q-item-section class="text-negative">Eliminar</q-item-section>
@@ -231,9 +241,10 @@ export default {
       const formData = new FormData()
       formData.append('titulo', this.form.titulo)
       formData.append('file', this.file)
-
+      formData.append('case_id', this.caseId)
+      formData.append('tipo', 'psicologico')
       this.saving = true
-      this.$axios.post(`/casos/${this.caseId}/sesiones-psicologicas/upload`, formData, {
+      this.$axios.post(`/casos/${this.caseId}/uploadFile`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       }).then(res=>{
         this.$q.notify({ type:'positive', message:'Informe subido' })
@@ -268,6 +279,7 @@ export default {
       }finally{ this.loading=false }
     },
     openSubirInforme(){
+      this.form.titulo = ''
       this.openSubirArchivo = true
     },
     openCreate(){
@@ -444,7 +456,9 @@ export default {
         this.$q.notify({ type:'negative', message: e?.response?.data?.message || 'No se pudo guardar' })
       }finally{ this.saving=false }
     },
-
+    openFile(it){
+      window.open(this.$url+ '/..'+ it.archivo, '_blank')
+    },
     remove(it){
       const go = async ()=>{
         try{
