@@ -61,12 +61,12 @@ return new class extends Migration
             $table->string('documento_libreta_notas', 160)->nullable();
             $table->string('documento_numero_cuenta', 160)->nullable();
 
-            $table->date('fecha_apertura_caso')->nullable();
-            $table->date('fecha_derivacion_psicologica')->nullable();
-            $table->date('fecha_informe_area_social')->nullable();
-            $table->date('fecha_informe_area_psicologica')->nullable();
-            $table->date('fecha_informe_trabajo_social')->nullable();
-            $table->date('fecha_derivacion_area_legal')->nullable();
+            $table->dateTime('fecha_apertura_caso')->nullable();
+            $table->dateTime('fecha_derivacion_psicologica')->nullable();
+            $table->dateTime('fecha_informe_area_social')->nullable();
+            $table->dateTime('fecha_informe_area_psicologica')->nullable();
+            $table->dateTime('fecha_informe_trabajo_social')->nullable();
+            $table->dateTime('fecha_derivacion_area_legal')->nullable();
 
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users');

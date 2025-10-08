@@ -6,11 +6,15 @@
 <!--      <a href="myscan://open">Escanear ahora</a>-->
       <div class="col-12 col-md-4">
         <div class="text-h6 text-weight-bold">{{caso?.tipo}} {{ caso?.caso_numero || '...' }}</div>
-<!--          tiempo desde que de abri el caso con momnet y fecha_apertura_caso -->
           <div class="text-subtitle2 text-black-7">
             <q-icon name="calendar_today" class="q-mr-sm"/>
-            Abierto {{ caso?.fecha_apertura_caso ? (new Date(caso.fecha_apertura_caso).toLocaleDateString()) : '...' }}
-            <span v-if="caso?.fecha_apertura_caso"> (hace {{ Math.floor((new Date() - new Date(caso.fecha_apertura_caso)) / (1000 * 60 * 60 * 24)) }} días)</span>
+            Abierto
+            {{ formatYmdHis(caso?.fecha_apertura_caso)}}
+            <span v-if="caso?.fecha_apertura_caso"> ({{cronometroDias}})</span>
+            <br>
+            <span class="text-black text-h4">
+              {{ cronometroHorasDiasMesesAnios }}
+            </span>
           </div>
 <!--        <div class="text-caption text-grey-7">Detalle y gestión integral</div>-->
       </div>
@@ -160,7 +164,7 @@ import CasoNuevoSLAM from "pages/slams/SlamNuevo.vue";
 import CasoNuevoUMADIS from "pages/umadis/UmadisNuevo.vue";
 import CasoNuevoPROPREMI from "pages/propremis/PropremisNuevo.vue";
 import Codigo from "pages/casos/tabs/Codigo.vue";
-
+import moment from "moment";
 export default {
   name: 'CasoDetalle',
   components: {
@@ -181,6 +185,8 @@ export default {
       tab: 'info',
       caso: null,
       defaultCountryCallingCode: '591',
+      now: moment(),
+      cronometroTimer: null,
     }
   },
   computed: {
@@ -190,11 +196,68 @@ export default {
       const c = this.caso || {}
       return !!(c?.psicologica_user?.celular || c?.legal_user?.celular || c?.trabajo_social_user?.celular)
     },
+    cronometroYmdHis() {
+      if (!this.caso?.fecha_apertura_caso) return '—'
+      const duracion = moment.duration(this.now.diff(moment(this.caso.fecha_apertura_caso)))
+      const days = Math.floor(duracion.asDays())
+      const hours = duracion.hours()
+      const minutes = duracion.minutes()
+      const seconds = duracion.seconds()
+      return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+    },
+    cronometroDias() {
+      if (!this.caso?.fecha_apertura_caso) return '—'
+      const duracion = moment.duration(this.now.diff(moment(this.caso.fecha_apertura_caso)))
+      const years = duracion.years()
+      const months = duracion.months()
+      const days = duracion.days()
+      const hours = duracion.hours()
+      const minutes = duracion.minutes()
+      const seconds = duracion.seconds()
+
+      let parts = []
+      if (years) parts.push(`${years} año${years !== 1 ? 's' : ''}`)
+      if (months) parts.push(`${months} mes${months !== 1 ? 'es' : ''}`)
+      if (days) parts.push(`${days} día${days !== 1 ? 's' : ''}`)
+      // if (hours) parts.push(`${hours} hora${hours !== 1 ? 's' : ''}`)
+      // if (minutes) parts.push(`${minutes} minuto${minutes !== 1 ? 's' : ''}`)
+      // if (seconds) parts.push(`${seconds} segundo${seconds !== 1 ? 's' : ''}`)
+
+      return parts.join(', ')
+    },
+    cronometroHorasDiasMesesAnios() {
+      if (!this.caso?.fecha_apertura_caso) return '—'
+      const duracion = moment.duration(this.now.diff(moment(this.caso.fecha_apertura_caso)))
+      const years = duracion.years()
+      const months = duracion.months()
+      const days = duracion.days()
+      const hours = duracion.hours()
+      const minutes = duracion.minutes()
+      const seconds = duracion.seconds()
+
+      let parts = []
+      // if (years) parts.push(`${years} año${years !== 1 ? 's' : ''}`)
+      // if (months) parts.push(`${months} mes${months !== 1 ? 'es' : ''}`)
+      // if (days) parts.push(`${days} día${days !== 1 ? 's' : ''}`)
+      if (hours) parts.push(`${hours}:${hours !== 1 ? '' : ''}`)
+      if (minutes) parts.push(`${minutes}:${minutes !== 1 ? '' : ''}`)
+      if (seconds) parts.push(`${seconds}${seconds !== 1 ? '' : ''}`)
+      return parts.join('')
+    }
   },
   created () {
     this.fetchCaso()
+    this.cronometroTimer = setInterval(() => {
+      this.now = moment();
+    }, 1000);
+  },
+  beforeUnmount() {
+    if (this.cronometroTimer) clearInterval(this.cronometroTimer);
   },
   methods: {
+    formatYmdHis(ymdhis) {
+      return moment(ymdhis).format('DD/MM/YYYY HH:mm:ss');
+    },
     aceptarCasoLegal(){
       this.$q.dialog({
         title: 'Confirmar aceptación',
