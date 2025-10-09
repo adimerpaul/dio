@@ -614,10 +614,10 @@ export default {
       } finally { this.loading = false }
     },
     async save () {
-      if (!this.f.principal || !this.f.denunciantes[0].denunciante_nombres) {
-        this.$alert?.error?.('Tipología y nombre del denunciante son obligatorios')
-        return
-      }
+      // if (!this.f.principal || !this.f.denunciantes[0].denunciante_nombres) {
+      //   this.$alert?.error?.('Tipología y nombre del denunciante son obligatorios')
+      //   return
+      // }
       this.loading = true
       try {
         const res = await this.$axios.post('/casos', { ...this.f, tipo: 'UMADIS' })

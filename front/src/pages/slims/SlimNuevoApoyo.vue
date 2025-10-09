@@ -1,5 +1,5 @@
 <template>
-  <SlimNuevo :showNumeroApoyoIntegral="false" />
+  <SlimNuevo :showNumeroApoyoIntegral="true" />
 </template>
 
 <script>

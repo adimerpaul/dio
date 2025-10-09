@@ -1,11 +1,17 @@
 <template>
-  <SlimNuevo :showNumeroApoyoIntegral="false" />
+  <SlimNuevo :showNumeroApoyoIntegral="false" :tipologias="tipologias"/>
 </template>
 
 <script>
 import SlimNuevo from 'pages/slims/SlimNuevo.vue'
 export default {
   name: 'SlimNuevoFamiliar',
-  components: { SlimNuevo }
+  components: { SlimNuevo },
+  data: () => ({
+    tipologias: [
+      'Asistencia Familiar',
+      'Otros'
+    ],
+  })
 }
 </script>
