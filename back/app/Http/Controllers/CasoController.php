@@ -909,11 +909,11 @@ class CasoController extends Controller
             $user = $request->user();
             $request['caso_numero'] = $this->numeroCaso($request->tipo);
             $request['user_id'] = $user->id;
-            $request['fecha_apertura_caso'] = date('Y-m-d');
+            $request['fecha_apertura_caso'] = date('Y-m-d H:i:s');
             $request['area'] = $user->area;
             $request['zona'] = $user->zona;
             if($request->has('legal_user_id') && $request->legal_user_id){
-                $request['fecha_derivacion_area_legal'] = date('Y-m-d');
+                $request['fecha_derivacion_area_legal'] = date('Y-m-d H:i:s');
             }
             $caso = Caso::create($request->all());
 
@@ -980,7 +980,7 @@ class CasoController extends Controller
         DB::beginTransaction();
         try {
             if($request->has('legal_user_id') && $request->legal_user_id && !$caso->fecha_derivacion_area_legal){
-                $request['fecha_derivacion_area_legal'] = date('Y-m-d');
+                $request['fecha_derivacion_area_legal'] = date('Y-m-d H:i:s');
             }
             $caso->update($request->all());
 

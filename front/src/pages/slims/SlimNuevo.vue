@@ -1195,6 +1195,7 @@ export default {
       try {
         await this.$axios.put(`/casos/${this.f.id}`, this.f)
         this.$alert.success('SLIM actualizado')
+        this.$emit('refresh')
       } catch (e) {
         this.$alert.error(e?.response?.data?.message || 'No se pudo actualizar el SLIM')
       } finally {

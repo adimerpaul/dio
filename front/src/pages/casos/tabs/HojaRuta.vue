@@ -30,11 +30,11 @@
 <!--        <div class="row q-col-gutter-md">-->
 <!--          &lt;!&ndash; Código y apertura: solo lectura &ndash;&gt;-->
 <!--          <div class="col-12 col-md-3">-->
-<!--            <q-input v-model="form.caso_numero" label="Código de caso" dense outlined readonly />-->
+<!--            <q-input v-model="caso.caso_numero" label="Código de caso" dense outlined readonly />-->
 <!--          </div>-->
 <!--          <div class="col-12 col-md-3">-->
 <!--            <q-input-->
-<!--              v-model="form.fecha_apertura_caso"-->
+<!--              v-model="caso.fecha_apertura_caso"-->
 <!--              type="date"-->
 <!--              label="Fecha de apertura del caso"-->
 <!--              dense outlined readonly-->
@@ -44,7 +44,7 @@
 <!--          &lt;!&ndash; Editables &ndash;&gt;-->
 <!--          <div class="col-12 col-md-3">-->
 <!--            <q-input-->
-<!--              v-model="form.fecha_derivacion_psicologica"-->
+<!--              v-model="caso.fecha_derivacion_psicologica"-->
 <!--              type="date"-->
 <!--              :readonly="!editing"-->
 <!--              dense outlined-->
@@ -54,7 +54,7 @@
 
 <!--          <div class="col-12 col-md-3">-->
 <!--            <q-input-->
-<!--              v-model="form.fecha_informe_area_psicologica"-->
+<!--              v-model="caso.fecha_informe_area_psicologica"-->
 <!--              type="date"-->
 <!--              :readonly="!editing"-->
 <!--              dense outlined-->
@@ -64,7 +64,7 @@
 
 <!--          <div class="col-12 col-md-3">-->
 <!--            <q-input-->
-<!--              v-model="form.fecha_informe_trabajo_social"-->
+<!--              v-model="caso.fecha_informe_trabajo_social"-->
 <!--              type="date"-->
 <!--              :readonly="!editing"-->
 <!--              dense outlined-->
@@ -74,7 +74,7 @@
 
 <!--          <div class="col-12 col-md-3">-->
 <!--            <q-input-->
-<!--              v-model="form.fecha_derivacion_area_legal"-->
+<!--              v-model="caso.fecha_derivacion_area_legal"-->
 <!--              type="date"-->
 <!--              :readonly="!editing"-->
 <!--              dense outlined-->
@@ -90,89 +90,89 @@
         <q-timeline color="primary" layout="comfortable" side="right">
           <q-timeline-entry
             title="Apertura del caso"
-            :subtitle="format(form.fecha_apertura_caso)"
+            :subtitle="format(caso.fecha_apertura_caso)"
             icon="flag"
           />
 <!--          <q-timeline-entry-->
 <!--            title="Derivación psicológica"-->
-<!--            :subtitle="format(form.fecha_derivacion_psicologica)"-->
+<!--            :subtitle="format(caso.fecha_derivacion_psicologica)"-->
 <!--            icon="psychology"-->
-<!--            :color="form.fecha_derivacion_psicologica ? 'primary' : 'grey-5'"-->
+<!--            :color="caso.fecha_derivacion_psicologica ? 'primary' : 'grey-5'"-->
 <!--          />-->
 <!--          <q-timeline-entry-->
 <!--            title="Informe área psicológica"-->
-<!--            :subtitle="format(form.fecha_informe_area_psicologica)"-->
+<!--            :subtitle="format(caso.fecha_informe_area_psicologica)"-->
 <!--            icon="assignment_turned_in"-->
-<!--            :color="form.fecha_informe_area_psicologica ? 'primary' : 'grey-5'"-->
+<!--            :color="caso.fecha_informe_area_psicologica ? 'primary' : 'grey-5'"-->
 <!--          />-->
 <!--          <q-timeline-entry-->
 <!--            title="Entrega trabajo social"-->
-<!--            :subtitle="format(form.fecha_informe_trabajo_social)"-->
+<!--            :subtitle="format(caso.fecha_informe_trabajo_social)"-->
 <!--            icon="diversity_3"-->
-<!--            :color="form.fecha_informe_trabajo_social ? 'primary' : 'grey-5'"-->
+<!--            :color="caso.fecha_informe_trabajo_social ? 'primary' : 'grey-5'"-->
 <!--          />-->
 <!--          <q-timeline-entry-->
 <!--            title="Derivación área legal"-->
-<!--            :subtitle="format(form.fecha_derivacion_area_legal)"-->
+<!--            :subtitle="format(caso.fecha_derivacion_area_legal)"-->
 <!--            icon="gavel"-->
-<!--            :color="form.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"-->
+<!--            :color="caso.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"-->
 <!--          />-->
 
           <q-timeline-entry
             title="Derivación área legal"
-            :subtitle="format(form.fecha_derivacion_area_legal)"
+            :subtitle="format(caso.fecha_derivacion_area_legal)"
             icon="gavel"
-            :color="form.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"
+            :color="caso.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"
           />
           <q-timeline-entry
             title="Aceptación área legal"
-            :subtitle="format(form.fecha_derivacion_area_legal)"
+            :subtitle="format(caso.fecha_derivacion_area_legal)"
             icon="gavel"
-            :color="form.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"
+            :color="caso.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"
           />
           <q-timeline-entry
             title="Devolución área legal"
-            :subtitle="format(form.fecha_derivacion_area_legal)"
+            :subtitle="format(caso.fecha_derivacion_area_legal)"
             icon="gavel"
-            :color="form.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"
+            :color="caso.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"
           />
 
           <q-timeline-entry
             title="Derivación área Psicologica"
-            :subtitle="format(form.fecha_derivacion_area_legal)"
+            :subtitle="format(caso.fecha_derivacion_area_legal)"
             icon="gavel"
-            :color="form.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"
+            :color="caso.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"
           />
           <q-timeline-entry
             title="Aceptación área Psicologica"
-            :subtitle="format(form.fecha_derivacion_area_legal)"
+            :subtitle="format(caso.fecha_derivacion_area_legal)"
             icon="gavel"
-            :color="form.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"
+            :color="caso.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"
           />
           <q-timeline-entry
             title="Devolución área Psicologica"
-            :subtitle="format(form.fecha_derivacion_area_legal)"
+            :subtitle="format(caso.fecha_derivacion_area_legal)"
             icon="gavel"
-            :color="form.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"
+            :color="caso.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"
           />
 
           <q-timeline-entry
             title="Derivación área Social"
-            :subtitle="format(form.fecha_derivacion_area_legal)"
+            :subtitle="format(caso.fecha_derivacion_area_legal)"
             icon="gavel"
-            :color="form.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"
+            :color="caso.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"
           />
           <q-timeline-entry
             title="Aceptación área Social"
-            :subtitle="format(form.fecha_derivacion_area_legal)"
+            :subtitle="format(caso.fecha_derivacion_area_legal)"
             icon="gavel"
-            :color="form.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"
+            :color="caso.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"
           />
           <q-timeline-entry
             title="Devolución área Social"
-            :subtitle="format(form.fecha_derivacion_area_legal)"
+            :subtitle="format(caso.fecha_derivacion_area_legal)"
             icon="gavel"
-            :color="form.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"
+            :color="caso.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"
           />
 
         </q-timeline>
@@ -184,7 +184,10 @@
 <script>
 export default {
   name: 'HojaRuta',
-  props: { caseId: { type: [String, Number], required: true } },
+  props: {
+    caseId: { type: [String, Number], required: true },
+    caso: { type: Object, required: true }
+  },
   data () {
     return {
       loading: false,
@@ -223,7 +226,7 @@ export default {
     }
   },
   created () {
-    this.fetch()
+    // this.fetch()
   },
   methods: {
     format (val) {
@@ -231,26 +234,26 @@ export default {
       // val ya viene como YYYY-MM-DD
       return val
     },
-    async fetch () {
-      this.loading = true
-      try {
-        const { data } = await this.$axios.get(`/casos/${this.caseId}`)
-        // Tomamos solo los campos que necesitamos
-        this.form = {
-          caso_numero: data.caso_numero || '',
-          fecha_apertura_caso: data.fecha_apertura_caso || '',
-          fecha_derivacion_psicologica: data.fecha_derivacion_psicologica || '',
-          fecha_informe_area_psicologica: data.fecha_informe_area_psicologica || '',
-          fecha_informe_trabajo_social: data.fecha_informe_trabajo_social || '',
-          fecha_derivacion_area_legal: data.fecha_derivacion_area_legal || ''
-        }
-        this.backup = { ...this.form }
-      } catch (e) {
-        this.$alert?.error(e?.response?.data?.message || 'No se pudo cargar la hoja de ruta')
-      } finally {
-        this.loading = false
-      }
-    },
+    // async fetch () {
+    //   this.loading = true
+    //   try {
+    //     const { data } = await this.$axios.get(`/casos/${this.caseId}`)
+    //     // Tomamos solo los campos que necesitamos
+    //     this.form = {
+    //       caso_numero: data.caso_numero || '',
+    //       fecha_apertura_caso: data.fecha_apertura_caso || '',
+    //       fecha_derivacion_psicologica: data.fecha_derivacion_psicologica || '',
+    //       fecha_informe_area_psicologica: data.fecha_informe_area_psicologica || '',
+    //       fecha_informe_trabajo_social: data.fecha_informe_trabajo_social || '',
+    //       fecha_derivacion_area_legal: data.fecha_derivacion_area_legal || ''
+    //     }
+    //     this.backup = { ...this.form }
+    //   } catch (e) {
+    //     this.$alert?.error(e?.response?.data?.message || 'No se pudo cargar la hoja de ruta')
+    //   } finally {
+    //     this.loading = false
+    //   }
+    // },
     startEdit () {
       this.editing = true
       this.backup = { ...this.form }
@@ -263,10 +266,10 @@ export default {
     async save () {
       // payload mínimo: solo campos de hoja de ruta (evita sobreescribir otros)
       const payload = {
-        fecha_derivacion_psicologica: this.form.fecha_derivacion_psicologica || null,
-        fecha_informe_area_psicologica: this.form.fecha_informe_area_psicologica || null,
-        fecha_informe_trabajo_social: this.form.fecha_informe_trabajo_social || null,
-        fecha_derivacion_area_legal: this.form.fecha_derivacion_area_legal || null
+        fecha_derivacion_psicologica: this.caso.fecha_derivacion_psicologica || null,
+        fecha_informe_area_psicologica: this.caso.fecha_informe_area_psicologica || null,
+        fecha_informe_trabajo_social: this.caso.fecha_informe_trabajo_social || null,
+        fecha_derivacion_area_legal: this.caso.fecha_derivacion_area_legal || null
       }
 
       this.loading = true
@@ -275,10 +278,10 @@ export default {
         // refrescamos con lo que devuelve el backend
         this.form = {
           ...this.form,
-          fecha_derivacion_psicologica: data.data?.fecha_derivacion_psicologica || this.form.fecha_derivacion_psicologica,
-          fecha_informe_area_psicologica: data.data?.fecha_informe_area_psicologica || this.form.fecha_informe_area_psicologica,
-          fecha_informe_trabajo_social: data.data?.fecha_informe_trabajo_social || this.form.fecha_informe_trabajo_social,
-          fecha_derivacion_area_legal: data.data?.fecha_derivacion_area_legal || this.form.fecha_derivacion_area_legal
+          fecha_derivacion_psicologica: data.data?.fecha_derivacion_psicologica || this.caso.fecha_derivacion_psicologica,
+          fecha_informe_area_psicologica: data.data?.fecha_informe_area_psicologica || this.caso.fecha_informe_area_psicologica,
+          fecha_informe_trabajo_social: data.data?.fecha_informe_trabajo_social || this.caso.fecha_informe_trabajo_social,
+          fecha_derivacion_area_legal: data.data?.fecha_derivacion_area_legal || this.caso.fecha_derivacion_area_legal
         }
         this.backup = { ...this.form }
         this.editing = false
