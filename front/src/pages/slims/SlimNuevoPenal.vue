@@ -1,12 +1,20 @@
 <template>
-  <SlimNuevo :showNumeroApoyoIntegral="false" :tipologias="tipologias"/>
+<!--  <SlimNuevo :showNumeroApoyoIntegral="false" :tipologias="tipologias"/>-->
+  <CasoNuevo
+    :showNumeroApoyoIntegral="false"
+    :tipologias="tipologias"
+    :titulo="'Registrar Nuevo Caso Penal'"
+    :tipo="'SLIM'"
+  />
 </template>
 
 <script>
-import SlimNuevo from 'pages/slims/SlimNuevo.vue'
+// import SlimNuevo from 'pages/slims/SlimNuevo.vue'
+import CasoNuevo from "pages/casos/CasoNuevo.vue";
+
 export default {
   name: 'SlimNuevoPenal',
-  components: { SlimNuevo },
+  components: {CasoNuevo },
   data () {
     return {
       tipologias: [

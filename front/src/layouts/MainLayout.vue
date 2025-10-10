@@ -11,7 +11,7 @@
 
         <div class="row items-center q-gutter-sm">
           <div class="text-subtitle1 text-weight-medium" style="line-height:.95">
-            Panel DIO · GAMO <br>
+            Panel <br>
             <q-chip v-if="$store.user?.area" color="grey-3" text-color="black" size="10px" dense>
               {{ $store.user?.area }}
             </q-chip>
@@ -24,7 +24,7 @@
         <q-space />
 
         <!-- Perfil -->
-        <div class="row items-center q-gutter-sm">
+        <div class="row flex-center">
           <!-- Badge de pendientes -->
 <!--          <pre>{{pendingCount}}</pre>-->
           <q-btn
