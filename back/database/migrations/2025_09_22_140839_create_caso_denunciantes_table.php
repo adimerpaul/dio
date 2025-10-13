@@ -26,6 +26,9 @@ return new class extends Migration
             $table->string('denunciante_residencia', 120)->nullable();
             $table->string('denunciante_estado_civil', 40)->nullable();
             $table->string('denunciante_relacion', 60)->nullable();
+            $table->string('denunciante_ingresos', 60)->nullable();
+            $table->string('denunciante_relacion_victima', 60)->nullable();
+            $table->string('denunciante_relacion_denunciado', 60)->nullable();
             $table->string('denunciante_grado', 60)->nullable();
             $table->string('denunciante_domicilio_actual')->nullable();
             $table->decimal('latitud', 10, 7)->nullable();

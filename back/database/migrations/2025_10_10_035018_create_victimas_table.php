@@ -15,10 +15,12 @@ return new class extends Migration
             $table->id();
             $table->string('nombres_apellidos');
             $table->string('ci')->nullable();
+            $table->string('tipo_documento')->nullable();
+            $table->string('tipo_documento_otro')->nullable();
             $table->date('fecha_nacimiento')->nullable();
             $table->string('lugar_nacimiento')->nullable();
             $table->integer('edad')->nullable();
-            $table->enum('sexo', ['M', 'F', 'OTRO'])->nullable();
+            $table->string('sexo')->nullable();
             $table->string('estado_civil')->nullable();
             $table->string('ocupacion')->nullable();
             $table->string('idioma')->nullable();
