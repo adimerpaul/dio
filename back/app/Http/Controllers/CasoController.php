@@ -24,7 +24,8 @@ use Intervention\Image\ImageManager;
 
 class CasoController extends Controller
 {
-    function aceptarLegal(Request $request, Caso $caso){
+    function aceptarLegal(Request $request, Caso $caso)
+    {
         $user = $request->user();
         if ($user->role !== 'Abogado') {
             return response()->json(['message' => 'No autorizado'], 403);
@@ -33,37 +34,39 @@ class CasoController extends Controller
         $caso->save();
         return response()->json($caso);
     }
-    function uploadFile(Request $request){
+
+    function uploadFile(Request $request)
+    {
 
         $request->validate([
-            'titulo' => ['nullable','string','max:255'],
-            'file'   => ['required','file','max:51200'], // 50 MB
-            'case_id'=> ['required','integer','exists:casos,id'],
-            'tipo'   => ['required'],
+            'titulo' => ['nullable', 'string', 'max:255'],
+            'file' => ['required', 'file', 'max:51200'], // 50 MB
+            'case_id' => ['required', 'integer', 'exists:casos,id'],
+            'tipo' => ['required'],
         ]);
 
         $file = $request->file('file');
         $caseId = $request->input('case_id');
         $tipo = $request->input('tipo');
-        $fileName = time().'_'.$file->getClientOriginalName();
-        $filePath = "caso/{$caseId}/{$tipo}/".$fileName;
+        $fileName = time() . '_' . $file->getClientOriginalName();
+        $filePath = "caso/{$caseId}/{$tipo}/" . $fileName;
         Storage::disk('public')->put($filePath, file_get_contents($file));
         $url = Storage::url($filePath);
         if ($tipo == 'psicologico') {
             $informe = Psicologica::create([
-                'caseable_id'   => $caseId,
+                'caseable_id' => $caseId,
                 'caseable_type' => Caso::class,
-                'user_id'       => $request->user()->id,
-                'titulo'        => $request->string('titulo')->toString() ?: $file->getClientOriginalName(),
-                'contenido_html'=> "<p>Archivo adjunto: <a href=\"{$url}\" target=\"_blank\" rel=\"noopener\">{$file->getClientOriginalName()}</a></p>",
-                'archivo'       => $url,
+                'user_id' => $request->user()->id,
+                'titulo' => $request->string('titulo')->toString() ?: $file->getClientOriginalName(),
+                'contenido_html' => "<p>Archivo adjunto: <a href=\"{$url}\" target=\"_blank\" rel=\"noopener\">{$file->getClientOriginalName()}</a></p>",
+                'archivo' => $url,
             ]);
         } elseif ($tipo == 'social') {
             $informe = InformesSocial::create([
                 'caseable_id' => $caseId,
                 'caseable_type' => Caso::class,
                 'user_id' => $request->user()->id,
-                'titulo'  => $request->string('titulo')->toString() ?: $file->getClientOriginalName(),
+                'titulo' => $request->string('titulo')->toString() ?: $file->getClientOriginalName(),
                 'contenido_html' => "<p>Archivo adjunto: <a href=\"{$url}\" target=\"_blank\" rel=\"noopener\">{$file->getClientOriginalName()}</a></p>",
                 'archivo' => $url,
             ]);
@@ -72,7 +75,7 @@ class CasoController extends Controller
                 'caseable_id' => $caseId,
                 'caseable_type' => Caso::class,
                 'user_id' => $request->user()->id,
-                'titulo'  => $request->string('titulo')->toString() ?: $file->getClientOriginalName(),
+                'titulo' => $request->string('titulo')->toString() ?: $file->getClientOriginalName(),
                 'contenido_html' => "<p>Archivo adjunto: <a href=\"{$url}\" target=\"_blank\" rel=\"noopener\">{$file->getClientOriginalName()}</a></p>",
                 'archivo' => $url,
             ]);
@@ -81,10 +84,13 @@ class CasoController extends Controller
         }
         return response()->json($informe->load('user:id,name,username'), 201);
     }
-    function destroy(Caso $caso){
+
+    function destroy(Caso $caso)
+    {
         $caso->delete();
         return response()->json(['message' => 'Caso eliminado']);
     }
+
     public function updateCodigos(\Illuminate\Http\Request $request, \App\Models\Caso $caso)
     {
         // Actualiza SOLO si vienen en el payload; si no vienen, no toca ese campo
@@ -99,16 +105,17 @@ class CasoController extends Controller
 
         return response()->json([
             'message' => 'Códigos actualizados',
-            'caso'    => $caso->only(['id','nurej','cud']),
+            'caso' => $caso->only(['id', 'nurej', 'cud']),
         ]);
     }
+
     public function reportesResumen(Request $request)
     {
         $start = $request->query('start'); // YYYY-MM-DD
-        $end   = $request->query('end');   // YYYY-MM-DD
-        $tipo  = $request->query('tipo');  // SLIM|DNA|SLAM|UMADIS|PROPREMIS
-        $area  = $request->query('area');
-        $zona  = $request->query('zona');
+        $end = $request->query('end');   // YYYY-MM-DD
+        $tipo = $request->query('tipo');  // SLIM|DNA|SLAM|UMADIS|PROPREMIS
+        $area = $request->query('area');
+        $zona = $request->query('zona');
 
         // UNA sola expresión de fecha:
         // MySQL/MariaDB: DATE(COALESCE(fecha_apertura_caso, created_at))
@@ -133,11 +140,11 @@ class CasoController extends Controller
         // Filtro por rol (como ya hacías)
         if ($u = $request->user()) {
             if ($u->role === 'Psicologo') $q->where('psicologica_user_id', $u->id);
-            if ($u->role === 'Social')    $q->where('trabajo_social_user_id', $u->id);
-            if ($u->role === 'Abogado')   $q->where('legal_user_id', $u->id);
+            if ($u->role === 'Social') $q->where('trabajo_social_user_id', $u->id);
+            if ($u->role === 'Abogado') $q->where('legal_user_id', $u->id);
         }
 
-        $base  = (clone $q);
+        $base = (clone $q);
         $total = (clone $base)->count();
 
         $byTipo = (clone $base)
@@ -160,40 +167,46 @@ class CasoController extends Controller
             ->select('caso_zona', DB::raw('COUNT(*) AS total'))
             ->groupBy('caso_zona')->orderByDesc('total')->limit(10)->get();
 
-        $fmt = function($rows) {
+        $fmt = function ($rows) {
             $labels = [];
             $series = [];
             foreach ($rows as $r) {
-                if (isset($r->tipo))            { $label = $r->tipo; }
-                elseif (isset($r->caso_tipologia)) { $label = $r->caso_tipologia; }
-                elseif (isset($r->caso_modalidad)) { $label = $r->caso_modalidad; }
-                elseif (isset($r->caso_zona))      { $label = $r->caso_zona; }
-                else { $label = '—'; }
+                if (isset($r->tipo)) {
+                    $label = $r->tipo;
+                } elseif (isset($r->caso_tipologia)) {
+                    $label = $r->caso_tipologia;
+                } elseif (isset($r->caso_modalidad)) {
+                    $label = $r->caso_modalidad;
+                } elseif (isset($r->caso_zona)) {
+                    $label = $r->caso_zona;
+                } else {
+                    $label = '—';
+                }
 
                 $labels[] = $label ?: '—';
-                $series[] = (int) ($r->total ?? 0);
+                $series[] = (int)($r->total ?? 0);
             }
             return ['labels' => $labels, 'series' => $series];
         };
 
         return response()->json([
-            'total'      => $total,
-            'tipo'       => $fmt($byTipo),
-            'tipologia'  => $fmt($byTipologia),
-            'modalidad'  => $fmt($byModalidad),
+            'total' => $total,
+            'tipo' => $fmt($byTipo),
+            'tipologia' => $fmt($byTipologia),
+            'modalidad' => $fmt($byModalidad),
             'zona_top10' => $fmt($byZona),
-            'diario'     => $byDia, // [{dia:'YYYY-MM-DD', total: N}]
+            'diario' => $byDia, // [{dia:'YYYY-MM-DD', total: N}]
         ]);
     }
 
 
     public function lineaTiempo(Request $request)
     {
-        $q            = trim((string) $request->get('q', ''));
-        $perPage      = (int) $request->get('per_page', 10);
-        $perPage      = max(5, min($perPage, 100));
+        $q = trim((string)$request->get('q', ''));
+        $perPage = (int)$request->get('per_page', 10);
+        $perPage = max(5, min($perPage, 100));
         // SLA configurable; por defecto 10 días exactos desde la apertura/creación
-        $deadlineDays = (int) $request->get('deadline_days', 10);
+        $deadlineDays = (int)$request->get('deadline_days', 10);
 
         $query = Caso::orderByDesc('created_at');
 
@@ -221,9 +234,15 @@ class CasoController extends Controller
 
         // Filtro por rol asignado (si aplica)
         $user = $request->user();
-        if ($user?->role === 'Psicologo') { $query->where('psicologica_user_id', $user->id); }
-        if ($user?->role === 'Social')    { $query->where('trabajo_social_user_id', $user->id); }
-        if ($user?->role === 'Abogado')   { $query->where('legal_user_id', $user->id); }
+        if ($user?->role === 'Psicologo') {
+            $query->where('psicologica_user_id', $user->id);
+        }
+        if ($user?->role === 'Social') {
+            $query->where('trabajo_social_user_id', $user->id);
+        }
+        if ($user?->role === 'Abogado') {
+            $query->where('legal_user_id', $user->id);
+        }
 
         // Relaciones mínimas necesarias
         $query->with([
@@ -242,17 +261,17 @@ class CasoController extends Controller
 
             // Fecha límite exacta: base + N días (solo fecha, sin sorpresas por horas)
             $baseDateOnly = Carbon::create($baseC->year, $baseC->month, $baseC->day, 0, 0, 0);
-            $deadline     = $baseDateOnly->copy()->addDays($deadlineDays);
+            $deadline = $baseDateOnly->copy()->addDays($deadlineDays);
 
             if (!$collection || $collection->isEmpty()) {
                 $diasRest = $baseDateOnly->diffInDays($now, false); // negativo si ya pasó
 
                 return [
-                    'entregado'       => false,
-                    'creado_dmY'      => $baseDateOnly->format('d/m/Y'),
-                    'deadline_dmY'    => $deadline->format('d/m/Y'),
-                    'dias_restantes'  => round($diasRest),
-                    'vencido'         => $diasRest < 0,
+                    'entregado' => false,
+                    'creado_dmY' => $baseDateOnly->format('d/m/Y'),
+                    'deadline_dmY' => $deadline->format('d/m/Y'),
+                    'dias_restantes' => round($diasRest),
+                    'vencido' => $diasRest < 0,
                 ];
             }
 
@@ -269,8 +288,8 @@ class CasoController extends Controller
             ));
 
             return [
-                'entregado'          => true,
-                'entrego_dmY'        => $entrega->format('d/m/Y'),
+                'entregado' => true,
+                'entrego_dmY' => $entrega->format('d/m/Y'),
                 'dias_hasta_entrega' => $diasHastaEntrega,
             ];
         };
@@ -286,47 +305,48 @@ class CasoController extends Controller
             $baseC = $base ? Carbon::parse($base) : $now;
 
             return [
-                'id'                 => $c->id,
-                'tipo'               => $c->tipo,
-                'caso_numero'        => $c->caso_numero,
-                'caso_zona'          => $c->caso_zona ?: $c->zona,
-                'creado_dmY'         => $baseC->format('d/m/Y'),
-                'base_user'          => $c->user?->name,
+                'id' => $c->id,
+                'tipo' => $c->tipo,
+                'caso_numero' => $c->caso_numero,
+                'caso_zona' => $c->caso_zona ?: $c->zona,
+                'creado_dmY' => $baseC->format('d/m/Y'),
+                'base_user' => $c->user?->name,
 
                 'denunciante_nombre' => $denName ?: null,
-                'denunciante_nro'    => $den?->denunciante_nro,
+                'denunciante_nro' => $den?->denunciante_nro,
 
-                'psico'  => $buildArea($c->psicologicas,     $baseC, $deadlineDays),
+                'psico' => $buildArea($c->psicologicas, $baseC, $deadlineDays),
                 'social' => $buildArea($c->informesSociales, $baseC, $deadlineDays),
-                'legal'  => $buildArea($c->informesLegales,  $baseC, $deadlineDays),
+                'legal' => $buildArea($c->informesLegales, $baseC, $deadlineDays),
             ];
         });
 
         return response()->json([
-            'data'         => $rows,
+            'data' => $rows,
             'current_page' => $paginated->currentPage(),
-            'last_page'    => $paginated->lastPage(),
-            'per_page'     => $paginated->perPage(),
-            'total'        => $paginated->total(),
-            'from'         => $paginated->firstItem(),
-            'to'           => $paginated->lastItem(),
+            'last_page' => $paginated->lastPage(),
+            'per_page' => $paginated->perPage(),
+            'total' => $paginated->total(),
+            'from' => $paginated->firstItem(),
+            'to' => $paginated->lastItem(),
         ]);
     }
+
     public function fotoStore(Request $request, Caso $caso)
     {
         $request->validate([
-            'file'        => ['required','image','mimes:jpg,jpeg,png,webp','max:10240'], // 10 MB
-            'titulo'      => ['nullable','string','max:255'],
-            'descripcion' => ['nullable','string'],
+            'file' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:10240'], // 10 MB
+            'titulo' => ['nullable', 'string', 'max:255'],
+            'descripcion' => ['nullable', 'string'],
         ]);
 
         $disk = 'public';                // <- FORZAR PUBLIC
-        $dir  = "caso/{$caso->id}/fotos";
+        $dir = "caso/{$caso->id}/fotos";
 
-        $file         = $request->file('file');
+        $file = $request->file('file');
         $originalName = $file->getClientOriginalName();
-        $nameNoExt    = pathinfo($originalName, PATHINFO_FILENAME);
-        $extLower     = strtolower($file->getClientOriginalExtension() ?: 'jpg');
+        $nameNoExt = pathinfo($originalName, PATHINFO_FILENAME);
+        $extLower = strtolower($file->getClientOriginalExtension() ?: 'jpg');
 
         // Nombre base único
         $base = Str::slug($nameNoExt) . '-' . Str::random(6);
@@ -338,18 +358,18 @@ class CasoController extends Controller
         $img->resizeDown(width: 2000, height: 2000);
 
         // Normalizamos extensión de salida
-        $storedExt = in_array($extLower, ['jpg','jpeg','png','webp']) ? ($extLower === 'jpeg' ? 'jpg' : $extLower) : 'jpg';
+        $storedExt = in_array($extLower, ['jpg', 'jpeg', 'png', 'webp']) ? ($extLower === 'jpeg' ? 'jpg' : $extLower) : 'jpg';
         $storedName = "{$base}.{$storedExt}";
-        $path       = "{$dir}/{$storedName}";
+        $path = "{$dir}/{$storedName}";
 
         if ($storedExt === 'jpg') {
-            Storage::disk($disk)->put($path, (string) $img->toJpeg(quality: 85));
+            Storage::disk($disk)->put($path, (string)$img->toJpeg(quality: 85));
             $mime = 'image/jpeg';
         } elseif ($storedExt === 'png') {
-            Storage::disk($disk)->put($path, (string) $img->toPng());
+            Storage::disk($disk)->put($path, (string)$img->toPng());
             $mime = 'image/png';
         } else { // webp
-            Storage::disk($disk)->put($path, (string) $img->toWebp(quality: 80));
+            Storage::disk($disk)->put($path, (string)$img->toWebp(quality: 80));
             $mime = 'image/webp';
         }
 
@@ -361,44 +381,44 @@ class CasoController extends Controller
         $thumbPath = "{$dir}/{$thumbName}";
 
         if ($storedExt === 'jpg') {
-            Storage::disk($disk)->put($thumbPath, (string) $thumb->toJpeg(quality: 80));
+            Storage::disk($disk)->put($thumbPath, (string)$thumb->toJpeg(quality: 80));
         } elseif ($storedExt === 'png') {
-            Storage::disk($disk)->put($thumbPath, (string) $thumb->toPng());
+            Storage::disk($disk)->put($thumbPath, (string)$thumb->toPng());
         } else {
-            Storage::disk($disk)->put($thumbPath, (string) $thumb->toWebp(quality: 75));
+            Storage::disk($disk)->put($thumbPath, (string)$thumb->toWebp(quality: 75));
         }
 
         // URLs públicas relativas (/storage/...)
-        $url      = Storage::url($path);
+        $url = Storage::url($path);
         $thumbUrl = Storage::url($thumbPath);
 
-        $bytes  = Storage::disk($disk)->size($path);
-        $width  = $img->width();
+        $bytes = Storage::disk($disk)->size($path);
+        $width = $img->width();
         $height = $img->height();
 
         $foto = Fotografia::create([
-            'caseable_id'   => $caso->id,
+            'caseable_id' => $caso->id,
             'caseable_type' => Caso::class,
-            'user_id'       => $request->user()->id,
+            'user_id' => $request->user()->id,
 
-            'titulo'        => $request->string('titulo')->toString() ?: $nameNoExt,
-            'descripcion'   => $request->get('descripcion'),
+            'titulo' => $request->string('titulo')->toString() ?: $nameNoExt,
+            'descripcion' => $request->get('descripcion'),
 
             'original_name' => $originalName,
-            'stored_name'   => $storedName,
-            'extension'     => $storedExt,
-            'mime'          => $mime,
-            'size_bytes'    => $bytes,
+            'stored_name' => $storedName,
+            'extension' => $storedExt,
+            'mime' => $mime,
+            'size_bytes' => $bytes,
 
-            'disk'          => $disk,
-            'path'          => $path,
-            'url'           => $url,
+            'disk' => $disk,
+            'path' => $path,
+            'url' => $url,
 
-            'thumb_path'    => $thumbPath,
-            'thumb_url'     => $thumbUrl,
+            'thumb_path' => $thumbPath,
+            'thumb_url' => $thumbUrl,
 
-            'width'         => $width,
-            'height'        => $height,
+            'width' => $width,
+            'height' => $height,
         ]);
 
         return response()->json($foto->load('user:id,name,username'), 201);
@@ -437,12 +457,13 @@ class CasoController extends Controller
         $pdf->getDomPDF()->getOptions()->set('defaultFont', 'DejaVu Sans');
 
         // ?download=1 para descargar, 0 para ver en el navegador
-        $download = (int) $request->query('download', 0) === 1;
+        $download = (int)$request->query('download', 0) === 1;
 
-        $filename = 'InformeLegal_'.$informe->id.'.pdf';
+        $filename = 'InformeLegal_' . $informe->id . '.pdf';
         return $download ? $pdf->download($filename) : $pdf->stream($filename);
 
     }
+
     function legalPdf(Request $request, InformeLegal $informe)
     {
         // Opciones extra para mejor render
@@ -454,12 +475,13 @@ class CasoController extends Controller
         $pdf->getDomPDF()->getOptions()->set('defaultFont', 'DejaVu Sans');
 
         // ?download=1 para descargar, 0 para ver en el navegador
-        $download = (int) $request->query('download', 0) === 1;
+        $download = (int)$request->query('download', 0) === 1;
 
-        $filename = 'InformeLegal_'.$informe->id.'.pdf';
+        $filename = 'InformeLegal_' . $informe->id . '.pdf';
         return $download ? $pdf->download($filename) : $pdf->stream($filename);
 
     }
+
     function psicoPdf(Request $request, Psicologica $psicologica)
     {
         // Opciones extra para mejor render
@@ -471,11 +493,12 @@ class CasoController extends Controller
         $pdf->getDomPDF()->getOptions()->set('defaultFont', 'DejaVu Sans');
 
         // ?download=1 para descargar, 0 para ver en el navegador
-        $download = (int) $request->query('download', 0) === 1;
+        $download = (int)$request->query('download', 0) === 1;
 
-        $filename = 'SesionPsicologica_'.$psicologica->id.'.pdf';
+        $filename = 'SesionPsicologica_' . $psicologica->id . '.pdf';
         return $download ? $pdf->download($filename) : $pdf->stream($filename);
     }
+
     public function pendientesResumen(Request $request)
     {
         $user = $request->user();
@@ -508,15 +531,15 @@ class CasoController extends Controller
     {
         // Cabecera compacta para el bloque superior
         $header = [
-            'caso_id'        => $caso->id,
-            'caso_numero'    => $caso->caso_numero,
-            'tipologia'      => $caso->caso_tipologia,
-            'modalidad'      => $caso->caso_modalidad,
-            'fecha_hecho'    => $caso->caso_fecha_hecho,
-            'zona'           => $caso->caso_zona ?: $caso->zona,
-            'direccion'      => $caso->caso_direccion ?: $caso->denunciante_domicilio_actual,
-            'denunciante'    => $caso->denunciante_nombre_completo,
-            'denunciado'     => $caso->denunciado_nombre_completo,
+            'caso_id' => $caso->id,
+            'caso_numero' => $caso->caso_numero,
+            'tipologia' => $caso->caso_tipologia,
+            'modalidad' => $caso->caso_modalidad,
+            'fecha_hecho' => $caso->caso_fecha_hecho,
+            'zona' => $caso->caso_zona ?: $caso->zona,
+            'direccion' => $caso->caso_direccion ?: $caso->denunciante_domicilio_actual,
+            'denunciante' => $caso->denunciante_nombre_completo,
+            'denunciado' => $caso->denunciado_nombre_completo,
             'registrado_por' => optional($caso->user)->name,
             'fecha_registro' => optional($caso->created_at)?->format('Y-m-d H:i'),
         ];
@@ -527,24 +550,24 @@ class CasoController extends Controller
             ->get()
             ->map(function ($i) {
                 return [
-                    'uid'        => 'INF-'.$i->id,
-                    'id'         => $i->id,
-                    'fecha'      => $i->fecha ? $i->fecha->format('Y-m-d') : optional($i->created_at)?->format('Y-m-d'),
-                    'tipo'       => 'Informe',
-                    'modulo'     => $i->area ?: 'General',
-                    'titulo'     => $i->titulo,
-                    'descripcion'=> strip_tags((string) $i->contenido_html),
-                    'usuario'    => optional($i->user)->name,
-                    'origen'     => 'SLIM',
+                    'uid' => 'INF-' . $i->id,
+                    'id' => $i->id,
+                    'fecha' => $i->fecha ? $i->fecha->format('Y-m-d') : optional($i->created_at)?->format('Y-m-d'),
+                    'tipo' => 'Informe',
+                    'modulo' => $i->area ?: 'General',
+                    'titulo' => $i->titulo,
+                    'descripcion' => strip_tags((string)$i->contenido_html),
+                    'usuario' => optional($i->user)->name,
+                    'origen' => 'SLIM',
                     // banderas para columnas estilo “visto/reserva/OJ/instrucción” (si las necesitas a futuro)
-                    'visto'      => false,
-                    'reserva'    => false,
+                    'visto' => false,
+                    'reserva' => false,
                     'oj_enviado' => false,
-                    'instruccion'=> null,
-                    'links'      => [
+                    'instruccion' => null,
+                    'links' => [
                         'pdf' => url("/api/informes/{$i->id}/pdf"),
                     ],
-                    'icon'       => 'description',
+                    'icon' => 'description',
                 ];
             });
 
@@ -553,23 +576,23 @@ class CasoController extends Controller
             ->get()
             ->map(function ($s) {
                 return [
-                    'uid'        => 'SES-'.$s->id,
-                    'id'         => $s->id,
-                    'fecha'      => $s->fecha ? $s->fecha->format('Y-m-d') : optional($s->created_at)?->format('Y-m-d'),
-                    'tipo'       => 'Sesión',
-                    'modulo'     => $s->tipo ?: 'Psicológico',
-                    'titulo'     => $s->titulo,
-                    'descripcion'=> strip_tags((string) $s->contenido_html),
-                    'usuario'    => optional($s->user)->name,
-                    'origen'     => 'SLIM',
-                    'visto'      => false,
-                    'reserva'    => false,
+                    'uid' => 'SES-' . $s->id,
+                    'id' => $s->id,
+                    'fecha' => $s->fecha ? $s->fecha->format('Y-m-d') : optional($s->created_at)?->format('Y-m-d'),
+                    'tipo' => 'Sesión',
+                    'modulo' => $s->tipo ?: 'Psicológico',
+                    'titulo' => $s->titulo,
+                    'descripcion' => strip_tags((string)$s->contenido_html),
+                    'usuario' => optional($s->user)->name,
+                    'origen' => 'SLIM',
+                    'visto' => false,
+                    'reserva' => false,
                     'oj_enviado' => false,
-                    'instruccion'=> null,
-                    'links'      => [
+                    'instruccion' => null,
+                    'links' => [
                         'pdf' => url("/api/sesiones-psicologicas/{$s->id}/pdf"),
                     ],
-                    'icon'       => 'psychology',
+                    'icon' => 'psychology',
                 ];
             });
 
@@ -578,24 +601,24 @@ class CasoController extends Controller
             ->get()
             ->map(function ($d) {
                 return [
-                    'uid'        => 'DOC-'.$d->id,
-                    'id'         => $d->id,
-                    'fecha'      => optional($d->created_at)?->format('Y-m-d'),
-                    'tipo'       => 'Documento',
-                    'modulo'     => $d->categoria ?: 'Documentos',
-                    'titulo'     => $d->titulo,
-                    'descripcion'=> (string) $d->descripcion,
-                    'usuario'    => optional($d->user)->name,
-                    'origen'     => 'SLIM',
-                    'visto'      => false,
-                    'reserva'    => false,
+                    'uid' => 'DOC-' . $d->id,
+                    'id' => $d->id,
+                    'fecha' => optional($d->created_at)?->format('Y-m-d'),
+                    'tipo' => 'Documento',
+                    'modulo' => $d->categoria ?: 'Documentos',
+                    'titulo' => $d->titulo,
+                    'descripcion' => (string)$d->descripcion,
+                    'usuario' => optional($d->user)->name,
+                    'origen' => 'SLIM',
+                    'visto' => false,
+                    'reserva' => false,
                     'oj_enviado' => false,
-                    'instruccion'=> null,
-                    'links'      => [
-                        'view'     => url("/api/documentos/{$d->id}/view"),
+                    'instruccion' => null,
+                    'links' => [
+                        'view' => url("/api/documentos/{$d->id}/view"),
                         'download' => url("/api/documentos/{$d->id}/download"),
                     ],
-                    'icon'       => 'attach_file',
+                    'icon' => 'attach_file',
                 ];
             });
 
@@ -604,23 +627,23 @@ class CasoController extends Controller
             ->get()
             ->map(function ($f) {
                 return [
-                    'uid'        => 'FOT-'.$f->id,
-                    'id'         => $f->id,
-                    'fecha'      => optional($f->created_at)?->format('Y-m-d'),
-                    'tipo'       => 'Fotografía',
-                    'modulo'     => 'Multimedia',
-                    'titulo'     => $f->titulo,
-                    'descripcion'=> (string) $f->descripcion,
-                    'usuario'    => optional($f->user)->name,
-                    'origen'     => 'SLIM',
-                    'visto'      => false,
-                    'reserva'    => false,
+                    'uid' => 'FOT-' . $f->id,
+                    'id' => $f->id,
+                    'fecha' => optional($f->created_at)?->format('Y-m-d'),
+                    'tipo' => 'Fotografía',
+                    'modulo' => 'Multimedia',
+                    'titulo' => $f->titulo,
+                    'descripcion' => (string)$f->descripcion,
+                    'usuario' => optional($f->user)->name,
+                    'origen' => 'SLIM',
+                    'visto' => false,
+                    'reserva' => false,
                     'oj_enviado' => false,
-                    'instruccion'=> null,
-                    'links'      => [
+                    'instruccion' => null,
+                    'links' => [
                         'open' => $f->url ?: $f->thumb_url,
                     ],
-                    'icon'       => 'image',
+                    'icon' => 'image',
                 ];
             });
 
@@ -637,7 +660,7 @@ class CasoController extends Controller
 
         return response()->json([
             'header' => $header,
-            'items'  => $items,
+            'items' => $items,
         ]);
     }
 
@@ -653,23 +676,23 @@ class CasoController extends Controller
         // Coordenadas por tipo
         if ($tipo === 'denunciado') {
             $denunciado = $caso->denunciados;
-            $nombre    = $denunciado->isNotEmpty() ? trim("{$denunciado->first()->denunciado_nombres} {$denunciado->first()->denunciado_paterno} {$denunciado->first()->denunciado_materno}") : '—';
+            $nombre = $denunciado->isNotEmpty() ? trim("{$denunciado->first()->denunciado_nombres} {$denunciado->first()->denunciado_paterno} {$denunciado->first()->denunciado_materno}") : '—';
             $lat = is_numeric($denunciado->first()->denunciado_latitud) ? (float)$denunciado->first()->denunciado_latitud : null;
             $lng = is_numeric($denunciado->first()->denunciado_longitud) ? (float)$denunciado->first()->denunciado_longitud : null;
-            $telefono  = $denunciado->first()->denunciado_telefono ?: ($denunciado->first()->denunciado_movil ?: $denunciado->first()->denunciado_fijo);
+            $telefono = $denunciado->first()->denunciado_telefono ?: ($denunciado->first()->denunciado_movil ?: $denunciado->first()->denunciado_fijo);
             $direccion = $denunciado->first()->denunciado_domicilio_actual ?: ($caso->caso_direccion ?: '—');
-            $zona      = $caso->caso_zona ?: $caso->zona;
+            $zona = $caso->caso_zona ?: $caso->zona;
             $tituloPersona = 'Denunciado';
         } else {
             // denunciante
             $denunciantes = $caso->denunciantes;
-            $nombre    = $denunciantes->isNotEmpty() ? trim("{$denunciantes->first()->denunciante_nombres} {$denunciantes->first()->denunciante_paterno} {$denunciantes->first()->denunciante_materno}") : '—';
+            $nombre = $denunciantes->isNotEmpty() ? trim("{$denunciantes->first()->denunciante_nombres} {$denunciantes->first()->denunciante_paterno} {$denunciantes->first()->denunciante_materno}") : '—';
             $lat = is_numeric($denunciantes->first()->latitud) ? (float)$denunciantes->first()->latitud : null;
             $lng = is_numeric($denunciantes->first()->longitud) ? (float)$denunciantes->first()->longitud : null;
 
-            $telefono  = $denunciantes->first()->denunciante_telefono ?: ($denunciantes->first()->denunciante_movil ?: $denunciantes->first()->denunciante_fijo);
+            $telefono = $denunciantes->first()->denunciante_telefono ?: ($denunciantes->first()->denunciante_movil ?: $denunciantes->first()->denunciante_fijo);
             $direccion = $denunciantes->first()->denunciante_domicilio_actual ?: ($caso->caso_direccion ?: '—');
-            $zona      = $caso->caso_zona ?: $caso->zona;
+            $zona = $caso->caso_zona ?: $caso->zona;
             $tituloPersona = 'Denunciante';
         }
 
@@ -679,22 +702,23 @@ class CasoController extends Controller
         $HAS = is_numeric($lat) && is_numeric($lng);
 
         return view('casos.pdfHojaRuta', [
-            'caso'          => $caso,
-            'tipo'          => $tipo,
+            'caso' => $caso,
+            'tipo' => $tipo,
             'tituloPersona' => $tituloPersona,
-            'LAT'           => $LAT,
-            'LNG'           => $LNG,
-            'HAS'           => $HAS,
-            'nombre'        => $nombre ?: '—',
-            'telefono'      => $telefono ?: '—',
-            'zona'          => $zona ?: '—',
-            'direccion'     => $direccion ?: '—',
+            'LAT' => $LAT,
+            'LNG' => $LNG,
+            'HAS' => $HAS,
+            'nombre' => $nombre ?: '—',
+            'telefono' => $telefono ?: '—',
+            'zona' => $zona ?: '—',
+            'direccion' => $direccion ?: '—',
         ]);
     }
+
     public function pdf(Request $request, Caso $caso)
     {
-        if($caso->tipo == 'SLIM'){
-            $caso = Caso::with(['denunciantes','denunciados','familiares','menores','psicologica_user:id,name','trabajo_social_user:id,name','legal_user:id,name','user:id,name'])->find($caso->id);
+        if ($caso->tipo == 'SLIM') {
+            $caso = Caso::with(['denunciantes', 'denunciados', 'familiares', 'menores', 'psicologica_user:id,name', 'trabajo_social_user:id,name', 'legal_user:id,name', 'user:id,name'])->find($caso->id);
 //            return response()->json($caso);
             $pdf = Pdf::loadView('casos.pdf', [
                 'caso' => $caso,
@@ -704,9 +728,9 @@ class CasoController extends Controller
             $pdf->getDomPDF()->getOptions()->set('defaultFont', 'DejaVu Sans');
 
             // ?download=1 para descargar, 0 para ver en el navegador
-            $download = (int) $request->query('download', 0) === 1;
+            $download = (int)$request->query('download', 0) === 1;
 
-            $filename = 'Caso_'.$caso->id.'.pdf';
+            $filename = 'Caso_' . $caso->id . '.pdf';
             return $download ? $pdf->download($filename) : $pdf->stream($filename);
         }
 //        dna
@@ -762,16 +786,17 @@ class CasoController extends Controller
             return $download ? $pdf->download($filename) : $pdf->stream($filename);
         }
     }
+
     /**
      * GET /casos?q=texto&page=1&per_page=10
      * Devuelve paginado con filtro por texto libre.
      */
     public function index(Request $request)
     {
-        $q       = trim((string) $request->get('q', ''));
-        $perPage = (int) $request->get('per_page', 10);
+        $q = trim((string)$request->get('q', ''));
+        $perPage = (int)$request->get('per_page', 10);
         $perPage = max(5, min($perPage, 100));
-        $tipo    = trim((string) $request->get('tipo', ''));
+        $tipo = trim((string)$request->get('tipo', ''));
 
         $query = Caso::query()
             ->orderByDesc('created_at')
@@ -846,8 +871,8 @@ class CasoController extends Controller
 
             $meAsignado = (
                 ($rolUsuario === 'Psicologo' && (int)$c->psicologica_user_id === (int)$user->id) ||
-                ($rolUsuario === 'Social'    && (int)$c->trabajo_social_user_id === (int)$user->id) ||
-                ($rolUsuario === 'Abogado'   && (int)$c->legal_user_id === (int)$user->id)
+                ($rolUsuario === 'Social' && (int)$c->trabajo_social_user_id === (int)$user->id) ||
+                ($rolUsuario === 'Abogado' && (int)$c->legal_user_id === (int)$user->id)
             );
 
             $apertura = $c->fecha_apertura_caso
@@ -879,31 +904,31 @@ class CasoController extends Controller
             }
 
             $c->setAttribute('mi_estado', [
-                'me_asignado'          => $meAsignado,
-                'rol'                  => $meAsignado ? $rolUsuario : null,
+                'me_asignado' => $meAsignado,
+                'rol' => $meAsignado ? $rolUsuario : null,
                 'primer_informe_hecho' => $hecho,
-                'label_listo'          => $labelListo,
-                'deadline'             => $deadline->format('Y-m-d'),
-                'dias_restantes'       => (int) $diasRest,
-                'atrasado'             => $atrasado,
+                'label_listo' => $labelListo,
+                'deadline' => $deadline->format('Y-m-d'),
+                'dias_restantes' => (int)$diasRest,
+                'atrasado' => $atrasado,
             ]);
 
             return $c;
         });
 
         return response()->json([
-            'data'         => $items->values(),
+            'data' => $items->values(),
             'current_page' => $paginated->currentPage(),
-            'last_page'    => $paginated->lastPage(),
-            'per_page'     => $paginated->perPage(),
-            'total'        => $paginated->total(),
-            'from'         => $paginated->firstItem(),
-            'to'           => $paginated->lastItem(),
+            'last_page' => $paginated->lastPage(),
+            'per_page' => $paginated->perPage(),
+            'total' => $paginated->total(),
+            'from' => $paginated->firstItem(),
+            'to' => $paginated->lastItem(),
         ]);
     }
 
-    public function store(Request $request){
-//{"numero_apoyo_integral":"","area":"SLIM","zona":"CENTRAL","denunciantes":[{"denunciante_nombres":"adimer","denunciante_paterno":"","denunciante_materno":"","denunciante_documento":"Carnet de identidad","denunciante_nro":"","denunciante_sexo":"","denunciante_lugar_nacimiento":"","denunciante_fecha_nacimiento":"2000-09-19","denunciante_edad":25,"denunciante_telefono":"","denunciante_residencia":"","denunciante_estado_civil":"","denunciante_trabaja":false,"denunciante_relacion":"","denunciante_grado":"","latitud":null,"longitud":null}],"denunciado":[{"denunciado_nombres":"","denunciado_paterno":"","denunciado_materno":"","denunciado_documento":"Carnet de identidad","denunciado_nro":"","denunciado_sexo":"","denunciado_lugar_nacimiento":"","denunciado_fecha_nacimiento":"","denunciado_edad":"","denunciado_telefono":"","denunciado_residencia":"","denunciado_estado_civil":"","denunciado_relacion":"","denunciado_grado":"","denunciado_trabaja":1,"denunciado_prox":"","denunciado_ocupacion":"","denunciado_ocupacion_exacto":"","denunciado_idioma":"","denunciado_fijo":"","denunciado_movil":"","denunciado_domicilio_actual":"","denunciado_latitud":null,"denunciado_longitud":null}],"caso_numero":"","caso_fecha_hecho":"","caso_lugar_hecho":"","caso_tipologia":"","caso_modalidad":"","caso_descripcion":"","violencia_fisica":false,"violencia_psicologica":false,"violencia_sexual":false,"violencia_economica":false,"psicologica_user_id":"","trabajo_social_user_id":"","legal_user_id":"","documento_fotocopia_carnet_denunciante":false,"documento_fotocopia_carnet_denunciado":false,"documento_placas_fotograficas_domicilio_denunciante":false,"documento_croquis_direccion_denunciado":false,"documento_placas_fotograficas_domicilio_denunciado":false,"documento_ciudadania_digital":false}
+    public function store(Request $request)
+    {
         DB::beginTransaction();
         try {
             $user = $request->user();
@@ -912,74 +937,84 @@ class CasoController extends Controller
             $request['fecha_apertura_caso'] = date('Y-m-d H:i:s');
             $request['area'] = $user->area;
             $request['zona'] = $user->zona;
-            if($request->has('legal_user_id') && $request->legal_user_id){
+            if ($request->has('legal_user_id') && $request->legal_user_id) {
                 $request['fecha_derivacion_area_legal'] = date('Y-m-d H:i:s');
             }
             $caso = Caso::create($request->all());
 
 //            $caso->asynccon denunciante
-            if($request->has('denunciantes')){
-                foreach ($request->denunciantes as $denunciante){
+            if ($request->has('denunciantes')) {
+                foreach ($request->denunciantes as $denunciante) {
                     $caso->denunciantes()->create($denunciante);
                 }
             }
-            if($request->has('denunciados')){
-                foreach ($request->denunciados as $denunciado){
+            if ($request->has('denunciados')) {
+                foreach ($request->denunciados as $denunciado) {
                     $caso->denunciados()->create($denunciado);
                 }
             }
-            if($request->has('familiares')){
-                foreach ($request->familiares as $familiar){
+            if ($request->has('familiares')) {
+                foreach ($request->familiares as $familiar) {
                     $caso->familiares()->create($familiar);
                 }
             }
-            if($request->has('menores')){
-                foreach ($request->menores as $menor){
+            if ($request->has('menores')) {
+                foreach ($request->menores as $menor) {
                     $caso->menores()->create($menor);
+                }
+            }
+            if ($request->has('victimas')) {
+                foreach ($request->victimas as $victima) {
+                    $caso->victimas()->create($victima);
                 }
             }
 
 
             DB::commit();
             return $caso;
-        }catch (\Illuminate\Database\QueryException $e){
+        } catch (\Illuminate\Database\QueryException $e) {
             DB::rollBack();
             return response()->json(['message' => 'Error al crear el caso', 'error' => $e->getMessage()], 500);
         }
     }
-    function numeroCaso($tipo){
+
+    function numeroCaso($tipo)
+    {
         $year = date('Y');
         $count = Caso::where('tipo', $tipo)->whereYear('created_at', $year)->count() + 1;
         $numero = str_pad($count, 3, '0', STR_PAD_LEFT) . '/' . substr($year, -2);
         return $numero;
     }
+
     public function show(Caso $caso)
     {
         $caso = Caso::with(
             [
-            'psicologica_user:id,name,celular',
-            'trabajo_social_user:id,name,celular',
-            'legal_user:id,name,celular',
-            'user:id,name,celular',
-            'denunciantes',
-            'menores',
-            'denunciados',
-             'familiares',
-            'psicologicas.user:id,name',
-            'informesLegales.user:id,name',
-            'documentos.user:id,name',
-            'fotografias.user:id,name',
-             'informesSociales.user:id,name',
+                'psicologica_user:id,name,celular',
+                'trabajo_social_user:id,name,celular',
+                'legal_user:id,name,celular',
+                'user:id,name,celular',
+                'denunciantes',
+                'menores',
+                'denunciados',
+                'familiares',
+                'psicologicas.user:id,name',
+                'informesLegales.user:id,name',
+                'documentos.user:id,name',
+                'fotografias.user:id,name',
+                'informesSociales.user:id,name',
+                'victimas'
             ]
         )
             ->find($caso->id);
         return response()->json($caso);
     }
 
-    public function update(Request $request, Caso $caso){
+    public function update(Request $request, Caso $caso)
+    {
         DB::beginTransaction();
         try {
-            if($request->has('legal_user_id') && $request->legal_user_id && !$caso->fecha_derivacion_area_legal){
+            if ($request->has('legal_user_id') && $request->legal_user_id && !$caso->fecha_derivacion_area_legal) {
                 $request['fecha_derivacion_area_legal'] = date('Y-m-d H:i:s');
             }
             unset($request['fecha_apertura_caso']);
@@ -990,43 +1025,51 @@ class CasoController extends Controller
             unset($request['tipo']);
             $caso->update($request->all());
 
-            if($request->has('familiares')){
+            if ($request->has('familiares')) {
                 $caso->familiares()->delete();
-                foreach ($request->familiares as $familiar){
+                foreach ($request->familiares as $familiar) {
                     $caso->familiares()->create($familiar);
                 }
             }
-            if($request->has('denunciantes')){
+            if ($request->has('denunciantes')) {
                 $caso->denunciantes()->delete();
-                foreach ($request->denunciantes as $denunciante){
+                foreach ($request->denunciantes as $denunciante) {
                     $caso->denunciantes()->create($denunciante);
                 }
             }
 //            error_log(json_encode($caso->denunciados));
-            if($request->has('denunciados')){
+            if ($request->has('denunciados')) {
                 $caso->denunciados()->delete();
-                foreach ($request->denunciados as $denunciado){
+                foreach ($request->denunciados as $denunciado) {
                     $caso->denunciados()->create($denunciado);
                 }
             }
-            if($request->has('menores')){
+            if ($request->has('menores')) {
                 $caso->menores()->delete();
-                foreach ($request->menores as $menor){
+                foreach ($request->menores as $menor) {
                     $caso->menores()->create($menor);
                 }
             }
+            if ($request->has('victimas')) {
+                $caso->victimas()->delete();
+                foreach ($request->victimas as $victima) {
+                    $caso->victimas()->create($victima);
+                }
+            }
             DB::commit();
-            return Caso::with(['denunciantes','denunciados','familiares'])->find($caso->id);
-        }catch (\Illuminate\Database\QueryException $e){
+            return Caso::with(['denunciantes', 'denunciados', 'familiares'])->find($caso->id);
+        } catch (\Illuminate\Database\QueryException $e) {
             DB::rollBack();
             return response()->json(['message' => 'Error al actualizar el caso', 'error' => $e->getMessage()], 500);
         }
     }
-    function psicoStore(Request $request, Caso $caso){
+
+    function psicoStore(Request $request, Caso $caso)
+    {
         $user = $request->user();
 
 //        actulizar caso [sgicologica/] fecha_derivacion_psicologica
-        if(!$caso->fecha_derivacion_psicologica){
+        if (!$caso->fecha_derivacion_psicologica) {
             $caso->fecha_derivacion_psicologica = date('Y-m-d');
             $caso->save();
         }
@@ -1038,11 +1081,15 @@ class CasoController extends Controller
         $sesion = Psicologica::create($request->all());
         return $sesion;
     }
-    function psicoUpdate(Request $request, Psicologica $psicologica){
+
+    function psicoUpdate(Request $request, Psicologica $psicologica)
+    {
         $psicologica->update($request->all());
         return $psicologica;
     }
-    function psicoDestroy(Psicologica $psicologica){
+
+    function psicoDestroy(Psicologica $psicologica)
+    {
         $psicologica->delete();
         return response()->json(['message' => 'Sesión psicológica eliminada']);
     }
@@ -1064,11 +1111,15 @@ class CasoController extends Controller
         $informe = InformeLegal::create($request->all());
         return $informe;
     }
-    function legalUpdate(Request $request, InformeLegal $informe){
+
+    function legalUpdate(Request $request, InformeLegal $informe)
+    {
         $informe->update($request->all());
         return $informe;
     }
-    function legalDestroy(InformeLegal $informe){
+
+    function legalDestroy(InformeLegal $informe)
+    {
         $informe->delete();
         return response()->json(['message' => 'Informe legal eliminado']);
     }
@@ -1090,45 +1141,52 @@ class CasoController extends Controller
         $informe = InformesSocial::create($request->all());
         return $informe;
     }
-    function socialUpdate(Request $request, InformesSocial $informe){
+
+    function socialUpdate(Request $request, InformesSocial $informe)
+    {
         $informe->update($request->all());
         return $informe;
     }
-    function socialDestroy(InformesSocial $informe){
+
+    function socialDestroy(InformesSocial $informe)
+    {
         $informe->delete();
         return response()->json(['message' => 'Informe social eliminado']);
     }
-    function docStore(Request $request, Caso $caso){
+
+    function docStore(Request $request, Caso $caso)
+    {
         $payload = [
-            'caseable_id'   => $caso->id,
+            'caseable_id' => $caso->id,
             'caseable_type' => Caso::class,
-            'user_id'       => $request->user()?->id,
-            'titulo'        => $request['titulo'] ?? null,
-            'categoria'     => $request['categoria'] ?? null,
-            'descripcion'   => $request['descripcion'] ?? null,
+            'user_id' => $request->user()?->id,
+            'titulo' => $request['titulo'] ?? null,
+            'categoria' => $request['categoria'] ?? null,
+            'descripcion' => $request['descripcion'] ?? null,
         ];
         if ($request->hasFile('file')) {
-            $file        = $request->file('file');
-            $ext         = strtolower($file->getClientOriginalExtension());
-            $storedName  = Str::uuid()->toString().'.'.$ext;
-            $path        = $file->storeAs("caso/{$caso->id}/documentos", $storedName, 'public');
-            $url         = Storage::disk('public')->url($path);
+            $file = $request->file('file');
+            $ext = strtolower($file->getClientOriginalExtension());
+            $storedName = Str::uuid()->toString() . '.' . $ext;
+            $path = $file->storeAs("caso/{$caso->id}/documentos", $storedName, 'public');
+            $url = Storage::disk('public')->url($path);
 
             $payload += [
                 'original_name' => $file->getClientOriginalName(),
-                'stored_name'   => $storedName,
-                'extension'     => $ext,
-                'mime'          => $file->getClientMimeType(),
-                'size_bytes'    => $file->getSize(),
-                'disk'          => 'public',
-                'path'          => $path,
-                'url'           => $url,
+                'stored_name' => $storedName,
+                'extension' => $ext,
+                'mime' => $file->getClientMimeType(),
+                'size_bytes' => $file->getSize(),
+                'disk' => 'public',
+                'path' => $path,
+                'url' => $url,
             ];
         }
         $documento = Documento::create($payload);
         return response()->json(['documento' => $documento], 201);
         return $documento;
     }
+
     function docDownload($doc)
     {
         $doc = Documento::where('id', $doc)->first();
@@ -1138,6 +1196,7 @@ class CasoController extends Controller
             return response()->json(['message' => 'Documento no encontrado'], 404);
         }
     }
+
     function docView($doc)
     {
         $doc = Documento::where('id', $doc)->first();
@@ -1149,6 +1208,7 @@ class CasoController extends Controller
             return response()->json(['message' => 'Documento no encontrado'], 404);
         }
     }
+
     function docUpdate(Request $request, $doc)
     {
         $data = $request->only(['titulo', 'categoria', 'descripcion']);
@@ -1160,6 +1220,7 @@ class CasoController extends Controller
             return response()->json(['message' => 'Documento no encontrado'], 404);
         }
     }
+
     function docDestroy($doc)
     {
         $doc = Documento::where('id', $doc)->first();
