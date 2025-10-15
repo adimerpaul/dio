@@ -93,87 +93,62 @@
             :subtitle="format(caso.fecha_apertura_caso)"
             icon="flag"
           />
-<!--          <q-timeline-entry-->
-<!--            title="Derivación psicológica"-->
-<!--            :subtitle="format(caso.fecha_derivacion_psicologica)"-->
-<!--            icon="psychology"-->
-<!--            :color="caso.fecha_derivacion_psicologica ? 'primary' : 'grey-5'"-->
-<!--          />-->
-<!--          <q-timeline-entry-->
-<!--            title="Informe área psicológica"-->
-<!--            :subtitle="format(caso.fecha_informe_area_psicologica)"-->
-<!--            icon="assignment_turned_in"-->
-<!--            :color="caso.fecha_informe_area_psicologica ? 'primary' : 'grey-5'"-->
-<!--          />-->
-<!--          <q-timeline-entry-->
-<!--            title="Entrega trabajo social"-->
-<!--            :subtitle="format(caso.fecha_informe_trabajo_social)"-->
-<!--            icon="diversity_3"-->
-<!--            :color="caso.fecha_informe_trabajo_social ? 'primary' : 'grey-5'"-->
-<!--          />-->
-<!--          <q-timeline-entry-->
-<!--            title="Derivación área legal"-->
-<!--            :subtitle="format(caso.fecha_derivacion_area_legal)"-->
-<!--            icon="gavel"-->
-<!--            :color="caso.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"-->
-<!--          />-->
-
           <q-timeline-entry
             title="Derivación área legal"
             :subtitle="format(caso.fecha_derivacion_area_legal)"
             icon="gavel"
             :color="caso.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"
           />
-          <q-timeline-entry
-            title="Aceptación área legal"
-            :subtitle="format(caso.fecha_derivacion_area_legal)"
-            icon="gavel"
-            :color="caso.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"
-          />
-          <q-timeline-entry
-            title="Devolución área legal"
-            :subtitle="format(caso.fecha_derivacion_area_legal)"
-            icon="gavel"
-            :color="caso.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"
-          />
+<!--          <q-timeline-entry-->
+<!--            title="Aceptación área legal"-->
+<!--            :subtitle="format(caso.fecha_derivacion_area_legal)"-->
+<!--            icon="gavel"-->
+<!--            :color="caso.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"-->
+<!--          />-->
+<!--          <q-timeline-entry-->
+<!--            title="Devolución área legal"-->
+<!--            :subtitle="format(caso.fecha_derivacion_area_legal)"-->
+<!--            icon="gavel"-->
+<!--            :color="caso.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"-->
+<!--          />-->
 
-          <q-timeline-entry
-            title="Derivación área Psicologica"
-            :subtitle="format(caso.fecha_derivacion_area_legal)"
-            icon="gavel"
-            :color="caso.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"
-          />
-          <q-timeline-entry
-            title="Aceptación área Psicologica"
-            :subtitle="format(caso.fecha_derivacion_area_legal)"
-            icon="gavel"
-            :color="caso.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"
-          />
-          <q-timeline-entry
-            title="Devolución área Psicologica"
-            :subtitle="format(caso.fecha_derivacion_area_legal)"
-            icon="gavel"
-            :color="caso.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"
-          />
+<!--          <q-timeline-entry-->
+<!--            title="Derivación área Psicologica"-->
+<!--            :subtitle="format(caso.fecha_derivacion_area_legal)"-->
+<!--            icon="gavel"-->
+<!--            :color="caso.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"-->
+<!--          />-->
+<!--          <q-timeline-entry-->
+<!--            title="Aceptación área Psicologica"-->
+<!--            :subtitle="format(caso.fecha_derivacion_area_legal)"-->
+<!--            icon="gavel"-->
+<!--            :color="caso.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"-->
+<!--          />-->
+<!--          <q-timeline-entry-->
+<!--            title="Devolución área Psicologica"-->
+<!--            :subtitle="format(caso.fecha_derivacion_area_legal)"-->
+<!--            icon="gavel"-->
+<!--            :color="caso.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"-->
+<!--          />-->
 
-          <q-timeline-entry
-            title="Derivación área Social"
-            :subtitle="format(caso.fecha_derivacion_area_legal)"
-            icon="gavel"
-            :color="caso.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"
-          />
-          <q-timeline-entry
-            title="Aceptación área Social"
-            :subtitle="format(caso.fecha_derivacion_area_legal)"
-            icon="gavel"
-            :color="caso.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"
-          />
-          <q-timeline-entry
-            title="Devolución área Social"
-            :subtitle="format(caso.fecha_derivacion_area_legal)"
-            icon="gavel"
-            :color="caso.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"
-          />
+<!--          <q-timeline-entry-->
+<!--            title="Derivación área Social"-->
+<!--            :subtitle="format(caso.fecha_derivacion_area_legal)"-->
+<!--            icon="gavel"-->
+<!--            :color="caso.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"-->
+<!--          />-->
+<!--          <q-timeline-entry-->
+<!--            title="Aceptación área Social"-->
+<!--            :subtitle="format(caso.fecha_derivacion_area_legal)"-->
+<!--            icon="gavel"-->
+<!--            :color="caso.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"-->
+<!--          />-->
+<!--          <q-timeline-entry-->
+<!--            title="Devolución área Social"-->
+<!--            :subtitle="format(caso.fecha_derivacion_area_legal)"-->
+<!--            icon="gavel"-->
+<!--            :color="caso.fecha_derivacion_area_legal ? 'primary' : 'grey-5'"-->
+<!--          />-->
 
         </q-timeline>
       </q-card-section>
