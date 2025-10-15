@@ -533,7 +533,7 @@
         <q-btn color="primary" icon="save" label="Guardar" :loading="loading" @click="save"/>
       </div>
       <div class="text-right q-mt-xs" v-else-if="accion==='modificar'">
-        <q-btn color="primary" icon="save" label="Actualizar" :loading="loading" @click="save"/>
+        <q-btn color="primary" icon="save" label="Actualizar" :loading="loading" @click="update"/>
       </div>
     </q-form>
   </q-page>
