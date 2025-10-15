@@ -143,12 +143,9 @@ async function searchAddress () {
 
     const res = await fetch(url.toString(), {
       headers: { 'Accept': 'application/json' }
-      // Si quieres cumplir la política estricta, añade un “User-Agent” identificando tu app/tienda
-      // headers: { 'Accept': 'application/json', 'User-Agent': 'TuApp/1.0 (tu-email@dominio.com)' }
     })
     const data = await res.json()
     if (!Array.isArray(data) || data.length === 0) {
-      // aquí puedes hacer this.$q.notify si el componente padre usa Quasar notify
       return
     }
     const best = data[0]

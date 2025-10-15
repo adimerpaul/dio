@@ -65,7 +65,7 @@
                   </div>
                   <div class="col-6 col-md-3">
                     <q-input v-model="v.fecha_nacimiento" type="date" dense outlined label="Fecha de nacimiento"
-                             @update:model-value="(val) => onBirthChange(val, v)"/>
+                             @update:model-value="(val) => onBirthChange(val, v,'victima')"/>
                   </div>
                   <div class="col-6 col-md-3">
                     <q-input v-model.number="v.edad" dense outlined type="number" label="Edad"/>
@@ -97,7 +97,7 @@
           </template>
         </q-card-section>
       </q-card>
-      <q-card flat bordered class="section-card">
+      <q-card flat bordered class="section-card q-mt-xs">
         <q-card-section class="row items-center q-pa-none">
           <q-item class="full-width" dense>
             <q-item-section avatar><q-icon name="assignment_ind" /></q-item-section>
@@ -112,47 +112,6 @@
         <q-separator/>
 
         <q-card-section class="q-pa-xs">
-<!--          denunciantes: [-->
-<!--          {-->
-<!--          denunciante_nombres: '',-->
-<!--          denunciante_paterno: '',-->
-<!--          denunciante_materno: '',-->
-<!--          denunciante_documento: 'Carnet de identidad',-->
-<!--          denunciante_nro: '',-->
-<!--          denunciante_sexo: '',-->
-<!--          denunciante_lugar_nacimiento: '',-->
-<!--          denunciante_fecha_nacimiento: '',-->
-<!--          denunciante_edad: '',-->
-<!--          denunciante_telefono: '',-->
-<!--          denunciante_residencia: '',-->
-<!--          denunciante_estado_civil: '',-->
-<!--          denunciante_relacion: '',-->
-<!--          denunciante_grado: '',-->
-<!--          denunciante_domicilio_actual: '',-->
-<!--          latitud: null,-->
-<!--          longitud: null,-->
-<!--          caso_id: null,-->
-<!--          denunciante_idioma: '',-->
-<!--          denunciante_trabaja: false,-->
-<!--          denunciante_ocupacion: '',-->
-<!--          denunciante_ingresos: null,-->
-<!--          denunciante_parentesco: '',-->
-<!--          }-->
-<!--          ],-->
-<!--          •	Nombres Completos y Apellidos-->
-<!--          •	cedula de identidad-->
-<!--          •	Fecha de Nacimiento-->
-<!--          •	Lugar de Nacimiento-->
-<!--          •	Edad-->
-<!--          •	Sexo-->
-<!--          •	Estado Civil-->
-<!--          •	Grado de Instrucción-->
-<!--          •	Ocupación-->
-<!--          •	Ingresos Económicos-->
-<!--          •	Idioma-->
-<!--          •	Domicilio-->
-<!--          •	Telf./Celular-->
-<!--          •	Parentesco o Relación con la Victima-->
 
           <div class="row">
           <q-card-section class="q-pa-xs">
@@ -161,20 +120,6 @@
               <div class="text-caption text-grey-7 q-ml-sm">Total: {{ f.denunciantes.length }}</div>
             </div>
             <template v-for="(d, id) in f.denunciantes" :key="id">
-              <!--          •	Nombres Completos y Apellidos-->
-              <!--          •	cedula de identidad-->
-              <!--          •	Fecha de Nacimiento-->
-              <!--          •	Lugar de Nacimiento-->
-              <!--          •	Edad-->
-              <!--          •	Sexo-->
-              <!--          •	Estado Civil-->
-              <!--          •	Grado de Instrucción-->
-              <!--          •	Ocupación-->
-              <!--          •	Ingresos Económicos-->
-              <!--          •	Idioma-->
-              <!--          •	Domicilio-->
-              <!--          •	Telf./Celular-->
-              <!--          •	Parentesco o Relación con la Victima-->
               <q-card flat bordered class="q-mb-md">
                 <q-card-section class="row items-center q-pa-xs">
                   <q-item class="full-width" dense>
@@ -208,7 +153,7 @@
                     </div>
                     <div class="col-6 col-md-3">
                       <q-input v-model="d.denunciante_fecha_nacimiento" type="date" dense outlined label="Fecha de nacimiento"
-                               @update:model-value="(val) => onBirthChange(val, d, 'denunciante_edad')"/>
+                               @update:model-value="(val) => onBirthChange(val, d, 'denunciante')"/>
                     </div>
                     <div class="col-6 col-md-3">
                       <q-input v-model.number="d.denunciante_edad" dense outlined type="number" label="Edad"/>
@@ -250,209 +195,193 @@
             </q-card-section>
           </div>
         </q-card-section>
-<!--        <q-card-section class="q-pa-xs">-->
-<!--          <div class="row items-center q-gutter-sm q-mb-sm">-->
-<!--            <q-btn dense no-caps color="primary" icon="add" label="Añadir víctima" @click="addVictima" size="10px" />-->
-<!--            &lt;!&ndash;            <q-btn dense no-caps color="negative" icon="remove" label="Quitar última" :disable="f.victimas.length<=1" @click="removeVictima"/>&ndash;&gt;-->
-<!--            <div class="text-caption text-grey-7 q-ml-sm">Total: {{ f.victimas.length }}</div>-->
-<!--          </div>-->
-<!--          <template v-for="(v, idx) in f.victimas" :key="idx">-->
-<!--            <q-card flat bordered class="q-mb-md">-->
-<!--              <q-card-section class="row items-center q-pa-xs">-->
-<!--                <q-item class="full-width" dense>-->
-<!--                  <q-item-section avatar><q-icon name="person" /></q-item-section>-->
-<!--                  <q-item-section>-->
-<!--                    <div class="text-subtitle2 text-weight-medium">Víctima {{ idx + 1 }}</div>-->
-<!--                  </q-item-section>-->
-<!--                  <q-item-section side>-->
-<!--                    <q-btn dense flat color="negative" icon="delete" :disable="f.victimas.length<=1" @click="removeVictimaAt(idx)" />-->
-<!--                  </q-item-section>-->
-<!--                </q-item>-->
-<!--              </q-card-section>-->
-<!--              <q-separator/>-->
-<!--              <q-card-section>-->
-<!--                <div class="row q-col-gutter-md">-->
-<!--                  <div class="col-12 col-md-6">-->
-<!--                    <q-input v-model="v.nombres_apellidos" dense outlined clearable label="Nombres y apellidos *" />-->
-<!--                  </div>-->
-<!--                  <div class="col-6 col-md-3">-->
-<!--                    <q-select v-model="v.tipo_documento" dense outlined emit-value map-options clearable-->
-<!--                              :options="documentos" label="Documento" @update:model-value="val => { if (val !== 'Otro') v.tipo_documento_otro = '' }"/>-->
-<!--                  </div>-->
-<!--                  <div class="col-6 col-md-3" v-if="v.tipo_documento==='Otro'">-->
-<!--                    <q-input v-model="v.tipo_documento_otro" dense outlined clearable label="Especifique otro documento"/>-->
-<!--                  </div>-->
-<!--                  <div class="col-6 col-md-3">-->
-<!--                    <q-input v-model="v.ci" dense outlined clearable label="Numero de documento"/>-->
-<!--                  </div>-->
-<!--                  <div class="col-6 col-md-3">-->
-<!--                    <q-input v-model="v.lugar_nacimiento" dense outlined clearable label="Lugar de nacimiento"/>-->
-<!--                  </div>-->
-<!--                  <div class="col-6 col-md-3">-->
-<!--                    <q-input v-model="v.fecha_nacimiento" type="date" dense outlined label="Fecha de nacimiento"-->
-<!--                             @update:model-value="(val) => onBirthChange(val, v)"/>-->
-<!--                  </div>-->
-<!--                  <div class="col-6 col-md-3">-->
-<!--                    <q-input v-model.number="v.edad" dense outlined type="number" label="Edad"/>-->
-<!--                  </div>-->
-<!--                  <div class="col-6 col-md-3">-->
-<!--                    <q-select v-model="v.sexo" dense outlined emit-value map-options clearable-->
-<!--                              :options="sexos" label="Sexo"/>-->
-<!--                  </div>-->
-<!--                  <div class="col-6 col-md-3">-->
-<!--                    <q-select v-model="v.estado_civil" dense outlined emit-value map-options clearable-->
-<!--                              :options="estadosCiviles" label="Estado civil"/>-->
-<!--                  </div>-->
-<!--                  <div class="col-12 col-md-4">-->
-<!--                    <q-input v-model="v.ocupacion" dense outlined clearable label="Ocupación"/>-->
-<!--                  </div>-->
-<!--                  <div class="col-12 col-md-4">-->
-<!--                    <q-select v-model="v.idioma" dense outlined emit-value map-options clearable-->
-<!--                              :options="idiomas" label="Idioma"/>-->
-<!--                  </div>-->
-<!--                  <div class="col-12 col-md-8">-->
-<!--                    <q-input v-model="v.domicilio" dense outlined clearable label="Domicilio"/>-->
-<!--                  </div>-->
-<!--                  <div class="col-12 col-md-4">-->
-<!--                    <q-input v-model="v.telefono" dense outlined clearable label="Teléfono/Celular"/>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--              </q-card-section>-->
-<!--            </q-card>-->
-<!--          </template>-->
-<!--        </q-card-section>-->
+      </q-card>
+
+      <q-card flat bordered class="section-card q-mt-xs">
+        <q-card-section class="row items-center q-pa-none">
+          <q-item class="full-width" dense>
+            <q-item-section avatar><q-icon name="place" /></q-item-section>
+            <q-item-section>
+              <div class="text-subtitle1 text-weight-medium">3) Ubicacion del denunciante</div>
+            </q-item-section>
+            <q-item-section side>
+              <q-badge color="blue-2" text-color="blue-10" outline rounded>Obligatorio *</q-badge>
+            </q-item-section>
+          </q-item>
+        </q-card-section>
+        <q-separator/>
+        <q-card-section class="q-pa-xs">
+          <div class="row q-col-gutter-md">
+            <div class="col-10">
+              <q-input v-model="f.denunciante_domicilio_actual" dense outlined clearable label="Domicilio actual"/>
+            </div>
+            <div class="col-2">
+              <q-btn label="Buscar" @click="$refs.denunMap?.geocodeAndFly(f.denunciante_domicilio_actual)" />
+            </div>
+            <div class="col-12">
+              <div class="text-caption text-grey-7 q-mb-xs">Ubicación (denunciante)</div>
+              <MapPicker v-model="denunciantePos" :center="oruroCenter"
+                          :address="f.denunciante_domicilio_actual"
+                          country="bo"
+                         ref="denunMap"
+              />
+            </div>
+          </div>
+        </q-card-section>
       </q-card>
 
 
       <!-- Grupo Familiar (en acordeón para no saturar) -->
-      <q-card flat bordered class="section-card">
+      <q-card flat bordered class="section-card q-mt-xs">
         <q-expansion-item icon="diversity_3" dense-toggle expand-separator dense
-                          label="2) Grupo Familiar" header-class="text-subtitle1">
+                          label="4) Grupo Familiar" header-class="text-subtitle1">
           <q-card>
             <q-card-section>
-              <div class="row q-col-gutter-md">
-                <div class="col-12 col-md-6">
-                  <q-input v-model="f.familiar1_nombre_completo" dense outlined clearable label="Familiar 1: Nombres y apellidos"/>
+              <q-btn size="10px" label="Agregar familiar" color="primary" icon="add" @click="f.familiares.push({ nombre_completo: '', edad: null, parentesco: '', celular: '' })" class="q-mb-md" no-caps/>
+              <template v-for="(fam, index) in f.familiares" :key="index">
+                <div class="row q-col-gutter-md">
+                  <div class="col-12 col-md-5" >
+                    <q-input v-model="fam.familiar_nombre_completo" dense outlined clearable :label="`Familiar ${index + 1}: Nombres y apellidos`"/>
+                  </div>
+                  <div class="col-6 col-md-2">
+                    <!--                      <q-input v-model.number="fam.edad" dense outlined type="number" label="Edad"/>-->
+                    <q-input v-model.number="fam.familiar_edad" dense outlined type="number" label="Edad"/>
+                  </div>
+                  <div class="col-6 col-md-2">
+                    <!--                      <q-input v-model="fam.parentesco" dense outlined clearable label="Parentesco"/>-->
+                    <q-input v-model="fam.familiar_parentesco" dense outlined clearable label="Parentesco"/>
+                  </div>
+<!--                  <div class="col-12 col-md-2">-->
+<!--                    &lt;!&ndash;                      <q-input v-model="fam.celular" dense outlined clearable label="Celular"/>&ndash;&gt;-->
+<!--                    <q-input v-model="fam.familiar_celular" dense outlined clearable label="Celular"/>-->
+<!--                  </div>-->
+<!--                  familiar_estado_civil familiar_ocupacion familiar_telefono-->
+
+                  <div class="col-12 col-md-2">
+                    <q-input v-model="fam.familiar_estado_civil" dense outlined clearable label="Estado Civil"/>
+                  </div>
+                  <div class="col-12 col-md-2">
+                    <q-input v-model="fam.familiar_ocupacion" dense outlined clearable label="Ocupación"/>
+                  </div>
+                  <div class="col-12 col-md-2">
+                    <q-input v-model="fam.familiar_telefono" dense outlined clearable label="Teléfono/Celular"/>
+                  </div>
+                  <div class="col-12 col-md-1">
+                    <q-btn color="negative" icon="delete" dense flat @click="f.familiares.splice(index, 1)" />
+                  </div>
                 </div>
-                <div class="col-6 col-md-2">
-                  <q-input v-model.number="f.familiar1_edad" dense outlined type="number" label="Edad" />
-                </div>
-                <div class="col-6 col-md-2">
-                  <q-input v-model="f.familiar1_parentesco" dense outlined clearable label="Parentesco"/>
-                </div>
-                <div class="col-12 col-md-2">
-                  <q-input v-model="f.familiar1_celular" dense outlined clearable label="Celular"/>
-                </div>
-              </div>
-
-              <q-separator spaced/>
-
-              <div class="row q-col-gutter-md">
-                <div class="col-12 col-md-6"><q-input v-model="f.familiar2_nombre_completo" dense outlined clearable label="Familiar 2: Nombres y apellidos"/></div>
-                <div class="col-6 col-md-2"><q-input v-model.number="f.familiar2_edad" dense outlined type="number" label="Edad"/></div>
-                <div class="col-6 col-md-2"><q-input v-model="f.familiar2_parentesco" dense outlined clearable label="Parentesco"/></div>
-                <div class="col-12 col-md-2"><q-input v-model="f.familiar2_celular" dense outlined clearable label="Celular"/></div>
-              </div>
-
-              <q-separator spaced/>
-
-              <div class="row q-col-gutter-md">
-                <div class="col-12 col-md-6"><q-input v-model="f.familiar3_nombre_completo" dense outlined clearable label="Familiar 3: Nombres y apellidos"/></div>
-                <div class="col-6 col-md-2"><q-input v-model.number="f.familiar3_edad" dense outlined type="number" label="Edad"/></div>
-                <div class="col-6 col-md-2"><q-input v-model="f.familiar3_parentesco" dense outlined clearable label="Parentesco"/></div>
-                <div class="col-12 col-md-2"><q-input v-model="f.familiar3_celular" dense outlined clearable label="Celular"/></div>
-              </div>
-
-              <q-separator spaced/>
-
-              <div class="row q-col-gutter-md">
-                <div class="col-12 col-md-6"><q-input v-model="f.familiar4_nombre_completo" dense outlined clearable label="Familiar 4: Nombres y apellidos"/></div>
-                <div class="col-6 col-md-2"><q-input v-model.number="f.familiar4_edad" dense outlined type="number" label="Edad"/></div>
-                <div class="col-6 col-md-2"><q-input v-model="f.familiar4_parentesco" dense outlined clearable label="Parentesco"/></div>
-                <div class="col-12 col-md-2"><q-input v-model="f.familiar4_celular" dense outlined clearable label="Celular"/></div>
-              </div>
-
-              <q-separator spaced/>
-
-              <div class="row q-col-gutter-md">
-                <div class="col-12 col-md-6"><q-input v-model="f.familiar5_nombre_completo" dense outlined clearable label="Familiar 5: Nombres y apellidos"/></div>
-                <div class="col-6 col-md-2"><q-input v-model.number="f.familiar5_edad" dense outlined type="number" label="Edad"/></div>
-                <div class="col-6 col-md-2"><q-input v-model="f.familiar5_parentesco" dense outlined clearable label="Parentesco"/></div>
-                <div class="col-12 col-md-2"><q-input v-model="f.familiar5_celular" dense outlined clearable label="Celular"/></div>
-              </div>
+              </template>
             </q-card-section>
           </q-card>
         </q-expansion-item>
       </q-card>
 
       <!-- Denunciado -->
-      <q-card flat bordered class="section-card">
+      <q-card flat bordered class="section-card q-mt-xs">
         <q-card-section class="row items-center">
           <q-icon name="person_pin_circle" class="q-mr-sm"/>
-          <div class="text-subtitle1 text-weight-medium">3) Datos del Denunciado</div>
+          <div class="text-subtitle1 text-weight-medium">5) Datos del Denunciado</div>
         </q-card-section>
         <q-separator/>
-
         <q-card-section>
+          <div class="row items-center q-gutter-sm q-mb-sm">
+            <q-btn dense no-caps color="primary" icon="add" label="Añadir denunciado" @click="addDenunciado" size="10px" />
+            <div class="text-caption text-grey-7 q-ml-sm">Total: {{ f.denunciados.length }}</div>
+          </div>
+          <template v-for="(v, idx) in f.denunciados" :key="idx">
+            <q-card flat bordered class="q-mb-md">
+              <q-card-section class="row items-center q-pa-xs">
+                <q-item class="full-width" dense>
+                  <q-item-section avatar><q-icon name="person" /></q-item-section>
+                  <q-item-section>
+                    <div class="text-subtitle2 text-weight-medium">Denunciados {{ idx + 1 }}</div>
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-btn dense flat color="negative" icon="delete" :disable="f.denunciados.length<=1" @click="removeDenunciadoAt(idx)" />
+                  </q-item-section>
+                </q-item>
+              </q-card-section>
+              <q-separator/>
+              <q-card-section>
+                <div class="row q-col-gutter-md">
+                  <div class="col-12 col-md-6">
+                    <q-input v-model="v.nombres_apellidos" dense outlined clearable label="Nombres y apellidos *" />
+                  </div>
+                  <div class="col-6 col-md-3">
+                    <q-select v-model="v.tipo_documento" dense outlined emit-value map-options clearable
+                              :options="documentos" label="Documento" @update:model-value="val => { if (val !== 'Otro') v.tipo_documento_otro = '' }"/>
+                  </div>
+                  <div class="col-6 col-md-3" v-if="v.tipo_documento==='Otro'">
+                    <q-input v-model="v.tipo_documento_otro" dense outlined clearable label="Especifique otro documento"/>
+                  </div>
+                  <div class="col-6 col-md-3">
+                    <q-input v-model="v.ci" dense outlined clearable label="Numero de documento"/>
+                  </div>
+                  <div class="col-6 col-md-3">
+                    <q-input v-model="v.lugar_nacimiento" dense outlined clearable label="Lugar de nacimiento"/>
+                  </div>
+                  <div class="col-6 col-md-3">
+                    <q-input v-model="v.fecha_nacimiento" type="date" dense outlined label="Fecha de nacimiento"
+                             @update:model-value="(val) => onBirthChange(val, v,'victima')"/>
+                  </div>
+                  <div class="col-6 col-md-3">
+                    <q-input v-model.number="v.edad" dense outlined type="number" label="Edad"/>
+                  </div>
+                  <div class="col-6 col-md-3">
+                    <q-select v-model="v.sexo" dense outlined emit-value map-options clearable
+                              :options="sexos" label="Sexo"/>
+                  </div>
+                  <div class="col-6 col-md-3">
+                    <q-select v-model="v.estado_civil" dense outlined emit-value map-options clearable
+                              :options="estadosCiviles" label="Estado civil"/>
+                  </div>
+                  <div class="col-12 col-md-4">
+                    <q-input v-model="v.ocupacion" dense outlined clearable label="Ocupación"/>
+                  </div>
+                  <div class="col-12 col-md-4">
+                    <q-select v-model="v.idioma" dense outlined emit-value map-options clearable
+                              :options="idiomas" label="Idioma"/>
+                  </div>
+                  <div class="col-12 col-md-8">
+                    <q-input v-model="v.domicilio" dense outlined clearable label="Domicilio"/>
+                  </div>
+                  <div class="col-12 col-md-4">
+                    <q-input v-model="v.telefono" dense outlined clearable label="Teléfono/Celular"/>
+                  </div>
+                </div>
+              </q-card-section>
+            </q-card>
+          </template>
+        </q-card-section>
+      </q-card>
+
+      <q-card flat bordered class="section-card q-mt-xs">
+        <q-card-section class="row items-center q-pa-none">
+          <q-item class="full-width" dense>
+            <q-item-section avatar><q-icon name="place" /></q-item-section>
+            <q-item-section>
+              <div class="text-subtitle1 text-weight-medium">3) Ubicacion del denunciado</div>
+            </q-item-section>
+            <q-item-section side>
+              <q-badge color="blue-2" text-color="blue-10" outline rounded>Obligatorio *</q-badge>
+            </q-item-section>
+          </q-item>
+        </q-card-section>
+        <q-separator/>
+        <q-card-section class="q-pa-xs">
           <div class="row q-col-gutter-md">
-            <div class="col-12 col-md-6">
-              <q-input v-model="f.denunciado_nombre_completo" dense outlined clearable label="Nombre completo"/>
-            </div>
-            <div class="col-6 col-md-3">
-<!--              <q-input v-model="f.denunciado_documento" dense outlined clearable label="Documento"/>-->
-              <q-select v-model="f.denunciado_documento" dense outlined emit-value map-options clearable
-                        :options="documentos" label="Documento"/>
-            </div>
-            <div class="col-6 col-md-3">
-              <q-input v-model="f.denunciado_nro" dense outlined clearable label="Nro documento"/>
-            </div>
-
-            <div class="col-6 col-md-3">
-<!--              <q-input v-model="f.denunciado_sexo" dense outlined clearable label="Sexo"/>-->
-              <q-select v-model="f.denunciado_sexo" dense outlined emit-value map-options clearable
-                        :options="sexos" label="Sexo"/>
-            </div>
-            <div class="col-6 col-md-3">
-              <q-input v-model="f.denunciado_lugar_nacimiento" dense outlined clearable label="Lugar de nacimiento"/>
-            </div>
-            <div class="col-6 col-md-3">
-              <q-input v-model="f.denunciado_fecha_nacimiento" type="date" dense outlined label="Fecha de nacimiento" @update:model-value="(v) => {
-                if (v) {
-                  const birthDate = new Date(v)
-                  const ageDifMs = Date.now() - birthDate.getTime()
-                  const ageDate = new Date(ageDifMs)
-                  this.f.denunciado_edad = Math.abs(ageDate.getUTCFullYear() - 1970)
-                } else {
-                  this.f.denunciado_edad = ''
-                }
-              }"/>
-            </div>
-            <div class="col-6 col-md-3">
-              <q-input v-model.number="f.denunciado_edad" dense outlined type="number" label="Edad"/>
-            </div>
-            <div class="col-6 col-md-3">
-              <q-input v-model="f.denunciado_telefono" dense outlined clearable label="Teléfono/Celular"/>
-            </div>
-            <div class="col-6 col-md-3">
-              <q-input v-model="f.denunciado_grado" dense outlined clearable label="Grado de instrucción"/>
-            </div>
-            <div class="col-6 col-md-3">
-              <q-input v-model="f.denunciado_residencia" dense outlined clearable label="Residencia"/>
-            </div>
-
             <div class="col-10">
               <q-input v-model="f.denunciado_domicilio_actual" dense outlined clearable label="Domicilio actual"/>
             </div>
             <div class="col-2">
-              <q-btn label="Buscar" @click="$refs.denunMap?.geocodeAndFly(f.denunciado_domicilio_actual)" />
+              <q-btn label="Buscar" @click="$refs.denunciadoMap?.geocodeAndFly(f.denunciado_domicilio_actual)" />
             </div>
-
             <div class="col-12">
-              <div class="text-caption text-grey-7 q-mb-xs">Ubicación (denunciado)</div>
+              <div class="text-caption text-grey-7 q-mb-xs">Ubicación (denunciante)</div>
               <MapPicker v-model="denunciadoPos" :center="oruroCenter"
-                          :address="f.denunciado_domicilio_actual"
-                          country="bo"
-                         ref="denunMap"
+                         :address="f.denunciado_domicilio_actual"
+                         country="bo"
+                         ref="denunciadoMap"
               />
             </div>
           </div>
@@ -609,6 +538,7 @@
 
 <script>
 import MapPicker from 'components/MapPicker.vue'
+import moment from 'moment'
 
 export default {
   name: 'CasoNuevo',
@@ -661,28 +591,28 @@ export default {
         numero_apoyo_integral: '',
         area: 'SLIM',
         zona: 'CENTRAL',
-        denunciante_nombre_completo: '',
-        denunciante_nombres: '',
-        denunciante_paterno: '',
-        denunciante_materno: '',
-        denunciante_lugar_nacimiento: '',
-        denunciante_fecha_nacimiento: '',
-        denunciante_edad: '',
-        denunciante_telefono: '',
-        denunciante_grado: '',
-        denunciante_documento: 'Carnet de identidad',
-        denunciante_nro: '',
-        denunciante_sexo: '',
-        denunciante_residencia: '',
-        denunciante_estado_civil: '',
-        denunciante_relacion: '',
-        denunciante_idioma: '',
-        denunciante_trabaja: false,
-        denunciante_ocupacion: '',
+        // denunciante_nombre_completo: '',
+        // denunciante_nombres: '',
+        // denunciante_paterno: '',
+        // denunciante_materno: '',
+        // denunciante_lugar_nacimiento: '',
+        // denunciante_fecha_nacimiento: '',
+        // denunciante_edad: '',
+        // denunciante_telefono: '',
+        // denunciante_grado: '',
+        // denunciante_documento: 'Carnet de identidad',
+        // denunciante_nro: '',
+        // denunciante_sexo: '',
+        // denunciante_residencia: '',
+        // denunciante_estado_civil: '',
+        // denunciante_relacion: '',
+        // denunciante_idioma: '',
+        // denunciante_trabaja: false,
+        // denunciante_ocupacion: '',
         denunciante_domicilio_actual: '',
         latitud: null,
         longitud: null,
-        // Familiares
+        familiares : [],
         victimas: [
           { nombres_apellidos: '', ci: '', fecha_nacimiento: '', lugar_nacimiento: '', edad: null, sexo: '', estado_civil: '', ocupacion: '', idioma: '', domicilio: '', telefono: '',tipo_documento:'Carnet de identidad',tipo_documento_otro:''}
         ],
@@ -714,19 +644,45 @@ export default {
           }
         ],
         // Denunciado
-        denunciado_nombre_completo: '',
-        denunciado_documento: '',
-        denunciado_nro: '',
-        denunciado_sexo: '',
-        denunciado_residencia: '',
+        // denunciado_nombre_completo: '',
+        // denunciado_documento: '',
+        // denunciado_nro: '',
+        // denunciado_sexo: '',
+        // denunciado_residencia: '',
         denunciado_domicilio_actual: '',
-        denunciado_latitud: null,
-        denunciado_longitud: null,
-        denunciado_lugar_nacimiento: '',
-        denunciado_fecha_nacimiento: '',
-        denunciado_edad: '',
-        denunciado_telefono: '',
-        denunciado_grado: '',
+        // denunciado_latitud: null,
+        // denunciado_longitud: null,
+        // denunciado_lugar_nacimiento: '',
+        // denunciado_fecha_nacimiento: '',
+        // denunciado_edad: '',
+        // denunciado_telefono: '',
+        // denunciado_grado: '',
+        denunciados: [{
+          denunciado_nombres: '',
+          denunciado_paterno: '',
+          denunciado_materno: '',
+          denunciado_documento: '',
+          denunciado_nro: '',
+          denunciado_sexo: '',
+          denunciado_lugar_nacimiento: '',
+          denunciado_fecha_nacimiento: '',
+          denunciado_edad: '',
+          denunciado_telefono: '',
+          denunciado_residencia: '',
+          denunciado_estado_civil: '',
+          denunciado_relacion: '',
+          denunciado_grado: '',
+          denunciado_trabaja: '',
+          denunciado_prox: '',
+          denunciado_ocupacion: '',
+          denunciado_ocupacion_exacto: '',
+          denunciado_idioma: '',
+          denunciado_fijo: '',
+          denunciado_movil: '',
+          denunciado_domicilio_actual: '',
+          denunciado_latitud: '',
+          denunciado_longitud: '',
+        }],
         // Caso
         caso_numero: '',
         caso_fecha_hecho: '',
@@ -796,15 +752,56 @@ export default {
   },
   computed: {
     denunciantePos: {
-      get () { return { latitud: this.f.latitud, longitud: this.f.longitud } },
-      set (v) { this.f.latitud = v.latitud; this.f.longitud = v.longitud }
+      // get () { return { latitud: this.f.latitud, longitud: this.f.longitud } },
+      // set (v) { this.f.latitud = v.latitud; this.f.longitud = v.longitud }
+      get () { return { latitud: this.f.denunciantes[0].latitud, longitud: this.f.denunciantes[0].longitud } },
+      set (v) { this.f.denunciantes[0].latitud = v.latitud; this.f.denunciantes[0].longitud = v.longitud }
     },
     denunciadoPos: {
-      get () { return { latitud: this.f.denunciado_latitud, longitud: this.f.denunciado_longitud } },
-      set (v) { this.f.denunciado_latitud = v.latitud; this.f.denunciado_longitud = v.longitud }
+      // get () { return { latitud: this.f.denunciado_latitud, longitud: this.f.denunciado_longitud } },
+      // set (v) { this.f.denunciado_latitud = v.latitud; this.f.denunciado_longitud = v.longitud }
+      get () { return { latitud: this.f.denunciados[0].latitud, longitud: this.f.denunciados[0].longitud } },
+      set (v) { this.f.denunciados[0].latitud = v.latitud; this.f.denunciados[0].longitud = v.longitud }
     }
   },
   methods: {
+    addDenunciado(){
+      this.f.denunciados.push({
+            denunciado_nombres: '',
+            denunciado_paterno: '',
+            denunciado_materno: '',
+            denunciado_documento: 'Carnet de identidad',
+            denunciado_nro: '',
+            denunciado_sexo: '',
+            denunciado_lugar_nacimiento: '',
+            denunciado_fecha_nacimiento: '',
+            denunciado_edad: '',
+            denunciado_telefono: '',
+            denunciado_residencia: '',
+            denunciado_estado_civil: '',
+            denunciado_relacion: '',
+            denunciado_grado: '',
+            denunciado_domicilio_actual: '',
+            latitud: null,
+            longitud: null,
+            caso_id: null,
+            denunciante_idioma: '',
+            denunciante_trabaja: false,
+            denunciante_ocupacion: '',
+            denunciante_ingresos: null,
+            denunciante_parentesco: '',
+      })
+    },
+    removeDenunciadoAt(idx) {
+      this.$q.dialog({
+        title: 'Confirmar',
+        message: '¿Está seguro de eliminar este denunciado?',
+        cancel: true,
+        persistent: true
+      }).onOk(() => {
+        if (this.f.denunciados.length > 1) this.f.denunciados.splice(idx, 1)
+      })
+    },
     removeDenuncianteAt(idx) {
       this.$q.dialog({
         title: 'Confirmar',
@@ -851,20 +848,26 @@ export default {
             denunciante_parentesco: '',
       })
     },
-    removeVictima () {
-      if (this.f.victimas.length > 1) this.f.victimas.pop()
-    },
     removeVictimaAt (idx) {
-      if (this.f.victimas.length > 1) this.f.victimas.splice(idx, 1)
+      this.$q.dialog({
+        title: 'Confirmar',
+        message: '¿Está seguro de eliminar esta víctima?',
+        cancel: true,
+        persistent: true
+      }).onOk(() => {
+        if (this.f.victimas.length > 1) this.f.victimas.splice(idx, 1)
+      })
     },
-    onBirthChange (val, v) {
+    onBirthChange (val, v,tipo) {
       if (!val) { v.edad = null; return }
-      const bd = new Date(val)
-      const now = new Date()
-      let age = now.getFullYear() - bd.getFullYear()
-      const m = now.getMonth() - bd.getMonth()
-      if (m < 0 || (m === 0 && now.getDate() < bd.getDate())) age--
-      v.edad = isNaN(age) ? null : age
+      const hoy = moment()
+      if (tipo === 'victima') {
+        const nacimiento = moment(val)
+        v.edad = hoy.diff(nacimiento, 'years')
+      } else if (tipo === 'denunciante') {
+        const nacimiento = moment(val)
+        v.denunciante_edad = hoy.diff(nacimiento, 'years')
+      }
     },
     toggleRecognition(field) {
       if (!this.recognition) {
