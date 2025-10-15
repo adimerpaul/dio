@@ -90,7 +90,15 @@
     <q-tab-panels v-model="tab" animated keep-alive>
       <!-- 1) Información General -->
       <q-tab-panel name="info">
-        <SlimNuevo :casoId="caso.id" :showNumeroApoyoIntegral="caso?.numero_apoyo_integral" :editable="true" v-if="caso?.tipo==='SLIM'" @refresh="fetchCaso"/>
+<!--        <SlimNuevo :casoId="caso.id" :showNumeroApoyoIntegral="caso?.numero_apoyo_integral" :editable="true" v-if="caso?.tipo==='SLIM'" @refresh="fetchCaso"/>-->
+<!--        -->
+<!--        <CasoNuevoDNA :casoId="caso.id" :showNumeroApoyoIntegral="caso?.numero_apoyo_integral" :editable="true" v-else-if="caso?.tipo==='DNA'" @refresh="fetchCaso"/>-->
+<!--        <CasoNuevoSLAM :casoId="caso.id" :showNumeroApoyoIntegral="caso?.numero_apoyo_integral" :editable="true" v-else-if="caso?.tipo==='SLAM'" @refresh="fetchCaso"/>-->
+<!--        <CasoNuevoUMADIS :casoId="caso.id" :showNumeroApoyoIntegral="caso?.numero_apoyo_integral" :editable="true" v-else-if="caso?.tipo==='UMADIS'" @refresh="fetchCaso"/>-->
+<!--        <CasoNuevoPROPREMI :casoId="caso.id" :showNumeroApoyoIntegral="caso?.numero_apoyo_integral" :editable="true" v-else-if="caso?.tipo==='PROPREMI'" @refresh="fetchCaso"/>-->
+        <CasoNuevo :casoId="caso.id" :showNumeroApoyoIntegral="caso?.numero_apoyo_integral" :accion="'modificar'" v-if="caso" @refresh="fetchCaso" :caso="caso"/>
+
+
         <CasoNuevoDNA :casoId="caso.id" :showNumeroApoyoIntegral="caso?.numero_apoyo_integral" :editable="true" v-else-if="caso?.tipo==='DNA'" @refresh="fetchCaso"/>
         <CasoNuevoSLAM :casoId="caso.id" :showNumeroApoyoIntegral="caso?.numero_apoyo_integral" :editable="true" v-else-if="caso?.tipo==='SLAM'" @refresh="fetchCaso"/>
         <CasoNuevoUMADIS :casoId="caso.id" :showNumeroApoyoIntegral="caso?.numero_apoyo_integral" :editable="true" v-else-if="caso?.tipo==='UMADIS'" @refresh="fetchCaso"/>
@@ -165,9 +173,11 @@ import CasoNuevoUMADIS from "pages/umadis/UmadisNuevo.vue";
 import CasoNuevoPROPREMI from "pages/propremis/PropremisNuevo.vue";
 import Codigo from "pages/casos/tabs/Codigo.vue";
 import moment from "moment";
+import CasoNuevo from "pages/casos/CasoNuevo.vue";
 export default {
   name: 'CasoDetalle',
   components: {
+    CasoNuevo,
     Codigo,
     CasoNuevoPROPREMI,
     CasoNuevoUMADIS,
