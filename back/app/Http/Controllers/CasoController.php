@@ -982,6 +982,12 @@ class CasoController extends Controller
             if($request->has('legal_user_id') && $request->legal_user_id && !$caso->fecha_derivacion_area_legal){
                 $request['fecha_derivacion_area_legal'] = date('Y-m-d H:i:s');
             }
+            unset($request['fecha_apertura_caso']);
+            unset($request['caso_numero']);
+            unset($request['user_id']);
+            unset($request['area']);
+            unset($request['zona']);
+            unset($request['tipo']);
             $caso->update($request->all());
 
             if($request->has('familiares')){
