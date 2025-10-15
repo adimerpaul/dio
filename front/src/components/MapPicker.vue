@@ -1,7 +1,7 @@
 <template>
   <div class="map-wrapper">
     <div class="row">
-      <div class="col-12 col-md-4">
+      <div class="col-12 col-md-6">
         <div class="row items-center q-col-gutter-sm q-mb-sm">
           <!--      <div class="col-12 col-md-6">-->
           <!--        <q-input v-model="addr" dense outlined placeholder="Buscar dirección (ej: Calle Bolívar, Oruro)"/>-->
@@ -23,7 +23,7 @@
           </div>
         </div>
       </div>
-      <div class="col-12 col-md-8">
+      <div class="col-12 col-md-6">
         <l-map
           style="height: 350px"
           v-model:zoom="zoom"
