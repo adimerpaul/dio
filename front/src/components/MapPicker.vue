@@ -16,10 +16,13 @@
             <q-input v-model.number="localValue.longitud" dense outlined label="Longitud" />
           </div>
           <div class="col-6 col-md-6">
-            <q-btn dense no-caps color="primary" label="Ir" @click="flyToLatLng" icon="place" style="width: 140px" />
+            <q-btn no-caps color="primary" label="Ir" @click="flyToLatLng" icon="place" style="width: 220px" />
           </div>
           <div class="col-6 col-md-6">
-            <q-btn dense no-caps color="secondary" label="Mi ubicación" @click="locateMe" icon="my_location" style="width: 140px" />
+            <q-btn no-caps color="primary" label="Mi ubicación" @click="locateMe" icon="my_location" style="width: 220px"/>
+          </div>
+          <div class="col-6 col-md-6">
+            <q-btn no-caps color="info" :href="`https://www.google.com/maps/search/?api=1&query=${localValue.latitud},${localValue.longitud}`" target="_blank" label="Abrir en Google Maps" icon="open_in_new" style="width: 220px"/>
           </div>
         </div>
       </div>
