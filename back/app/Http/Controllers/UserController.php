@@ -9,10 +9,22 @@ use Intervention\Image\Drivers\Gd\Driver;
 use Spatie\Permission\Models\Permission;
 
 class UserController extends Controller{
-    function usuariosRole(){
-        $psicologos = User::where('role', 'Psicologo')->get();
-        $abogados = User::where('role', 'Abogado')->get();
-        $sociales = User::where('role', 'Social')->get();
+    function usuariosRole(Request $request){
+        $user = $request->user();
+        $area = $user->area;
+        $zona = $user->zona;
+        $psicologos = User::where('role', 'Psicologo')
+            ->where('area', $area)
+            ->where('zona', $zona)
+            ->get();
+        $abogados = User::where('role', 'Abogado')
+            ->where('area', $area)
+            ->where('zona', $zona)
+            ->get();
+        $sociales = User::where('role', 'Social')
+            ->where('area', $area)
+            ->where('zona', $zona)
+            ->get();
         return response()->json([
             'psicologos' => $psicologos,
             'abogados' => $abogados,
