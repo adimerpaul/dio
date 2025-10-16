@@ -66,6 +66,12 @@
         <div v-if="role === 'Abogado' && caso?.legal_user_id === $store.user?.id && !caso?.fecha_aceptacion_area_legal">
           <q-btn color="red" icon="check_circle" label="Aceptar Caso Legal" @click="aceptarCasoLegal()" no-caps size="10px"/>
         </div>
+        <div v-if="role === 'Psicologo' && caso?.psicologica_user_id === $store.user?.id && !caso?.fecha_aceptacion_area_psicologica">
+          <q-btn color="red" icon="check_circle" label="Aceptar Caso Psicológico" @click="aceptarCasoPsicolico()" no-caps size="10px"/>
+        </div>
+        <div v-if="role === 'Social' && caso?.trabajo_social_user_id === $store.user?.id && !caso?.fecha_aceptacion_area_social">
+          <q-btn color="red" icon="check_circle" label="Aceptar Caso Social" @click="aceptarCasoSocial()" no-caps size="10px"/>
+        </div>
       </div>
     </div>
 
@@ -267,6 +273,48 @@ export default {
   methods: {
     formatYmdHis(ymdhis) {
       return moment(ymdhis).format('DD/MM/YYYY HH:mm:ss');
+    },
+    aceptarCasoSocial(){
+      this.$q.dialog({
+        title: 'Confirmar aceptación',
+        html: true,
+        message: 'Confirma que deseas <b>ACEPTAR </b> el CASO: <b>' + (this.caso?.tipo || '')+' '+(this.caso?.caso_numero || '') + '</b><br><br>'+
+          '<span style="font-weight: bold">Denunciante: </span>' +(this.caso?.denunciantes[0]?.denunciante_nombres || '') + ' ' + (this.caso?.denunciantes[0]?.denunciante_paterno || '') + ' ' + (this.caso?.denunciantes[0]?.denunciante_materno || '') +'<br>'+
+          '<span style="font-weight: bold">Tipologia: </span>' + (this.caso?.caso_tipologia || '') +
+          '',
+        persistent: true,
+        ok: { label: 'Aceptar Caso', color: 'positive' },
+        cancel: { label: 'Cancelar', color: 'red' }
+      }).onOk(async () => {
+        try {
+          await this.$axios.post(`/casos/${this.caseId}/aceptar-social`);
+          this.$q.notify({ type: 'positive', message: 'Caso social aceptado exitosamente.' });
+          this.fetchCaso();
+        } catch (e) {
+          this.$alert.error(e?.response?.data?.message || 'No se pudo aceptar el caso social');
+        }
+      });
+    },
+    aceptarCasoPsicolico(){
+      this.$q.dialog({
+        title: 'Confirmar aceptación',
+        html: true,
+        message: 'Confirma que deseas <b>ACEPTAR </b> el CASO: <b>' + (this.caso?.tipo || '')+' '+(this.caso?.caso_numero || '') + '</b><br><br>'+
+          '<span style="font-weight: bold">Denunciante: </span>' +(this.caso?.denunciantes[0]?.denunciante_nombres || '') + ' ' + (this.caso?.denunciantes[0]?.denunciante_paterno || '') + ' ' + (this.caso?.denunciantes[0]?.denunciante_materno || '') +'<br>'+
+          '<span style="font-weight: bold">Tipologia: </span>' + (this.caso?.caso_tipologia || '') +
+          '',
+        persistent: true,
+        ok: { label: 'Aceptar Caso', color: 'positive' },
+        cancel: { label: 'Cancelar', color: 'red' }
+      }).onOk(async () => {
+        try {
+          await this.$axios.post(`/casos/${this.caseId}/aceptar-psicologico`);
+          this.$q.notify({ type: 'positive', message: 'Caso psicológico aceptado exitosamente.' });
+          this.fetchCaso();
+        } catch (e) {
+          this.$alert.error(e?.response?.data?.message || 'No se pudo aceptar el caso psicológico');
+        }
+      });
     },
     aceptarCasoLegal(){
       this.$q.dialog({
