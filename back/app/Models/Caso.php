@@ -63,6 +63,8 @@ class Caso extends Model implements AuditableContract
         'fecha_aceptacion_area_legal',
         'fecha_derivacion_area_psicologica',
         'fecha_aceptacion_area_psicologica',
+        'fecha_derivacion_area_social',
+        'fecha_aceptacion_area_social',
         'user_id',
     ];
 

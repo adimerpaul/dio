@@ -69,6 +69,8 @@ return new class extends Migration
             $table->dateTime('fecha_derivacion_area_legal')->nullable();
             $table->dateTime('fecha_derivacion_area_psicologica')->nullable();
             $table->dateTime('fecha_aceptacion_area_psicologica')->nullable();
+            $table->dateTime('fecha_derivacion_area_social')->nullable();
+            $table->dateTime('fecha_aceptacion_area_social')->nullable();
 
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users');
