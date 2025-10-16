@@ -27,10 +27,10 @@ class CasoController extends Controller
     function aceptarLegal(Request $request, Caso $caso)
     {
         $user = $request->user();
-        if ($user->role !== 'Abogado') {
-            return response()->json(['message' => 'No autorizado'], 403);
-        }
-        $caso->fecha_aceptacion_area_legal = date('Y-m-d');
+//        if ($user->role !== 'Abogado') {
+//            return response()->json(['message' => 'No autorizado'], 403);
+//        }
+        $caso->fecha_aceptacion_area_legal = date('Y-m-d H:i:s');
         $caso->save();
         return response()->json($caso);
     }
