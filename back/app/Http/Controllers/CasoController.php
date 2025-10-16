@@ -24,13 +24,18 @@ use Intervention\Image\ImageManager;
 
 class CasoController extends Controller
 {
-    function aceptarLegal(Request $request, Caso $caso)
-    {
-        $user = $request->user();
-//        if ($user->role !== 'Abogado') {
-//            return response()->json(['message' => 'No autorizado'], 403);
-//        }
+    function aceptarLegal(Request $request, Caso $caso){
         $caso->fecha_aceptacion_area_legal = date('Y-m-d H:i:s');
+        $caso->save();
+        return response()->json($caso);
+    }
+    function aceptarSocial(Request $request, Caso $caso){
+        $caso->fecha_aceptacion_area_social = date('Y-m-d H:i:s');
+        $caso->save();
+        return response()->json($caso);
+    }
+    function aceptarPsicologico(Request $request, Caso $caso){
+        $caso->fecha_aceptacion_area_psicologica = date('Y-m-d H:i:s');
         $caso->save();
         return response()->json($caso);
     }
@@ -940,6 +945,12 @@ class CasoController extends Controller
             if ($request->has('legal_user_id') && $request->legal_user_id) {
                 $request['fecha_derivacion_area_legal'] = date('Y-m-d H:i:s');
             }
+            if ($request->has('psicologica_user_id') && $request->psicologica_user_id) {
+                $request['fecha_derivacion_area_psicologica'] = date('Y-m-d H:i:s');
+            }
+            if ($request->has('trabajo_social_user_id') && $request->trabajo_social_user_id) {
+                $request['fecha_derivacion_area_social'] = date('Y-m-d H:i:s');
+            }
             $caso = Caso::create($request->all());
 
 //            $caso->asynccon denunciante
@@ -1029,6 +1040,14 @@ class CasoController extends Controller
         try {
             if ($request->has('legal_user_id') && $request->legal_user_id && !$caso->fecha_derivacion_area_legal) {
                 $request['fecha_derivacion_area_legal'] = date('Y-m-d H:i:s');
+            }
+
+            if ($request->has('psicologica_user_id') && $request->psicologica_user_id && !$caso->fecha_derivacion_area_psicologica) {
+                $request['fecha_derivacion_area_psicologica'] = date('Y-m-d H:i:s');
+            }
+
+            if ($request->has('trabajo_social_user_id') && $request->trabajo_social_user_id && !$caso->fecha_derivacion_area_social) {
+                $request['fecha_derivacion_area_social'] = date('Y-m-d H:i:s');
             }
 
             $caso->update($request->all());

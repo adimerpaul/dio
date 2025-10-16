@@ -38,6 +38,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/reportes/casos-resumen', [\App\Http\Controllers\CasoController::class, 'reportesResumen']);
     Route::delete('/casos/{caso}', [\App\Http\Controllers\CasoController::class, 'destroy']);
     Route::post('/casos/{caso}/aceptar-legal', [\App\Http\Controllers\CasoController::class, 'aceptarLegal']);
+//    await this.$axios.post(`/casos/${this.caseId}/aceptar-social`);
+    Route::post('/casos/{caso}/aceptar-social', [\App\Http\Controllers\CasoController::class, 'aceptarSocial']);
+//    await this.$axios.post(`/casos/${this.caseId}/aceptar-psicologico`);
+    Route::post('/casos/{caso}/aceptar-psicologico', [\App\Http\Controllers\CasoController::class, 'aceptarPsicologico']);
 
 
     Route::get ('/casos-linea-tiempo', [\App\Http\Controllers\CasoController::class, 'lineaTiempo']);
