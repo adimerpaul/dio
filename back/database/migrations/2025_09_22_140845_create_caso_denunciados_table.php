@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('denunciado_paterno', 80)->nullable();
             $table->string('denunciado_materno', 80)->nullable();
             $table->string('denunciado_documento', 40)->nullable();
+            $table->string('denunciado_documento_otro', 40)->nullable();
             $table->string('denunciado_nro', 30)->nullable();
             $table->string('denunciado_sexo', 15)->nullable();
             $table->string('denunciado_lugar_nacimiento', 120)->nullable();
@@ -34,7 +35,10 @@ return new class extends Migration
             $table->string('denunciado_idioma', 60)->nullable();
             $table->string('denunciado_fijo', 30)->nullable();
             $table->string('denunciado_movil', 30)->nullable();
-            $table->text('denunciado_domicilio_actual')->nullable();    // TEXT
+            $table->text('denunciado_domicilio_actual')->nullable();
+            $table->string('denunciado_ingresos', 60)->nullable();
+            $table->string('denunciado_relacion_victima', 60)->nullable();
+            $table->string('denunciado_relacion_denunciado', 60)->nullable();
             $table->decimal('denunciado_latitud', 10, 7)->nullable();
             $table->decimal('denunciado_longitud', 10, 7)->nullable();
             $table->unsignedBigInteger('caso_id');

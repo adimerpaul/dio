@@ -45,7 +45,10 @@
                     <div class="text-subtitle2 text-weight-medium">Víctima {{ idx + 1 }}</div>
                   </q-item-section>
                   <q-item-section side>
-                    <q-btn dense flat color="negative" icon="delete" :disable="f.victimas.length<=1" @click="removeVictimaAt(idx)" />
+                    <q-btn-group flat>
+<!--                      <q-btn dense flat color="primary" icon="content_copy"  @click="copyVictimaToDenunciante(idx)" title="Copiar datos de esta víctima al denunciante"/>-->
+                      <q-btn dense flat color="negative" icon="delete" :disable="f.victimas.length<=1" @click="removeVictimaAt(idx)" />
+                    </q-btn-group>
                   </q-item-section>
                 </q-item>
               </q-card-section>
@@ -100,6 +103,15 @@
               </q-card-section>
             </q-card>
           </template>
+          <div class="col-12">
+            <q-toggle v-model="copiar" @update:model-value="copyVictimaToDenunciante" dense
+                      :true-value="true" :false-value="false" title="Copiar datos de esta víctima al denunciante"
+            >
+              <div class="text-subtitle2 text-bold" style="font-size: 17px">
+                Victima es igual que denunciante?
+              </div>
+            </q-toggle>
+          </div>
         </q-card-section>
       </q-card>
       <q-card flat bordered class="section-card q-mt-xs">
@@ -172,13 +184,15 @@
                                 :options="estadosCiviles" label="Estado civil"/>
                     </div>
                     <div class="col-12 col-md-4">
-                      <q-input v-model="d.denunciante_grado" dense outlined clearable label="Grado de Instrucción"/>
+<!--                      <q-input v-model="d.denunciante_grado" dense outlined clearable label="Grado de Instrucción"/>-->
+                      <q-select v-model="d.denunciante_grado" dense outlined emit-value map-options clearable
+                                :options="gradosInstruccion" label="Grado de Instrucción"/>
                     </div>
                     <div class="col-12 col-md-4">
                       <q-input v-model="d.denunciante_ocupacion" dense outlined clearable label="Ocupación"/>
                     </div>
                     <div class="col-12 col-md-4">
-                      <q-input v-model.number="d.denunciante_ingresos" dense outlined type="number" label="Ingresos Económicos"/>
+                      <q-input v-model.number="d.denunciante_ingresos" dense outlined type="text" label="Ingresos Económicos"/>
                     </div>
                     <div class="col-12 col-md-4">
                       <q-select v-model="d.denunciante_idioma" dense outlined emit-value map-options clearable
@@ -191,7 +205,10 @@
                       <q-input v-model="d.denunciante_telefono" dense outlined clearable label="Teléfono/Celular"/>
                     </div>
                     <div class="col-12 col-md-4">
-                      <q-input v-model="d.denunciante_parentesco" dense outlined clearable label="Parentesco o Relación con la Victima"/>
+                      <q-input v-model="d.denunciante_relacion_victima" dense outlined clearable label="Parentesco o Relación con la Víctima"/>
+                    </div>
+                    <div class="col-12 col-md-4">
+                      <q-input v-model="d.denunciante_relacion_denunciado" dense outlined clearable label="Parentesco o Relación con el Denunciado"/>
                     </div>
                   </div>
                 </q-card-section>
@@ -313,10 +330,10 @@
                     <q-input v-model="v.denunciado_nombres" dense outlined clearable label="Nombres y apellidos *" />
                   </div>
                   <div class="col-6 col-md-3">
-                    <q-select v-model="v.tipo_documento" dense outlined emit-value map-options clearable
+                    <q-select v-model="v.denunciado_documento" dense outlined emit-value map-options clearable
                               :options="documentos" label="Documento" @update:model-value="val => { if (val !== 'Otro') v.tipo_documento_otro = '' }"/>
                   </div>
-                  <div class="col-6 col-md-3" v-if="v.tipo_documento==='Otro'">
+                  <div class="col-6 col-md-3" v-if="v.denunciado_documento==='Otro'">
                     <q-input v-model="v.tipo_documento_otro" dense outlined clearable label="Especifique otro documento"/>
                   </div>
                   <div class="col-6 col-md-3">
@@ -337,21 +354,37 @@
                               :options="sexos" label="Sexo"/>
                   </div>
                   <div class="col-6 col-md-3">
-                    <q-select v-model="v.estado_civil" dense outlined emit-value map-options clearable
+                    <q-select v-model="v.denunciado_estado_civil" dense outlined emit-value map-options clearable
                               :options="estadosCiviles" label="Estado civil"/>
                   </div>
                   <div class="col-12 col-md-4">
-                    <q-input v-model="v.ocupacion" dense outlined clearable label="Ocupación"/>
+                    <q-select v-model="v.denunciado_grado" dense outlined emit-value map-options clearable
+                              :options="gradosInstruccion" label="Grado de Instrucción"/>
                   </div>
                   <div class="col-12 col-md-4">
-                    <q-select v-model="v.idioma" dense outlined emit-value map-options clearable
+                    <q-input v-model="v.denunciado_ocupacion" dense outlined clearable label="Ocupación"/>
+                  </div>
+                  <div class="col-12 col-md-4">
+                    <q-select v-model="v.denunciado_idioma" dense outlined emit-value map-options clearable
                               :options="idiomas" label="Idioma"/>
                   </div>
                   <div class="col-12 col-md-8">
-                    <q-input v-model="v.domicilio" dense outlined clearable label="Domicilio"/>
+                    <q-input v-model="v.denunciado_domicilio_actual" dense outlined clearable label="Domicilio"/>
                   </div>
                   <div class="col-12 col-md-4">
-                    <q-input v-model="v.telefono" dense outlined clearable label="Teléfono/Celular"/>
+                    <q-input v-model="v.denunciado_telefono" dense outlined clearable label="Teléfono/Celular"/>
+                  </div>
+<!--                  'denunciado_ingresos',-->
+<!--                  'denunciado_relacion_victima',-->
+<!--                  'denunciado_relacion_denunciado',-->
+                  <div class="col-12 col-md-4">
+                    <q-input v-model="v.denunciado_ingresos" dense outlined clearable label="Ingresos Económicos"/>
+                  </div>
+                  <div class="col-12 col-md-4">
+                    <q-input v-model="v.denunciado_relacion_victima" dense outlined clearable label="Parentesco o Relación con la Víctima"/>
+                  </div>
+                  <div class="col-12 col-md-4">
+                    <q-input v-model="v.denunciado_relacion_denunciante" dense outlined clearable label="Parentesco o Relación con el Denunciante"/>
                   </div>
                 </div>
               </q-card-section>
@@ -427,15 +460,15 @@
                 </template>
               </q-input>
             </div>
-            <div class="col-12 col-md-3">
-              <q-input v-model="f.caso_fecha_hecho" type="date" dense outlined label="Fecha del hecho"/>
-            </div>
-            <div class="col-6 col-md-3">
-              <q-input v-model="f.denunciante_relacion" dense outlined clearable label="Relación con el denunciante"/>
-            </div>
-            <div class="col-12 col-md-6">
-              <q-input v-model="f.caso_lugar_hecho" dense outlined clearable label="Lugar del hecho"/>
-            </div>
+<!--            <div class="col-12 col-md-3">-->
+<!--              <q-input v-model="f.caso_fecha_hecho" type="date" dense outlined label="Fecha del hecho"/>-->
+<!--            </div>-->
+<!--            <div class="col-6 col-md-3">-->
+<!--              <q-input v-model="f.denunciante_relacion" dense outlined clearable label="Relación con el denunciante"/>-->
+<!--            </div>-->
+<!--            <div class="col-12 col-md-6">-->
+<!--              <q-input v-model="f.caso_lugar_hecho" dense outlined clearable label="Lugar del hecho"/>-->
+<!--            </div>-->
             <div class="col-12 col-md-4">
               <q-select v-model="f.caso_tipologia" dense outlined emit-value map-options clearable
                         :options="tipologias" label="Tipología"/>
@@ -557,6 +590,15 @@ export default {
   },
   data () {
     return {
+      gradosInstruccion: [
+        { label: 'Grado Primario', value: 'Grado Primario' },
+        { label: 'Grado Secundario', value: 'Grado Secundario' },
+        { label: 'Bachiller', value: 'Bachiller' },
+        { label: 'Grado Universitario', value: 'Grado Universitario' },
+        { label: 'Profesional', value: 'Profesional' },
+        { label: 'Otro', value: 'Otro' }
+      ],
+      copiar: false,
       tipologias: [],
       recognition: null,
       activeField: null,
@@ -649,7 +691,8 @@ export default {
           denunciado_nombres: '',
           denunciado_paterno: '',
           denunciado_materno: '',
-          denunciado_documento: '',
+          denunciado_documento: 'Carnet de identidad',
+          denunciado_documento_otro: '',
           denunciado_nro: '',
           denunciado_sexo: '',
           denunciado_lugar_nacimiento: '',
@@ -865,6 +908,67 @@ export default {
             denunciante_ingresos: null,
             denunciante_parentesco: '',
       })
+    },
+    copyVictimaToDenunciante(val){
+      console.log(val)
+      this.f.denunciantes = []
+      if (val){
+        console.log(this.f.victimas)
+        this.f.victimas.forEach((v,index)=>{
+          this.f.denunciantes.push({
+            denunciante_nombres: v.nombres_apellidos || '',
+            denunciante_paterno: '',
+            denunciante_materno: '',
+            denunciante_documento: v.tipo_documento || 'Carnet de identidad',
+            denunciante_nro: v.ci || '',
+            denunciante_sexo: v.sexo || '',
+            denunciante_lugar_nacimiento: v.lugar_nacimiento || '',
+            denunciante_fecha_nacimiento: v.fecha_nacimiento || '',
+            denunciante_edad: v.edad || '',
+            denunciante_telefono: v.telefono || '',
+            denunciante_residencia: v.domicilio || '',
+            denunciante_estado_civil: v.estado_civil || '',
+            denunciante_relacion: '',
+            denunciante_grado: '',
+            denunciante_domicilio_actual: v.domicilio || '',
+            latitud: null,
+            longitud: null,
+            caso_id: null,
+            denunciante_idioma: v.idioma || '',
+            denunciante_trabaja: false,
+            denunciante_ocupacion: v.ocupacion || '',
+            denunciante_ingresos: null,
+            denunciante_parentesco: '',
+          })
+        })
+        return false
+      }else {
+        this.f.denunciantes.push({
+          denunciante_nombres: '',
+          denunciante_paterno: '',
+          denunciante_materno: '',
+          denunciante_documento: 'Carnet de identidad',
+          denunciante_nro: '',
+          denunciante_sexo: '',
+          denunciante_lugar_nacimiento: '',
+          denunciante_fecha_nacimiento: '',
+          denunciante_edad: '',
+          denunciante_telefono: '',
+          denunciante_residencia: '',
+          denunciante_estado_civil: '',
+          denunciante_relacion: '',
+          denunciante_grado: '',
+          denunciante_domicilio_actual: '',
+          latitud: null,
+          longitud: null,
+          caso_id: null,
+          denunciante_idioma: '',
+          denunciante_trabaja: false,
+          denunciante_ocupacion: '',
+          denunciante_ingresos: null,
+          denunciante_parentesco: '',
+        })
+      }
     },
     removeVictimaAt (idx) {
       this.$q.dialog({

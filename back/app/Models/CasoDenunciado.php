@@ -15,6 +15,7 @@ class CasoDenunciado extends Model implements AuditableContract
         'denunciado_paterno',
         'denunciado_materno',
         'denunciado_documento',
+        'denunciado_documento_otro',
         'denunciado_nro',
         'denunciado_sexo',
         'denunciado_lugar_nacimiento',
@@ -36,6 +37,9 @@ class CasoDenunciado extends Model implements AuditableContract
         'denunciado_latitud',
         'denunciado_longitud',
         'caso_id',
+        'denunciado_ingresos',
+        'denunciado_relacion_victima',
+        'denunciado_relacion_denunciado',
     ];
     protected $hidden = [
         'created_at',
