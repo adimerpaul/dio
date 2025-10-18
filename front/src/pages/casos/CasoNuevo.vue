@@ -56,27 +56,27 @@
               <q-card-section>
                 <div class="row q-col-gutter-md">
                   <div class="col-12 col-md-6">
-                    <q-input v-model="v.nombres_apellidos" dense outlined clearable label="Nombres y apellidos *" />
+                    <q-input v-model="v.nombres_apellidos" dense outlined clearable label="Nombres y apellidos *"  v-upper />
                   </div>
                   <div class="col-6 col-md-3">
                     <q-select v-model="v.tipo_documento" dense outlined emit-value map-options clearable
                               :options="documentos" label="Documento" @update:model-value="val => { if (val !== 'Otro') v.tipo_documento_otro = '' }"/>
                   </div>
                   <div class="col-6 col-md-3" v-if="v.tipo_documento==='Otro'">
-                    <q-input v-model="v.tipo_documento_otro" dense outlined clearable label="Especifique otro documento"/>
+                    <q-input v-model="v.tipo_documento_otro" dense outlined clearable label="Especifique otro documento" v-upper/>
                   </div>
                   <div class="col-6 col-md-3">
-                    <q-input v-model="v.ci" dense outlined clearable label="Numero de documento"/>
+                    <q-input v-model="v.ci" dense outlined clearable label="Numero de documento" v-upper/>
                   </div>
                   <div class="col-6 col-md-3">
-                    <q-input v-model="v.lugar_nacimiento" dense outlined clearable label="Lugar de nacimiento"/>
+                    <q-input v-model="v.lugar_nacimiento" dense outlined clearable label="Lugar de nacimiento" v-upper/>
                   </div>
                   <div class="col-6 col-md-3">
-                    <q-input v-model="v.fecha_nacimiento" type="date" dense outlined label="Fecha de nacimiento"
+                    <q-input v-model="v.fecha_nacimiento" type="date" dense outlined label="Fecha de nacimient v-uppero"
                              @update:model-value="(val) => onBirthChange(val, v,'victima')"/>
                   </div>
                   <div class="col-6 col-md-3">
-                    <q-input v-model.number="v.edad" dense outlined type="number" label="Edad"/>
+                    <q-input v-model.number="v.edad" dense outlined type="number" label="Edad" v-upper/>
                   </div>
                   <div class="col-6 col-md-3">
                     <q-select v-model="v.sexo" dense outlined emit-value map-options clearable
@@ -87,17 +87,17 @@
                               :options="estadosCiviles" label="Estado civil"/>
                   </div>
                   <div class="col-12 col-md-4">
-                    <q-input v-model="v.ocupacion" dense outlined clearable label="Ocupación"/>
+                    <q-input v-model="v.ocupacion" dense outlined clearable label="Ocupación" v-upper/>
                   </div>
                   <div class="col-12 col-md-4">
                     <q-select v-model="v.idioma" dense outlined emit-value map-options clearable
                               :options="idiomas" label="Idioma"/>
                   </div>
                   <div class="col-12 col-md-8">
-                    <q-input v-model="v.domicilio" dense outlined clearable label="Domicilio"/>
+                    <q-input v-model="v.domicilio" dense outlined clearable label="Domicilio" v-upper/>
                   </div>
                   <div class="col-12 col-md-4">
-                    <q-input v-model="v.telefono" dense outlined clearable label="Teléfono/Celular"/>
+                    <q-input v-model="v.telefono" dense outlined clearable label="Teléfono/Celular" v-upper/>
                   </div>
                 </div>
               </q-card-section>
@@ -153,20 +153,20 @@
                 <q-card-section>
                   <div class="row q-col-gutter-md">
                     <div class="col-12 col-md-6">
-                      <q-input v-model="d.denunciante_nombres" dense outlined clearable label="Nombres y apellidos *" />
+                      <q-input v-model="d.denunciante_nombres" dense outlined clearable label="Nombres y apellidos *"  v-upper/>
                     </div>
                     <div class="col-6 col-md-3">
                       <q-select v-model="d.denunciante_documento" dense outlined emit-value map-options clearable
                                 :options="documentos" label="Documento" @update:model-value="val => { if (val !== 'Otro') d.denunciante_documento_otro = '' }"/>
                     </div>
                     <div class="col-6 col-md-3" v-if="d.denunciante_documento==='Otro'">
-                      <q-input v-model="d.denunciante_documento_otro" dense outlined clearable label="Especifique otro documento"/>
+                      <q-input v-model="d.denunciante_documento_otro" dense outlined clearable label="Especifique otro documento" v-upper/>
                     </div>
                     <div class="col-6 col-md-3">
-                      <q-input v-model="d.denunciante_nro" dense outlined clearable label="Numero de documento"/>
+                      <q-input v-model="d.denunciante_nro" dense outlined clearable label="Numero de documento" v-upper/>
                     </div>
                     <div class="col-6 col-md-3">
-                      <q-input v-model="d.denunciante_lugar_nacimiento" dense outlined clearable label="Lugar de nacimiento"/>
+                      <q-input v-model="d.denunciante_lugar_nacimiento" dense outlined clearable label="Lugar de nacimiento" v-upper/>
                     </div>
                     <div class="col-6 col-md-3">
                       <q-input v-model="d.denunciante_fecha_nacimiento" type="date" dense outlined label="Fecha de nacimiento"
@@ -189,26 +189,26 @@
                                 :options="gradosInstruccion" label="Grado de Instrucción"/>
                     </div>
                     <div class="col-12 col-md-4">
-                      <q-input v-model="d.denunciante_ocupacion" dense outlined clearable label="Ocupación"/>
+                      <q-input v-model="d.denunciante_ocupacion" dense outlined clearable label="Ocupación" v-upper/>
                     </div>
                     <div class="col-12 col-md-4">
-                      <q-input v-model.number="d.denunciante_ingresos" dense outlined type="text" label="Ingresos Económicos"/>
+                      <q-input v-model.number="d.denunciante_ingresos" dense outlined type="text" label="Ingresos Económicos" v-upper/>
                     </div>
                     <div class="col-12 col-md-4">
                       <q-select v-model="d.denunciante_idioma" dense outlined emit-value map-options clearable
                                 :options="idiomas" label="Idioma"/>
                     </div>
                     <div class="col-12 col-md-8">
-                      <q-input v-model="d.denunciante_domicilio_actual" dense outlined clearable label="Domicilio"/>
+                      <q-input v-model="d.denunciante_domicilio_actual" dense outlined clearable label="Domicilio" v-upper/>
                     </div>
                     <div class="col-12 col-md-4">
-                      <q-input v-model="d.denunciante_telefono" dense outlined clearable label="Teléfono/Celular"/>
+                      <q-input v-model="d.denunciante_telefono" dense outlined clearable label="Teléfono/Celular" v-upper/>
                     </div>
                     <div class="col-12 col-md-4">
-                      <q-input v-model="d.denunciante_relacion_victima" dense outlined clearable label="Parentesco o Relación con la Víctima"/>
+                      <q-input v-model="d.denunciante_relacion_victima" dense outlined clearable label="Parentesco o Relación con la Víctima" v-upper/>
                     </div>
                     <div class="col-12 col-md-4">
-                      <q-input v-model="d.denunciante_relacion_denunciado" dense outlined clearable label="Parentesco o Relación con el Denunciado"/>
+                      <q-input v-model="d.denunciante_relacion_denunciado" dense outlined clearable label="Parentesco o Relación con el Denunciado" v-upper/>
                     </div>
                   </div>
                 </q-card-section>
@@ -263,7 +263,7 @@
               <template v-for="(fam, index) in f.familiares" :key="index">
                 <div class="row q-col-gutter-md">
                   <div class="col-12 col-md-5" >
-                    <q-input v-model="fam.familiar_nombre_completo" dense outlined clearable :label="`Familiar ${index + 1}: Nombres y apellidos`"/>
+                    <q-input v-model="fam.familiar_nombre_completo" dense outlined clearable :label="`Familiar ${index + 1}: Nombres y apellidos`" v-upper/>
                   </div>
                   <div class="col-6 col-md-2">
                     <!--                      <q-input v-model.number="fam.edad" dense outlined type="number" label="Edad"/>-->
@@ -280,13 +280,13 @@
 <!--                  familiar_estado_civil familiar_ocupacion familiar_telefono-->
 
                   <div class="col-12 col-md-2">
-                    <q-input v-model="fam.familiar_estado_civil" dense outlined clearable label="Estado Civil"/>
+                    <q-input v-model="fam.familiar_estado_civil" dense outlined clearable label="Estado Civil" v-upper/>
                   </div>
                   <div class="col-12 col-md-2">
-                    <q-input v-model="fam.familiar_ocupacion" dense outlined clearable label="Ocupación"/>
+                    <q-input v-model="fam.familiar_ocupacion" dense outlined clearable label="Ocupación" v-upper/>
                   </div>
                   <div class="col-12 col-md-2">
-                    <q-input v-model="fam.familiar_telefono" dense outlined clearable label="Teléfono/Celular"/>
+                    <q-input v-model="fam.familiar_telefono" dense outlined clearable label="Teléfono/Celular" v-upper/>
                   </div>
                   <div class="col-12 col-md-1">
                     <q-btn color="negative" icon="delete" dense flat @click="f.familiares.splice(index, 1)" />
@@ -327,27 +327,27 @@
               <q-card-section>
                 <div class="row q-col-gutter-md">
                   <div class="col-12 col-md-6">
-                    <q-input v-model="v.denunciado_nombres" dense outlined clearable label="Nombres y apellidos *" />
+                    <q-input v-model="v.denunciado_nombres" dense outlined clearable label="Nombres y apellidos *"  v-upper/>
                   </div>
                   <div class="col-6 col-md-3">
                     <q-select v-model="v.denunciado_documento" dense outlined emit-value map-options clearable
                               :options="documentos" label="Documento" @update:model-value="val => { if (val !== 'Otro') v.tipo_documento_otro = '' }"/>
                   </div>
                   <div class="col-6 col-md-3" v-if="v.denunciado_documento==='Otro'">
-                    <q-input v-model="v.tipo_documento_otro" dense outlined clearable label="Especifique otro documento"/>
+                    <q-input v-model="v.tipo_documento_otro" dense outlined clearable label="Especifique otro documento" v-upper/>
                   </div>
                   <div class="col-6 col-md-3">
-                    <q-input v-model="v.ci" dense outlined clearable label="Numero de documento"/>
+                    <q-input v-model="v.ci" dense outlined clearable label="Numero de documento" v-upper/>
                   </div>
                   <div class="col-6 col-md-3">
-                    <q-input v-model="v.lugar_nacimiento" dense outlined clearable label="Lugar de nacimiento"/>
+                    <q-input v-model="v.lugar_nacimiento" dense outlined clearable label="Lugar de nacimiento" v-upper/>
                   </div>
                   <div class="col-6 col-md-3">
                     <q-input v-model="v.fecha_nacimiento" type="date" dense outlined label="Fecha de nacimiento"
                              @update:model-value="(val) => onBirthChange(val, v,'victima')"/>
                   </div>
                   <div class="col-6 col-md-3">
-                    <q-input v-model.number="v.edad" dense outlined type="number" label="Edad"/>
+                    <q-input v-model.number="v.edad" dense outlined type="number" label="Edad" v-upper/>
                   </div>
                   <div class="col-6 col-md-3">
                     <q-select v-model="v.sexo" dense outlined emit-value map-options clearable
@@ -362,29 +362,29 @@
                               :options="gradosInstruccion" label="Grado de Instrucción"/>
                   </div>
                   <div class="col-12 col-md-4">
-                    <q-input v-model="v.denunciado_ocupacion" dense outlined clearable label="Ocupación"/>
+                    <q-input v-model="v.denunciado_ocupacion" dense outlined clearable label="Ocupación" v-upper/>
                   </div>
                   <div class="col-12 col-md-4">
                     <q-select v-model="v.denunciado_idioma" dense outlined emit-value map-options clearable
                               :options="idiomas" label="Idioma"/>
                   </div>
                   <div class="col-12 col-md-8">
-                    <q-input v-model="v.denunciado_domicilio_actual" dense outlined clearable label="Domicilio"/>
+                    <q-input v-model="v.denunciado_domicilio_actual" dense outlined clearable label="Domicilio" v-upper/>
                   </div>
                   <div class="col-12 col-md-4">
-                    <q-input v-model="v.denunciado_telefono" dense outlined clearable label="Teléfono/Celular"/>
+                    <q-input v-model="v.denunciado_telefono" dense outlined clearable label="Teléfono/Celular" v-upper/>
                   </div>
 <!--                  'denunciado_ingresos',-->
 <!--                  'denunciado_relacion_victima',-->
 <!--                  'denunciado_relacion_denunciado',-->
                   <div class="col-12 col-md-4">
-                    <q-input v-model="v.denunciado_ingresos" dense outlined clearable label="Ingresos Económicos"/>
+                    <q-input v-model="v.denunciado_ingresos" dense outlined clearable label="Ingresos Económicos" v-upper/>
                   </div>
                   <div class="col-12 col-md-4">
-                    <q-input v-model="v.denunciado_relacion_victima" dense outlined clearable label="Parentesco o Relación con la Víctima"/>
+                    <q-input v-model="v.denunciado_relacion_victima" dense outlined clearable label="Parentesco o Relación con la Víctima" v-upper/>
                   </div>
                   <div class="col-12 col-md-4">
-                    <q-input v-model="v.denunciado_relacion_denunciante" dense outlined clearable label="Parentesco o Relación con el Denunciante"/>
+                    <q-input v-model="v.denunciado_relacion_denunciante" dense outlined clearable label="Parentesco o Relación con el Denunciante" v-upper/>
                   </div>
                 </div>
               </q-card-section>
@@ -575,10 +575,61 @@
 <script>
 import MapPicker from 'components/MapPicker.vue'
 import moment from 'moment'
+const vUpper = {
+  _attach(el) {
+    // evita enganchar dos veces
+    if (el.__upperAttached__) return
 
+    // QInput puede renderizar tarde; busca el nativo
+    const input = el.querySelector(
+      'input:not([type="number"]):not([type="date"]):not([type="time"]), textarea'
+    )
+    if (!input) {
+      // reintenta en el siguiente tick
+      clearTimeout(el.__upperTimer__)
+      el.__upperTimer__ = setTimeout(() => vUpper._attach(el), 0)
+      return
+    }
+
+    const handler = (e) => {
+      const upper = (e.target.value || '')
+        .toUpperCase()
+        .replace(/\s+/g, ' ')
+        .trim()
+      if (upper !== e.target.value) {
+        const caret = e.target.selectionStart
+        e.target.value = upper
+        // sincroniza con v-model (QInput escucha este evento)
+        e.target.dispatchEvent(new Event('input', { bubbles: true }))
+        try { e.target.setSelectionRange(caret, caret) } catch {}
+      }
+    }
+
+    input.autocapitalize = 'characters' // ayuda en móviles
+    input.addEventListener('input', handler)
+    // inicializa si ya hay valor
+    handler({ target: input })
+
+    el.__upperAttached__ = true
+    el.__upperHandler__ = handler
+  },
+
+  mounted(el)   { vUpper._attach(el) },
+  updated(el)   { vUpper._attach(el) },
+  unmounted(el) {
+    clearTimeout(el.__upperTimer__)
+    const input = el.querySelector('input, textarea')
+    if (input && el.__upperHandler__) {
+      input.removeEventListener('input', el.__upperHandler__)
+    }
+    delete el.__upperAttached__
+    delete el.__upperHandler__
+  }
+}
 export default {
   name: 'CasoNuevo',
   components: { MapPicker },
+  directives: { upper: vUpper },
   props: {
     showNumeroApoyoIntegral: { type: Boolean, default: false },
     // tipologias: { type: Array, default: () => [] },
@@ -910,10 +961,10 @@ export default {
       })
     },
     copyVictimaToDenunciante(val){
-      console.log(val)
+      // console.log(val)
       this.f.denunciantes = []
       if (val){
-        console.log(this.f.victimas)
+        this.$alert.info('Complete el grado de instrucción e ingresos económicos del/los denunciante(s) copiado(s) de la(s) víctima(s).')
         this.f.victimas.forEach((v,index)=>{
           this.f.denunciantes.push({
             denunciante_nombres: v.nombres_apellidos || '',
