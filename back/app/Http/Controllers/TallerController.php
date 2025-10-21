@@ -16,8 +16,15 @@ class TallerController extends Controller
 
     // Crear
     public function store(Request $request){
+        $user = $request->user();
+        $request->merge(['user_id' => $user->id]);
         $taller = Taller::create($request->all());
         return response()->json($taller, 201);
+    }
+    public function update(Request $request, Taller $taller)
+    {
+        $taller->update($request->all());
+        return response()->json($taller, 200);
     }
 
     // Eliminar

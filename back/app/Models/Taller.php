@@ -29,6 +29,7 @@ class Taller extends Model implements AuditableContract
         'direccion_ubicacion_ue_colegio',
         'dirigido_a',
         'color',
+        'user_id'
     ];
 
     protected $hidden = [
@@ -36,4 +37,8 @@ class Taller extends Model implements AuditableContract
         'updated_at',
         'deleted_at',
     ];
+
+    function user(){
+        return $this->belongsTo(User::class);
+    }
 }

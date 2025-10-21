@@ -40,6 +40,9 @@ return new class extends Migration
 
             $table->string('color', 7)->nullable();
 
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users');
+
             $table->softDeletes();
             $table->timestamps();
         });

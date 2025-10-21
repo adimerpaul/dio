@@ -216,6 +216,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/talleres', [TallerController::class, 'index']);
     Route::post('/talleres', [TallerController::class, 'store']);
+    Route::put('/talleres/{taller}', [TallerController::class, 'update']);
     Route::delete('/talleres/{taller}', [TallerController::class, 'destroy']);
 });
 Route::get('/slimsImprimir', [SlimController::class, 'imprimir']);
