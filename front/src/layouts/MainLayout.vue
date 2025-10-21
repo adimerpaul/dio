@@ -351,12 +351,12 @@
               </q-item-section>
             </q-item>
 <!--            -	ORIENTACIONES/TALLERES-->
-            <q-item :inset-level="0.3" dense to="/propremis/nuevo-orientacion-taller" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
+            <q-item :inset-level="0.3" dense to="/talleres" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
               <q-item-section avatar>
                 <q-icon name="record_voice_over" class="text-white"/>
               </q-item-section>
               <q-item-section>
-                <q-item-label class="text-white">Nueva Orientación / Taller</q-item-label>
+                <q-item-label class="text-white">Agenda Talleres de Orientación</q-item-label>
               </q-item-section>
             </q-item>
           </q-list>
