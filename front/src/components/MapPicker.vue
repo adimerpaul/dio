@@ -24,6 +24,9 @@
           <div class="col-6 col-md-6">
             <q-btn no-caps color="info" :href="`https://www.google.com/maps/search/?api=1&query=${localValue.latitud},${localValue.longitud}`" target="_blank" label="Abrir en Google Maps" icon="open_in_new" style="width: 220px"/>
           </div>
+          <div class="col-6 col-md-6">
+            <q-btn no-caps color="info" :href="`${$url}/mapa?lat=${localValue.latitud}&lng=${localValue.longitud}`" target="_blank" label="Imprimir" icon="print" style="width: 220px"/>
+          </div>
         </div>
       </div>
       <div class="col-12 col-md-6">

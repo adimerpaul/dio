@@ -383,6 +383,12 @@
                     <q-input v-model="v.denunciado_ocupacion" dense outlined clearable label="Ocupación" v-upper/>
                   </div>
                   <div class="col-12 col-md-4">
+                    <q-input v-model="v.denunciado_cargo" dense outlined clearable label="Institucion / Cargo" v-upper/>
+                  </div>
+                  <div class="col-12 col-md-4">
+                    <q-input v-model="v.denunciado_ingresos" dense outlined clearable label="Ingresos Económicos" v-upper/>
+                  </div>
+                  <div class="col-12 col-md-4">
                     <q-select v-model="v.denunciado_idioma" dense outlined emit-value map-options clearable
                               :options="idiomas" label="Idioma"/>
                   </div>
@@ -395,9 +401,6 @@
 <!--                  'denunciado_ingresos',-->
 <!--                  'denunciado_relacion_victima',-->
 <!--                  'denunciado_relacion_denunciado',-->
-                  <div class="col-12 col-md-4">
-                    <q-input v-model="v.denunciado_ingresos" dense outlined clearable label="Ingresos Económicos" v-upper/>
-                  </div>
                   <div class="col-12 col-md-4">
                     <q-input v-model="v.denunciado_relacion_victima" dense outlined clearable label="Parentesco o Relación con la Víctima" v-upper/>
                   </div>
@@ -830,6 +833,7 @@ export default {
           denunciado_trabaja: '',
           denunciado_prox: '',
           denunciado_ocupacion: '',
+          denunciado_cargo: '',
           denunciado_ocupacion_exacto: '',
           denunciado_idioma: '',
           denunciado_fijo: '',
