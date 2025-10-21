@@ -35,7 +35,9 @@ return new class extends Migration
             $table->decimal('longitud', 10, 7)->nullable();
             $table->string('denunciante_idioma', 80)->nullable();
             $table->boolean('denunciante_trabaja')->default(false);
-            $table->string('denunciante_ocupacion', 120)->nullable();
+            $table->string('denunciante_ocupacion')->nullable();
+            $table->string('denunciante_parentesco')->nullable();
+            $table->string('denunciante_cargo')->nullable();
             $table->unsignedBigInteger('caso_id');
             $table->foreign('caso_id')->references('id')->on('casos');
             $table->softDeletes();

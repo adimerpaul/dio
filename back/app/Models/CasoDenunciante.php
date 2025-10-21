@@ -34,6 +34,7 @@ class CasoDenunciante extends Model implements AuditableContract
         'denunciante_ingresos',
         'denunciante_relacion_victima',
         'denunciante_relacion_denunciado',
+        'denunciante_cargo'
     ];
     protected $hidden = [
         'created_at',
