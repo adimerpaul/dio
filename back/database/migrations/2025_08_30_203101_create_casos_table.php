@@ -37,6 +37,7 @@ return new class extends Migration
             $table->string('violencia_patrimonial', 10)->nullable();
             $table->string('violencia_simbolica', 10)->nullable();
             $table->string('violencia_institucional', 10)->nullable();
+            $table->string('violencia_cibernetica', 10)->nullable();
 
             $table->unsignedBigInteger('psicologica_user_id')->nullable();
             $table->foreign('psicologica_user_id')->references('id')->on('users');
@@ -60,6 +61,16 @@ return new class extends Migration
             $table->string('documento_contrato_pago', 160)->nullable();
             $table->string('documento_libreta_notas', 160)->nullable();
             $table->string('documento_numero_cuenta', 160)->nullable();
+//• INICIA EL PROCESO CON HOJA DE RUTA EN SECRETARIA, CON UNA  NOTA DE DENUNCIA DEL DIRECTOR (HOJA DE RUTA:XXXX)
+//•	FOTOCOPIA DE CI. DE LA VICTIMA Y DENUNCIANTE
+//•	NOTA DEL DIRECTOR
+//•	NOTA DEL DISTRITAL
+//•	NOTA DEL DEFENSOR DEL PUEBLO
+            $table->string('documento_fotocopia_ci_victima', 160)->nullable();
+            $table->string('documento_fotocopia_ci_denunciante', 160)->nullable();
+            $table->string('documento_nota_director', 160)->nullable();
+            $table->string('documento_nota_distrital', 160)->nullable();
+            $table->string('documento_nota_defensor_pueblo', 160)->nullable();
 
             $table->dateTime('fecha_apertura_caso')->nullable();
             $table->dateTime('fecha_derivacion_psicologica')->nullable();

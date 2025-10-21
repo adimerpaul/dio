@@ -37,6 +37,7 @@ class Caso extends Model implements AuditableContract
         'violencia_patrimonial',
         'violencia_simbolica',
         'violencia_institucional',
+        'violencia_cibernetica',
         'psicologica_user_id',
         'trabajo_social_user_id',
         'legal_user_id',
@@ -54,6 +55,13 @@ class Caso extends Model implements AuditableContract
         'documento_numero_cuenta',
         'documento_otros',
         'documento_otros_detalle',
+
+        'documento_fotocopia_ci_victima',
+        'documento_fotocopia_ci_denunciante',
+        'documento_nota_director',
+        'documento_nota_distrital',
+        'documento_nota_defensor_pueblo',
+
         'fecha_apertura_caso',
         'fecha_derivacion_psicologica',
         'fecha_informe_area_psicologica',
@@ -77,12 +85,15 @@ class Caso extends Model implements AuditableContract
         'deleted_at',
     ];
     protected $casts = [
-//        'caso_fecha_hecho'      => 'date',
         'denunciante_trabaja'   => 'boolean',
         'violencia_fisica'      => 'boolean',
         'violencia_psicologica' => 'boolean',
         'violencia_sexual'      => 'boolean',
         'violencia_economica'   => 'boolean',
+        'violencia_cibernetica' => 'boolean',
+        'violencia_patrimonial' => 'boolean',
+        'violencia_simbolica'   => 'boolean',
+        'violencia_institucional'=> 'boolean',
     ];
     public function problematicas(){ return $this->hasMany(Problematica::class); }
     public function user(){ return $this->belongsTo(User::class); }

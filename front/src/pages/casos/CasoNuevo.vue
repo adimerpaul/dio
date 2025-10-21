@@ -398,9 +398,6 @@
                   <div class="col-12 col-md-4">
                     <q-input v-model="v.denunciado_telefono" dense outlined clearable label="Teléfono/Celular" v-upper/>
                   </div>
-<!--                  'denunciado_ingresos',-->
-<!--                  'denunciado_relacion_victima',-->
-<!--                  'denunciado_relacion_denunciado',-->
                   <div class="col-12 col-md-4">
                     <q-input v-model="v.denunciado_relacion_victima" dense outlined clearable label="Parentesco o Relación con la Víctima" v-upper/>
                   </div>
@@ -481,15 +478,15 @@
                 </template>
               </q-input>
             </div>
-<!--            <div class="col-12 col-md-3">-->
-<!--              <q-input v-model="f.caso_fecha_hecho" type="date" dense outlined label="Fecha del hecho"/>-->
-<!--            </div>-->
+            <div class="col-12 col-md-3">
+              <q-input v-model="f.caso_fecha_hecho" type="date" dense outlined label="Fecha del hecho"/>
+            </div>
 <!--            <div class="col-6 col-md-3">-->
 <!--              <q-input v-model="f.denunciante_relacion" dense outlined clearable label="Relación con el denunciante"/>-->
 <!--            </div>-->
-<!--            <div class="col-12 col-md-6">-->
-<!--              <q-input v-model="f.caso_lugar_hecho" dense outlined clearable label="Lugar del hecho"/>-->
-<!--            </div>-->
+            <div class="col-12 col-md-6">
+              <q-input v-model="f.caso_lugar_hecho" dense outlined clearable label="Lugar del hecho"/>
+            </div>
             <div class="col-12 col-md-4">
               <q-select v-model="f.caso_tipologia" dense outlined emit-value map-options clearable
                         :options="tipologias" label="Tipología"/>
@@ -512,6 +509,7 @@
             <div class="col-6 col-md-3"><q-toggle v-model="f.violencia_psicologica" label="Psicológica"/></div>
             <div class="col-6 col-md-3"><q-toggle v-model="f.violencia_sexual" label="Sexual"/></div>
             <div class="col-6 col-md-3"><q-toggle v-model="f.violencia_economica" label="Económica/Patrimonial"/></div>
+            <div class="col-6 col-md-3"><q-toggle v-model="f.violencia_cibernetica" label="Cibernética"/></div>
           </div>
         </q-card-section>
       </q-card>
@@ -558,24 +556,43 @@
 
         <q-card-section>
           <div class="row q-col-gutter-md">
-            <div class="col-12 col-md-2">
-              <q-checkbox v-model="f.documento_fotocopia_carnet_denunciante" label="Fotocopia CI denunciante" true-value="1" false-value="0"/>
-            </div>
-            <div class="col-12 col-md-2">
-              <q-checkbox v-model="f.documento_fotocopia_carnet_denunciado" label="Fotocopia CI denunciado" true-value="1" false-value="0"/>
-            </div>
-            <div class="col-12 col-md-2">
-              <q-checkbox v-model="f.documento_placas_fotograficas_domicilio_denunciante" label="Placas fotográficas domicilio denunciante" true-value="1" false-value="0"/>
-            </div>
-            <div class="col-12 col-md-2">
-              <q-checkbox v-model="f.documento_croquis_direccion_denunciado" label="Croquis dirección denunciado" true-value="1" false-value="0"/>
-            </div>
-            <div class="col-12 col-md-2">
-              <q-checkbox v-model="f.documento_placas_fotograficas_domicilio_denunciado" label="Placas fotográficas domicilio denunciado" true-value="1" false-value="0"/>
-            </div>
-            <div class="col-12 col-md-2">
-              <q-checkbox v-model="f.documento_ciudadania_digital" label="Ciudadanía digital" true-value="1" false-value="0"/>
-            </div>
+            <template v-if="tipo ==='PROPREMI'">
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_fotocopia_ci_victima" label="Fotocopia CI víctima" true-value="1" false-value="0"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_fotocopia_ci_denunciante" label="Fotocopia CI denunciante" true-value="1" false-value="0"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_nota_director" label="Nota director" true-value="1" false-value="0"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_nota_distrital" label="Nota distrital" true-value="1" false-value="0"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_nota_defensor_pueblo" label="Nota defensor del pueblo" true-value="1" false-value="0"/>
+              </div>
+            </template>
+            <template v-else>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_fotocopia_carnet_denunciante" label="Fotocopia CI denunciante" true-value="1" false-value="0"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_fotocopia_carnet_denunciado" label="Fotocopia CI denunciado" true-value="1" false-value="0"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_placas_fotograficas_domicilio_denunciante" label="Placas fotográficas domicilio denunciante" true-value="1" false-value="0"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_croquis_direccion_denunciado" label="Croquis dirección denunciado" true-value="1" false-value="0"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_placas_fotograficas_domicilio_denunciado" label="Placas fotográficas domicilio denunciado" true-value="1" false-value="0"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_ciudadania_digital" label="Ciudadanía digital" true-value="1" false-value="0"/>
+              </div>
+            </template>
           </div>
 <!--          <pre>{{f}}</pre>-->
         </q-card-section>
@@ -854,6 +871,7 @@ export default {
         violencia_psicologica: false,
         violencia_sexual: false,
         violencia_economica: false,
+        violencia_cibernetica: false,
         // Seguimiento
         psicologica_user_id: '',
         trabajo_social_user_id: '',
@@ -865,6 +883,11 @@ export default {
         documento_croquis_direccion_denunciado: '0',
         documento_placas_fotograficas_domicilio_denunciado: '0',
         documento_ciudadania_digital: '0',
+        documento_fotocopia_ci_victima: '0',
+        documento_fotocopia_ci_denunciante: '0',
+        documento_nota_director: '0',
+        documento_nota_distrital: '0',
+        documento_nota_defensor_pueblo: '0',
       }
     }
   },
@@ -896,6 +919,19 @@ export default {
         'Violencia Contra los Derechos y la Libertad Sexual',
         'Tipologias Multiples',
         'Otra'
+      ]
+    }
+    if (this.tipo === 'PROPREMI') {
+      this.tipologias = [
+        'Violencia entre pares',
+        'Violencia entre no pares',
+        'Violencia verbal',
+        'Violencia en discriminación en el sistema educativo',
+        'Violencia en razón de género',
+        'Violencia en situación de la situación económica',
+        'Violencia cibernética en el sistema educativo',
+        'Violencia multiple',
+        'Otra',
       ]
     }
 
