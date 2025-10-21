@@ -8,6 +8,7 @@ use App\Http\Controllers\SlimDocumentoController;
 use App\Http\Controllers\SlimFotografiaController;
 use App\Http\Controllers\SlimInformeLegalController;
 use App\Http\Controllers\SlimPsicologicaController;
+use App\Http\Controllers\TallerController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SlimController;
 // ... (tus otros use ya existentes)
@@ -212,6 +213,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/casos/{caso}/acogimiento', [AcogimientoController::class, 'upsert']);
 
     Route::post('/casos/{caso}/uploadFile', [CasoController::class, 'uploadFile']);
+
+    Route::get('/talleres', [TallerController::class, 'index']);
+    Route::post('/talleres', [TallerController::class, 'store']);
+    Route::delete('/talleres/{taller}', [TallerController::class, 'destroy']);
 });
 Route::get('/slimsImprimir', [SlimController::class, 'imprimir']);
 
