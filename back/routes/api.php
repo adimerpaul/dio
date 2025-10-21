@@ -255,3 +255,5 @@ Route::get('/umadis/informes-legales/{informe}/pdf', [\App\Http\Controllers\Umad
 Route::get('/umadis/documentos/{documento}/view', [\App\Http\Controllers\UmadiController::class, 'docView']);
 Route::get('/umadis/documentos/{documento}/download', [\App\Http\Controllers\UmadiController::class, 'docDownload']);
 Route::get('/umadis/{slam}/pdf/hoja-ruta', [\App\Http\Controllers\UmadiController::class, 'pdfHojaRuta']);
+
+Route::get('/mapa', [\App\Http\Controllers\MapaController::class, 'mapa']);

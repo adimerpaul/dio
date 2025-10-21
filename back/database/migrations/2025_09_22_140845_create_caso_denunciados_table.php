@@ -41,6 +41,7 @@ return new class extends Migration
             $table->string('denunciado_relacion_denunciado', 60)->nullable();
             $table->decimal('denunciado_latitud', 10, 7)->nullable();
             $table->decimal('denunciado_longitud', 10, 7)->nullable();
+            $table->string('denunciado_cargo')->nullable();
             $table->unsignedBigInteger('caso_id');
             $table->foreign('caso_id')->references('id')->on('casos');
             $table->softDeletes();
