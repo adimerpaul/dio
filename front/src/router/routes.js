@@ -13,6 +13,8 @@ const routes = [
       { path: '/slims/nuevo-penal', component: () => import('pages/slims/SlimNuevoPenal.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
       { path: '/slims/nuevo-familiar', component: () => import('pages/slims/SlimNuevoFamiliar.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
       { path: '/slims/nuevo-apoyo', component: () => import('pages/slims/SlimNuevoApoyo.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
+      // http://localhost:9001/propremis/nuevo-infraccion-educativo
+      { path: '/propremis/nuevo-infraccion-educativo', component: () => import('pages/propremis/PropremisNuevoInfraccionEducativo.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
 
 
       // casos

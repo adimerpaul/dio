@@ -325,25 +325,43 @@
         </q-item>
         <q-expansion-item dense expand-separator icon="add_circle" label="Nuevo PROPREMI" active-class="menu-active" v-if="hasAnyPerm(['Crear PROPREMIS'])">
           <q-list>
-            <q-item :inset-level="0.3" dense to="/propremis/nuevofisica" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
+<!--            <q-item :inset-level="0.3" dense to="/propremis/nuevofisica" exact clickable class="menu-item" active-class="menu-active" v-close-popup>-->
+<!--              <q-item-section avatar>-->
+<!--                <q-icon name="person_add" class="text-white"/>-->
+<!--              </q-item-section>-->
+<!--              <q-item-section>-->
+<!--                <q-item-label class="text-white">Nueva Denuncia Física</q-item-label>-->
+<!--              </q-item-section>-->
+<!--            </q-item>-->
+<!--            <q-item :inset-level="0.3" dense to="/propremis/nuevointegral" exact clickable class="menu-item" active-class="menu-active" v-close-popup>-->
+<!--              <q-item-section avatar>-->
+<!--                <q-icon name="diversity_1" class="text-white"/>-->
+<!--              </q-item-section>-->
+<!--              <q-item-section>-->
+<!--                <q-item-label class="text-white">Nuevo Apoyo Integral</q-item-label>-->
+<!--              </q-item-section>-->
+<!--            </q-item>-->
+<!--            -	INFRACCIONES SISTEMA EDUCATIVO-->
+            <q-item :inset-level="0.3" dense to="/propremis/nuevo-infraccion-educativo" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
               <q-item-section avatar>
-                <q-icon name="person_add" class="text-white"/>
+                <q-icon name="school" class="text-white"/>
               </q-item-section>
               <q-item-section>
-                <q-item-label class="text-white">Nueva Denuncia Física</q-item-label>
+                <q-item-label class="text-white">Nueva Infracción Sistema Educativo</q-item-label>
               </q-item-section>
             </q-item>
-            <q-item :inset-level="0.3" dense to="/propremis/nuevointegral" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
+<!--            -	ORIENTACIONES/TALLERES-->
+            <q-item :inset-level="0.3" dense to="/propremis/nuevo-orientacion-taller" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
               <q-item-section avatar>
-                <q-icon name="diversity_1" class="text-white"/>
+                <q-icon name="record_voice_over" class="text-white"/>
               </q-item-section>
               <q-item-section>
-                <q-item-label class="text-white">Nuevo Apoyo Integral</q-item-label>
+                <q-item-label class="text-white">Nueva Orientación / Taller</q-item-label>
               </q-item-section>
             </q-item>
           </q-list>
         </q-expansion-item>
-        <q-item dense to="/propremis" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Ver PROPREMIS')">
+        <q-item dense to="/propremis" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Ver PROPREMI')">
           <q-item-section avatar>
             <q-icon name="folder_shared" class="text-white"/>
           </q-item-section>

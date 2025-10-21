@@ -305,8 +305,8 @@ export default {
           'Ver SLAM',
           'Crear UMADIS',
           'Ver UMADIS',
-          'Crear PROMPREMIS',
-          'Ver PROMPREMIS',
+          'Crear PROPREMI',
+          'Ver PROPREMI',
           'Reportes',
           'Acogimiento'
         ])

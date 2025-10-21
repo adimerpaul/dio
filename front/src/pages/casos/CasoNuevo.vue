@@ -21,7 +21,8 @@
           <q-item class="full-width" dense>
             <q-item-section avatar><q-icon name="assignment_ind" /></q-item-section>
             <q-item-section>
-              <div class="text-subtitle1 text-weight-medium">1) DATOS DE LA VICTIMA</div>
+              <div class="text-subtitle1 text-weight-medium" v-if="tipo='PROPREMI'">1) DATOS DE LA VICTIMA (MENOR/ES)</div>
+              <div class="text-subtitle1 text-weight-medium" v-else>1) DATOS DE LA VICTIMA</div>
             </q-item-section>
             <q-item-section side>
               <q-badge color="blue-2" text-color="blue-10" outline rounded>Obligatorio *</q-badge>
@@ -99,11 +100,25 @@
                   <div class="col-12 col-md-4">
                     <q-input v-model="v.telefono" dense outlined clearable label="Teléfono/Celular" v-upper/>
                   </div>
+                  <div class="col-12 col-md-4" v-if="tipo==='PROPREMI'">
+                    <q-input v-model="v.lugar_estudio" dense outlined clearable label="Lugar de estudio" v-upper/>
+                  </div>
+                  <div class="col-12 col-md-4" v-if="tipo==='PROPREMI'">
+                    <q-input v-model="v.grado_curso" dense outlined clearable label="Grado o curso" v-upper/>
+                  </div>
+                  <div class="col-12 col-md-4" v-if="tipo==='PROPREMI'">
+                    <q-toggle v-model="v.trabaja" dense :true-value="'1'" :false-value="'0'" label="¿Trabaja actualmente?"/>
+                  </div>
+                  <div class="col-12 col-md-6" v-if="v.trabaja==='1'">
+                    <q-input v-model="v.lugar_trabajo" dense outlined clearable label="Lugar de trabajo" v-upper/>
+                  </div>
                 </div>
               </q-card-section>
             </q-card>
           </template>
-          <div class="col-12">
+          <div class="col-12" v-if="tipo='PROPREMI'">
+          </div>
+          <div class="col-12" v-else>
             <q-toggle v-model="copiar" @update:model-value="copyVictimaToDenunciante" dense
                       :true-value="true" :false-value="false" title="Copiar datos de esta víctima al denunciante"
             >
@@ -190,6 +205,9 @@
                     </div>
                     <div class="col-12 col-md-4">
                       <q-input v-model="d.denunciante_ocupacion" dense outlined clearable label="Ocupación" v-upper/>
+                    </div>
+                    <div class="col-12 col-md-4">
+                      <q-input v-model="d.denunciante_cargo" dense outlined clearable label="Institucion / Cargo" v-upper/>
                     </div>
                     <div class="col-12 col-md-4">
                       <q-input v-model.number="d.denunciante_ingresos" dense outlined type="text" label="Ingresos Económicos" v-upper/>
@@ -576,56 +594,110 @@
 import MapPicker from 'components/MapPicker.vue'
 import moment from 'moment'
 const vUpper = {
-  _attach(el) {
-    // evita enganchar dos veces
-    if (el.__upperAttached__) return
-
-    // QInput puede renderizar tarde; busca el nativo
-    const input = el.querySelector(
+  _findInput(root) {
+    return root.querySelector(
       'input:not([type="number"]):not([type="date"]):not([type="time"]), textarea'
-    )
-    if (!input) {
-      // reintenta en el siguiente tick
-      clearTimeout(el.__upperTimer__)
-      el.__upperTimer__ = setTimeout(() => vUpper._attach(el), 0)
-      return
-    }
-
-    const handler = (e) => {
-      const upper = (e.target.value || '')
-        .toUpperCase()
-        .replace(/\s+/g, ' ')
-        .trim()
-      if (upper !== e.target.value) {
-        const caret = e.target.selectionStart
-        e.target.value = upper
-        // sincroniza con v-model (QInput escucha este evento)
-        e.target.dispatchEvent(new Event('input', { bubbles: true }))
-        try { e.target.setSelectionRange(caret, caret) } catch {}
-      }
-    }
-
-    input.autocapitalize = 'characters' // ayuda en móviles
-    input.addEventListener('input', handler)
-    // inicializa si ya hay valor
-    handler({ target: input })
-
-    el.__upperAttached__ = true
-    el.__upperHandler__ = handler
+    );
   },
 
-  mounted(el)   { vUpper._attach(el) },
-  updated(el)   { vUpper._attach(el) },
-  unmounted(el) {
-    clearTimeout(el.__upperTimer__)
-    const input = el.querySelector('input, textarea')
-    if (input && el.__upperHandler__) {
-      input.removeEventListener('input', el.__upperHandler__)
+  _attachHandlers(el, input) {
+    if (!input || input.__upperBound__) return;
+
+    el.__isComposing__ = false;
+
+    const toUpper = (v) => (v ?? '').toLocaleUpperCase('es');
+
+    const onCompositionStart = () => { el.__isComposing__ = true; };
+    const onCompositionEnd = () => { el.__isComposing__ = false; onInput(); };
+
+    const onInput = () => {
+      if (el.__isComposing__) return;
+      const prev = input.value ?? '';
+      const s = input.selectionStart, e = input.selectionEnd;
+      const next = toUpper(prev); // no tocamos espacios aquí
+      if (next !== prev) {
+        input.value = next;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        try { input.setSelectionRange(s, e); } catch {}
+      }
+    };
+
+    const onBlur = () => {
+      const prev = input.value ?? '';
+      const normalized = prev
+        .replace(/\u00A0/g, ' ')
+        .replace(/[ \t]+/g, ' ')
+        .trim();
+      const next = toUpper(normalized);
+      if (next !== prev) {
+        input.value = next;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    };
+
+    input.autocapitalize = 'characters';
+    input.addEventListener('compositionstart', onCompositionStart);
+    input.addEventListener('compositionend', onCompositionEnd);
+    input.addEventListener('input', onInput);
+    input.addEventListener('blur', onBlur);
+
+    // Primera pasada si ya hay valor
+    onInput();
+
+    input.__upperBound__ = true;
+    el.__upperCleanup__ = () => {
+      input.removeEventListener('compositionstart', onCompositionStart);
+      input.removeEventListener('compositionend', onCompositionEnd);
+      input.removeEventListener('input', onInput);
+      input.removeEventListener('blur', onBlur);
+      delete input.__upperBound__;
+    };
+  },
+
+  _ensure(el) {
+    const input = vUpper._findInput(el);
+    if (input) {
+      vUpper._attachHandlers(el, input);
+      return true;
     }
-    delete el.__upperAttached__
-    delete el.__upperHandler__
+    return false;
+  },
+
+  mounted(el) {
+    if (vUpper._ensure(el)) {
+      el.__upperAttached__ = true;
+      return;
+    }
+    // Observa hasta que Quasar pinte el input interno
+    const obs = new MutationObserver(() => {
+      if (vUpper._ensure(el)) {
+        obs.disconnect();
+        delete el.__upperObserver__;
+        el.__upperAttached__ = true;
+      }
+    });
+    obs.observe(el, { childList: true, subtree: true });
+    el.__upperObserver__ = obs;
+  },
+
+  updated(el) {
+    // Por si el QInput se re-renderiza y perdemos el input
+    if (!el.__upperAttached__) vUpper.mounted(el);
+  },
+
+  unmounted(el) {
+    if (el.__upperObserver__) {
+      el.__upperObserver__.disconnect();
+      delete el.__upperObserver__;
+    }
+    if (el.__upperCleanup__) {
+      el.__upperCleanup__();
+      delete el.__upperCleanup__;
+    }
+    delete el.__upperAttached__;
+    delete el.__isComposing__;
   }
-}
+};
 export default {
   name: 'CasoNuevo',
   components: { MapPicker },
@@ -720,6 +792,7 @@ export default {
             denunciante_idioma: '',
             denunciante_trabaja: false,
             denunciante_ocupacion: '',
+            denunciante_cargo: '',
             denunciante_ingresos: null,
             denunciante_parentesco: '',
           }
