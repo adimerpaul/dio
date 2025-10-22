@@ -892,6 +892,7 @@ export default {
     }
   },
   mounted() {
+    console.log('tipo', this.tipo)
     // if caso
     if (this.caso) {
       this.f = { ...this.f, ...this.caso }
