@@ -116,7 +116,7 @@
               </q-card-section>
             </q-card>
           </template>
-          <div class="col-12" v-if="tipo='PROPREMI'">
+          <div class="col-12" v-if="tipo==='PROPREMI'">
           </div>
           <div class="col-12" v-else>
             <q-toggle v-model="copiar" @update:model-value="copyVictimaToDenunciante" dense
