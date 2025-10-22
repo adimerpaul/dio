@@ -105,12 +105,20 @@ class CasoController extends Controller
         if ($request->has('cud')) {
             $caso->cud = $request->input('cud');
         }
+//        'numero_juzgado',
+//        'responsable_fiscalia',
+        if ($request->has('numero_juzgado')) {
+            $caso->numero_juzgado = $request->input('numero_juzgado');
+        }
+        if ($request->has('responsable_fiscalia')) {
+            $caso->responsable_fiscalia = $request->input('responsable_fiscalia');
+        }
 
         $caso->save();
 
         return response()->json([
             'message' => 'Códigos actualizados',
-            'caso' => $caso->only(['id', 'nurej', 'cud']),
+            'caso' => $caso->only(['id', 'nurej', 'cud', 'numero_juzgado', 'responsable_fiscalia'])
         ]);
     }
 

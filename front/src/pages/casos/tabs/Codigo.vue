@@ -38,7 +38,6 @@
           <template #prepend><q-icon name="tag" /></template>
         </q-input>
       </div>
-
       <div class="col-12 col-md-6">
         <q-input
           v-model="form.cud"
@@ -48,6 +47,28 @@
           :dense="$q.screen.lt.md"
         >
           <template #prepend><q-icon name="confirmation_number" /></template>
+        </q-input>
+      </div>
+      <div class="col-12 col-md-6">
+        <q-select v-model="form.numero_juzgado"
+                  :options="juzgados"
+                  :readonly="!editMode"
+                  filled
+                  label="Número de Juzgado"
+                  :dense="$q.screen.lt.md">
+          <template #prepend><q-icon name="gavel" /></template>
+        </q-select>
+      </div>
+<!--      responsable_fiscalia-->
+      <div class="col-12 col-md-6">
+        <q-input
+          v-model="form.responsable_fiscalia"
+          :readonly="!editMode"
+          filled
+          label="Responsable Fiscalía"
+          :dense="$q.screen.lt.md"
+        >
+          <template #prepend><q-icon name="person" /></template>
         </q-input>
       </div>
     </div>
@@ -70,6 +91,17 @@ export default {
         nurej: null,
         cud: null,
       },
+      juzgados: [
+        'Juzgado Publico de la familia 1',
+        'Juzgado Publico de la familia 2',
+        'Juzgado Publico de la familia 3',
+        'Juzgado Publico de la familia 4',
+        'Juzgado Publico de la familia 5',
+        'Juzgado Publico de la familia 6',
+        'Juzgado Publico de la familia 7',
+        'Juzgado Publico de la familia 8',
+        'Juzgado Publico de la familia 9',
+      ],
     }
   },
   watch: {
@@ -80,6 +112,8 @@ export default {
       handler (v) {
         this.form.nurej = v?.nurej ?? null
         this.form.cud   = v?.cud   ?? null
+        this.form.numero_juzgado = v?.numero_juzgado ?? null
+        this.form.responsable_fiscalia = v?.responsable_fiscalia ?? null
       },
     },
   },
@@ -98,6 +132,8 @@ export default {
         const payload = {
           nurej: this.form.nurej,
           cud: this.form.cud,
+          numero_juzgado: this.form.numero_juzgado,
+          responsable_fiscalia: this.form.responsable_fiscalia,
         }
         await this.$axios.put(`casos/${this.caso.id}/codigos`, payload)
         this.$emit('actualizado') // notificar al padre
