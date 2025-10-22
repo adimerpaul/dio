@@ -1,30 +1,22 @@
 <template>
+<!--  <SlimNuevo :showNumeroApoyoIntegral="false" :tipologias="tipologias"/>-->
   <CasoNuevo
-    v-if="ready"
     :showNumeroApoyoIntegral="false"
-    :titulo="tipo"
-    :subtitulo="'Nuevo proceso penal'"
+    :titulo="'Registrar Nuevo Caso Penal'"
+    :tipo="'SLIM'"
   />
 </template>
 
 <script>
-import { nextTick } from 'vue'
-import CasoNuevo from 'pages/casos/CasoNuevo.vue'
+// import SlimNuevo from 'pages/slims/SlimNuevo.vue'
+import CasoNuevo from "pages/casos/CasoNuevo.vue";
 
 export default {
   name: 'SlimNuevoPenal',
-  components: { CasoNuevo },
+  components: {CasoNuevo },
   data () {
     return {
-      ready: false,
-      tipo: 'SLIM',
     }
-  },
-  async created () {
-    this.tipo = 'SLIM'
-    console.log('SlimNuevoPenal created, tipo set to:', this.tipo)
-    await nextTick()
-    this.ready = true
   }
 }
 </script>
