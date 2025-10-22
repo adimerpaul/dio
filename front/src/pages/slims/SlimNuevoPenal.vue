@@ -4,7 +4,7 @@
     :showNumeroApoyoIntegral="false"
     :tipologias="tipologias"
     :titulo="'Registrar Nuevo Caso Penal'"
-    :tipo="'SLIM'"
+    :tipo="tipo"
   />
 </template>
 
@@ -17,6 +17,7 @@ export default {
   components: {CasoNuevo },
   data () {
     return {
+      tipo: 'SLIM',
       tipologias: [
         'Violencia Física',
         'Violencia Feminicida',
@@ -38,6 +39,9 @@ export default {
         'Otra'
       ],
     }
+  },
+  mounted() {
+    console.log('Tipo de caso:', this.tipo);
   }
 }
 </script>
