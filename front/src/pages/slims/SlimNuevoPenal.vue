@@ -3,7 +3,7 @@
     v-if="ready"
     :tipoForm="tipo"
     :showNumeroApoyoIntegral="false"
-    :titulo="'Registrar Nuevo Caso Penal yyyyy'"
+    :titulo="tipo"
   />
 </template>
 
@@ -22,6 +22,7 @@ export default {
   },
   async created () {
     this.tipo = 'SLIM'
+    console.log('SlimNuevoPenal created, tipo set to:', this.tipo)
     await nextTick()
     this.ready = true
   }
