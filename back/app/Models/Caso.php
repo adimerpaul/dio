@@ -79,6 +79,9 @@ class Caso extends Model implements AuditableContract
         'responsable_fiscalia',
         'estado_caso',
         'archivo_caso',
+        'respaldo',
+        'observaciones',
+        'estado_caso_otro'
     ];
 
     /**

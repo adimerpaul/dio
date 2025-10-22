@@ -18,6 +18,10 @@ return new class extends Migration
             $table->string('numero_juzgado', 80)->nullable();
             $table->string('responsable_fiscalia', 120)->nullable();
             $table->string('estado_caso', 80)->nullable();
+            $table->string('estado_caso_otro', 80)->nullable();
+            $table->string('respaldo', 255)->nullable();
+            $table->text('observaciones')->nullable();
+            $table->string('respaldo', 255)->nullable();
             $table->string('archivo_caso', 255)->nullable();
             $table->string('cud', 80)->nullable();
             $table->string('numero_apoyo_integral', 80)->nullable();

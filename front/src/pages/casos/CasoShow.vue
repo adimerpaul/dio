@@ -89,6 +89,7 @@
         <q-tab name="docs"         label="7 Documentos General"    icon="folder"          no-caps/>
         <q-tab name="fotos"        label="8 Fotografías"           icon="photo_library"   no-caps/>
         <q-tab name="codigo"        label="9 Codigos"               icon="code"   no-caps/>
+        <q-tab name="estados" label="10 Estado Caso"        icon="warning"         no-caps/>
       </q-tabs>
     </q-card>
 <!--    <pre>{{role}}</pre>-->
@@ -156,6 +157,10 @@
       <q-tab-panel name="codigo">
         <Codigo :case-id="caseId" :caso="caso" @refresh="fetchCaso"/>
       </q-tab-panel>
+      <!-- 10 ) Estados del Caso -->
+      <q-tab-panel name="estados">
+        <EstadoCaso :case-id="caseId" :caso="caso" @refresh="fetchCaso"/>
+      </q-tab-panel>
     </q-tab-panels>
   </q-page>
 </template>
@@ -180,9 +185,11 @@ import CasoNuevoPROPREMI from "pages/propremis/PropremisNuevo.vue";
 import Codigo from "pages/casos/tabs/Codigo.vue";
 import moment from "moment";
 import CasoNuevo from "pages/casos/CasoNuevo.vue";
+import EstadoCaso from "pages/casos/tabs/EstadoCaso.vue";
 export default {
   name: 'CasoDetalle',
   components: {
+    EstadoCaso,
     CasoNuevo,
     Codigo,
     CasoNuevoPROPREMI,
