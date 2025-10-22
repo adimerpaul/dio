@@ -2,8 +2,8 @@
   <q-page class="q-pa-xs bg-grey-2">
     <div class="toolbar q-pa-sm bg-white row items-center shadow-1" v-if="accion==='nuevo'">
       <div class="col">
-        <div class="text-subtitle1 text-weight-bold"> {{ tipoForm }}</div>
-        <div class="text-caption text-grey-7">{{ titulo }}</div>
+        <div class="text-subtitle1 text-weight-bold"> {{ titulo }}</div>
+        <div class="text-caption text-grey-7">{{ subtitulo }}</div>
       </div>
       <div class="col-auto row q-gutter-sm">
         <q-btn flat color="primary" icon="history" label="Limpiar" @click="resetForm" no-caps dense/>
@@ -21,7 +21,7 @@
           <q-item class="full-width" dense>
             <q-item-section avatar><q-icon name="assignment_ind" /></q-item-section>
             <q-item-section>
-              <div class="text-subtitle1 text-weight-medium" v-if="tipoForm='PROPREMI'">1) DATOS DE LA VICTIMA (MENOR/ES)</div>
+              <div class="text-subtitle1 text-weight-medium" v-if="titulo='PROPREMI'">1) DATOS DE LA VICTIMA (MENOR/ES)</div>
               <div class="text-subtitle1 text-weight-medium" v-else>1) DATOS DE LA VICTIMA</div>
             </q-item-section>
             <q-item-section side>
@@ -556,7 +556,7 @@
 
         <q-card-section>
           <div class="row q-col-gutter-md">
-            <template v-if="tipoForm ==='PROPREMI'">
+            <template v-if="titulo ==='PROPREMI'">
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_fotocopia_ci_victima" label="Fotocopia CI víctima" true-value="1" false-value="0"/>
               </div>
@@ -725,8 +725,9 @@ export default {
   props: {
     showNumeroApoyoIntegral: { type: Boolean, default: false },
     // tipologias: { type: Array, default: () => [] },
-    titulo: { type: String, default: 'Registrar Nuevo Caso' },
-    tipoForm: { type: String, default: 'SLIM' },
+    // titulo: { type: String, default: 'Registrar Nuevo Caso' },
+    titulo: { type: String, default: 'SLIM' },
+    subtitulo: { type: String, default: 'Registrar Nuevo Caso' },
     casoId: { type: [Number, String], default: null },
     caso: { type: Object, default: null },
     accion : { type: String, default: 'nuevo' },
@@ -892,7 +893,7 @@ export default {
     }
   },
   mounted() {
-    console.log('tipo', this.tipoForm)
+    console.log('tipo', this.titulo)
     // if caso
     if (this.caso) {
       this.f = { ...this.f, ...this.caso }
@@ -900,7 +901,7 @@ export default {
       if (this.caso.denunciantes && this.caso.denunciantes.length > 0) this.f.denunciantes = this.caso.denunciantes
       if (this.caso.denunciados && this.caso.denunciados.length > 0) this.f.denunciados = this.caso.denunciados
     }
-    if (this.tipoForm === 'SLIM') {
+    if (this.titulo === 'SLIM') {
       this.tipologias = [
         'Violencia Física',
         'Violencia Feminicida',
@@ -922,7 +923,7 @@ export default {
         'Otra'
       ]
     }
-    if (this.tipoForm === 'PROPREMI') {
+    if (this.titulo === 'PROPREMI') {
       this.tipologias = [
         'Violencia entre pares',
         'Violencia entre no pares',
@@ -1196,7 +1197,7 @@ export default {
       }
       this.loading = true
       try {
-        this.f.tipo = this.tipoForm
+        this.f.tipo = this.titulo
         const res = await this.$axios.post('/casos', this.f)
         this.$alert.success('Caso creado')
         // Si quieres redirigir al show, descomenta:
@@ -1219,7 +1220,7 @@ export default {
       }
       this.loading = true
       try {
-        this.f.tipo = this.tipoForm
+        this.f.tipo = this.titulo
         const res = await this.$axios.put(`/casos/${this.casoId}`, this.f)
         this.$alert.success('Caso actualizado')
         this.$emit('refresh')

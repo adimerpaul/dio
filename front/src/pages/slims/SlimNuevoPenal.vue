@@ -1,9 +1,9 @@
 <template>
   <CasoNuevo
     v-if="ready"
-    :tipoForm="tipo"
     :showNumeroApoyoIntegral="false"
     :titulo="tipo"
+    :subtitulo="'Nuevo proceso penal'"
   />
 </template>
 
