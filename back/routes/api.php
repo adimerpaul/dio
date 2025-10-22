@@ -263,4 +263,5 @@ Route::get('/umadis/documentos/{documento}/download', [\App\Http\Controllers\Uma
 Route::get('/umadis/{slam}/pdf/hoja-ruta', [\App\Http\Controllers\UmadiController::class, 'pdfHojaRuta']);
 
 Route::get('/mapa', [\App\Http\Controllers\MapaController::class, 'mapa']);
-Route::get('/reportes/talleres', [TallerController::class, 'pdf'])->name('talleres.pdf');
+
+Route::get('/talleres/print', [TallerController::class, 'print']);
