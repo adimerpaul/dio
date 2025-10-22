@@ -1,7 +1,7 @@
 <template>
   <CasoNuevo
     v-if="ready"
-    :tipo="tipo"
+    :tipoForm="tipo"
     :showNumeroApoyoIntegral="false"
     :titulo="'Registrar Nuevo Caso Penal yyyyy'"
   />
