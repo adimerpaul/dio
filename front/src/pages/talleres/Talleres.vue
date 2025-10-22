@@ -7,7 +7,9 @@
         <div class="text-caption text-grey-7">Gestión en calendario</div>
       </div>
       <div class="col-auto">
-        <q-btn color="primary" icon="add" label="Nuevo Taller" @click="openCreateForNow" />
+<!--        btn imprimir-->
+        <q-btn flat icon="print" class="q-mr-sm" @click="imprimir" />
+        <q-btn color="primary" icon="add_circle" label="Nuevo Taller" @click="openCreateForNow" no-caps/>
         <q-btn flat icon="refresh" class="q-ml-sm" @click="refetch" />
       </div>
     </div>
@@ -452,7 +454,15 @@ export default {
       const api = this.$refs.calendar?.getApi?.()
       if (api) api.refetchEvents()
     },
-
+    imprimir(){
+      const start = this.$refs.calendar.getApi().view.currentStart
+      const end = this.$refs.calendar.getApi().view.currentEnd
+      const params = new URLSearchParams()
+      params.set('start', this.dateToLocalString(start))
+      params.set('end', this.dateToLocalString(end))
+      const url = `/talleres/print?${params.toString()}`
+      window.open(this.$axios.defaults.baseURL + url, '_blank')
+    },
     openCreateForNow () {
       const now = new Date()
       const pad = n => String(n).padStart(2, '0')
