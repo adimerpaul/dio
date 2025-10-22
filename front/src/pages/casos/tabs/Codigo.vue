@@ -50,13 +50,14 @@
         </q-input>
       </div>
       <div class="col-12 col-md-6">
-        <q-select v-model="form.numero_juzgado"
-                  :options="juzgados"
+        <q-select v-model="form.numero_juzgado_padre"
+                  :options="juzgados_padre"
+                  @update:model-value="changeJuzgadoPadre"
                   :readonly="!editMode"
                   filled
-                  label="Número de Juzgado"
+                  label="Tipo Juzgado"
                   :dense="$q.screen.lt.md">
-          <template #prepend><q-icon name="gavel" /></template>
+          <template #prepend><q-icon name="balance" /></template>
         </q-select>
       </div>
 <!--      responsable_fiscalia-->
@@ -70,6 +71,16 @@
         >
           <template #prepend><q-icon name="person" /></template>
         </q-input>
+      </div>
+      <div class="col-12 col-md-6">
+        <q-select v-model="form.numero_juzgado"
+                  :options="juzgados"
+                  :readonly="!editMode"
+                  filled
+                  label="Número de Juzgado"
+                  :dense="$q.screen.lt.md">
+          <template #prepend><q-icon name="gavel" /></template>
+        </q-select>
       </div>
     </div>
   </q-card>
@@ -102,6 +113,10 @@ export default {
         'Juzgado Publico de la familia 8',
         'Juzgado Publico de la familia 9',
       ],
+      juzgados_padre: [
+        'Juzgado Tribunal Sala',
+        'Juzgado Familia',
+      ],
     }
   },
   watch: {
@@ -113,11 +128,70 @@ export default {
         this.form.nurej = v?.nurej ?? null
         this.form.cud   = v?.cud   ?? null
         this.form.numero_juzgado = v?.numero_juzgado ?? null
+        this.form.numero_juzgado_padre = v?.numero_juzgado_padre ?? null
         this.form.responsable_fiscalia = v?.responsable_fiscalia ?? null
       },
     },
   },
   methods: {
+    changeJuzgadoPadre(value) {
+      this.form.numero_juzgado = null; // resetear el valor seleccionado
+      if(value === 'Juzgado Familia') {
+        this.juzgados = [
+          'Juzgado Publico de la familia 1',
+          'Juzgado Publico de la familia 2',
+          'Juzgado Publico de la familia 3',
+          'Juzgado Publico de la familia 4',
+          'Juzgado Publico de la familia 5',
+          'Juzgado Publico de la familia 6',
+          'Juzgado Publico de la familia 7',
+          'Juzgado Publico de la familia 8',
+          'Juzgado Publico de la familia 9',
+        ]
+      }else{
+        this.juzgados = [
+          "JUZGADO - TRIBUNAL - SALA",
+          "JUZGADO DE LA NIÑEZ Y ADOLESCENCIA N° 1",
+          "JUZGADO DE LA NIÑEZ Y ADOLESCENCIA N° 2",
+          "JUZGADO DE INSTRUCCIÓN PENAL ANTICORRUPCIÓN Y CONTRA LA VIOLENCIA HACIA LAS MUJERES N° 1",
+          "JUZGADO DE INSTRUCCIÓN PENAL ANTICORRUPCIÓN Y CONTRA LA VIOLENCIA HACIA LAS MUJERES N° 2",
+          "JUZGADO DE INSTRUCCIÓN PENAL ANTICORRUPCIÓN Y CONTRA LA VIOLENCIA HACIA LAS MUJERES N° 3",
+          "JUZGADO DE INSTRUCCIÓN PENAL ANTICORRUPCIÓN Y CONTRA LA VIOLENCIA HACIA LAS MUJERES N° 4",
+          "JUZGADO DE INSTRUCCIÓN PENAL ANTICORRUPCIÓN Y CONTRA LA VIOLENCIA HACIA LAS MUJERES N° 5",
+          "JUZGADO DE INSTRUCCIÓN PENAL ANTICORRUPCIÓN Y CONTRA LA VIOLENCIA HACIA LAS MUJERES N° 6",
+          "JUZGADO DE INSTRUCCIÓN PENAL ANTICORRUPCIÓN Y CONTRA LA VIOLENCIA HACIA LAS MUJERES N° 7",
+          "JUZGADO DE INSTRUCCIÓN PENAL ANTICORRUPCIÓN Y CONTRA LA VIOLENCIA HACIA LAS MUJERES N° 8",
+          "TRIBUNAL DE SENTENCIA PENAL N° 1",
+          "TRIBUNAL DE SENTENCIA PENAL N° 2",
+          "TRIBUNAL DE SENTENCIA PENAL N° 3",
+          "JUZGADO DE SENTENCIA PENAL N° 1",
+          "JUZGADO DE SENTENCIA PENAL N° 2",
+          "JUZGADO DE SENTENCIA PENAL N° 3",
+          "JUZGADO DE SENTENCIA PENAL N° 4",
+          "JUZGADO DE SENTENCIA PENAL N° 5",
+          "JUZGADO DE SENTENCIA PENAL N° 6",
+          "JUZGADO DE SENTENCIA PENAL N° 7",
+          "SALA PENAL N° 1",
+          "SALA PENAL N° 2",
+          "SALA PENAL N° 3",
+          "JUZGADO DE EJECUCIÓN PENAL 1",
+          "JUZGADO CIVIL COMERCIAL",
+          "SALA CIVIL, COMERCIAL, DE FAMILIA 1",
+          "SALA CIVIL, COMERCIAL, DE FAMILIA 2",
+          "SALA CONSTITUCIONAL N° 1",
+          "SALA CONSTITUCIONAL N° 2",
+          "JUZGADO PÚBLICO DE FAMILIA N° 1",
+          "JUZGADO PÚBLICO DE FAMILIA N° 2",
+          "JUZGADO PÚBLICO DE FAMILIA N° 3",
+          "JUZGADO PÚBLICO DE FAMILIA N° 4",
+          "JUZGADO PÚBLICO DE FAMILIA N° 5",
+          "JUZGADO PÚBLICO DE FAMILIA N° 6",
+          "JUZGADO PÚBLICO DE FAMILIA N° 7",
+          "JUZGADO PÚBLICO DE FAMILIA N° 8",
+          "JUZGADO PÚBLICO DE FAMILIA N° 9"
+        ];
+      }
+    },
     toggleEdit () {
       if (this.editMode) {
         // al cancelar, restaurar desde props
@@ -134,6 +208,7 @@ export default {
           cud: this.form.cud,
           numero_juzgado: this.form.numero_juzgado,
           responsable_fiscalia: this.form.responsable_fiscalia,
+          numero_juzgado_padre: this.form.numero_juzgado_padre,
         }
         await this.$axios.put(`casos/${this.caso.id}/codigos`, payload)
         this.$emit('actualizado') // notificar al padre
