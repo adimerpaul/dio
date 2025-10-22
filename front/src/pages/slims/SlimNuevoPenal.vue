@@ -18,13 +18,14 @@ export default {
   data () {
     return {
       ready: false,
-      tipo: null,
+      tipo: 'SLIM',
       tipologias: []
     }
   },
   async created () {
     // 1) Asignas variables
     this.tipo = 'SLIM'
+    console .log('Tipo de caso:', this.tipo)
     this.tipologias = [
       'Violencia Física',
       'Violencia Feminicida',
