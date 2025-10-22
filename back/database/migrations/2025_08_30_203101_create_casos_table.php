@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('zona', 80)->nullable();
             $table->string('nurej', 80)->nullable();
             $table->string('numero_juzgado', 80)->nullable();
+            $table->string('numero_juzgado_padre', 80)->nullable();
             $table->string('responsable_fiscalia', 120)->nullable();
             $table->string('estado_caso', 80)->nullable();
             $table->string('estado_caso_otro', 80)->nullable();

@@ -81,7 +81,8 @@ class Caso extends Model implements AuditableContract
         'archivo_caso',
         'respaldo',
         'observaciones',
-        'estado_caso_otro'
+        'estado_caso_otro',
+        'numero_juzgado_padre'
     ];
 
     /**

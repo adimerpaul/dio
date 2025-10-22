@@ -113,6 +113,10 @@ class CasoController extends Controller
         if ($request->has('responsable_fiscalia')) {
             $caso->responsable_fiscalia = $request->input('responsable_fiscalia');
         }
+//        numero_juzgado_padre
+        if ($request->has('numero_juzgado_padre')) {
+            $caso->numero_juzgado_padre = $request->input('numero_juzgado_padre');
+        }
 
         $caso->save();
 
