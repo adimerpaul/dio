@@ -26,19 +26,9 @@
       </q-input>
     </div>
     <div class="col-12 col-md-12">
-<!--      <q-input-->
-<!--        v-model="caso.respaldo"-->
-<!--        outlined-->
-<!--        label="Respaldo"-->
-<!--        :dense="$q.screen.lt.md"-->
-<!--      >-->
-<!--        <template #prepend><q-icon name="backup" /></template>-->
-<!--      </q-input>-->
-<!--      file-->
-<!--      ver achico esta lleno-->
       <div v-if="caso.respaldo">
         <q-icon name="attachment" />
-        <a :href="caso.respaldo" target="_blank">{{ caso.respaldo.split('/').pop() }}</a>
+        <q-btn flat @click="fileDownload" target="_blank">{{ caso.respaldo.split('/').pop() }}</q-btn>
       </div>
       <q-file
         v-model="file"
@@ -70,6 +60,7 @@
         label="Guardar"
         color="primary"
         @click="guardar"
+        :loading="loading"
       />
     </div>
   </div>
@@ -86,6 +77,7 @@ export default {
     return {
       casoNew: {},
       file: null,
+      loading: false,
       estado_casos:[
         "Concluido",
         "Con Representacion",
@@ -105,18 +97,31 @@ export default {
   },
   emits: ["refresh"],
   methods: {
+    fileDownload() {
+      console.log(this.caso.respaldo);
+      window.open(this.$axios.defaults.baseURL +'/..'+ this.caso.respaldo, '_blank');
+      // const link = document.createElement('a');
+      // link.href = this.$axios.defaults.baseURL + this.caso.respaldo;
+      // link.download = this.caso.respaldo.split('/').pop();
+      // document.body.appendChild(link);
+      // link.click();
+      // document.body.removeChild(link);
+    },
     onFileChange (file) {
-      if (!file) return;                 // file es un File, no array
+      if (!file) return;
       const formData = new FormData();
-      formData.append('file', file);      // 👈 directo
-
+      formData.append('file', file);
+      this.loading = true;
       this.$axios.post(`/casos/${this.caseId}/upload_respaldo/`, formData)
         .then(({ data }) => {
-          this.caso.respaldo = data.respaldo;
+          // this.caso.respaldo = data.respaldo;
           this.$q.notify({ type: 'positive', message: 'Archivo subido correctamente' });
+          this.$emit("refresh");
         })
         .catch(err => {
           this.$q.notify({ type: 'negative', message: `Error al subir: ${err?.response?.data?.detail || err.message}` });
+        }).finally(() => {
+          this.loading = false;
         });
     },
     refresh() {
