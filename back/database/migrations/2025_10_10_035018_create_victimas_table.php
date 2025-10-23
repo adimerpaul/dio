@@ -28,7 +28,7 @@ return new class extends Migration
             $table->string('telefono')->nullable();
 
             // Campos específicos según área
-            $table->boolean('gestante')->nullable(); // DNA
+            $table->boolean('gestante')->nullable();
             $table->boolean('estudia')->nullable();
             $table->string('lugar_estudio')->nullable();
             $table->string('grado_curso')->nullable();
