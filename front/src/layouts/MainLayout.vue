@@ -323,7 +323,7 @@
             <q-item-label class="text-white">UMADIS (Casos)</q-item-label>
           </q-item-section>
         </q-item>
-        <q-expansion-item dense expand-separator icon="add_circle" label="Nuevo PROPREMI" active-class="menu-active" v-if="hasAnyPerm(['Crear PROPREMIS'])">
+        <q-expansion-item dense expand-separator icon="add_circle" label="Nuevo PROPREMI" active-class="menu-active" v-if="hasAnyPerm(['Crear PROPREMI'])">
           <q-list>
 <!--            <q-item :inset-level="0.3" dense to="/propremis/nuevofisica" exact clickable class="menu-item" active-class="menu-active" v-close-popup>-->
 <!--              <q-item-section avatar>-->
