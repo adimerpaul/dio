@@ -44,6 +44,8 @@ Route::middleware('auth:sanctum')->group(function () {
 //    await this.$axios.post(`/casos/${this.caseId}/aceptar-psicologico`);
     Route::post('/casos/{caso}/aceptar-psicologico', [\App\Http\Controllers\CasoController::class, 'aceptarPsicologico']);
 
+    Route::post('/casos/{caso}/upload_respaldo', [\App\Http\Controllers\CasoController::class, 'uploadRespaldo']);
+
 
     Route::get ('/casos-linea-tiempo', [\App\Http\Controllers\CasoController::class, 'lineaTiempo']);
 
