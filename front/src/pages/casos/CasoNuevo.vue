@@ -666,6 +666,47 @@
                             false-value="0"/>
               </div>
             </template>
+            <template v-if="tipo ==='DNA'">
+
+              <!--            documento_certificado_nacimiento-->
+              <!--            documento_certificado_matrimonio-->
+              <!--            documento_tres_testigos-->
+              <!--            documento_croquis_direccion_denunciado-->
+              <!--            documento_contrato_pago-->
+              <!--            documento_libreta_notas-->
+              <!--            documento_fotocopia_carnet_denunciante-->
+              <!--            documento_fotocopia_carnet_denunciado-->
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_certificado_nacimiento" label="Certificado de nacimiento hijos original"
+                            true-value="1" false-value="0"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_certificado_matrimonio" label="Certificado de matrimonio Original"
+                            true-value="1" false-value="0"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_tres_testigos" label="Tres testigos con fotocopia de CI" true-value="1" false-value="0"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_croquis_direccion_denunciado" label="Croquis dirección denunciado"
+                            true-value="1" false-value="0"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_contrato_pago" label="Papeleta / Contrato de pago del denunciado" true-value="1" false-value="0"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_libreta_notas" label="Prueba o libreta de notas de los hijos" true-value="1" false-value="0"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_fotocopia_carnet_denunciante" label="Fotocopia CI denunciante"
+                            true-value="1" false-value="0"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_fotocopia_carnet_denunciado" label="Fotocopia CI denunciado"
+                            true-value="1" false-value="0"/>
+              </div>
+            </template>
+
             <template v-else>
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_fotocopia_carnet_denunciante" label="Fotocopia CI denunciante"
@@ -1243,7 +1284,12 @@ export default {
         documento_fotocopia_carnet_denunciante: '0',
         documento_fotocopia_carnet_denunciado: '0',
         documento_placas_fotograficas_domicilio_denunciante: '0',
+        documento_certificado_nacimiento: '0',
+        documento_certificado_matrimonio: '0',
+        documento_tres_testigos: '0',
         documento_croquis_direccion_denunciado: '0',
+        documento_contrato_pago: '0',
+        documento_libreta_notas: '0',
         documento_placas_fotograficas_domicilio_denunciado: '0',
         documento_ciudadania_digital: '0',
         documento_fotocopia_ci_victima: '0',
