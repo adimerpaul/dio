@@ -96,32 +96,54 @@
                     <q-select v-model="v.sexo" dense outlined emit-value map-options clearable
                               :options="sexos" label="Sexo"/>
                   </div>
-                  <div class="col-6 col-md-3">
-                    <q-select v-model="v.estado_civil" dense outlined emit-value map-options clearable
-                              :options="estadosCiviles" label="Estado civil"/>
-                  </div>
-                  <div class="col-12 col-md-4">
-                    <q-input v-model="v.ocupacion" dense outlined clearable label="Ocupación" v-upper/>
-                  </div>
-                  <div class="col-12 col-md-4">
-                    <q-select v-model="v.idioma" dense outlined emit-value map-options clearable
-                              :options="idiomas" label="Idioma"/>
-                  </div>
+                  <template v-if="tipo==='DNA' || tipo==='PROPREMI'">
+
+                  </template>
+                  <template v-else>
+                    <div class="col-6 col-md-3">
+                      <q-select v-model="v.estado_civil" dense outlined emit-value map-options clearable
+                                :options="estadosCiviles" label="Estado civil"/>
+                    </div>
+                  </template>
+                  <template v-if="tipo==='DNA' || tipo==='PROPREMI'">
+
+                  </template>
+                  <template v-else>
+                    <div class="col-12 col-md-4">
+                      <q-input v-model="v.ocupacion" dense outlined clearable label="Ocupación" v-upper/>
+                    </div>
+                  </template>
+                  <template v-if="tipo==='DNA' || tipo==='PROPREMI'">
+
+                  </template>
+                  <template v-else>
+                    <div class="col-12 col-md-4">
+                      <q-select v-model="v.idioma" dense outlined emit-value map-options clearable
+                                :options="idiomas" label="Idioma"/>
+                    </div>
+                  </template>
                   <div class="col-12 col-md-8">
                     <q-input v-model="v.domicilio" dense outlined clearable label="Domicilio" v-upper/>
                   </div>
                   <div class="col-12 col-md-4">
                     <q-input v-model="v.telefono" dense outlined clearable label="Teléfono/Celular" v-upper/>
                   </div>
-                  <div class="col-12 col-md-4" v-if="tipo==='PROPREMI'">
-                    <!--                    <q-input v-model="v.lugar_estudio" dense outlined clearable label="UE / Colegio" v-upper/>-->
+                  <div class="col-6 col-md-2" v-if="tipo==='DNA'">
+                    <q-toggle v-model.number="v.estudia" dense :true-value="1" :false-value="0" label="¿Estudia?"/>
+                  </div>
+                  <div class="col-12 col-md-4" v-if="v.estudia ===1 && tipo==='DNA'">
                     <q-select v-model="v.lugar_estudio" dense outlined emit-value map-options clearable
                               :options="colegios" label="UE / Colegio"/>
                   </div>
                   <div class="col-12 col-md-4" v-if="tipo==='PROPREMI'">
-                    <q-input v-model="v.grado_curso" dense outlined clearable label="Grado o curso" v-upper/>
+                    <q-select v-model="v.lugar_estudio" dense outlined emit-value map-options clearable
+                              :options="colegios" label="UE / Colegio"/>
                   </div>
-                  <div class="col-12 col-md-4" v-if="tipo==='PROPREMI'">
+                  <div class="col-12 col-md-4" v-if="tipo==='PROPREMI' || tipo==='DNA'">
+                    <q-select v-model="v.grado_curso" dense outlined emit-value map-options clearable
+                              :options="cursos" label="Grado o curso"/>
+                  </div>
+                  <div class="col-12 col-md-4" v-if="tipo==='PROPREMI' || tipo==='DNA'">
                     <q-toggle v-model="v.trabaja" dense :true-value="1" :false-value="0" label="¿Trabaja actualmente?"/>
                     <!--                    <pre>{{v}}</pre>-->
                   </div>
@@ -540,6 +562,12 @@
               <q-input v-model="f.caso_lugar_hecho" dense outlined clearable label="Lugar del hecho"/>
             </div>
             <div class="col-12 col-md-4">
+<!--              <pre>-->
+<!--                {{tipo}}-->
+<!--              </pre>-->
+<!--              <pre>-->
+<!--                {{titulo}}-->
+<!--              </pre>-->
               <q-select v-model="f.caso_tipologia" dense outlined emit-value map-options clearable
                         :options="tipologias" label="Tipología"/>
             </div>
@@ -1035,6 +1063,22 @@ export default {
         'AMERICA',
         'T. H. MINEROS HUANUNI SECUNDARIA',
       ],
+      cursos: [
+        '1ro. INICIAL',
+        '2do. INICIAL',
+        '1RO. PRIMARIA',
+        '2DO. PRIMARIA',
+        '3RO. PRIMARIA',
+        '4TO. PRIMARIA',
+        '5TO. PRIMARIA',
+        '6TO. PRIMARIA',
+        '1RO. SECUNDARIA',
+        '2DO. SECUNDARIA',
+        '3RO. SECUNDARIA',
+        '4TO. SECUNDARIA',
+        '5TO. SECUNDARIA',
+        '6TO. SECUNDARIA'
+      ],
       gradosInstruccion: [
         {label: 'Grado Primario', value: 'Grado Primario'},
         {label: 'Grado Secundario', value: 'Grado Secundario'},
@@ -1092,6 +1136,7 @@ export default {
           {
             nombres_apellidos: '',
             gestante: 0,
+            estudia: 0,
             ci: '',
             fecha_nacimiento: '',
             lugar_nacimiento: '',
@@ -1252,6 +1297,56 @@ export default {
         'Violencia cibernética en el sistema educativo',
         'Violencia multiple',
         'Otra',
+      ]
+    }
+    if (this.tipo === 'DNA' && this.titulo==='DNA Proceso Penal') {
+      console.log('entra a tipologias DNA Proceso Penal')
+      this.tipologias = [
+        'Violacion',
+        'Estupro',
+        'Abuso sexual',
+        'Acoso sexual',
+        'Infanticidio',
+        'Rapto',
+        'Corrupcion',
+        'Proxenetismo',
+        'Violencia sexual comercial',
+        'Pornografia',
+        'Trafico de personas',
+        'Trata de personas',
+        'Lesiones graves y leves',
+        'Lesiones gravisimas',
+        'Sustracción de menor incapaz',
+        'Violencia familiar o domestica (fisica, psicologica)',
+        'Abandono de niños/as',
+        'Abandono por causa de honor',
+        'Otros'
+      ];
+    }
+    if (this.tipo === 'DNA' && this.titulo==='DNA Nuevo Familiar') {
+      console.log('entra a tipologias DNA Nuevo Familiar')
+      this.tipologias = [
+        'Asistencia familiar',
+        'Otros'
+      ]
+    }
+
+    if (this.tipo === 'DNA' && this.titulo==='DNA Nuevo Niño, Niña o Adolescente') {
+      console.log('entra a tipologias DNA Nuevo Niño, Niña o Adolescente')
+      this.tipologias = [
+        'Acogimiento circunstancial',
+        'Infracción por violencia',
+        'Irresponsabilidad paterna o materna',
+        'Otros'
+      ]
+    }
+    if (this.tipo === 'DNA' && this.titulo==='DNA Nuevo Apoyo Integral') {
+      console.log('entra a tipologias DNA Nuevo Apoyo Integral')
+      this.tipologias = [
+        'Informes psicológicos',
+        'Informes sociales',
+        'Informes psicosociales',
+        'Otros'
       ]
     }
 
