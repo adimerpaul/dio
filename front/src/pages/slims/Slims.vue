@@ -35,8 +35,31 @@
       </div>
 
       <div class="col-auto">
-        <q-btn color="primary" icon="refresh" label="Actualizar" no-caps @click="fetchSlims()" :loading="loading"/>
-        <q-btn color="secondary" icon="print" label="Imprimir" no-caps @click="imprimir()" />
+        <q-btn color="primary" icon="refresh" label="Actualizar" no-caps @click="fetchSlims()" :loading="loading" size="10px"/>
+<!--        <q-btn color="secondary" icon="print" label="Imprimir" no-caps @click="imprimir()" />-->
+        <q-btn-dropdown label="Visualizar Casos" color="green" icon="visibility" no-caps size="10px">
+          <q-list>
+<!--            <q-item clickable v-ripple @click="imprimir()">-->
+<!--              <q-item-section>Imprimir SLIMs</q-item-section>-->
+<!--            </q-item>-->
+<!--            descrgar excel-->
+            <q-item clickable v-ripple @click="visibleShow" v-close-popup>
+              <q-item-section avatar>
+                <q-icon name="visibility" />
+              </q-item-section>
+              <q-item-section>Vizualizar Casos</q-item-section>
+            </q-item>
+<!--            <q-item clickable v-ripple @click="excelDownload" v-close-popup>-->
+<!--              <q-item-section avatar>-->
+<!--                <q-icon name="file_download" />-->
+<!--              </q-item-section>-->
+<!--              <q-item-section>Descargar Excel</q-item-section>-->
+<!--            </q-item>-->
+<!--            <q-item clickable v-ripple @click="$router.push('/slims/imprimir-etiquetas')">-->
+<!--              <q-item-section>Imprimir etiquetas</q-item-section>-->
+<!--            </q-item>-->
+          </q-list>
+        </q-btn-dropdown>
       </div>
     </div>
 
@@ -50,10 +73,26 @@
         <th>Denunciado</th>
         <th>Tipología</th>
         <th>Zona</th>
-        <th>Tipo</th>
+        <th>Estado</th>
         <th>Alerta</th>
+
+        <!-- ⬇️ NUEVAS COLUMNAS (formato planilla) -->
+        <th v-if="showExtra">Víctima (NNA)</th>
+        <th v-if="showExtra">Resp. Legal</th>
+        <th v-if="showExtra">Resp. Psicológico</th>
+        <th v-if="showExtra">Resp. T. Social</th>
+        <th v-if="showExtra">CUD</th>
+        <th v-if="showExtra">NUREJ</th>
+        <th v-if="showExtra">Juzgado</th>
+        <th v-if="showExtra">Fiscalía a Resp.</th>
+        <th v-if="showExtra">Estado actual del proceso</th>
+        <th v-if="showExtra">Fecha Sentencia</th>
+        <th v-if="showExtra">Observación</th>
+        <!-- (Opcional) columna extra si es Apoyo Integral -->
+        <th v-if="showExtra">F. Entrega al Juzgado</th>
       </tr>
       </thead>
+
 
       <tbody v-if="!loading && slims.length">
       <tr
@@ -142,13 +181,14 @@
         <td>{{ c.caso_tipologia || '—' }}</td>
         <td>{{ c.zona || '—' }}</td>
         <td>
-          <q-badge
-            :color="c.numero_apoyo_integral ? 'green' : 'grey-5'"
-            :text-color="c.numero_apoyo_integral ? 'white' : 'black'"
-            :label="c.numero_apoyo_integral ? 'Apoyo Integral' : 'Regular'"
-            rounded
-            dense
-          />
+<!--          <q-badge-->
+<!--            :color="c.numero_apoyo_integral ? 'green' : 'grey-5'"-->
+<!--            :text-color="c.numero_apoyo_integral ? 'white' : 'black'"-->
+<!--            :label="c.numero_apoyo_integral ? 'Apoyo Integral' : 'Regular'"-->
+<!--            rounded-->
+<!--            dense-->
+<!--          />-->
+          {{c.estado_caso || '—'}}
         </td>
         <td>
           <template v-if="c.mi_estado?.me_asignado">
@@ -181,6 +221,18 @@
             <span class="text-grey-6">—</span>
           </template>
         </td>
+        <td v-if="showExtra">—</td> <!-- Víctima (NNA) si luego la expones -->
+        <td v-if="showExtra">{{ c.legal_user?.name ?? '—' }}</td>
+        <td v-if="showExtra">{{ c.psicologica_user?.name ?? '—' }}</td>
+        <td v-if="showExtra">{{ c.trabajo_social_user?.name ?? '—' }}</td>
+        <td v-if="showExtra">{{ fmt(c.cud) }}</td>
+        <td v-if="showExtra">{{ fmt(c.nurej) }}</td>
+        <td v-if="showExtra">{{ fmt(c.numero_juzgado) }}</td>
+        <td v-if="showExtra">{{ fmt(c.responsable_fiscalia) }}</td>
+        <td v-if="showExtra">{{ fmt(c.estado_caso || c.estado_caso_otro) }}</td>
+        <td v-if="showExtra">{{ fmtFecha(c.fecha_sentencia) }}</td>
+        <td v-if="showExtra" class="ellipsis-2-lines">{{ fmt(c.observaciones) }}</td>
+        <td v-if="showExtra">{{ c.numero_apoyo_integral ? fmtFecha(c.fecha_entrega_juzgado || c.fecha_derivacion_area_legal) : '—' }}</td>
       </tr>
       </tbody>
 
@@ -225,6 +277,7 @@ export default {
   name: 'SlimsPage',
   data () {
     return {
+      showExtra: false,
       slims: [],
       loading: false,
       // server meta
@@ -249,6 +302,29 @@ export default {
     }
   },
   methods: {
+    visibleShow () {
+      this.showExtra = !this.showExtra
+    },
+    nombrePersona (p) {
+      if (!p) return '—'
+      const n = [
+        p.denunciante_nombres ?? p.denunciado_nombres ?? p.nombres,
+        p.denunciante_paterno ?? p.paterno,
+        p.denunciante_materno ?? p.materno
+      ].filter(Boolean).join(' ')
+      return n || '—'
+    },
+    fmt (v) { return (v ?? '') !== '' ? v : '—' },
+    fmtFecha (v) {
+      if (!v) return '—'
+      try {
+        const d = new Date(String(v).replace(' ', 'T'))
+        const dd = String(d.getDate()).padStart(2, '0')
+        const mm = String(d.getMonth()+1).padStart(2, '0')
+        const yyyy = d.getFullYear()
+        return `${dd}/${mm}/${yyyy}`
+      } catch { return v }
+    },
     imprimir(){
       this.$axios.get('/slimsImprimir',)
         .then(res => {

@@ -5,7 +5,10 @@
     <div class="row items-center q-mb-md">
 <!--      <a href="myscan://open">Escanear ahora</a>-->
       <div class="col-12 col-md-4">
-        <div class="text-h6 text-weight-bold">{{caso?.tipo}} {{ caso?.caso_numero || '...' }}</div>
+        <div class="text-h6 text-weight-bold">
+          {{caso?.tipo}} {{ caso?.caso_numero || '...' }}
+          <q-btn flat icon="arrow_back" @click="$router.back()" class="q-mr-sm"/>
+        </div>
           <div class="text-subtitle2 text-black-7">
             <q-icon name="calendar_today" class="q-mr-sm"/>
             Abierto
