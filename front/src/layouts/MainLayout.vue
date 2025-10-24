@@ -377,6 +377,34 @@
             <q-item-label class="text-white">Acogimiento</q-item-label>
           </q-item-section>
         </q-item>
+        <q-expansion-item dense expand-separator icon="emoji_people" label="Juventudes" active-class="menu-active" v-if="hasPerm('Juventudes')">
+          <q-list>
+            <q-item :inset-level="0.3" dense to="/juventudes/permisos-trabajo" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
+              <q-item-section avatar>
+                <q-icon name="work" class="text-white"/>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label class="text-white">Permisos y Autorizaciones de Trabajo</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item :inset-level="0.3" dense to="/juventudes/actividades-talleres" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
+              <q-item-section avatar>
+                <q-icon name="record_voice_over" class="text-white"/>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label class="text-white">Actividades o Talleres</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item :inset-level="0.3" dense to="/juventudes/asistencias-familiares" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
+              <q-item-section avatar>
+                <q-icon name="family_restroom" class="text-white"/>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label class="text-white">Asistencias Familiares</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-expansion-item>
         <q-item dense to="/reportes" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Reportes')">
           <q-item-section avatar>
             <q-icon name="bar_chart" class="text-white"/>
@@ -385,7 +413,21 @@
             <q-item-label class="text-white">Reportes</q-item-label>
           </q-item-section>
         </q-item>
-<!--        <pre>{{$store.permissions}}</pre>-->
+<!--        JUVENTUDES-->
+<!--        <q-item dense to="/juventudes" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Juventudes')">-->
+<!--          <q-item-section avatar>-->
+<!--            <q-icon name="emoji_people" class="text-white"/>-->
+<!--          </q-item-section>-->
+<!--          <q-item-section>-->
+<!--            <q-item-label class="text-white">Juventudes</q-item-label>-->
+<!--          </q-item-section>-->
+<!--        </q-item>-->
+<!--        1.	PERMISOS Y AUTORIZACIONES DE TRABAJO-->
+<!--        2.	ACTIVIDADES O TALLERES-->
+<!--        3.	ASISTENCIAS FAMILIARES :-->
+
+
+        <!--        <pre>{{$store.permissions}}</pre>-->
 
         <!-- Menú filtrado -->
 <!--        <template v-for="link in filteredLinks" :key="link.link">-->
