@@ -144,11 +144,19 @@
                     <q-select v-model="v.lugar_estudio" dense outlined emit-value map-options clearable
                               :options="colegios" label="UE / Colegio"/>
                   </div>
-                  <div class="col-12 col-md-4" v-if="tipo==='PROPREMI' || tipo==='DNA'">
+                  <div class="col-12 col-md-4" v-if="tipo==='JUVENTUDES'">
+                    <q-input v-model="v.lugar_estudio" dense outlined emit-value map-options clearable
+                              :options="colegios" label="U.E./Colegio/Universidad"/>
+                  </div>
+                  <div class="col-12 col-md-4" v-if="tipo==='JUVENTUDES'">
+                    <q-input v-model="v.grado_curso" dense outlined emit-value map-options clearable
+                             label="Curso/Grado Actual"/>
+                  </div>
+                  <div class="col-12 col-md-4" v-if="tipo==='PROPREMI' || tipo==='DNA' ">
                     <q-select v-model="v.grado_curso" dense outlined emit-value map-options clearable
                               :options="cursos" label="Grado o curso"/>
                   </div>
-                  <div class="col-12 col-md-4" v-if="tipo==='PROPREMI' || tipo==='DNA'">
+                  <div class="col-12 col-md-4" v-if="tipo==='PROPREMI' || tipo==='DNA'  || tipo==='JUVENTUDES'">
                     <q-toggle v-model="v.trabaja" dense :true-value="1" :false-value="0" label="¿Trabaja actualmente?"/>
                     <!--                    <pre>{{v}}</pre>-->
                   </div>
@@ -261,10 +269,18 @@
                       <div class="col-12 col-md-4">
                         <q-input v-model="d.denunciante_ocupacion" dense outlined clearable label="Ocupación" v-upper/>
                       </div>
-                      <div class="col-12 col-md-4">
-                        <q-input v-model="d.denunciante_cargo" dense outlined clearable label="Institucion / Cargo"
-                                 v-upper/>
-                      </div>
+                      <template v-if="tipo==='DNA' || tipo==='JUVENTUDES'">
+                        <div class="col-12 col-md-4">
+                          <q-input v-model="d.denunciante_cargo" dense outlined clearable label="Lugar de trabajo"
+                                   v-upper/>
+                        </div>
+                      </template>
+                      <template v-else>
+                        <div class="col-12 col-md-4">
+                          <q-input v-model="d.denunciante_cargo" dense outlined clearable label="Institucion / Cargo"
+                                   v-upper/>
+                        </div>
+                      </template>
                       <div class="col-12 col-md-4">
                         <q-input v-model.number="d.denunciante_ingresos" dense outlined type="text"
                                  label="Ingresos Económicos" v-upper/>
@@ -455,9 +471,21 @@
                   <div class="col-12 col-md-4">
                     <q-input v-model="v.denunciado_ocupacion" dense outlined clearable label="Ocupación" v-upper/>
                   </div>
-                  <div class="col-12 col-md-4">
-                    <q-input v-model="v.denunciado_cargo" dense outlined clearable label="Institucion / Cargo" v-upper/>
-                  </div>
+<!--                  <div class="col-12 col-md-4">-->
+<!--                    <q-input v-model="v.denunciado_cargo" dense outlined clearable label="Institucion / Cargo" v-upper/>-->
+<!--                  </div>-->
+                  <template v-if="tipo==='DNA' || tipo==='JUVENTUDES'">
+                    <div class="col-12 col-md-4">
+                      <q-input v-model="v.denunciado_cargo" dense outlined clearable label="Lugar de trabajo"
+                               v-upper/>
+                    </div>
+                  </template>
+                  <template v-else>
+                    <div class="col-12 col-md-4">
+                      <q-input v-model="v.denunciado_cargo" dense outlined clearable label="Institucion / Cargo"
+                               v-upper/>
+                    </div>
+                  </template>
                   <div class="col-12 col-md-4">
                     <q-input v-model="v.denunciado_ingresos" dense outlined clearable label="Ingresos Económicos"
                              v-upper/>
@@ -581,33 +609,38 @@
       </q-card>
 
       <!-- Violencias -->
-      <q-card flat bordered class="section-card q-mt-xs">
-        <q-card-section class="row items-center">
-          <q-icon name="warning_amber" class="q-mr-sm"/>
-          <div class="text-subtitle1 text-weight-medium">8) Tipos de violencia</div>
-        </q-card-section>
-        <q-separator/>
+      <template v-if="tipo==='JUVENTUDES'">
 
-        <q-card-section>
-          <div class="row q-col-gutter-md">
-            <div class="col-6 col-md-3">
-              <q-toggle v-model="f.violencia_fisica" label="Física"/>
+      </template>
+      <template v-else>
+        <q-card flat bordered class="section-card q-mt-xs">
+          <q-card-section class="row items-center">
+            <q-icon name="warning_amber" class="q-mr-sm"/>
+            <div class="text-subtitle1 text-weight-medium">8) Tipos de violencia</div>
+          </q-card-section>
+          <q-separator/>
+
+          <q-card-section>
+            <div class="row q-col-gutter-md">
+              <div class="col-6 col-md-3">
+                <q-toggle v-model="f.violencia_fisica" label="Física"/>
+              </div>
+              <div class="col-6 col-md-3">
+                <q-toggle v-model="f.violencia_psicologica" label="Psicológica"/>
+              </div>
+              <div class="col-6 col-md-3">
+                <q-toggle v-model="f.violencia_sexual" label="Sexual"/>
+              </div>
+              <div class="col-6 col-md-3">
+                <q-toggle v-model="f.violencia_economica" label="Económica/Patrimonial"/>
+              </div>
+              <div class="col-6 col-md-3">
+                <q-toggle v-model="f.violencia_cibernetica" label="Cibernética"/>
+              </div>
             </div>
-            <div class="col-6 col-md-3">
-              <q-toggle v-model="f.violencia_psicologica" label="Psicológica"/>
-            </div>
-            <div class="col-6 col-md-3">
-              <q-toggle v-model="f.violencia_sexual" label="Sexual"/>
-            </div>
-            <div class="col-6 col-md-3">
-              <q-toggle v-model="f.violencia_economica" label="Económica/Patrimonial"/>
-            </div>
-            <div class="col-6 col-md-3">
-              <q-toggle v-model="f.violencia_cibernetica" label="Cibernética"/>
-            </div>
-          </div>
-        </q-card-section>
-      </q-card>
+          </q-card-section>
+        </q-card>
+      </template>
 
       <!-- Seguimiento -->
       <q-card flat bordered class="section-card q-mt-xs">
@@ -671,7 +704,44 @@
                             false-value="0"/>
               </div>
             </template>
-            <template v-if="tipo ==='DNA'">
+            <template v-else-if="tipo ==='JUVENTUDES'">
+<!--              documento_certificado_nacimiento-->
+<!--              documento_fotocopia_ci_victima-->
+<!--              documento_libreta_notas-->
+<!--              documento_diploma_bachiller-->
+<!--              documento_comprobante_universidades-->
+<!--              documento_fotocopia_ci_padres-->
+<!--              documento_tres_testigos-->
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_certificado_nacimiento" label="Certificado de nacimiento del joven"
+                            true-value="1" false-value="0"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_fotocopia_ci_victima" label="Fotocopia CI del joven" true-value="1"
+                            false-value="0"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_libreta_notas" label="Libreta/Certificado de notas del colegio" true-value="1"
+                            false-value="0"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_diploma_bachiller" label="Diploma/Titulo de bachiller" true-value="1"
+                            false-value="0"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_comprobante_universidades" label="Comprobante/Matricula Universidad"
+                            true-value="1" false-value="0"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_fotocopia_ci_padres" label="Fotocopia CI de los padres" true-value="1"
+                            false-value="0"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_tres_testigos" label="Tres testigos con fotocopia de CI" true-value="1"
+                            false-value="0"/>
+              </div>
+            </template>
+            <template v-else-if="tipo ==='DNA'">
 
               <!--            documento_certificado_nacimiento-->
               <!--            documento_certificado_matrimonio-->
@@ -1295,6 +1365,9 @@ export default {
         documento_croquis_direccion_denunciado: '0',
         documento_contrato_pago: '0',
         documento_libreta_notas: '0',
+        documento_diploma_bachiller: '0',
+        documento_comprobante_universidades: '0',
+        documento_fotocopia_ci_padres: '0',
         documento_placas_fotograficas_domicilio_denunciado: '0',
         documento_ciudadania_digital: '0',
         documento_fotocopia_ci_victima: '0',
@@ -1314,6 +1387,12 @@ export default {
       if (this.caso.victimas && this.caso.victimas.length > 0) this.f.victimas = this.caso.victimas
       if (this.caso.denunciantes && this.caso.denunciantes.length > 0) this.f.denunciantes = this.caso.denunciantes
       if (this.caso.denunciados && this.caso.denunciados.length > 0) this.f.denunciados = this.caso.denunciados
+    }
+    // juventides tipologia
+    if (this.tipo === 'JUVENTUDES') {
+      this.tipologias = [
+        'Asistencia familiar',
+      ]
     }
     if (this.tipo === 'SLIM') {
       this.tipologias = [
