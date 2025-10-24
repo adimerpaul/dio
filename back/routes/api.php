@@ -220,6 +220,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/talleres', [TallerController::class, 'store']);
     Route::put('/talleres/{taller}', [TallerController::class, 'update']);
     Route::delete('/talleres/{taller}', [TallerController::class, 'destroy']);
+
+    Route::get('/juventud-talleres', [\App\Http\Controllers\JuventudTallerController::class, 'index']);
+    Route::post('/juventud-talleres', [\App\Http\Controllers\JuventudTallerController::class, 'store']);
+    Route::put('/juventud-talleres/{taller}', [\App\Http\Controllers\JuventudTallerController::class, 'update']);
+    Route::delete('/juventud-talleres/{taller}', [\App\Http\Controllers\JuventudTallerController::class, 'destroy']);
 });
 Route::get('/slimsImprimir', [SlimController::class, 'imprimir']);
 
