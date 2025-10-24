@@ -82,7 +82,10 @@ class Caso extends Model implements AuditableContract
         'respaldo',
         'observaciones',
         'estado_caso_otro',
-        'numero_juzgado_padre'
+        'numero_juzgado_padre',
+        'documento_diploma_bachiller',
+        'documento_comprobante_universidades',
+        'documento_fotocopia_ci_padres',
     ];
 
     /**

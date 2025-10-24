@@ -80,6 +80,17 @@ return new class extends Migration
             $table->string('documento_nota_director', 160)->nullable();
             $table->string('documento_nota_distrital', 160)->nullable();
             $table->string('documento_nota_defensor_pueblo', 160)->nullable();
+//            •	Certificado de Nacimiento del Joven 16-25 AÑOS JUVENTUDES
+//•	Fotocopia de Carnet del Joven
+//•	CERTIFICADO DEL COLEGIO
+//•	Libreta de Bachiller si ya han salido
+//•	Comprobante de ingreso a la universidad
+//•	Fotocopia de Carnet de los padres
+//•	Fotocopia de carnet de tres testigos
+            $table->string('documento_diploma_bachiller', 160)->nullable();
+            $table->string('documento_comprobante_universidades', 160)->nullable();
+            $table->string('documento_fotocopia_ci_padres', 160)->nullable();
+
 
             $table->dateTime('fecha_apertura_caso')->nullable();
             $table->dateTime('fecha_derivacion_psicologica')->nullable();
