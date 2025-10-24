@@ -23,10 +23,15 @@
               <q-icon name="assignment_ind"/>
             </q-item-section>
             <q-item-section>
-              <div class="text-subtitle1 text-weight-medium" v-if="tipo==='PROPREMI'">
+              <div class="text-subtitle1 text-weight-medium" v-if="tipo==='PROPREMI' || tipo==='DNA'">
                 1) DATOS DE LA VICTIMA (MENOR/ES)
               </div>
-              <div class="text-subtitle1 text-weight-medium" v-else>1) DATOS DE LA VICTIMA</div>
+              <div class="text-subtitle1 text-weight-medium" v-if="tipo==='JUVENTUDES'">
+                1) DATOS DE LA VICTIMA (ADOLECENTE/JOVEN)
+              </div>
+              <div class="text-subtitle1 text-weight-medium" v-else>
+                1) DATOS DE LA VICTIMA
+              </div>
             </q-item-section>
             <q-item-section side>
               <q-badge color="blue-2" text-color="blue-10" outline rounded>Obligatorio *</q-badge>

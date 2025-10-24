@@ -44,6 +44,9 @@ const routes = [
       { path: '/dnas/nuevo-apoyo',  component: () => import('pages/dnas/DnaNuevoApoyo.vue'),    meta: { requiresAuth: true } },
       { path: '/dnas/:id',          component: () => import('pages/dnas/DnaShow.vue'),          meta: { requiresAuth: true } },
 
+      // juventudes
+      { path: '/juventudes/asistencias-familiares', component: () => import('pages/juventudes/JuventudesAsistenciaFamiliar.vue'), meta: { requiresAuth: true, perm: 'Juventudes' } },
+
       { path: '/lineas-tiempo', component: () => import('pages/lineastiempo/LineasTiempo.vue'), meta: { requiresAuth: true, perm: 'Lineas de Tiempo' } },
       { path: '/kpis', component: () => import('pages/kpis/Kpis.vue'), meta: { requiresAuth: true, perm: 'Kpis' } },
       { path: '/auditorias', component: () => import('pages/auditorias/Auditorias.vue'), meta: { requiresAuth: true, perm: 'Auditorias' } },
