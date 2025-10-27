@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('sexo')->nullable();
             $table->string('estado_civil')->nullable();
             $table->string('ocupacion')->nullable();
+            $table->string('ingreso_economico')->nullable();
             $table->string('idioma')->nullable();
             $table->string('domicilio')->nullable();
             $table->string('telefono')->nullable();

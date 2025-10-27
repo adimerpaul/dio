@@ -41,6 +41,7 @@ class Victima extends Model implements Auditable{
         'sexo',
         'estado_civil',
         'ocupacion',
+        'ingreso_economico',
         'idioma',
         'domicilio',
         'telefono',

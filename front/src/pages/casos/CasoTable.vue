@@ -61,25 +61,31 @@
         <th>Zona</th>
         <th>Estado</th>
         <th>Alerta</th>
+
+        <!-- Extra, siempre render (sin v-if) -->
+<!--        <th class="col-extra">—</th>-->
+<!--        <th class="col-extra">Legal</th>-->
+<!--        <th class="col-extra">Psicológica</th>-->
+<!--        <th class="col-extra">Trabajo Social</th>-->
+<!--        <th class="col-extra">CUD</th>-->
+<!--        <th class="col-extra">NUREJ</th>-->
+<!--        <th class="col-extra">Juzgado</th>-->
+<!--        <th class="col-extra">Fiscal</th>-->
+<!--        <th class="col-extra">Estado (Legal)</th>-->
+<!--        <th class="col-extra">Fecha Sentencia</th>-->
+<!--        <th class="col-extra">Observaciones</th>-->
+<!--        <th class="col-extra">Entrega/Derivación</th>-->
       </tr>
       </thead>
-
       <tbody v-if="!loading && casos.length">
-      <tr
-        v-for="(c, idx) in casos"
-        :key="c.id"
-        @click="goToDetalle(c)"
-        class="cursor-pointer"
-      >
+      <tr v-for="(c, idx) in casos" :key="c.id" @click="goToDetalle(c)" class="cursor-pointer">
         <td>{{ rowIndex(idx) }}</td>
         <td class="text-no-wrap">{{ tipo }} {{ c.caso_numero || '—' }}</td>
         <td class="text-no-wrap">{{ $filters.date?.(c.fecha_apertura_caso) ?? c.fecha_apertura_caso }}</td>
 
         <!-- Denunciante -->
         <td>
-          <div class="text-weight-medium">
-            {{ nombrePersona(c.denunciantes?.[0], 'denunciante') }}
-          </div>
+          <div class="text-weight-medium">{{ nombrePersona(c.denunciantes?.[0], 'denunciante') }}</div>
           <div class="text-caption text-grey-7" v-if="c.denunciantes?.[0]?.denunciante_nro">
             CI: {{ c.denunciantes?.[0]?.denunciante_nro }}
           </div>
@@ -87,9 +93,7 @@
 
         <!-- Denunciado -->
         <td>
-          <div class="text-weight-medium">
-            {{ nombrePersona(c.denunciados?.[0], 'denunciado') }}
-          </div>
+          <div class="text-weight-medium">{{ nombrePersona(c.denunciados?.[0], 'denunciado') }}</div>
           <div class="text-caption text-grey-7" v-if="c.denunciados?.[0]?.denunciado_nro">
             CI: {{ c.denunciados?.[0]?.denunciado_nro }}
           </div>
@@ -97,11 +101,7 @@
 
         <td>{{ c.caso_tipologia || '—' }}</td>
         <td>{{ c.zona || '—' }}</td>
-
-        <!-- Tipo/Estado -->
-        <td>
-            {{ c.estado_caso || '—' }}
-        </td>
+        <td>{{ c.estado_caso || '—' }}</td>
 
         <!-- Alerta -->
         <td>
@@ -136,39 +136,24 @@
           </template>
         </td>
 
-        <!-- Columnas extra (solo SLIM) -->
-        <template >
-          <td>—</td>
-          <td>{{ c.legal_user?.name ?? '—' }}</td>
-          <td>{{ c.psicologica_user?.name ?? '—' }}</td>
-          <td>{{ c.trabajo_social_user?.name ?? '—' }}</td>
-          <td>{{ fmt(c.cud) }}</td>
-          <td>{{ fmt(c.nurej) }}</td>
-          <td>{{ fmt(c.numero_juzgado) }}</td>
-          <td>{{ fmt(c.responsable_fiscalia) }}</td>
-          <td>{{ fmt(c.estado_caso || c.estado_caso_otro) }}</td>
-          <td>{{ fmtFecha(c.fecha_sentencia) }}</td>
-          <td class="ellipsis-2-lines">{{ fmt(c.observaciones) }}</td>
-          <td>{{ c.numero_apoyo_integral ? fmtFecha(c.fecha_entrega_juzgado || c.fecha_derivacion_area_legal) : '—' }}</td>
-        </template>
+<!--        &lt;!&ndash; Extra, siempre render (sin v-if) &ndash;&gt;-->
+<!--        <td class="col-extra">—</td>-->
+<!--        <td class="col-extra">{{ c.legal_user?.name ?? '—' }}</td>-->
+<!--        <td class="col-extra">{{ c.psicologica_user?.name ?? '—' }}</td>-->
+<!--        <td class="col-extra">{{ c.trabajo_social_user?.name ?? '—' }}</td>-->
+<!--        <td class="col-extra">{{ fmt(c.cud) }}</td>-->
+<!--        <td class="col-extra">{{ fmt(c.nurej) }}</td>-->
+<!--        <td class="col-extra">{{ fmt(c.numero_juzgado) }}</td>-->
+<!--        <td class="col-extra">{{ fmt(c.responsable_fiscalia) }}</td>-->
+<!--        <td class="col-extra">{{ fmt(c.estado_caso || c.estado_caso_otro) }}</td>-->
+<!--        <td class="col-extra">{{ fmtFecha(c.fecha_sentencia) }}</td>-->
+<!--        <td class="col-extra ellipsis-2-lines">{{ fmt(c.observaciones) }}</td>-->
+<!--        <td class="col-extra">-->
+<!--          {{ c.numero_apoyo_integral ? fmtFecha(c.fecha_entrega_juzgado || c.fecha_derivacion_area_legal) : '—' }}-->
+<!--        </td>-->
       </tr>
       </tbody>
 
-      <tbody v-else-if="!loading && !casos.length">
-      <tr>
-        <td :colspan="baseColspan" class="text-center text-grey">
-          No hay resultados para tu búsqueda.
-        </td>
-      </tr>
-      </tbody>
-
-      <tbody v-else>
-      <tr>
-        <td :colspan="baseColspan" class="text-center">
-          <q-spinner-dots size="24px" class="q-mr-sm" /> Cargando…
-        </td>
-      </tr>
-      </tbody>
     </q-markup-table>
 
     <!-- Paginación -->

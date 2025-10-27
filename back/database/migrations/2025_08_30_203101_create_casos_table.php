@@ -60,6 +60,7 @@ return new class extends Migration
             $table->string('documento_fotocopia_carnet_denunciado', 10)->nullable();
             $table->string('documento_placas_fotograficas_domicilio_denunciante', 10)->nullable();
             $table->string('documento_croquis_direccion_denunciado', 10)->nullable();
+            $table->string('documento_croquis_direccion_denunciante', 10)->nullable();
             $table->string('documento_placas_fotograficas_domicilio_denunciado', 10)->nullable();
             $table->string('documento_ciudadania_digital', 10)->nullable();
             $table->string('documento_otros', 160)->nullable();

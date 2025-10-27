@@ -353,38 +353,12 @@
         </q-item>
         <q-expansion-item dense expand-separator icon="add_circle" label="Nuevo PROPREMI" active-class="menu-active" v-if="hasAnyPerm(['Crear PROPREMI'])">
           <q-list>
-<!--            <q-item :inset-level="0.3" dense to="/propremis/nuevofisica" exact clickable class="menu-item" active-class="menu-active" v-close-popup>-->
-<!--              <q-item-section avatar>-->
-<!--                <q-icon name="person_add" class="text-white"/>-->
-<!--              </q-item-section>-->
-<!--              <q-item-section>-->
-<!--                <q-item-label class="text-white">Nueva Denuncia Física</q-item-label>-->
-<!--              </q-item-section>-->
-<!--            </q-item>-->
-<!--            <q-item :inset-level="0.3" dense to="/propremis/nuevointegral" exact clickable class="menu-item" active-class="menu-active" v-close-popup>-->
-<!--              <q-item-section avatar>-->
-<!--                <q-icon name="diversity_1" class="text-white"/>-->
-<!--              </q-item-section>-->
-<!--              <q-item-section>-->
-<!--                <q-item-label class="text-white">Nuevo Apoyo Integral</q-item-label>-->
-<!--              </q-item-section>-->
-<!--            </q-item>-->
-<!--            -	INFRACCIONES SISTEMA EDUCATIVO-->
             <q-item :inset-level="0.3" dense to="/propremis/nuevo-infraccion-educativo" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
               <q-item-section avatar>
                 <q-icon name="school" class="text-white"/>
               </q-item-section>
               <q-item-section>
                 <q-item-label class="text-white">Nueva Infracción Sistema Educativo</q-item-label>
-              </q-item-section>
-            </q-item>
-<!--            -	ORIENTACIONES/TALLERES-->
-            <q-item :inset-level="0.3" dense to="/talleres" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
-              <q-item-section avatar>
-                <q-icon name="record_voice_over" class="text-white"/>
-              </q-item-section>
-              <q-item-section>
-                <q-item-label class="text-white">Agenda Talleres de Orientación</q-item-label>
               </q-item-section>
             </q-item>
           </q-list>
@@ -395,6 +369,14 @@
           </q-item-section>
           <q-item-section>
             <q-item-label class="text-white">PROPREMI (Casos)</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item dense to="/talleres" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Agenda Talleres de Orientación')">
+          <q-item-section avatar>
+            <q-icon name="record_voice_over" class="text-white"/>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label class="text-white">Agenda Talleres de Orientación</q-item-label>
           </q-item-section>
         </q-item>
         <q-item dense to="/acogimiento" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Acogimiento')">
