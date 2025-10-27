@@ -182,7 +182,7 @@ import Seguimiento from "pages/casos/tabs/Seguimiento.vue";
 import SlimNuevo from "pages/slims/SlimNuevo.vue";
 import SocialInformes from "pages/casos/tabs/Social.vue";
 import CasoNuevoDNA from "pages/dnas/DnaNuevo.vue";
-import CasoNuevoSLAM from "pages/slams/SlamNuevo.vue";
+// import CasoNuevoSLAM from "pages/slams/SlamNuevo.vue";
 import CasoNuevoUMADIS from "pages/umadis/UmadisNuevo.vue";
 import CasoNuevoPROPREMI from "pages/propremis/PropremisNuevo.vue";
 import Codigo from "pages/casos/tabs/Codigo.vue";
@@ -197,7 +197,7 @@ export default {
     Codigo,
     CasoNuevoPROPREMI,
     CasoNuevoUMADIS,
-    CasoNuevoSLAM,
+    // CasoNuevoSLAM,
     CasoNuevoDNA,
     SocialInformes,
     SlimNuevo,

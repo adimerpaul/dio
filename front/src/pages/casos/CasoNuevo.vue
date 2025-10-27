@@ -26,8 +26,11 @@
               <div class="text-subtitle1 text-weight-medium" v-if="tipo==='PROPREMI' || tipo==='DNA'">
                 1) DATOS DE LA VICTIMA (MENOR/ES)
               </div>
-              <div class="text-subtitle1 text-weight-medium" v-if="tipo==='JUVENTUDES'">
+              <div class="text-subtitle1 text-weight-medium" v-else-if="tipo==='JUVENTUDES'">
                 1) DATOS DE LA VICTIMA (ADOLECENTE/JOVEN)
+              </div>
+              <div class="text-subtitle1 text-weight-medium" v-else-if="tipo==='SLAM'">
+                1) DATOS DE LA VICTIMA (ADULTOS MAYORES)
               </div>
               <div class="text-subtitle1 text-weight-medium" v-else>
                 1) DATOS DE LA VICTIMA
@@ -118,6 +121,9 @@
                       <q-input v-model="v.ocupacion" dense outlined clearable label="Ocupación" v-upper/>
                     </div>
                   </template>
+                  <div class="col-12 col-md-4" v-if="tipo==='SLAM'">
+                    <q-input v-model="v.ingreso_economico" dense outlined clearable label="Ingresos Económicos" v-upper/>
+                  </div>
                   <template v-if="tipo==='DNA' || tipo==='PROPREMI'">
 
                   </template>
@@ -269,7 +275,7 @@
                       <div class="col-12 col-md-4">
                         <q-input v-model="d.denunciante_ocupacion" dense outlined clearable label="Ocupación" v-upper/>
                       </div>
-                      <template v-if="tipo==='DNA' || tipo==='JUVENTUDES'">
+                      <template v-if="tipo==='DNA' || tipo==='JUVENTUDES' || tipo==='SLAM' || tipo==='SLIM' || tipo==='UMADIS'">
                         <div class="col-12 col-md-4">
                           <q-input v-model="d.denunciante_cargo" dense outlined clearable label="Lugar de trabajo"
                                    v-upper/>
@@ -634,7 +640,7 @@
               <div class="col-6 col-md-3">
                 <q-toggle v-model="f.violencia_economica" label="Económica/Patrimonial"/>
               </div>
-              <div class="col-6 col-md-3">
+              <div class="col-6 col-md-3" v-if="tipo==='DNA' || tipo==='PROPREMI' || tipo==='SLIM' || tipo==='UMADIS'">
                 <q-toggle v-model="f.violencia_cibernetica" label="Cibernética"/>
               </div>
             </div>
@@ -684,7 +690,43 @@
 
         <q-card-section>
           <div class="row q-col-gutter-md">
-            <template v-if="tipo ==='PROPREMI'">
+            <template v-if="tipo ==='SLAM'">
+<!--              <div class="col-12 col-md-2">-->
+<!--                <q-checkbox v-model="f.documento_fotocopia_ci_victima" label="Fotocopia CI víctima" true-value="1"-->
+<!--                            false-value="0"/>-->
+<!--              </div>-->
+<!--              documento_fotocopia_ci_denunciante-->
+<!--              documento_fotocopia_carnet_denunciado-->
+<!--              documento_placas_fotograficas_domicilio_denunciante-->
+<!--              documento_placas_fotograficas_domicilio_denunciado-->
+<!--              documento_croquis_direccion_denunciado-->
+<!--              documento_croquis_direccion_denunciante-->
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_fotocopia_ci_denunciante" label="Fotocopia CI denunciante"
+                            true-value="1" false-value="0"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_fotocopia_carnet_denunciado" label="Fotocopia CI denunciado"
+                            true-value="1" false-value="0"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_placas_fotograficas_domicilio_denunciante"
+                            label="Placas fotográficas domicilio denunciante" true-value="1" false-value="0"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_placas_fotograficas_domicilio_denunciado"
+                            label="Placas fotográficas domicilio denunciado" true-value="1" false-value="0"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_croquis_direccion_denunciado" label="Croquis dirección denunciado"
+                            true-value="1" false-value="0"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_croquis_direccion_denunciante"
+                            label="Croquis dirección denunciante" true-value="1" false-value="0"/>
+              </div>
+            </template>
+            <template v-else-if="tipo ==='PROPREMI'">
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_fotocopia_ci_victima" label="Fotocopia CI víctima" true-value="1"
                             false-value="0"/>
@@ -705,13 +747,6 @@
               </div>
             </template>
             <template v-else-if="tipo ==='JUVENTUDES'">
-<!--              documento_certificado_nacimiento-->
-<!--              documento_fotocopia_ci_victima-->
-<!--              documento_libreta_notas-->
-<!--              documento_diploma_bachiller-->
-<!--              documento_comprobante_universidades-->
-<!--              documento_fotocopia_ci_padres-->
-<!--              documento_tres_testigos-->
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_certificado_nacimiento" label="Certificado de nacimiento del joven"
                             true-value="1" false-value="0"/>
@@ -742,15 +777,6 @@
               </div>
             </template>
             <template v-else-if="tipo ==='DNA'">
-
-              <!--            documento_certificado_nacimiento-->
-              <!--            documento_certificado_matrimonio-->
-              <!--            documento_tres_testigos-->
-              <!--            documento_croquis_direccion_denunciado-->
-              <!--            documento_contrato_pago-->
-              <!--            documento_libreta_notas-->
-              <!--            documento_fotocopia_carnet_denunciante-->
-              <!--            documento_fotocopia_carnet_denunciado-->
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_certificado_nacimiento" label="Certificado de nacimiento hijos original"
                             true-value="1" false-value="0"/>
@@ -802,6 +828,10 @@
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_placas_fotograficas_domicilio_denunciado"
                             label="Placas fotográficas domicilio denunciado" true-value="1" false-value="0"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_croquis_direccion_denunciante" label="Croquis dirección denunciante"
+                            true-value="1" false-value="0"/>
               </div>
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_ciudadania_digital" label="Ciudadanía digital" true-value="1"
@@ -1233,10 +1263,13 @@ export default {
         {label: 'Concubinato', value: 'Concubinato'},
       ],
       idiomas: [
-        {label: 'Catellano', value: 'Catellano'},
+        {label: 'Castellano', value: 'Castellano'},
         {label: 'Quechua', value: 'Quechua'},
         {label: 'Aymara', value: 'Aymara'},
         {label: 'Guaraní', value: 'Guaraní'},
+        { label: 'Castellano / Quechua', value: 'Castellano / Quechua'},
+        { label: 'Castellano / Aymara', value: 'Castellano / Aymara'},
+        { label: 'Castellano / Guaraní', value: 'Castellano / Guaraní'},
         {label: 'Otro', value: 'Otro'}
       ],
       oruroCenter: [-17.9667, -67.1167],
@@ -1363,6 +1396,7 @@ export default {
         documento_certificado_matrimonio: '0',
         documento_tres_testigos: '0',
         documento_croquis_direccion_denunciado: '0',
+        documento_croquis_direccion_denunciante: '0',
         documento_contrato_pago: '0',
         documento_libreta_notas: '0',
         documento_diploma_bachiller: '0',
@@ -1394,6 +1428,19 @@ export default {
         'Asistencia familiar',
       ]
     }
+    if (this.tipo === 'SLAM') {
+      this.tipologias = [
+        'Violencia Física',
+        'Violencia Psicológica',
+        'Violencia Sexual',
+        'Violencia Económica/Patrimonial',
+        'Abandono',
+        'Extravío',
+        'Tipología Múltiple',
+        'Otra'
+      ]
+    }
+
     if (this.tipo === 'SLIM') {
       this.tipologias = [
         'Violencia Física',
