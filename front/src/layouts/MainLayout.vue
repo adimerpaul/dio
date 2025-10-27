@@ -269,15 +269,26 @@
         </q-item>
         <q-expansion-item dense expand-separator icon="add_circle" label="Nuevo SLAM" active-class="menu-active" v-if="hasAnyPerm(['Crear SLAM'])">
           <q-list>
-            <q-item :inset-level="0.3" dense to="/slams/nuevofisica" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
+<!--            nuevo proceso penal slam-->
+<!--            nuevo proceso proceso familiar slam-->
+<!--            nuevo apoyo integral-->
+            <q-item :inset-level="0.3" dense to="/slams/nuevo-penal" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
               <q-item-section avatar>
-                <q-icon name="person_add" class="text-white"/>
+                <q-icon name="balance" class="text-white"/>
               </q-item-section>
               <q-item-section>
-                <q-item-label class="text-white">Nueva Denuncia Física</q-item-label>
+                <q-item-label class="text-white">Nuevo Proceso Penal</q-item-label>
               </q-item-section>
             </q-item>
-            <q-item :inset-level="0.3" dense to="/slams/nuevointegral" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
+            <q-item :inset-level="0.3" dense to="/slams/nuevo-familiar" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
+              <q-item-section avatar>
+                <q-icon name="family_restroom" class="text-white"/>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label class="text-white">Nuevo Proceso Familiar</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item :inset-level="0.3" dense to="/slams/nuevo-apoyo" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
               <q-item-section avatar>
                 <q-icon name="diversity_1" class="text-white"/>
               </q-item-section>
@@ -285,6 +296,23 @@
                 <q-item-label class="text-white">Nuevo Apoyo Integral</q-item-label>
               </q-item-section>
             </q-item>
+
+<!--            <q-item :inset-level="0.3" dense to="/slams/nuevofisica" exact clickable class="menu-item" active-class="menu-active" v-close-popup>-->
+<!--              <q-item-section avatar>-->
+<!--                <q-icon name="person_add" class="text-white"/>-->
+<!--              </q-item-section>-->
+<!--              <q-item-section>-->
+<!--                <q-item-label class="text-white">Nueva Denuncia Física</q-item-label>-->
+<!--              </q-item-section>-->
+<!--            </q-item>-->
+<!--            <q-item :inset-level="0.3" dense to="/slams/nuevointegral" exact clickable class="menu-item" active-class="menu-active" v-close-popup>-->
+<!--              <q-item-section avatar>-->
+<!--                <q-icon name="diversity_1" class="text-white"/>-->
+<!--              </q-item-section>-->
+<!--              <q-item-section>-->
+<!--                <q-item-label class="text-white">Nuevo Apoyo Integral</q-item-label>-->
+<!--              </q-item-section>-->
+<!--            </q-item>-->
           </q-list>
         </q-expansion-item>
         <q-item dense to="/slams" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Ver SLAM')">

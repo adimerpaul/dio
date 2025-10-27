@@ -22,8 +22,14 @@ const routes = [
       // { path: '/slims/:id', component: () => import('pages/slims/SlimShow.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
       //
       { path: '/slams', component: () => import('pages/slams/Slams.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
-      { path: '/slams/nuevofisica', component: () => import('pages/slams/SlamNuevoFisico.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
-      { path: '/slams/nuevointegral', component: () => import('pages/slams/SlamNuevoIntegral.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
+      // <!--            nuevo proceso penal slam-->
+      // <!--            nuevo proceso proceso familiar slam-->
+      // <!--            nuevo apoyo integral-->
+      { path: '/slams/nuevo-penal', component: () => import('pages/slams/SlamNuevoPenal.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
+      { path: '/slams/nuevo-familiar', component: () => import('pages/slams/SlamNuevoFamiliar.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
+      { path: '/slams/nuevo-apoyo', component: () => import('pages/slams/SlamNuevoApoyo.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
+      // { path: '/slams/nuevofisica', component: () => import('pages/slams/SlamNuevoFisico.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
+      // { path: '/slams/nuevointegral', component: () => import('pages/slams/SlamNuevoIntegral.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
       // { path: '/slams/:id', component: () => import('pages/slams/SlamShow.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
       //
       { path: '/umadis', component: () => import('pages/umadis/Umadis.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
