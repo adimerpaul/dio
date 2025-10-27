@@ -405,7 +405,7 @@
             <q-item-label class="text-white">Acogimiento</q-item-label>
           </q-item-section>
         </q-item>
-        <q-expansion-item dense expand-separator icon="emoji_people" label="Juventudes" active-class="menu-active" v-if="hasPerm('Juventudes')">
+        <q-expansion-item dense expand-separator icon="emoji_people" label="JUVENTUDES" active-class="menu-active" v-if="hasPerm('Crear Juventudes')">
           <q-list>
             <q-item :inset-level="0.3" dense to="/juventudes/permisos-trabajo" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
               <q-item-section avatar>
@@ -433,6 +433,15 @@
             </q-item>
           </q-list>
         </q-expansion-item>
+<!--       Ver juventudes -->
+        <q-item dense to="/juventudes" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Ver Juventudes')">
+          <q-item-section avatar>
+            <q-icon name="emoji_people" class="text-white"/>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label class="text-white">Juventudes (Casos)</q-item-label>
+          </q-item-section>
+        </q-item>
         <q-item dense to="/reportes" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Reportes')">
           <q-item-section avatar>
             <q-icon name="bar_chart" class="text-white"/>
