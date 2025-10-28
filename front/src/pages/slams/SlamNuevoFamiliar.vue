@@ -1,7 +1,7 @@
 <template>
   <CasoNuevo
     :showNumeroApoyoIntegral="false"
-    titulo="Familiar SLAM"
+    titulo="Proceso Familiar SLAM"
     :tipo="'SLAM'"
   />
 </template>

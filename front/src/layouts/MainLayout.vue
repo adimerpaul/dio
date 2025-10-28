@@ -269,9 +269,6 @@
         </q-item>
         <q-expansion-item dense expand-separator icon="add_circle" label="Nuevo SLAM" active-class="menu-active" v-if="hasAnyPerm(['Crear SLAM'])">
           <q-list>
-<!--            nuevo proceso penal slam-->
-<!--            nuevo proceso proceso familiar slam-->
-<!--            nuevo apoyo integral-->
             <q-item :inset-level="0.3" dense to="/slams/nuevo-penal" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
               <q-item-section avatar>
                 <q-icon name="balance" class="text-white"/>
@@ -294,6 +291,15 @@
               </q-item-section>
               <q-item-section>
                 <q-item-label class="text-white">Nuevo Apoyo Integral</q-item-label>
+              </q-item-section>
+            </q-item>
+<!--            Nuevo apoyo Notarial-->
+            <q-item :inset-level="0.3" dense to="/slams/nuevo-notarial" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
+              <q-item-section avatar>
+                <q-icon name="gavel" class="text-white"/>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label class="text-white">Nuevo Apoyo Notarial</q-item-label>
               </q-item-section>
             </q-item>
 

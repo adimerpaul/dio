@@ -1428,7 +1428,7 @@ export default {
         'Asistencia familiar',
       ]
     }
-    if (this.tipo === 'SLAM') {
+    if (this.tipo === 'SLAM' && this.titulo==='Proceso Penal SLAM') {
       this.tipologias = [
         'Violencia Física',
         'Violencia Psicológica',
@@ -1438,6 +1438,33 @@ export default {
         'Extravío',
         'Tipología Múltiple',
         'Otra'
+      ]
+    }
+    if (this.tipo === 'SLAM' && this.titulo==='Proceso Penal SLAM') {
+      this.tipologias = [
+        'Violencia Física',
+        'Violencia Psicológica',
+        'Violencia Sexual',
+        'Violencia Económica/Patrimonial',
+        'Abandono',
+        'Extravío',
+        'Tipología Múltiple',
+        'Otra'
+      ]
+    }
+    if (this.tipo === 'SLAM' && this.titulo==='Proceso Familiar SLAM') {
+      this.tipologias = [
+        'Asistencia familiar',
+        'Otros'
+      ]
+    }
+
+    if (this.tipo === 'SLAM' && this.titulo==='Apoyo Integral SLAM') {
+      this.tipologias = [
+        'Informes psicológicos',
+        'Informes sociales',
+        'Informes psicosociales',
+        'Otros'
       ]
     }
 
