@@ -16,22 +16,14 @@ const routes = [
       { path: '/propremis/nuevo-infraccion-educativo', component: () => import('pages/propremis/PropremisNuevoInfraccionEducativo.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
       { path: '/talleres', component: () => import('pages/talleres/Talleres.vue'), meta: { requiresAuth: true, perm: 'Talleres' } },
 
-
-      // casos
       { path: '/casos/:id', component: () => import('pages/casos/CasoShow.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
-      // { path: '/slims/:id', component: () => import('pages/slims/SlimShow.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
-      //
       { path: '/slams', component: () => import('pages/slams/Slams.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
-      // <!--            nuevo proceso penal slam-->
-      // <!--            nuevo proceso proceso familiar slam-->
-      // <!--            nuevo apoyo integral-->
+      // http://localhost:9001/slams/nuevo-notarial
+      { path: '/slams/nuevo-notarial', component: () => import('pages/slams/SlamNotarialPage.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
       { path: '/slams/nuevo-penal', component: () => import('pages/slams/SlamNuevoPenal.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
       { path: '/slams/nuevo-familiar', component: () => import('pages/slams/SlamNuevoFamiliar.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
       { path: '/slams/nuevo-apoyo', component: () => import('pages/slams/SlamNuevoApoyo.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
-      // { path: '/slams/nuevofisica', component: () => import('pages/slams/SlamNuevoFisico.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
-      // { path: '/slams/nuevointegral', component: () => import('pages/slams/SlamNuevoIntegral.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
-      // { path: '/slams/:id', component: () => import('pages/slams/SlamShow.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
-      //
+
       { path: '/umadis', component: () => import('pages/umadis/Umadis.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
       { path: '/umadis/nuevofisica', component: () => import('pages/umadis/UmadisNuevoFisico.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
       { path: '/umadis/nuevointegral', component: () => import('pages/umadis/UmadisNuevoIntegral.vue'), meta: { requiresAuth: true, perm: 'Casos' } },

@@ -4,6 +4,7 @@ use App\Http\Controllers\AcogimientoController;
 use App\Http\Controllers\CasoController;
 use App\Http\Controllers\DnaController;
 use App\Http\Controllers\SlamController;
+use App\Http\Controllers\SlamNotarialController;
 use App\Http\Controllers\SlimDocumentoController;
 use App\Http\Controllers\SlimFotografiaController;
 use App\Http\Controllers\SlimInformeLegalController;
@@ -225,6 +226,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/juventud-talleres', [\App\Http\Controllers\JuventudTallerController::class, 'store']);
     Route::put('/juventud-talleres/{taller}', [\App\Http\Controllers\JuventudTallerController::class, 'update']);
     Route::delete('/juventud-talleres/{taller}', [\App\Http\Controllers\JuventudTallerController::class, 'destroy']);
+
+
+    Route::get('slam-notariales', [SlamNotarialController::class, 'index']);
+    Route::post('slam-notariales', [SlamNotarialController::class, 'store']);
+    Route::put('slam-notariales/{id}', [SlamNotarialController::class, 'update']);
+    Route::delete('slam-notariales/{id}', [SlamNotarialController::class, 'destroy']);
 });
 Route::get('/slimsImprimir', [SlimController::class, 'imprimir']);
 
