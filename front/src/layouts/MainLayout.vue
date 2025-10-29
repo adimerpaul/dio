@@ -806,7 +806,7 @@ async function fetchPendientesCount () {
 
 function irPendientes (p) {
   // proxy.$router.push({ path: '/slims', query: { only_pendientes: 1 } })
-  proxy.$router.push(`/${p.tipo.toLowerCase()}s/`)
+  proxy.$router.push(`/${p.tipo.toLowerCase()}/`)
 }
 
 onMounted(() => { fetchPendientesCount() })

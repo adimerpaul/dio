@@ -32,6 +32,9 @@
               <div class="text-subtitle1 text-weight-medium" v-else-if="tipo==='SLAM'">
                 1) DATOS DE LA VICTIMA (ADULTOS MAYORES)
               </div>
+              <div class="text-subtitle1 text-weight-medium" v-else-if="tipo==='UMADIS'">
+                1) DATOS DE LA VICTIMA (PERSONAS CON DISCAPACIDAD)
+              </div>
               <div class="text-subtitle1 text-weight-medium" v-else>
                 1) DATOS DE LA VICTIMA
               </div>
@@ -121,7 +124,7 @@
                       <q-input v-model="v.ocupacion" dense outlined clearable label="Ocupación" v-upper/>
                     </div>
                   </template>
-                  <div class="col-12 col-md-4" v-if="tipo==='SLAM'">
+                  <div class="col-12 col-md-4" v-if="tipo==='SLAM' || tipo==='UMADIS'">
                     <q-input v-model="v.ingreso_economico" dense outlined clearable label="Ingresos Económicos" v-upper/>
                   </div>
                   <template v-if="tipo==='DNA' || tipo==='PROPREMI'">
@@ -166,6 +169,16 @@
                     <q-toggle v-model="v.trabaja" dense :true-value="1" :false-value="0" label="¿Trabaja actualmente?"/>
                     <!--                    <pre>{{v}}</pre>-->
                   </div>
+                  <div class="col-12 col-md-6" v-if="tipo==='UMADIS'">
+                    <q-select v-model="v.tipo_discapacidad" dense outlined emit-value map-options clearable
+                              :options="tiposDiscapacidad" label="Tipo de discapacidad"/>
+                  </div>
+                  <div class="col-12 col-md-6" v-if="tipo==='UMADIS'">
+<!--                    <q-select v-model="v.grado_discapacidad" dense outlined emit-value map-options clearable-->
+<!--                              :options="gradosDiscapacidad" label="Grado de discapacidad"/>-->
+                    <q-input v-model="v.grado_discapacidad" dense outlined clearable label="Grado de discapacidad" v-upper/>
+                  </div>
+
                   <div class="col-12 col-md-6" v-if="v.trabaja===1">
                     <q-input v-model="v.lugar_trabajo" dense outlined clearable label="Lugar de trabajo" v-upper/>
                   </div>
@@ -690,7 +703,46 @@
 
         <q-card-section>
           <div class="row q-col-gutter-md">
-            <template v-if="tipo ==='SLAM'">
+<!--            //            Presencia física de la persona a evaluar (obligatoria).-->
+<!--            //            Cédula de Identidad de la persona con discapacidad (original y fotocopia).-->
+<!--            //Cédula de Identidad del padre, madre y/o tutor para persona referente.-->
+<!--            //            Certificado médico actualizado (original y fotocopia), según tipo de discapacidad. Para persona con discapacidad AUDITIVA adjuntar examen de Audiometría.-->
+<!--            //            Croquis del domicilio actualizado.-->
+<!--            //            Papeleta de luz y agua (original y fotocopia).-->
+<!--            $table->string('documento_persona_fisica', 160)->nullable();-->
+<!--            $table->string('documento_carnet_discapacidad', 160)->nullable();-->
+<!--            $table->string('documento_carnet_padres', 160)->nullable();-->
+<!--            $table->string('documento_certificado_medico', 160)->nullable();-->
+<!--            //            documento_croquis_direccion_denunciante-->
+<!--            $table->string('documento_papeleta_luz_agua', 160)->nullable();-->
+<!--            UMADIS-->
+            <template v-if="tipo ==='UMADIS'">
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_persona_fisica" label="Presencia física de la persona a evaluar"
+                            true-value="1" false-value="0"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_carnet_discapacidad" label="Cédula de Identidad de la persona con discapacidad"
+                            true-value="1" false-value="0"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_carnet_padres" label="Cédula de Identidad del padre, madre y/o tutor"
+                            true-value="1" false-value="0"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_certificado_medico" label="Certificado médico actualizado" true-value="1"
+                            false-value="0"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_croquis_direccion_denunciante" label="Croquis del domicilio actualizado"
+                            true-value="1" false-value="0"/>
+              </div>
+              <div class="col-12 col-md-2">
+                <q-checkbox v-model="f.documento_papeleta_luz_agua" label="Papeleta de luz y agua" true-value="1"
+                            false-value="0"/>
+              </div>
+            </template>
+            <template v-else-if="tipo ==='SLAM'">
 <!--              <div class="col-12 col-md-2">-->
 <!--                <q-checkbox v-model="f.documento_fotocopia_ci_victima" label="Fotocopia CI víctima" true-value="1"-->
 <!--                            false-value="0"/>-->
@@ -1209,6 +1261,14 @@ export default {
         'AMERICA',
         'T. H. MINEROS HUANUNI SECUNDARIA',
       ],
+      tiposDiscapacidad: [
+        {label: 'Física', value: 'Física'},
+        {label: 'Sensorial', value: 'Sensorial'},
+        {label: 'Intelectual', value: 'Intelectual'},
+        {label: 'Psicosocial', value: 'Psicosocial'},
+        {label: 'Múltiple', value: 'Múltiple'},
+        {label: 'Otra', value: 'Otra'},
+      ],
       cursos: [
         '1ro. INICIAL',
         '2do. INICIAL',
@@ -1270,6 +1330,7 @@ export default {
         { label: 'Castellano / Quechua', value: 'Castellano / Quechua'},
         { label: 'Castellano / Aymara', value: 'Castellano / Aymara'},
         { label: 'Castellano / Guaraní', value: 'Castellano / Guaraní'},
+        { label: 'Castellano / Quechua / Aymara', value: 'Castellano / Quechua / Aymara'},
         {label: 'Otro', value: 'Otro'}
       ],
       oruroCenter: [-17.9667, -67.1167],
@@ -1409,6 +1470,11 @@ export default {
         documento_nota_director: '0',
         documento_nota_distrital: '0',
         documento_nota_defensor_pueblo: '0',
+        documento_persona_fisica: '0',
+        documento_carnet_discapacidad: '0',
+        documento_carnet_padres: '0',
+        documento_certificado_medico: '0',
+        documento_papeleta_luz_agua: '0',
       }
     }
   },
@@ -1422,7 +1488,39 @@ export default {
       if (this.caso.denunciantes && this.caso.denunciantes.length > 0) this.f.denunciantes = this.caso.denunciantes
       if (this.caso.denunciados && this.caso.denunciados.length > 0) this.f.denunciados = this.caso.denunciados
     }
-    // juventides tipologia
+    if (this.tipo === 'UMADIS' && this.titulo==='Nuevo Caso Penal UMADIS') {
+      this.tipologias = [
+        'Violacion física',
+        'Violacion psicológica',
+        'Violacion sexual',
+        'Violacion económica/patrimonial',
+        'Violacion familiar (doméstica)',
+        'Tipología múltiple',
+      ]
+    }
+    if (this.tipo === 'UMADIS' && this.titulo==='Nuevo Familiar UMADIS') {
+      this.tipologias = [
+        'Asistencia familiar',
+        'Interdictos',
+        'Extinción de autoridad',
+        'Entrega provisional',
+        'Perdida de personas con discapacidad',
+      ]
+    }
+    if (this.tipo === 'UMADIS' && this.titulo==='Nuevo Caso Social UMADIS') {
+      this.tipologias = [
+        'Bullying',
+        'Ciberbullying',
+      ]
+    }
+    if( this.tipo === 'UMADIS' && this.titulo==='Nuevo Apoyo Integral UMADIS') {
+      this.tipologias = [
+        'Informes psicológicos',
+        'Informes sociales',
+        'Informes psicosociales',
+        'Otros'
+      ]
+    }
     if (this.tipo === 'JUVENTUDES') {
       this.tipologias = [
         'Asistencia familiar',
@@ -1730,8 +1828,9 @@ export default {
             denunciante_idioma: v.idioma || '',
             denunciante_trabaja: false,
             denunciante_ocupacion: v.ocupacion || '',
-            denunciante_ingresos: null,
+            denunciante_ingresos: v.ingreso_economico || null,
             denunciante_parentesco: '',
+
           })
         })
         return false

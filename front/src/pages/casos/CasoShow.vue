@@ -183,7 +183,7 @@ import SlimNuevo from "pages/slims/SlimNuevo.vue";
 import SocialInformes from "pages/casos/tabs/Social.vue";
 import CasoNuevoDNA from "pages/dnas/DnaNuevo.vue";
 // import CasoNuevoSLAM from "pages/slams/SlamNuevo.vue";
-import CasoNuevoUMADIS from "pages/umadis/UmadisNuevo.vue";
+// import CasoNuevoUMADIS from "pages/umadis/UmadisNuevo.vue";
 import CasoNuevoPROPREMI from "pages/propremis/PropremisNuevo.vue";
 import Codigo from "pages/casos/tabs/Codigo.vue";
 import moment from "moment";
@@ -196,7 +196,7 @@ export default {
     CasoNuevo,
     Codigo,
     CasoNuevoPROPREMI,
-    CasoNuevoUMADIS,
+    // CasoNuevoUMADIS,
     // CasoNuevoSLAM,
     CasoNuevoDNA,
     SocialInformes,
