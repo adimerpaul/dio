@@ -52,7 +52,9 @@ class Victima extends Model implements Auditable{
         'trabaja',
         'lugar_trabajo',
         'es_denunciante',
-        'caso_id'
+        'caso_id',
+        'grado_discapacidad',
+        'tipo_discapacidad',
     ];
     protected $hidden = [
         'created_at',

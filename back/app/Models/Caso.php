@@ -87,6 +87,11 @@ class Caso extends Model implements AuditableContract
         'documento_comprobante_universidades',
         'documento_fotocopia_ci_padres',
         'documento_croquis_direccion_denunciante',
+        'documento_persona_fisica',
+        'documento_carnet_discapacidad',
+        'documento_carnet_padres',
+        'documento_certificado_medico',
+        'documento_papeleta_luz_agua',
     ];
 
     /**

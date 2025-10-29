@@ -91,6 +91,19 @@ return new class extends Migration
             $table->string('documento_diploma_bachiller', 160)->nullable();
             $table->string('documento_comprobante_universidades', 160)->nullable();
             $table->string('documento_fotocopia_ci_padres', 160)->nullable();
+//            Presencia física de la persona a evaluar (obligatoria).
+//            Cédula de Identidad de la persona con discapacidad (original y fotocopia).
+//Cédula de Identidad del padre, madre y/o tutor para persona referente.
+//            Certificado médico actualizado (original y fotocopia), según tipo de discapacidad. Para persona con discapacidad AUDITIVA adjuntar examen de Audiometría.
+//            Croquis del domicilio actualizado.
+//            Papeleta de luz y agua (original y fotocopia).
+            $table->string('documento_persona_fisica', 160)->nullable();
+            $table->string('documento_carnet_discapacidad', 160)->nullable();
+            $table->string('documento_carnet_padres', 160)->nullable();
+            $table->string('documento_certificado_medico', 160)->nullable();
+//            documento_croquis_direccion_denunciante
+            $table->string('documento_papeleta_luz_agua', 160)->nullable();
+
 
 
             $table->dateTime('fecha_apertura_caso')->nullable();

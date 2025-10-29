@@ -36,6 +36,9 @@ return new class extends Migration
             $table->boolean('trabaja')->nullable();
             $table->string('lugar_trabajo')->nullable();
 
+            $table->string('grado_discapacidad')->nullable();
+            $table->string('tipo_discapacidad')->nullable();
+
             $table->boolean('es_denunciante')->default(false);
 
             $table->unsignedBigInteger('caso_id')->nullable();
