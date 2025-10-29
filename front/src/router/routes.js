@@ -25,9 +25,17 @@ const routes = [
       { path: '/slams/nuevo-apoyo', component: () => import('pages/slams/SlamNuevoApoyo.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
 
       { path: '/umadis', component: () => import('pages/umadis/Umadis.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
-      { path: '/umadis/nuevofisica', component: () => import('pages/umadis/UmadisNuevoFisico.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
-      { path: '/umadis/nuevointegral', component: () => import('pages/umadis/UmadisNuevoIntegral.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
+      // { path: '/umadis/nuevofisica', component: () => import('pages/umadis/UmadisNuevoFisico.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
+      // { path: '/umadis/nuevointegral', component: () => import('pages/umadis/UmadisNuevoIntegral.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
       // { path: '/umadis/:id', component: () => import('pages/umadis/UmadisShow.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
+      // to="/umadis/nuevo-penal"
+      // to="/umadis/nuevo-familiar"
+      // to="/umadis/nuevo-social"
+      // to="/umadis/nuevo-apoyo"
+      { path: '/umadis/nuevo-penal', component: () => import('pages/umadis/UmadisNuevoPenal.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
+      { path: '/umadis/nuevo-familiar', component: () => import('pages/umadis/UmadisNuevoFamiliar.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
+      { path: '/umadis/nuevo-social', component: () => import('pages/umadis/UmadisNuevoSocial.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
+      { path: '/umadis/nuevo-apoyo', component: () => import('pages/umadis/UmadisNuevoApoyo.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
 
       { path: '/propremis', component: () => import('pages/propremis/Propremis.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
       // http://localhost:9011/propremis/nuevofisica

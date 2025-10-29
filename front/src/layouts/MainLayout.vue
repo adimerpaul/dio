@@ -330,16 +330,54 @@
           </q-item-section>
         </q-item>
         <q-expansion-item dense expand-separator icon="add_circle" label="Nuevo UMADIS" active-class="menu-active" v-if="hasAnyPerm(['Crear UMADIS'])">
+<!--          <q-list>-->
+<!--            <q-item :inset-level="0.3" dense to="/umadis/nuevofisica" exact clickable class="menu-item" active-class="menu-active" v-close-popup>-->
+<!--              <q-item-section avatar>-->
+<!--                <q-icon name="person_add" class="text-white"/>-->
+<!--              </q-item-section>-->
+<!--              <q-item-section>-->
+<!--                <q-item-label class="text-white">Nueva Denuncia Física</q-item-label>-->
+<!--              </q-item-section>-->
+<!--            </q-item>-->
+<!--            <q-item :inset-level="0.3" dense to="/umadis/nuevointegral" exact clickable class="menu-item" active-class="menu-active" v-close-popup>-->
+<!--              <q-item-section avatar>-->
+<!--                <q-icon name="diversity_1" class="text-white"/>-->
+<!--              </q-item-section>-->
+<!--              <q-item-section>-->
+<!--                <q-item-label class="text-white">Nuevo Apoyo Integral</q-item-label>-->
+<!--              </q-item-section>-->
+<!--            </q-item>-->
+<!--          </q-list>-->
+<!--          Nuevo Proceso Penal-->
+<!--          Nuevo Proceso Familiar-->
+<!--          Nuevo Proceso Sociales-->
+<!--          Nuevo Apoyo Integral-->
           <q-list>
-            <q-item :inset-level="0.3" dense to="/umadis/nuevofisica" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
+            <q-item :inset-level="0.3" dense to="/umadis/nuevo-penal" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
               <q-item-section avatar>
-                <q-icon name="person_add" class="text-white"/>
+                <q-icon name="balance" class="text-white"/>
               </q-item-section>
               <q-item-section>
-                <q-item-label class="text-white">Nueva Denuncia Física</q-item-label>
+                <q-item-label class="text-white">Nuevo Proceso Penal</q-item-label>
               </q-item-section>
             </q-item>
-            <q-item :inset-level="0.3" dense to="/umadis/nuevointegral" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
+            <q-item :inset-level="0.3" dense to="/umadis/nuevo-familiar" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
+              <q-item-section avatar>
+                <q-icon name="family_restroom" class="text-white"/>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label class="text-white">Nuevo Proceso Familiar</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item :inset-level="0.3" dense to="/umadis/nuevo-social" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
+              <q-item-section avatar>
+                <q-icon name="people" class="text-white"/>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label class="text-white">Nuevo Proceso Social</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item :inset-level="0.3" dense to="/umadis/nuevo-apoyo" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
               <q-item-section avatar>
                 <q-icon name="diversity_1" class="text-white"/>
               </q-item-section>
