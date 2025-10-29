@@ -116,6 +116,14 @@ return new class extends Migration
             $table->dateTime('fecha_aceptacion_area_psicologica')->nullable();
             $table->dateTime('fecha_derivacion_area_social')->nullable();
             $table->dateTime('fecha_aceptacion_area_social')->nullable();
+//            if (!Schema::hasColumn('casos', 'fecha_aceptacion_area_legal')) {
+//                $table->dateTime('fecha_aceptacion_area_legal')->nullable()->after('fecha_derivacion_area_legal');
+//            }
+//            if (!Schema::hasColumn('casos', 'ingreso_economico')) {
+//                $table->string('ingreso_economico', 255)->nullable()->after('documento_fotocopia_ci_padres');
+//            }
+            $table->dateTime('fecha_aceptacion_area_legal')->nullable();
+            $table->string('ingreso_economico', 255)->nullable();
 
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users');
