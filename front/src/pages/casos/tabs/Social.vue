@@ -12,7 +12,7 @@
         </q-input>
         <q-btn flat color="primary" icon="refresh" :loading="loading" @click="$emit('refresh')"/>
         <q-btn color="green" icon="add_circle_outline" no-caps label="Crear informe" @click="openCreate"/>
-        <q-btn color="primary" icon="upload" no-caps label="Subir Informe/Fotografia" @click="openSubirInforme"/>
+        <q-btn color="primary" icon="upload" no-caps label="Subir Informe" @click="openSubirInforme"/>
 <!--        <q-btn color="secondary" icon="folder_open" no-caps label="Carpeta digital" @click="openCarpetaDigital"/>-->
       </div>
     </div>

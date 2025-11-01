@@ -1,7 +1,7 @@
 <template>
   <template v-for="documento in caso.documentos" :key="documento.id">
     <tr v-if="documento.user?.role === role">
-      <td>Documento</td>
+      <td>Archivo</td>
       <td>{{ documento.titulo || documento.original_name }}</td>
       <td>{{ (documento.created_at || '').slice(0,10) || '—' }}</td>
       <td>{{ documento.user?.name || '—' }}</td>

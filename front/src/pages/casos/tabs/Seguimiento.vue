@@ -93,84 +93,6 @@
         </div>
       </div>
     </q-card>
-<!--    <pre>{{caso}}</pre>-->
-
-    <!-- FILTROS -->
-<!--    <q-card flat bordered class="q-pa-sm q-mb-sm rounded-borders">-->
-<!--      <div class="row items-center q-col-gutter-sm">-->
-<!--        <div class="col-12 col-md-4">-->
-<!--          <q-input v-model="filters.q" dense outlined placeholder="Buscar (título, descripción, usuario)">-->
-<!--            <template #append><q-icon name="search"/></template>-->
-<!--          </q-input>-->
-<!--        </div>-->
-<!--        <div class="col-6 col-md-2">-->
-<!--          <q-select v-model="filters.tipo" :options="tipos" dense outlined label="Tipo"/>-->
-<!--        </div>-->
-<!--        <div class="col-6 col-md-2">-->
-<!--          <q-select v-model="filters.modulo" :options="modulos" dense outlined label="Módulo"/>-->
-<!--        </div>-->
-<!--        <div class="col-6 col-md-2">-->
-<!--          <q-input v-model="filters.desde" type="date" dense outlined label="Desde"/>-->
-<!--        </div>-->
-<!--        <div class="col-6 col-md-2">-->
-<!--          <q-input v-model="filters.hasta" type="date" dense outlined label="Hasta"/>-->
-<!--        </div>-->
-<!--      </div>-->
-<!--    </q-card>-->
-
-    <!-- TABLA -->
-<!--    <pre>{{rowsFiltered}}</pre>-->
-<!--    <q-table-->
-<!--      flat bordered-->
-<!--      :rows="rowsFiltered"-->
-<!--      :columns="columns"-->
-<!--      row-key="uid"-->
-<!--      :loading="loading"-->
-<!--      hide-bottom-->
-<!--      :rows-per-page-options="[0]"-->
-<!--      class="rounded-borders"-->
-<!--      @rowClick="clickSeguimiento"-->
-<!--    >-->
-<!--      <template #body-cell-actividad="props">-->
-<!--        <q-td :props="props">-->
-<!--          <div class="row no-wrap items-start q-gutter-sm">-->
-<!--            <q-icon :name="props.row.icon || 'feed'" size="18px" class="text-primary q-mt-xs"/>-->
-<!--            <div>-->
-<!--              <div class="text-weight-medium">-->
-<!--                {{ props.row.tipo }}-->
-<!--                <span class="text-grey-7">·</span>-->
-<!--                {{ props.row.titulo || '—' }}-->
-<!--              </div>-->
-<!--              <div class="text-caption text-grey-7 ellipsis-2-lines" style="max-width:560px">-->
-<!--                {{ props.row.descripcion || '—' }}-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </q-td>-->
-<!--      </template>-->
-
-<!--      <template #body-cell-fecha="props">-->
-<!--        <q-td :props="props">-->
-<!--          <div class="text-weight-medium">{{ props.row.fecha || '—' }}</div>-->
-<!--          <div class="text-caption text-grey-7">{{ props.row.usuario || '—' }}</div>-->
-<!--        </q-td>-->
-<!--      </template>-->
-
-<!--      <template #body-cell-modulo="props">-->
-<!--        <q-td :props="props">-->
-<!--          <q-chip dense square>{{ props.row.modulo || '—' }}</q-chip>-->
-<!--        </q-td>-->
-<!--      </template>-->
-
-<!--      <template #body-cell-acciones="props">-->
-<!--        <q-td :props="props" class="q-gutter-xs">-->
-<!--          <q-btn v-if="props.row.links?.pdf" dense flat icon="picture_as_pdf" @click="open(props.row.links.pdf)" title="Ver PDF"/>-->
-<!--          <q-btn v-if="props.row.links?.view" dense flat icon="visibility" @click="open(props.row.links.view)" title="Ver"/>-->
-<!--          <q-btn v-if="props.row.links?.download" dense flat icon="download" @click="open(props.row.links.download)" title="Descargar"/>-->
-<!--          <q-btn v-if="props.row.links?.open" dense flat icon="open_in_new" @click="open(props.row.links.open)" title="Abrir"/>-->
-<!--        </q-td>-->
-<!--      </template>-->
-<!--    </q-table>-->
     <div class="row">
       <div class="col-12 col-md-12">
         <span class="text-bold">Asistente</span>
@@ -205,7 +127,6 @@
           <tbody>
             <tr v-for="informe in caso.informes_sociales" :key="informe.id">
               <td>
-<!--                {{ informe.archivo ? 'Archivo' : 'Informe' }}-->
                 Informe
               </td>
               <td>{{ informe.titulo }}</td>
@@ -215,33 +136,65 @@
                 <a @click="openSocialInforme(informe)">
                   Ver archivo
                 </a>
-<!--                <span v-else>—</span>-->
               </td>
             </tr>
             <ArchivoFoto role="Social" :caso="caso" />
           </tbody>
         </q-markup-table>
-<!--        {-->
-<!--        "id": 5,-->
-<!--        "caseable_type": "App\\Models\\Caso",-->
-<!--        "caseable_id": 62,-->
-<!--        "user_id": 1,-->
-<!--        "fecha": null,-->
-<!--        "titulo": "AAA",-->
-<!--        "numero": null,-->
-<!--        "contenido_html": "<p>Archivo adjunto: <a href=\"/storage/caso/62/social/1761983122_MANUAL DE ACOPIO APICOLA (2).pdf\" target=\"_blank\" rel=\"noopener\">MANUAL DE ACOPIO APICOLA (2).pdf</a></p>",-->
-<!--        "created_at": "2025-11-01T07:45:22.000000Z",-->
-<!--        "updated_at": "2025-11-01T07:45:22.000000Z",-->
-<!--        "deleted_at": null,-->
-<!--        "archivo": "/storage/caso/62/social/1761983122_MANUAL DE ACOPIO APICOLA (2).pdf",-->
-<!--        "user": {-->
-<!--        "id": 1,-->
-<!--        "name": "Ing Evelyn Ramirez Cube"-->
-<!--        }-->
-<!--        },-->
       </div>
       <div class="col-12 col-md-12">
-        Psicológia
+        <div class="text-bold">Psicológia</div>
+<!--        <pre>{{caso.psicologicas}}</pre>-->
+<!--        [-->
+<!--        {-->
+<!--        "id": 3,-->
+<!--        "caseable_type": "App\\Models\\Caso",-->
+<!--        "caseable_id": 11,-->
+<!--        "user_id": 28,-->
+<!--        "fecha": "2025-10-02",-->
+<!--        "titulo": "informe juzgado",-->
+<!--        "duracion_min": null,-->
+<!--        "lugar": null,-->
+<!--        "tipo": "Individual",-->
+<!--        "contenido_html": "<div style=\"font-size:12px; line-height:1.35\">\n  <div style=\"text-align:center; font-weight:700; text-transform:uppercase;\">\n    INFORME PSICOLÓGICO\n  </div>\n  <div style=\"text-align:center; margin-top:2px; font-size:11px; color:#333\">\n    Nro. de Caso: 005/25&nbsp;&nbsp;|&nbsp;&nbsp;Caso ID: #11\n  </div>\n\n  <div style=\"margin-top:8px; border:1px solid #333; border-radius:6px; padding:10px;\">\n    <table style=\"width:100%; border-collapse:collapse; font-size:12px\">\n      <tbody><tr>\n        <td style=\"width:10%;\"><b>A:</b></td>\n        <td> </td>\n      </tr>\n      <tr>\n        <td></td>\n        <td></td>\n      </tr>\n      <tr><td colspan=\"2\" style=\"height:8px\"></td></tr>\n      <tr>\n        <td><b>DE:</b></td>\n        <td> LIC MILENKA PINAYA FLORES </td>\n      </tr>\n      <tr>\n        <td></td>\n        <td>PSICÓLOGA / PSICÓLOGO – DIRECCIÓN DE IGUALDAD DE OPORTUNIDADES (DIO) SLIM</td>\n      </tr>\n      <tr>\n        <td><b>Fecha:</b></td>\n        <td>2025-10-02</td>\n      </tr>\n    </tbody></table>\n  </div>\n\n  <h5 style=\"margin:12px 0 4px 0;\">1. DATOS PERSONALES DE LA DENUNCIANTE</h5>\n  <table style=\"width:100%; border-collapse:collapse; font-size:12px\">\n    <tbody><tr>\n      <td style=\"width:45%\"><b>Nombres y apellidos:</b> carla myerlin blancas flores —</td>\n      <td style=\"width:20%\"><b>Edad:</b> 34</td>\n      <td style=\"width:35%\"><b>Fecha de nacimiento:</b> —</td>\n    </tr>\n    <tr>\n      <td><b>Lugar de nacimiento:</b> oruro</td>\n      <td colspan=\"2\"><b>Grado de instrucción:</b> —</td>\n    </tr>\n    <tr>\n      <td><b>Ocupación:</b> —</td>\n      <td colspan=\"2\"><b>Dirección/Domicilio:</b> juan lechin oquendo</td>\n    </tr>\n    <tr>\n      <td><b>Documento:</b> Carnet de identidad</td>\n      <td><b>Nro.:</b> —</td>\n      <td><b>Teléfono:</b> —</td>\n    </tr>\n    <tr>\n      <td colspan=\"3\"><b>Estado civil:</b> —</td>\n    </tr>\n  </tbody></table>\n\n  <h5 style=\"margin:12px 0 4px 0;\">2. DATOS FAMILIARES</h5>\n  <table style=\"width:100%; border:1px solid #333; border-collapse:collapse; font-size:12px\">\n    <thead>\n      <tr style=\"background:#eee\">\n        <th style=\"border:1px solid #333; padding:4px; text-align:left;\">Nombres y Apellidos</th>\n        <th style=\"border:1px solid #333; padding:4px; width:60px;\">Edad</th>\n        <th style=\"border:1px solid #333; padding:4px; width:110px;\">Estado civil</th>\n        <th style=\"border:1px solid #333; padding:4px; width:110px;\">Parentesco</th>\n        <th style=\"border:1px solid #333; padding:4px; width:140px;\">Ocupación</th>\n      </tr>\n    </thead>\n    <tbody>\n      \n    <tr>\n      <td>—</td>\n      <td style=\"text-align:center\">—</td>\n      <td style=\"text-align:center\">—</td>\n      <td style=\"text-align:center\">—</td>\n      <td style=\"text-align:center\">—</td>\n    </tr>\n  \n    </tbody>\n  </table>\n\n  <h5 style=\"margin:12px 0 4px 0;\">3. MOTIVO DE CONSULTA</h5><div><p class=\"MsoNormal\" style=\"margin-bottom:0cm;text-align:justify;line-height:\n115%\"><span lang=\"ES\" style=\"font-size: 12pt; line-height: 115%; font-family: &quot;Calibri Light&quot;, sans-serif;\">Se\nemite el presente informe dando cumplimiento al acta de audiencia de fecha 20\nde agosto, emitida por su autoridad, en el que dispone la notificación al equipo\ninterdisciplinario de la D.I.O. a objeto que se elabore el informe psicológico\nde los niños Luka Thiago Villca Salazar y Aitana Nataniel Villca Salazar.<o:p></o:p></span></p></div>\n\n\n  <h5 style=\"margin:12px 0 4px 0;\">4. ANTECEDENTES</h5>\n\n\n  <h5 style=\"margin:12px 0 4px 0;\">5. TÉCNICAS E INSTRUMENTOS EMPLEADOS</h5>\n\n\n  <h5 style=\"margin:12px 0 4px 0;\">6. CONCLUSIONES</h5>\n\n\n  <h5 style=\"margin:12px 0 4px 0;\">7. RECOMENDACIONES</h5>\n\n  <p style=\"margin-top:12px\">Se emite el presente informe en honor a la verdad para fines consiguientes.</p>\n\n  <div style=\"margin-top:28px; display:flex; justify-content:space-between; font-size:12px;\">\n    <div style=\"text-align:center; width:45%;\">\n      __________________________<br>\n      LIC MILENKA PINAYA FLORES\n    </div>\n    <div style=\"text-align:center; width:45%;\">\n      __________________________<br>\n      Vo.Bo.\n    </div>\n  </div>\n</div>",-->
+<!--  "created_at": "2025-10-02T20:20:14.000000Z",-->
+<!--  "updated_at": "2025-10-02T20:20:14.000000Z",-->
+<!--  "deleted_at": null,-->
+<!--  "archivo": null,-->
+<!--  "user": {-->
+<!--  "id": 28,-->
+<!--  "name": "LIC MILENKA PINAYA FLORES",-->
+<!--  "role": "Psicologo"-->
+<!--  }-->
+<!--  }-->
+<!--  ]-->
+        <q-markup-table dense bordered flat>
+          <thead class="bg-primary text-white">
+            <tr>
+              <th>Tipo</th>
+              <th>Título</th>
+              <th>Fecha</th>
+              <th>Usuario</th>
+              <th>Archivo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="sesion in caso.psicologicas" :key="sesion.id">
+              <td>
+                Informe
+              </td>
+              <td>{{ sesion.tipo }} — {{ sesion.titulo || 'Sesión' }}</td>
+              <td>{{ sesion.fecha || '—' }}</td>
+              <td>{{ sesion.user?.name || '—' }}</td>
+              <td>
+                <a @click="clickSeguimiento($event,{ tipo: 'Sesión', modulo: 'Psicológico', uid: 'psi-' + sesion.id })">
+                  Ver archivo
+                </a>
+              </td>
+            </tr>
+            <ArchivoFoto role="Psicologo" :caso="caso" />
+          </tbody>
+        </q-markup-table>
       </div>
       <div class="col-12 col-md-12">
         Legal
