@@ -25,7 +25,7 @@
         <th style="width:70px">ID</th>
         <th style="width:160px">Acciones</th>
         <th>Título</th>
-        <th style="width:130px">Categoría</th>
+<!--        <th style="width:130px">Categoría</th>-->
         <th style="width:120px">Tamaño</th>
         <th style="width:160px">Tipo</th>
         <th style="width:180px">Usuario</th>
@@ -56,7 +56,7 @@
           </q-btn-dropdown>
         </td>
         <td class="text-weight-medium">{{ it.titulo }}</td>
-        <td>{{ it.categoria || '—' }}</td>
+<!--        <td>{{ it.categoria || '—' }}</td>-->
         <td>{{ it.size_human }}</td>
         <td>{{ it.mime || it.extension }}</td>
         <td>{{ it.user?.name || it.user?.username || '—' }}</td>
@@ -80,7 +80,7 @@
         </q-card-section>
         <q-card-section class="q-gutter-md">
           <q-input v-model="meta.titulo" label="Título" outlined dense/>
-          <q-input v-model="meta.categoria" label="Categoría" outlined dense/>
+<!--          <q-input v-model="meta.categoria" label="Categoría" outlined dense/>-->
           <q-input v-model="meta.descripcion" type="textarea" label="Descripción" outlined dense autogrow/>
           <q-file v-model="file" outlined dense use-chips :clearable="true"
                   :accept="accept"
@@ -102,7 +102,7 @@
         </q-card-section>
         <q-card-section class="q-gutter-md">
           <q-input v-model="edit.titulo" label="Título" outlined dense/>
-          <q-input v-model="edit.categoria" label="Categoría" outlined dense/>
+<!--          <q-input v-model="edit.categoria" label="Categoría" outlined dense/>-->
           <q-input v-model="edit.descripcion" type="textarea" label="Descripción" outlined dense autogrow/>
         </q-card-section>
         <q-card-actions align="right">
@@ -185,7 +185,8 @@ export default {
     },
     downloadDoc(it){
       const base = this.$url || ''
-      window.open(`${base}/documentos/${it.id}/download`, '_blank')
+      // window.open(`${base}/documentos/${it.id}/download`, '_blank')
+      console.log('url', `${base}/documentos/${it.id}/download`)
     },
 
     editMeta(it){

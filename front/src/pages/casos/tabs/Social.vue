@@ -162,7 +162,7 @@
           </div>
           <q-input v-model="form.titulo" dense outlined label="Título informe *" :rules="[v=>!!v||'Requerido']"/>
           <q-file v-model="file" label="Seleccionar archivo" outlined dense @update:model-value="onFileChange"
-                  accept=".pdf,.doc,.docx,.odt,.png,.jpg,.jpeg"
+                  accept=".pdf,.doc,.docx,.odt,.png,.jpg,.jpeg,.xlsx,.xls"
           />
           <q-btn color="primary" label="Guardar" :disabled="!file || !form.titulo" @click="guardarInforme"
                  :loading="loading"

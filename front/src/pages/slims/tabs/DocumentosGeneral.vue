@@ -3,7 +3,7 @@
     <!-- Header -->
     <div class="row items-center q-mb-sm">
       <div class="col">
-        <div class="text-subtitle1 text-weight-medium">Documentos (General)</div>
+        <div class="text-subtitle1 text-weight-medium">Documentos (General)   asas</div>
         <div class="text-caption text-grey-7">Gestión de adjuntos del caso #{{ caseId }}</div>
       </div>
       <div class="col-auto row items-center q-gutter-sm">
@@ -41,7 +41,7 @@
             </q-item>
             <q-item clickable v-close-popup @click="downloadDoc(it)">
               <q-item-section avatar><q-icon name="download"/></q-item-section>
-              <q-item-section>Descargar</q-item-section>
+              <q-item-section>Descargar 222</q-item-section>
             </q-item>
             <q-separator/>
             <q-item clickable v-close-popup @click="editMeta(it)">
@@ -192,8 +192,9 @@ export default {
       window.open(`${base}/slims/documentos/${it.id}/view`, '_blank')
     },
     downloadDoc(it){
-      const base = this.$axios?.defaults?.baseURL || ''
-      window.open(`${base}/slims/documentos/${it.id}/download`, '_blank')
+      // const base = this.$axios?.defaults?.baseURL || ''
+      // window.open(`${base}/slims/documentos/${it.id}/download`, '_blank')
+      // console.log('url: ', `${base}/slims/documentos/${it.id}/download`)
     },
 
     editMeta(it){

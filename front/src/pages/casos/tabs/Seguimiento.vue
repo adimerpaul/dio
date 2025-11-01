@@ -93,89 +93,169 @@
         </div>
       </div>
     </q-card>
+<!--    <pre>{{caso}}</pre>-->
 
     <!-- FILTROS -->
-    <q-card flat bordered class="q-pa-sm q-mb-sm rounded-borders">
-      <div class="row items-center q-col-gutter-sm">
-        <div class="col-12 col-md-4">
-          <q-input v-model="filters.q" dense outlined placeholder="Buscar (título, descripción, usuario)">
-            <template #append><q-icon name="search"/></template>
-          </q-input>
-        </div>
-        <div class="col-6 col-md-2">
-          <q-select v-model="filters.tipo" :options="tipos" dense outlined label="Tipo"/>
-        </div>
-        <div class="col-6 col-md-2">
-          <q-select v-model="filters.modulo" :options="modulos" dense outlined label="Módulo"/>
-        </div>
-        <div class="col-6 col-md-2">
-          <q-input v-model="filters.desde" type="date" dense outlined label="Desde"/>
-        </div>
-        <div class="col-6 col-md-2">
-          <q-input v-model="filters.hasta" type="date" dense outlined label="Hasta"/>
-        </div>
-      </div>
-    </q-card>
+<!--    <q-card flat bordered class="q-pa-sm q-mb-sm rounded-borders">-->
+<!--      <div class="row items-center q-col-gutter-sm">-->
+<!--        <div class="col-12 col-md-4">-->
+<!--          <q-input v-model="filters.q" dense outlined placeholder="Buscar (título, descripción, usuario)">-->
+<!--            <template #append><q-icon name="search"/></template>-->
+<!--          </q-input>-->
+<!--        </div>-->
+<!--        <div class="col-6 col-md-2">-->
+<!--          <q-select v-model="filters.tipo" :options="tipos" dense outlined label="Tipo"/>-->
+<!--        </div>-->
+<!--        <div class="col-6 col-md-2">-->
+<!--          <q-select v-model="filters.modulo" :options="modulos" dense outlined label="Módulo"/>-->
+<!--        </div>-->
+<!--        <div class="col-6 col-md-2">-->
+<!--          <q-input v-model="filters.desde" type="date" dense outlined label="Desde"/>-->
+<!--        </div>-->
+<!--        <div class="col-6 col-md-2">-->
+<!--          <q-input v-model="filters.hasta" type="date" dense outlined label="Hasta"/>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </q-card>-->
 
     <!-- TABLA -->
 <!--    <pre>{{rowsFiltered}}</pre>-->
-    <q-table
-      flat bordered
-      :rows="rowsFiltered"
-      :columns="columns"
-      row-key="uid"
-      :loading="loading"
-      hide-bottom
-      :rows-per-page-options="[0]"
-      class="rounded-borders"
-      @rowClick="clickSeguimiento"
-    >
-      <template #body-cell-actividad="props">
-        <q-td :props="props">
-          <div class="row no-wrap items-start q-gutter-sm">
-            <q-icon :name="props.row.icon || 'feed'" size="18px" class="text-primary q-mt-xs"/>
-            <div>
-              <div class="text-weight-medium">
-                {{ props.row.tipo }}
-                <span class="text-grey-7">·</span>
-                {{ props.row.titulo || '—' }}
-              </div>
-              <div class="text-caption text-grey-7 ellipsis-2-lines" style="max-width:560px">
-                {{ props.row.descripcion || '—' }}
-              </div>
-            </div>
-          </div>
-        </q-td>
-      </template>
+<!--    <q-table-->
+<!--      flat bordered-->
+<!--      :rows="rowsFiltered"-->
+<!--      :columns="columns"-->
+<!--      row-key="uid"-->
+<!--      :loading="loading"-->
+<!--      hide-bottom-->
+<!--      :rows-per-page-options="[0]"-->
+<!--      class="rounded-borders"-->
+<!--      @rowClick="clickSeguimiento"-->
+<!--    >-->
+<!--      <template #body-cell-actividad="props">-->
+<!--        <q-td :props="props">-->
+<!--          <div class="row no-wrap items-start q-gutter-sm">-->
+<!--            <q-icon :name="props.row.icon || 'feed'" size="18px" class="text-primary q-mt-xs"/>-->
+<!--            <div>-->
+<!--              <div class="text-weight-medium">-->
+<!--                {{ props.row.tipo }}-->
+<!--                <span class="text-grey-7">·</span>-->
+<!--                {{ props.row.titulo || '—' }}-->
+<!--              </div>-->
+<!--              <div class="text-caption text-grey-7 ellipsis-2-lines" style="max-width:560px">-->
+<!--                {{ props.row.descripcion || '—' }}-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </q-td>-->
+<!--      </template>-->
 
-      <template #body-cell-fecha="props">
-        <q-td :props="props">
-          <div class="text-weight-medium">{{ props.row.fecha || '—' }}</div>
-          <div class="text-caption text-grey-7">{{ props.row.usuario || '—' }}</div>
-        </q-td>
-      </template>
+<!--      <template #body-cell-fecha="props">-->
+<!--        <q-td :props="props">-->
+<!--          <div class="text-weight-medium">{{ props.row.fecha || '—' }}</div>-->
+<!--          <div class="text-caption text-grey-7">{{ props.row.usuario || '—' }}</div>-->
+<!--        </q-td>-->
+<!--      </template>-->
 
-      <template #body-cell-modulo="props">
-        <q-td :props="props">
-          <q-chip dense square>{{ props.row.modulo || '—' }}</q-chip>
-        </q-td>
-      </template>
+<!--      <template #body-cell-modulo="props">-->
+<!--        <q-td :props="props">-->
+<!--          <q-chip dense square>{{ props.row.modulo || '—' }}</q-chip>-->
+<!--        </q-td>-->
+<!--      </template>-->
 
-      <template #body-cell-acciones="props">
-        <q-td :props="props" class="q-gutter-xs">
-          <q-btn v-if="props.row.links?.pdf" dense flat icon="picture_as_pdf" @click="open(props.row.links.pdf)" title="Ver PDF"/>
-          <q-btn v-if="props.row.links?.view" dense flat icon="visibility" @click="open(props.row.links.view)" title="Ver"/>
-          <q-btn v-if="props.row.links?.download" dense flat icon="download" @click="open(props.row.links.download)" title="Descargar"/>
-          <q-btn v-if="props.row.links?.open" dense flat icon="open_in_new" @click="open(props.row.links.open)" title="Abrir"/>
-        </q-td>
-      </template>
-    </q-table>
+<!--      <template #body-cell-acciones="props">-->
+<!--        <q-td :props="props" class="q-gutter-xs">-->
+<!--          <q-btn v-if="props.row.links?.pdf" dense flat icon="picture_as_pdf" @click="open(props.row.links.pdf)" title="Ver PDF"/>-->
+<!--          <q-btn v-if="props.row.links?.view" dense flat icon="visibility" @click="open(props.row.links.view)" title="Ver"/>-->
+<!--          <q-btn v-if="props.row.links?.download" dense flat icon="download" @click="open(props.row.links.download)" title="Descargar"/>-->
+<!--          <q-btn v-if="props.row.links?.open" dense flat icon="open_in_new" @click="open(props.row.links.open)" title="Abrir"/>-->
+<!--        </q-td>-->
+<!--      </template>-->
+<!--    </q-table>-->
+    <div class="row">
+      <div class="col-12 col-md-12">
+        <span class="text-bold">Asistente</span>
+        <q-markup-table dense bordered flat>
+          <thead class="bg-primary text-white">
+            <tr>
+              <th>Tipo</th>
+              <th>Título</th>
+              <th>Fecha</th>
+              <th>Usuario</th>
+              <th>Archivo</th>
+            </tr>
+          </thead>
+          <tbody>
+          <ArchivoFoto role="Asistente" :caso="caso" />
+          <ArchivoFoto role="Auxiliar" :caso="caso" />
+          </tbody>
+        </q-markup-table>
+      </div>
+      <div class="col-12 col-md-12">
+        <span class="text-bold">Social</span>
+        <q-markup-table dense bordered flat>
+          <thead class="bg-primary text-white">
+            <tr>
+              <th>Tipo</th>
+              <th>Título</th>
+              <th>Fecha</th>
+              <th>Usuario</th>
+              <th>Archivo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="informe in caso.informes_sociales" :key="informe.id">
+              <td>
+<!--                {{ informe.archivo ? 'Archivo' : 'Informe' }}-->
+                Informe
+              </td>
+              <td>{{ informe.titulo }}</td>
+              <td>{{ informe.fecha || '—' }}</td>
+              <td>{{ informe.user?.name || '—' }}</td>
+              <td>
+                <a @click="openSocialInforme(informe)">
+                  Ver archivo
+                </a>
+<!--                <span v-else>—</span>-->
+              </td>
+            </tr>
+            <ArchivoFoto role="Social" :caso="caso" />
+          </tbody>
+        </q-markup-table>
+<!--        {-->
+<!--        "id": 5,-->
+<!--        "caseable_type": "App\\Models\\Caso",-->
+<!--        "caseable_id": 62,-->
+<!--        "user_id": 1,-->
+<!--        "fecha": null,-->
+<!--        "titulo": "AAA",-->
+<!--        "numero": null,-->
+<!--        "contenido_html": "<p>Archivo adjunto: <a href=\"/storage/caso/62/social/1761983122_MANUAL DE ACOPIO APICOLA (2).pdf\" target=\"_blank\" rel=\"noopener\">MANUAL DE ACOPIO APICOLA (2).pdf</a></p>",-->
+<!--        "created_at": "2025-11-01T07:45:22.000000Z",-->
+<!--        "updated_at": "2025-11-01T07:45:22.000000Z",-->
+<!--        "deleted_at": null,-->
+<!--        "archivo": "/storage/caso/62/social/1761983122_MANUAL DE ACOPIO APICOLA (2).pdf",-->
+<!--        "user": {-->
+<!--        "id": 1,-->
+<!--        "name": "Ing Evelyn Ramirez Cube"-->
+<!--        }-->
+<!--        },-->
+      </div>
+      <div class="col-12 col-md-12">
+        Psicológia
+      </div>
+      <div class="col-12 col-md-12">
+        Legal
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import ArchivoFoto from "components/ArchivoFoto.vue";
+
 export default {
   name: 'SeguimientoCaso',
+  components: {ArchivoFoto},
   props: {
     caso: { type: Object, required: true }
   },
@@ -381,6 +461,19 @@ export default {
     }
   },
   methods: {
+    openSocialInforme(informe) {
+      if (informe.archivo) {
+        const base = this.$axios?.defaults?.baseURL || ''
+        const url = `${base}/../storage/${informe.archivo.replace('/storage/','')}`
+        this.open(url)
+        return
+      }else{
+        const id = informe.id
+        const url = this.$axios.defaults.baseURL + `/informesSocial/${id}/pdf`
+        console.log('url', url)
+        this.open(url)
+      }
+    },
     clickSeguimiento(event,row) {
       // console.log('Fila clicada:', row)
       if (row.tipo === 'Informe' && row.modulo === 'Social' && row.uid.startsWith('soc-')) {
