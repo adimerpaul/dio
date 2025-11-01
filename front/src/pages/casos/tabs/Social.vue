@@ -12,7 +12,8 @@
         </q-input>
         <q-btn flat color="primary" icon="refresh" :loading="loading" @click="$emit('refresh')"/>
         <q-btn color="green" icon="add_circle_outline" no-caps label="Crear informe" @click="openCreate"/>
-        <q-btn color="primary" icon="upload" no-caps label="Subir Informe" @click="openSubirInforme"/>
+        <q-btn color="primary" icon="upload" no-caps label="Subir Informe/Fotografia" @click="openSubirInforme"/>
+<!--        <q-btn color="secondary" icon="folder_open" no-caps label="Carpeta digital" @click="openCarpetaDigital"/>-->
       </div>
     </div>
 
@@ -55,7 +56,7 @@
               <q-item clickable v-close-popup @click="openFile(it)" >
                 <q-item-section avatar><q-icon name="download"/></q-item-section>
                 <q-item-section>
-                  Descargar informe
+                  Descargar
                 </q-item-section>
               </q-item>
             </template>
@@ -163,8 +164,9 @@
           <q-file v-model="file" label="Seleccionar archivo" outlined dense @update:model-value="onFileChange"
                   accept=".pdf,.doc,.docx,.odt,.png,.jpg,.jpeg"
           />
-          <!--          bton guardar-->
-          <q-btn color="primary" label="Guardar" :disabled="!file || !form.titulo" @click="guardarInforme"/>
+          <q-btn color="primary" label="Guardar" :disabled="!file || !form.titulo" @click="guardarInforme"
+                 :loading="loading"
+          />
         </q-card-section>
 
         <q-separator/>
@@ -246,6 +248,7 @@ export default {
       formData.append('case_id', this.caseId)
       formData.append('tipo', 'social')
       this.saving = true
+      this.loading = true
       this.$axios.post(`/casos/${this.caseId}/uploadFile`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       }).then(res=>{
@@ -258,11 +261,15 @@ export default {
         this.$q.notify({ type:'negative', message: e?.response?.data?.message || 'No se pudo subir el informe' })
       }).finally(()=>{
         this.saving = false
+        this.loading = false
       })
     },
     onFileChange(file){
       this.file = file
       if(!file) return
+    },
+    openCarpetaDigital(){
+      console.log('Abrir carpeta digital del caso', this.caseId)
     },
     openSubirInforme(){
       this.openSubirArchivo = true
