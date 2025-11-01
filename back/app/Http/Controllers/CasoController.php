@@ -85,6 +85,7 @@ class CasoController extends Controller
         } elseif ($tipo == 'social') {
             $informe = InformesSocial::create([
                 'caseable_id' => $caseId,
+                'fecha' => date('Y-m-d'),
                 'caseable_type' => Caso::class,
                 'user_id' => $request->user()->id,
                 'titulo' => $request->string('titulo')->toString() ?: $file->getClientOriginalName(),
@@ -1037,11 +1038,11 @@ class CasoController extends Controller
                 'menores',
                 'denunciados',
                 'familiares',
-                'psicologicas.user:id,name',
-                'informesLegales.user:id,name',
-                'documentos.user:id,name',
-                'fotografias.user:id,name',
-                'informesSociales.user:id,name',
+                'psicologicas.user:id,name,role',
+                'informesLegales.user:id,name,role',
+                'documentos.user:id,name,role',
+                'fotografias.user:id,name,role',
+                'informesSociales.user:id,name,role',
                 'victimas'
             ]
         )
