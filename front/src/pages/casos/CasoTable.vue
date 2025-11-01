@@ -34,16 +34,13 @@
           @update:model-value="goFirstPage"
         />
       </div>
-
       <div class="col-auto row items-center">
-        <!-- Botón refresh -->
         <q-btn color="primary" icon="refresh" label="Actualizar" no-caps
                @click="fetchCasos()" :loading="loading" class="q-mr-sm" size="10px"/>
-        <!-- Solo para SLIM: alternar columnas extra -->
         <q-btn v-if="isSLIM" color="green" icon="visibility" no-caps size="10px"
-               :label="showExtra ? 'Ocultar columnas extra' : 'Visualizar Casos'"
-               @click="showExtra = !showExtra"/>
-        <!-- Slot opcional para acciones extra -->
+               :labelx="showExtra ? 'Ocultar columnas extra' : 'Visualizar Casos/Estado'"
+               label="Visualizar Casos/Estado"
+               @click="openDialogFormat"/>
         <slot name="actions" />
       </div>
     </div>
@@ -155,6 +152,108 @@
       </tbody>
 
     </q-markup-table>
+<!--    <q-markup-table dense flat bordered v-else>-->
+<!--      <thead>-->
+<!--      <tr>-->
+<!--        <th style="width: 60px">#</th>-->
+<!--        <th>Nº</th>-->
+<!--        <th>Fecha</th>-->
+<!--        <th>Denunciante</th>-->
+<!--        <th>Denunciado</th>-->
+<!--        <th>Tipología</th>-->
+<!--        <th>Zona</th>-->
+<!--        <th>Estado</th>-->
+<!--        <th>Alerta</th>-->
+
+<!--        &lt;!&ndash; Extra SLIM &ndash;&gt;-->
+<!--        <th class="col-extra">—</th>-->
+<!--        <th class="col-extra">Legal</th>-->
+<!--        <th class="col-extra">Psicológica</th>-->
+<!--        <th class="col-extra">Trabajo Social</th>-->
+<!--        <th class="col-extra">CUD</th>-->
+<!--        <th class="col-extra">NUREJ</th>-->
+<!--        <th class="col-extra">Juzgado</th>-->
+<!--        <th class="col-extra">Fiscal</th>-->
+<!--        <th class="col-extra">Estado (Legal)</th>-->
+<!--        <th class="col-extra">Fecha Sentencia</th>-->
+<!--        <th class="col-extra">Observaciones</th>-->
+<!--        <th class="col-extra">Entrega/Derivación</th>-->
+<!--      </tr>-->
+<!--      </thead>-->
+<!--      <tbody v-if="!loading && casos.length">-->
+<!--      <tr v-for="(c, idx) in casos" :key="c.id" @click="goToDetalle(c)" class="cursor-pointer">-->
+<!--        <td>{{ rowIndex(idx) }}</td>-->
+<!--        <td class="text-no-wrap">{{ tipo }} {{ c.caso_numero || '—' }}</td>-->
+<!--        <td class="text-no-wrap">{{ $filters.date?.(c.fecha_apertura_caso) ?? c.fecha_apertura_caso }}</td>-->
+
+<!--        &lt;!&ndash; Denunciante &ndash;&gt;-->
+<!--        <td>-->
+<!--          <div class="text-weight-medium">{{ nombrePersona(c.denunciantes?.[0], 'denunciante') }}</div>-->
+<!--          <div class="text-caption text-grey-7" v-if="c.denunciantes?.[0]?.denunciante_nro">-->
+<!--            CI: {{ c.denunciantes?.[0]?.denunciante_nro }}-->
+<!--          </div>-->
+<!--        </td>-->
+
+<!--        &lt;!&ndash; Denunciado &ndash;&gt;-->
+<!--        <td>-->
+<!--          <div class="text-weight-medium">{{ nombrePersona(c.denunciados?.[0], 'denunciado') }}</div>-->
+<!--          <div class="text-caption text-grey-7" v-if="c.denunciados?.[0]?.denunciado_nro">-->
+<!--            CI: {{ c.denunciados?.[0]?.denunciado_nro }}-->
+<!--          </div>-->
+<!--        </td>-->
+<!--        <td>{{ c.caso_tipologia || '—' }}</td>-->
+<!--        <td>{{ c.zona || '—' }}</td>-->
+<!--        <td>{{ c.estado_caso || '—' }}</td>-->
+<!--        &lt;!&ndash; Alerta &ndash;&gt;-->
+<!--        <td>-->
+<!--          <template v-if="c.mi_estado?.me_asignado">-->
+<!--            <template v-if="c.mi_estado.primer_informe_hecho">-->
+<!--              <q-badge color="green" text-color="white" class="q-mr-xs">-->
+<!--                {{ c.mi_estado.label_listo || 'Primer informe listo' }}-->
+<!--              </q-badge>-->
+<!--            </template>-->
+<!--            <template v-else>-->
+<!--              <q-badge-->
+<!--                :color="c.mi_estado.atrasado ? 'red' : 'orange'"-->
+<!--                :text-color="c.mi_estado.atrasado ? 'white' : 'black'"-->
+<!--                class="q-mr-xs"-->
+<!--              >-->
+<!--                <template v-if="c.mi_estado.atrasado">-->
+<!--                  Atrasado {{ Math.abs(c.mi_estado.dias_restantes) }} d-->
+<!--                </template>-->
+<!--                <template v-else>-->
+<!--                  Faltan {{ c.mi_estado.dias_restantes }} d-->
+<!--                </template>-->
+<!--              </q-badge>-->
+<!--              <q-tooltip transition-show="jump-down" transition-hide="jump-up">-->
+<!--                Debes cargar tu-->
+<!--                <b>{{ c.mi_estado.rol === 'Psicologo' ? 'primera sesión' : 'primer informe' }}</b>.<br>-->
+<!--                Fecha límite: <b>{{ c.mi_estado.deadline }}</b>.-->
+<!--              </q-tooltip>-->
+<!--            </template>-->
+<!--          </template>-->
+<!--          <template v-else>-->
+<!--            <span class="text-grey-6">—</span>-->
+<!--          </template>-->
+<!--        </td>-->
+<!--        &lt;!&ndash; Extra SLIM &ndash;&gt;-->
+<!--        <td class="col-extra">—</td>-->
+<!--        <td class="col-extra">{{ c.legal_user?.name ?? '—' }}</td>-->
+<!--        <td class="col-extra">{{ c.psicologica_user?.name ?? '—' }}</td>-->
+<!--        <td class="col-extra">{{ c.trabajo_social_user?.name ?? '—' }}</td>-->
+<!--        <td class="col-extra">{{ fmt(c.cud) }}</td>-->
+<!--        <td class="col-extra">{{ fmt(c.nurej) }}</td>-->
+<!--        <td class="col-extra">{{ fmt(c.numero_juzgado) }}</td>-->
+<!--        <td class="col-extra">{{ fmt(c.responsable_fiscalia) }}</td>-->
+<!--        <td class="col-extra">{{ fmt(c.estado_caso || c.estado_caso_otro) }}</td>-->
+<!--        <td class="col-extra">{{ fmtFecha(c.fecha_sentencia) }}</td>-->
+<!--        <td class="col-extra ellipsis-2-lines">{{ fmt(c.observaciones) }}</td>-->
+<!--        <td class="col-extra">-->
+<!--          {{ c.numero_apoyo_integral ? fmtFecha(c.fecha_entrega_juzgado || c.fecha_derivacion_area_legal) : '—' }}-->
+<!--        </td>-->
+<!--      </tr>-->
+<!--      </tbody>-->
+<!--    </q-markup-table>-->
 
     <!-- Paginación -->
     <div class="row items-center justify-between q-mt-md">
@@ -173,6 +272,119 @@
       />
     </div>
   </q-page>
+  <q-dialog v-model="dialogFormat" persistent maximized>
+    <q-card>
+      <q-card-section>
+        <div class="text-h6">Visualizar Casos/Estado</div>
+      </q-card-section>
+      <q-markup-table flat bordered dense>
+        <thead>
+        <tr>
+          <th style="width: 60px">#</th>
+          <th>Nº</th>
+          <th>Fecha</th>
+          <th>Denunciante</th>
+          <th>Denunciado</th>
+          <th>Tipología</th>
+          <th>Zona</th>
+          <th>Estado</th>
+          <th>Alerta</th>
+
+          <!-- Extra, siempre render (sin v-if) -->
+          <th class="col-extra">—</th>
+          <th class="col-extra">Legal</th>
+          <th class="col-extra">Psicológica</th>
+          <th class="col-extra">Trabajo Social</th>
+          <th class="col-extra">CUD</th>
+          <th class="col-extra">NUREJ</th>
+          <th class="col-extra">Juzgado</th>
+          <th class="col-extra">Fiscal</th>
+          <th class="col-extra">Estado (Legal)</th>
+          <th class="col-extra">Fecha Sentencia</th>
+          <th class="col-extra">Observaciones</th>
+          <th class="col-extra">Entrega/Derivación</th>
+        </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(c, idx) in casos" :key="c.id" @click="goToDetalle(c)" class="cursor-pointer">
+            <td>{{ rowIndex(idx) }}</td>
+            <td class="text-no-wrap">{{ tipo }} {{ c.caso_numero || '—' }}</td>
+            <td class="text-no-wrap">{{ $filters.date?.(c.fecha_apertura_caso) ?? c.fecha_apertura_caso }}</td>
+
+            <!-- Denunciante -->
+            <td>
+              <div class="text-weight-medium">{{ nombrePersona(c.denunciantes?.[0], 'denunciante') }}</div>
+              <div class="text-caption text-grey-7" v-if="c.denunciantes?.[0]?.denunciante_nro">
+                CI: {{ c.denunciantes?.[0]?.denunciante_nro }}
+              </div>
+            </td>
+
+            <!-- Denunciado -->
+            <td>
+              <div class="text-weight-medium">{{ nombrePersona(c.denunciados?.[0], 'denunciado') }}</div>
+              <div class="text-caption text-grey-7" v-if="c.denunciados?.[0]?.denunciado_nro">
+                CI: {{ c.denunciados?.[0]?.denunciado_nro }}
+              </div>
+            </td>
+            <td>{{ c.caso_tipologia || '—' }}</td>
+            <td>{{ c.zona || '—' }}</td>
+            <td>{{ c.estado_caso || '—' }}</td>
+            <!-- Alerta -->
+            <td>
+              <template v-if="c.mi_estado?.me_asignado">
+                <template v-if="c.mi_estado.primer_informe_hecho">
+                  <q-badge color="green" text-color="white" class="q-mr-xs">
+                    {{ c.mi_estado.label_listo || 'Primer informe listo' }}
+                  </q-badge>
+                </template>
+                <template v-else>
+                  <q-badge
+                    :color="c.mi_estado.atrasado ? 'red' : 'orange'"
+                    :text-color="c.mi_estado.atrasado ? 'white' : 'black'"
+                    class="q-mr-xs"
+                  >
+                    <template v-if="c.mi_estado.atrasado">
+                      Atrasado {{ Math.abs(c.mi_estado.dias_restantes) }} d
+                    </template>
+                    <template v-else>
+                      Faltan {{ c.mi_estado.dias_restantes }} d
+                    </template>
+                  </q-badge>
+                  <q-tooltip transition-show="jump-down" transition-hide="jump-up">
+                    Debes cargar tu
+                    <b>{{ c.mi_estado.rol === 'Psicologo' ? 'primera sesión' : 'primer informe' }}</b>.<br>
+                    Fecha límite: <b>{{ c.mi_estado.deadline }}</b>.
+                  </q-tooltip>
+                </template>
+              </template>
+              <template v-else>
+                <span class="text-grey-6">—</span>
+              </template>
+            </td>
+            <!-- Extra, siempre render (sin v-if) -->
+            <td class="col-extra">—</td>
+            <td class="col-extra">{{ c.legal_user?.name ?? '—' }}</td>
+            <td class="col-extra">{{ c.psicologica_user?.name ?? '—' }}</td>
+            <td class="col-extra">{{ c.trabajo_social_user?.name ?? '—' }}</td>
+            <td class="col-extra">{{ fmt(c.cud) }}</td>
+            <td class="col-extra">{{ fmt(c.nurej) }}</td>
+            <td class="col-extra">{{ fmt(c.numero_juzgado) }}</td>
+            <td class="col-extra">{{ fmt(c.responsable_fiscalia) }}</td>
+            <td class="col-extra">{{ fmt(c.estado_caso || c.estado_caso_otro) }}</td>
+            <td class="col-extra">{{ fmtFecha(c.fecha_sentencia) }}</td>
+            <td class="col-extra ellipsis-2-lines">{{ fmt(c.observaciones) }}</td>
+            <td class="col-extra">
+              {{ c.numero_apoyo_integral ? fmtFecha(c.fecha_entrega_juzgado || c.fecha_derivacion_area_legal) : '—' }}
+            </td>
+          </tr>
+        </tbody>
+      </q-markup-table>
+
+      <q-card-actions align="right">
+        <q-btn flat label="Cerrar" color="primary" v-close-popup />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script>
@@ -190,6 +402,7 @@ export default {
   },
   data () {
     return {
+      dialogFormat: false,
       casos: [],
       loading: false,
       // server meta
@@ -232,6 +445,9 @@ export default {
     }
   },
   methods: {
+    openDialogFormat(){
+      this.dialogFormat=true;
+    },
     // público: puedes llamar this.$refs.tabla.refresh()
     refresh () { this.fetchCasos() },
 

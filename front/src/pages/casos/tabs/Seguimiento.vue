@@ -197,7 +197,75 @@
         </q-markup-table>
       </div>
       <div class="col-12 col-md-12">
-        Legal
+        <span class="text-bold">Legal</span>
+<!--        <pre>{{caso.informes_legales}}</pre>-->
+<!--        [-->
+<!--        {-->
+<!--        "id": 5,-->
+<!--        "caseable_type": "App\\Models\\Caso",-->
+<!--        "caseable_id": 59,-->
+<!--        "user_id": 26,-->
+<!--        "fecha": "2025-11-01",-->
+<!--        "titulo": "aaaa",-->
+<!--        "numero": null,-->
+<!--        "contenido_html": "<div style=\"border:1px solid #333;border-radius:6px;padding:14px;margin-bottom:12px;font-size:13px;line-height:1.35\">\n\n  <div style=\"margin-bottom:10px\">\n    <div><b>A :</b> SEÑOR REPRESENTANTE DEL JUZGADO PUBLICO DE FAMILIA LA CIUDAD DE ORURO</div>\n    <div><b>DE :</b> ABG. ABG. XIMENA MAMANI VALDEZ</div>\n  </div>\n\n  <div style=\"margin:14px 0; font-weight:700\">I. FORMULACION DE DENUNCIA</div>\n  <div style=\"margin:14px 0; font-weight:700\">II. FUNDAMENTO DEL HECHO</div>\n  <div style=\"margin:14px 0; font-weight:700\">III. FUNDAMENTO DE DERECHO</div>\n  <div style=\"margin:14px 0; font-weight:700\">IV. PETITORIO</div>\n  <div style=\"margin:14px 0; font-weight:700\">V. OTROSIS</div>\n\n  <div style=\"margin:18px 0; font-weight:700\">I. FORMULA DENUNCIA POR EL MOTIVO DE :</div>\n  <div style=\"margin:6px 0 14px 0\">—</div>\n\n  <div style=\"margin:10px 0; font-weight:700\">DATOS GENERALES DEL DENUNCIANTE :</div>\n  <div><b>Nombres y Apellidos:</b> giovana ramirez</div>\n  <div><b>Fecha de Nacimiento:</b> —</div>\n  <div><b>Lugar de Nacimiento:</b> —</div>\n  <div><b>Edad:</b> —</div>\n  <div><b>C.I.:</b> —</div>\n  <div><b>Estado Civil:</b> —</div>\n  <div><b>Grado de Instrucción:</b> —</div>\n  <div><b>Dirección:</b> —</div>\n  <div><b>Ocupación:</b> —</div>\n  <div><b>Teléfono Celular:</b> —</div>\n  <div><b>Correo electrónico:</b> —</div>\n  <div><b>Ciudadanía Digital:</b> No</div>\n\n  <div style=\"margin:16px 0; font-weight:700\">DATOS DEL DEMANDADO</div>\n  <div><b>Nombres y Apellidos:</b> adimer paul</div>\n  <div><b>Fecha de Nacimiento:</b> —</div>\n  <div><b>Lugar de Nacimiento:</b> —</div>\n  <div><b>Edad:</b> —</div>\n  <div><b>C.I.:</b> —</div>\n  <div><b>Estado Civil:</b> —</div>\n  <div><b>Grado de Instrucción:</b> —</div>\n  <div><b>Dirección:</b> —</div>\n  <div><b>Ocupación:</b> —</div>\n  <div><b>Teléfono Celular:</b> —</div>\n  <div><b>Correo electrónico:</b> —</div>\n\n  <div style=\"margin:18px 0; font-weight:700\">II. FUNDAMENTO DE HECHO</div>\n  <p style=\"margin:6px 0\">...</p>\n\n  <div style=\"margin:18px 0; font-weight:700\">III. FUNDAMENTO DE DERECHO</div>\n  <p style=\"margin:6px 0\">...</p>\n\n  <div style=\"margin:18px 0; font-weight:700\">IV. PETITORIO</div>\n  <p style=\"margin:6px 0\">...</p>\n\n  <div style=\"margin:18px 0; font-weight:700\">V. OTROSIS</div>\n  <p style=\"margin:6px 0\">Por un derecho y protección a la Mujer…</p>\n\n  <div style=\"margin-top:24px;\">Oruro, 01/11/2025</div>\n\n  <div style=\"margin-top:36px;text-align:center\">\n    __________________________<br>\n    NOMBRE Y FIRMA DEL ABOGADO\n  </div>\n</div>",-->
+<!--  "created_at": "2025-11-01T09:32:14.000000Z",-->
+<!--  "updated_at": "2025-11-01T09:32:14.000000Z",-->
+<!--  "deleted_at": null,-->
+<!--  "archivo": null,-->
+<!--  "user": {-->
+<!--  "id": 26,-->
+<!--  "name": "ABG. XIMENA MAMANI VALDEZ",-->
+<!--  "role": "Abogado"-->
+<!--  }-->
+<!--  },-->
+<!--  {-->
+<!--  "id": 6,-->
+<!--  "caseable_type": "App\\Models\\Caso",-->
+<!--  "caseable_id": 59,-->
+<!--  "user_id": 26,-->
+<!--  "fecha": null,-->
+<!--  "titulo": "aaaa",-->
+<!--  "numero": null,-->
+<!--  "contenido_html": "<p>Archivo adjunto: <a href=\"/storage/caso/59/legal/1761989540_logoColMed3.png\" target=\"_blank\" rel=\"noopener\">logoColMed3.png</a></p>",-->
+<!--  "created_at": "2025-11-01T09:32:20.000000Z",-->
+<!--  "updated_at": "2025-11-01T09:32:20.000000Z",-->
+<!--  "deleted_at": null,-->
+<!--  "archivo": "/storage/caso/59/legal/1761989540_logoColMed3.png",-->
+<!--  "user": {-->
+<!--  "id": 26,-->
+<!--  "name": "ABG. XIMENA MAMANI VALDEZ",-->
+<!--  "role": "Abogado"-->
+<!--  }-->
+<!--  }-->
+<!--  ]-->
+        <q-markup-table dense bordered flat>
+          <thead class="bg-primary text-white">
+            <tr>
+              <th>Tipo</th>
+              <th>Título</th>
+              <th>Fecha</th>
+              <th>Usuario</th>
+              <th>Archivo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="informe in caso.informes_legales" :key="informe.id">
+              <td>
+                Informe
+              </td>
+              <td>{{ informe.titulo }}</td>
+              <td>{{ informe.fecha || '—' }}</td>
+              <td>{{ informe.user?.name || '—' }}</td>
+              <td>
+                <a @click="clickSeguimiento($event,{ tipo: 'Informe', modulo: 'Legal', uid: 'leg-' + informe.id })">
+                  Ver archivo
+                </a>
+              </td>
+            </tr>
+            <ArchivoFoto role="Abogado" :caso="caso" />
+          </tbody>
+        </q-markup-table>
       </div>
     </div>
   </div>
