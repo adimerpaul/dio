@@ -24,6 +24,22 @@ use Intervention\Image\ImageManager;
 
 class CasoController extends Controller
 {
+    function uploadCodigoFile(Request $request, Caso $caso){
+        $request->validate([
+            'file' => ['required', 'file', 'max:51200'], // 50 MB
+        ]);
+
+        $file = $request->file('file');
+        $userId = $request->user()->id;
+        $fileName = time() . '_' . $file->getClientOriginalName();
+        $filePath = "caso_codigo/user_{$userId}/" . $fileName;
+        Storage::disk('public')->put($filePath, file_get_contents($file));
+        $url = Storage::url($filePath);
+        $caso ->codigo_file = $url;
+        $caso ->save();
+
+        return response()->json(['url' => $url], 201);
+    }
     function uploadRespaldo(Request $request, Caso $caso){
         $request->validate([
             'file' => ['required', 'file', 'max:51200'], // 50 MB

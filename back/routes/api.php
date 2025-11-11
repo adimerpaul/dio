@@ -216,6 +216,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/casos/{caso}/acogimiento', [AcogimientoController::class, 'upsert']);
 
     Route::post('/casos/{caso}/uploadFile', [CasoController::class, 'uploadFile']);
+//    http://localhost:8000/api/casos/6/upload-codigo-file
+    Route::post('/casos/{caso}/upload-codigo-file', [CasoController::class, 'uploadCodigoFile']);
+
 
     Route::get('/talleres', [TallerController::class, 'index']);
     Route::post('/talleres', [TallerController::class, 'store']);
