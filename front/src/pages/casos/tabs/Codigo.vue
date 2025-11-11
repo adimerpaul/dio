@@ -81,6 +81,38 @@
                   :dense="$q.screen.lt.md">
           <template #prepend><q-icon name="gavel" /></template>
         </q-select>
+<!--        ver archivo-->
+<!--        href ver archivo-->
+<!--        <a :href="`${$url}/..${caso.codigo_file}`" target="_blank">-->
+<!--          Ver Archivo de Código-->
+<!--        </a>-->
+        <div v-if="caso.codigo_file" class="q-mt-md">
+          <q-btn
+            :href="`${$url}/..${caso.codigo_file}`"
+            target="_blank"
+            rel="noopener"
+            color="secondary"
+            icon="visibility"
+            label="Ver Archivo de Código"
+            :dense="$q.screen.lt.md"
+            no-caps
+          />
+        </div>
+
+<!--        subir archivo -->
+        <!--          v-if="solo para Abogado"-->
+        <q-file
+          v-model="form.archivo_codigo"
+          :readonly="!editMode"
+          outlined
+          label="Subir Archivo de Código"
+          accept=".pdf,.doc,.docx"
+          @update:model-value="uploadFile"
+          dense
+          v-if="$store.user.role === 'Abogado'"
+        >
+          <template #prepend><q-icon name="upload_file" /></template>
+        </q-file>
       </div>
     </div>
   </q-card>
@@ -134,6 +166,20 @@ export default {
     },
   },
   methods: {
+    uploadFile(file) {
+      this.form.archivo_codigo = file;
+      const form = new FormData();
+      form.append('file', file);
+      this.$axios.post(`casos/${this.caso.id}/upload-codigo-file`, form, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      }).then(() => {
+        this.$q.notify({ type: 'positive', message: 'Archivo de código subido correctamente.' });
+        this.$emit('refresh');
+      }).catch((error) => {
+        console.error(error);
+        this.$q.notify({ type: 'negative', message: 'Error al subir el archivo de código.' });
+      });
+    },
     changeJuzgadoPadre(value) {
       this.form.numero_juzgado = null; // resetear el valor seleccionado
       if(value === 'Juzgado Familia') {
