@@ -656,6 +656,12 @@
               <div class="col-6 col-md-3" v-if="tipo==='DNA' || tipo==='PROPREMI' || tipo==='SLIM' || tipo==='UMADIS'">
                 <q-toggle v-model="f.violencia_cibernetica" label="Cibernética"/>
               </div>
+              <div class="col-6 col-md-3" v-if="tipo==='DNA'">
+                <q-toggle v-model="f.violencia_abandono" label="Abandono"/>
+              </div>
+              <div class="col-6 col-md-3" v-if="tipo==='DNA'">
+                <q-toggle v-model="f.violencia_otros" label="Otros"/>
+              </div>
             </div>
           </q-card-section>
         </q-card>
@@ -703,18 +709,6 @@
 
         <q-card-section>
           <div class="row q-col-gutter-md">
-<!--            //            Presencia física de la persona a evaluar (obligatoria).-->
-<!--            //            Cédula de Identidad de la persona con discapacidad (original y fotocopia).-->
-<!--            //Cédula de Identidad del padre, madre y/o tutor para persona referente.-->
-<!--            //            Certificado médico actualizado (original y fotocopia), según tipo de discapacidad. Para persona con discapacidad AUDITIVA adjuntar examen de Audiometría.-->
-<!--            //            Croquis del domicilio actualizado.-->
-<!--            //            Papeleta de luz y agua (original y fotocopia).-->
-<!--            $table->string('documento_persona_fisica', 160)->nullable();-->
-<!--            $table->string('documento_carnet_discapacidad', 160)->nullable();-->
-<!--            $table->string('documento_carnet_padres', 160)->nullable();-->
-<!--            $table->string('documento_certificado_medico', 160)->nullable();-->
-<!--            //            documento_croquis_direccion_denunciante-->
-<!--            $table->string('documento_papeleta_luz_agua', 160)->nullable();-->
 <!--            UMADIS-->
             <template v-if="tipo ==='UMADIS'">
               <div class="col-12 col-md-2">
@@ -743,16 +737,6 @@
               </div>
             </template>
             <template v-else-if="tipo ==='SLAM'">
-<!--              <div class="col-12 col-md-2">-->
-<!--                <q-checkbox v-model="f.documento_fotocopia_ci_victima" label="Fotocopia CI víctima" true-value="1"-->
-<!--                            false-value="0"/>-->
-<!--              </div>-->
-<!--              documento_fotocopia_ci_denunciante-->
-<!--              documento_fotocopia_carnet_denunciado-->
-<!--              documento_placas_fotograficas_domicilio_denunciante-->
-<!--              documento_placas_fotograficas_domicilio_denunciado-->
-<!--              documento_croquis_direccion_denunciado-->
-<!--              documento_croquis_direccion_denunciante-->
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_fotocopia_ci_denunciante" label="Fotocopia CI denunciante"
                             true-value="1" false-value="0"/>
@@ -828,7 +812,7 @@
                             false-value="0"/>
               </div>
             </template>
-            <template v-else-if="tipo ==='DNA'">
+            <template v-else-if="tipo ==='DNA' && titulo==='DNA Nuevo Familiar'">
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_certificado_nacimiento" label="Certificado de nacimiento hijos original"
                             true-value="1" false-value="0"/>
@@ -1445,6 +1429,8 @@ export default {
         violencia_sexual: false,
         violencia_economica: false,
         violencia_cibernetica: false,
+        violencia_abandono: false,
+        violencia_otros: false,
         // Seguimiento
         psicologica_user_id: '',
         trabajo_social_user_id: '',

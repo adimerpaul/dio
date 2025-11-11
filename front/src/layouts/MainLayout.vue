@@ -468,6 +468,42 @@
             <q-item-label class="text-white">Juventudes (Casos)</q-item-label>
           </q-item-section>
         </q-item>
+<!--        •	ANTECEDENTES NNA (DNA)-->
+<!--        •	LUGAR DE AGOGIDA NNA-->
+<!--        •	EQUIPO RESPONSABLE-->
+<!--        •	INFORMES-->
+        <q-item dense to="/antecedentes-nna" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Antecedentes NNA')">
+          <q-item-section avatar>
+            <q-icon name="history_edu" class="text-white"/>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label class="text-white">Antecedentes NNA(DNA)</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item dense to="/lugares-acogida-nna" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Lugar de Acogida NNA')">
+          <q-item-section avatar>
+            <q-icon name="home_work" class="text-white"/>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label class="text-white">Lugar de Acogida NNA</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item dense to="/equipos-responsables" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Equipo Responsable')">
+          <q-item-section avatar>
+            <q-icon name="groups" class="text-white"/>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label class="text-white">Equipo Responsable</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item dense to="/informes" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Informes')">
+          <q-item-section avatar>
+            <q-icon name="description" class="text-white"/>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label class="text-white">Informes</q-item-label>
+          </q-item-section>
+        </q-item>
         <q-item dense to="/reportes" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Reportes')">
           <q-item-section avatar>
             <q-icon name="bar_chart" class="text-white"/>

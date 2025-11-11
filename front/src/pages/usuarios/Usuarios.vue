@@ -312,6 +312,10 @@ export default {
           'Ver Juventudes',
           'Crear Juventudes',
           'Agenda Talleres de Orientación',
+          'Antecedentes NNA',
+          'Lugar de Acogida NNA',
+          'Equipo Responsable',
+          'Informes',
         ])
         this.permissions = all
           .filter(p => valid.has(p.name))
