@@ -38,6 +38,8 @@ class Caso extends Model implements AuditableContract
         'violencia_simbolica',
         'violencia_institucional',
         'violencia_cibernetica',
+        'violencia_abandono',
+        'violencia_otros',
         'psicologica_user_id',
         'trabajo_social_user_id',
         'legal_user_id',
@@ -112,6 +114,8 @@ class Caso extends Model implements AuditableContract
         'violencia_patrimonial' => 'boolean',
         'violencia_simbolica'   => 'boolean',
         'violencia_institucional'=> 'boolean',
+        'violencia_abandono'    => 'boolean',
+        'violencia_otros'       => 'boolean',
     ];
     public function problematicas(){ return $this->hasMany(Problematica::class); }
     public function user(){ return $this->belongsTo(User::class); }

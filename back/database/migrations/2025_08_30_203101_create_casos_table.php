@@ -47,6 +47,8 @@ return new class extends Migration
             $table->string('violencia_simbolica', 10)->nullable();
             $table->string('violencia_institucional', 10)->nullable();
             $table->string('violencia_cibernetica', 10)->nullable();
+            $table->string('violencia_abandono', 10)->nullable();
+            $table->string('violencia_otros', 10)->nullable();
 
             $table->unsignedBigInteger('psicologica_user_id')->nullable();
             $table->foreign('psicologica_user_id')->references('id')->on('users');
