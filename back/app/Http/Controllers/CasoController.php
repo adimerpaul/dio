@@ -844,6 +844,7 @@ class CasoController extends Controller
     public function index(Request $request)
     {
         $q = trim((string)$request->get('q', ''));
+        $tipologia = trim((string)$request->get('tipologia', ''));
         $perPage = (int)$request->get('per_page', 10);
         $perPage = max(5, min($perPage, 100));
         $tipo = trim((string)$request->get('tipo', ''));
@@ -851,6 +852,10 @@ class CasoController extends Controller
         $query = Caso::query()
             ->orderByDesc('created_at')
             ->when($tipo !== '', fn($qq) => $qq->where('tipo', $tipo));
+
+        if ($tipologia !== '') {
+            $query->where('caso_tipologia', $tipologia);
+        }
 
         if ($q !== '') {
             $like = "%{$q}%";

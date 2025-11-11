@@ -95,6 +95,7 @@ class Caso extends Model implements AuditableContract
         'documento_certificado_medico',
         'documento_papeleta_luz_agua',
         'codigo_file',
+        'titulo',
     ];
 
     /**

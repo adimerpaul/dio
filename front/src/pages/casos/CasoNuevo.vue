@@ -1587,6 +1587,7 @@ export default {
         'Otra',
       ]
     }
+    console.log('Tipo:', this.tipo, 'Titulo:', this.titulo)
     if (this.tipo === 'DNA' && this.titulo==='DNA Proceso Penal') {
       console.log('entra a tipologias DNA Proceso Penal')
       this.tipologias = [
@@ -1921,6 +1922,7 @@ export default {
       this.loading = true
       try {
         this.f.tipo = this.tipo
+        this.f.titulo = this.titulo
         const res = await this.$axios.post('/casos', this.f)
         this.$alert.success('Caso creado')
         // Si quieres redirigir al show, descomenta:

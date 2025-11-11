@@ -106,7 +106,7 @@
 <!--        <CasoNuevoSLAM :casoId="caso.id" :showNumeroApoyoIntegral="caso?.numero_apoyo_integral" :editable="true" v-else-if="caso?.tipo==='SLAM'" @refresh="fetchCaso"/>-->
 <!--        <CasoNuevoUMADIS :casoId="caso.id" :showNumeroApoyoIntegral="caso?.numero_apoyo_integral" :editable="true" v-else-if="caso?.tipo==='UMADIS'" @refresh="fetchCaso"/>-->
 <!--        <CasoNuevoPROPREMI :casoId="caso.id" :showNumeroApoyoIntegral="caso?.numero_apoyo_integral" :editable="true" v-else-if="caso?.tipo==='PROPREMI'" @refresh="fetchCaso"/>-->
-        <CasoNuevo :casoId="caso.id" :showNumeroApoyoIntegral="caso?.numero_apoyo_integral" :accion="'modificar'" v-if="caso" @refresh="fetchCaso" :caso="caso" :tipo="caso?.tipo"/>
+        <CasoNuevo :casoId="caso.id" :showNumeroApoyoIntegral="caso?.numero_apoyo_integral" :accion="'modificar'" v-if="caso" @refresh="fetchCaso" :caso="caso" :tipo="caso?.tipo" :titulo="caso?.titulo"/>
 
 
 <!--        <CasoNuevoDNA :casoId="caso.id" :showNumeroApoyoIntegral="caso?.numero_apoyo_integral" :editable="true" v-else-if="caso?.tipo==='DNA'" @refresh="fetchCaso"/>-->

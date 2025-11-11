@@ -391,13 +391,10 @@
 export default {
   name: 'CasoTable',
   props: {
-    // SLIM | SLAM | DNA
     tipo: { type: String, required: true },
-    // Si llega ?only_pendientes=1, lo respetamos (por defecto true)
+    tipologia: { type: String, default: '' },
     leerOnlyPendientesDeRuta: { type: Boolean, default: true },
-    // Placeholder de búsqueda (si no envías, se genera con base al tipo)
     placeholder: { type: String, default: '' },
-    // Per page inicial
     perPageInit: { type: Number, default: 10 },
   },
   data () {
@@ -405,15 +402,11 @@ export default {
       dialogFormat: false,
       casos: [],
       loading: false,
-      // server meta
       page: 1,
       perPage: this.perPageInit,
       meta: { current_page: 1, last_page: 1, total: 0, from: 0, to: 0 },
-      // search
       search: '',
-      // filtro pendientes
       onlyPendientes: false,
-      // columnas extra (solo SLIM)
       showExtra: false,
     }
   },
@@ -456,6 +449,7 @@ export default {
       this.$axios.get('/casos', {
         params: {
           q: this.search || '',
+          tipologia: this.tipologia || '',
           tipo: this.tipo,
           page: this.page,
           per_page: this.perPage,
