@@ -55,6 +55,16 @@
                 <q-item-section avatar><q-icon name="print" /></q-item-section>
                 <q-item-section><q-item-label>Imprimir hoja</q-item-label></q-item-section>
               </q-item>
+
+              <q-item
+                v-if="props.row.archivo"
+                clickable
+                v-close-popup
+                @click="verArchivo(props.row)"
+              >
+                <q-item-section avatar><q-icon name="attach_file" /></q-item-section>
+                <q-item-section><q-item-label>Ver archivo</q-item-label></q-item-section>
+              </q-item>
             </q-list>
           </q-btn-dropdown>
         </q-td>
@@ -88,7 +98,7 @@
               class="q-mt-sm"
             />
 
-            <!-- REMITENTE (USUARIO) -->
+            <!-- REMITENTE (texto libre) -->
             <q-input
               v-model="remision.remitente"
               label="Remitente"
@@ -96,8 +106,10 @@
               outlined
               class="q-mt-sm"
             />
+
+            <!-- ORGANIZACIÓN -->
             <q-select
-              v-model="remision.organizaciones"
+              v-model="remision.organizacion"
               label="Organización"
               dense
               :options="organizaciones"
@@ -114,6 +126,8 @@
               outlined
               class="q-mt-sm"
             />
+
+            <!-- USUARIO REFERENCIA -->
             <q-select
               v-model="remision.user_id"
               :options="usuarios"
@@ -121,22 +135,27 @@
               :option-label="u => `${u.name} (${u.role})`"
               emit-value
               map-options
-              label="Referencia"
+              label="Referencia (usuario)"
               dense
               outlined
               class="q-mt-sm"
             />
-            <!--            <pre>{{usuarios}}</pre>-->
 
-            <!-- REFERENCIA (solo para hoja/imprimir, si la sigues usando) -->
-<!--            <q-input-->
-<!--              v-model="remision.referencia"-->
-<!--              label="Referencia"-->
-<!--              type="textarea"-->
-<!--              dense-->
-<!--              outlined-->
-<!--              class="q-mt-sm"-->
-<!--            />-->
+            <!-- ARCHIVO ADJUNTO (OPCIONAL) -->
+            <q-file
+              v-model="archivoFile"
+              label="Archivo adjunto (opcional)"
+              outlined
+              dense
+              class="q-mt-sm"
+              :clearable="true"
+              accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+              use-chips
+            >
+              <template #append>
+                <q-icon name="attach_file" />
+              </template>
+            </q-file>
 
             <!-- DISPOSICIÓN -->
             <q-select
@@ -184,8 +203,9 @@ export default {
       accion: '',
       loading: false,
       filter: '',
-      usuarios: [], // <-- usuarios remitentes
-      dispociciones:[
+      archivoFile: null, // <-- archivo seleccionado (o null si no se sube)
+      usuarios: [],
+      dispociciones: [
         'Urgente',
         'Atender Solicitud',
         'Para su conocimiento',
@@ -201,7 +221,7 @@ export default {
         'Fiscal de Materia',
         'Defensor del Pueblo',
         'Otros'
-  ],
+      ],
       columns: [
         { name: 'actions', label: 'Acciones', align: 'center' },
         { name: 'codigo_ingreso', label: 'N° Ingreso', field: 'codigo_ingreso', align: 'left' },
@@ -217,12 +237,10 @@ export default {
           name: 'remitente',
           label: 'Remitente',
           align: 'left',
-          // Nombre del usuario remitente; si no existe, mostramos remitente_otros
-          field: row => (row.user ? row.user.name : (row.remitente_otros || ''))
+          field: row => (row.user ? row.user.name : (row.remitente_otros || row.remitente || ''))
         },
-        { name: 'referencia', label: 'Referencia', field: 'referencia', align: 'left' },
         { name: 'disposicion', label: 'Disposición', field: 'disposicion', align: 'left' },
-        { name: 'estado', label: 'Estado', field: 'estado', align: 'left' }
+        // { name: 'estado', label: 'Estado', field: 'estado', align: 'left' }
       ]
     }
   },
@@ -244,7 +262,6 @@ export default {
     },
     async getUsuarios () {
       try {
-        // Endpoint basado en tu UserController::usuariosRole
         const res = await this.$axios.get('users')
         this.usuarios = res.data
       } catch (e) {
@@ -258,12 +275,15 @@ export default {
         fecha_hora: '',
         objeto_ingreso: '',
         cantidad: null,
-        user_id: null,
+        remitente: '',
+        organizacion: '',
         remitente_otros: '',
-        referencia: '',
+        user_id: null,
         disposicion: '',
+        archivo: null,
         estado: 'ACTIVO'
       }
+      this.archivoFile = null
       this.accion = 'Nueva'
       this.dialog = true
     },
@@ -273,6 +293,7 @@ export default {
         user_id: row.user_id || null,
         remitente_otros: row.remitente_otros || ''
       }
+      this.archivoFile = null // si no cambia archivo, se mantiene el existente
       this.accion = 'Editar'
       this.dialog = true
     },
@@ -296,31 +317,65 @@ export default {
     async guardar () {
       this.loading = true
       try {
+        const formData = new FormData()
+
+        // Pasar todos los campos de remision (menos algunos especiales)
+        Object.entries(this.remision).forEach(([key, value]) => {
+          if (value !== null && value !== undefined && key !== 'user' && key !== 'archivo') {
+            formData.append(key, value)
+          }
+        })
+
+        // Archivo (si el usuario seleccionó uno)
+        if (this.archivoFile) {
+          formData.append('archivo', this.archivoFile)
+        }
+
+        let res
         if (this.remision.id) {
-          await this.$axios.put(`remision-casos/${this.remision.id}`, this.remision)
+          // Update (usamos _method PUT para compatibilidad con Laravel)
+          formData.append('_method', 'PUT')
+          res = await this.$axios.post(`remision-casos/${this.remision.id}`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+          })
           this.$alert && this.$alert.success('Remisión actualizada')
         } else {
-          await this.$axios.post('remision-casos', this.remision)
+          // Create
+          res = await this.$axios.post('remision-casos', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+          })
           this.$alert && this.$alert.success('Remisión creada')
         }
+
         this.dialog = false
         this.getRemisiones()
       } catch (e) {
+        console.error(e)
         this.$alert && this.$alert.error(e.response?.data?.message || 'No se pudo guardar')
       } finally {
         this.loading = false
       }
     },
 
+    // Ver archivo adjunto (si existe)
+    verArchivo (row) {
+      if (!row.archivo) return
+      // const base = window.location.origin
+      // apiback
+      const base = this.$axios.defaults.baseURL.replace('/api/', '')
+      const url = `${base}/../storage/${row.archivo}`
+      window.open(url, '_blank')
+    },
+
     // --- Imprimir hoja de ruta ---
     imprimir (row) {
       const fechaHora = row.fecha_hora || ''
-      const fecha = fechaHora.substring(0, 10)          // yyyy-mm-dd
-      const hora = fechaHora.substring(11, 16) || ''    // hh:mm
+      const fecha = fechaHora.substring(0, 10)
+      const hora = fechaHora.substring(11, 16) || ''
 
       const remitenteTexto = row.user
         ? row.user.name
-        : (row.remitente_otros || '')
+        : (row.remitente_otros || row.remitente || '')
 
       const win = window.open('', '_blank', 'width=800,height=1000')
       win.document.write(`
@@ -406,11 +461,6 @@ export default {
             <div class="seccion-titulo">OBJETO / INGRESO</div>
             <div class="campo texto-largo" style="margin-bottom:6px;">
               <div>${row.objeto_ingreso || ''}</div>
-            </div>
-
-            <div class="seccion-titulo">REFERENCIA</div>
-            <div class="campo texto-largo" style="margin-bottom:6px;">
-              <div>${row.referencia || ''}</div>
             </div>
 
             <div class="seccion-titulo">PROVEÍDO / DISPOSICIÓN</div>

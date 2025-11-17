@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('organizacion')->nullable();
 //            $table->string('referencia')->nullable();
             $table->string('disposicion')->nullable();
+            $table->string('archivo')->nullable();
             $table->string('estado')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users');

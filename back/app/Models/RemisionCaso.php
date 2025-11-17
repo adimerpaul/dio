@@ -32,6 +32,7 @@ class RemisionCaso extends Model implements AuditableContract
         'organizacion',
         'disposicion',
         'estado',
+        'archivo',
         'user_id',
     ];
     protected $hidden = [
