@@ -163,7 +163,7 @@
             <q-item-label class="text-white">Agenda</q-item-label>
           </q-item-section>
         </q-item>
-        <q-expansion-item dense expand-separator icon="add_circle" label="Nuevo SLIM" active-class="menu-active" v-if="hasAnyPerm(['Crear SLIM'])">
+        <q-expansion-item dense expand-separator icon="add_circle" label="Nuevo SLIM" active-class="menu-active" v-if="hasPerm(['Crear SLIM'])">
           <q-list>
 <!--            <q-item :inset-level="0.3" dense to="/slims/nuevofisica" exact clickable class="menu-item" active-class="menu-active" v-close-popup>-->
 <!--              <q-item-section avatar>-->
@@ -223,7 +223,7 @@
             <q-item-label class="text-white">SLIM (Casos)</q-item-label>
           </q-item-section>
         </q-item>
-        <q-expansion-item dense expand-separator icon="gavel" label="Nuevo DNA" active-class="menu-active" v-if="hasAnyPerm(['Crear DNA'])">
+        <q-expansion-item dense expand-separator icon="gavel" label="Nuevo DNA" active-class="menu-active" v-if="hasPerm(['Crear DNA'])">
           <q-list>
             <q-item :inset-level="0.3" dense to="/dnas/nuevo-penal" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
               <q-item-section avatar>
@@ -267,7 +267,7 @@
             <q-item-label class="text-white">DNA (Casos)</q-item-label>
           </q-item-section>
         </q-item>
-        <q-expansion-item dense expand-separator icon="add_circle" label="Nuevo SLAM" active-class="menu-active" v-if="hasAnyPerm(['Crear SLAM'])">
+        <q-expansion-item dense expand-separator icon="add_circle" label="Nuevo SLAM" active-class="menu-active" v-if="hasPerm(['Crear SLAM'])">
           <q-list>
             <q-item :inset-level="0.3" dense to="/slams/nuevo-penal" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
               <q-item-section avatar>
@@ -329,7 +329,7 @@
             <q-item-label class="text-white">SLAM (Casos)</q-item-label>
           </q-item-section>
         </q-item>
-        <q-expansion-item dense expand-separator icon="add_circle" label="Nuevo UMADIS" active-class="menu-active" v-if="hasAnyPerm(['Crear UMADIS'])">
+        <q-expansion-item dense expand-separator icon="add_circle" label="Nuevo UMADIS" active-class="menu-active" v-if="hasPerm(['Crear UMADIS'])">
 <!--          <q-list>-->
 <!--            <q-item :inset-level="0.3" dense to="/umadis/nuevofisica" exact clickable class="menu-item" active-class="menu-active" v-close-popup>-->
 <!--              <q-item-section avatar>-->
@@ -395,7 +395,7 @@
             <q-item-label class="text-white">UMADIS (Casos)</q-item-label>
           </q-item-section>
         </q-item>
-        <q-expansion-item dense expand-separator icon="add_circle" label="Nuevo PROPREMI" active-class="menu-active" v-if="hasAnyPerm(['Crear PROPREMI'])">
+        <q-expansion-item dense expand-separator icon="add_circle" label="Nuevo PROPREMI" active-class="menu-active" v-if="hasPerm(['Crear PROPREMI'])">
           <q-list>
             <q-item :inset-level="0.3" dense to="/propremis/nuevo-infraccion-educativo" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
               <q-item-section avatar>
@@ -505,7 +505,7 @@
           </q-item-section>
         </q-item>
 <!--        remision-casos-->
-        <q-item dense to="/remision-casos" exact clickable class="menu-item" active-class="menu-active" v-close-popup >
+        <q-item dense to="/remision-casos" exact clickable class="menu-item" active-class="menu-active" v-close-popup  v-if="hasPerm('Remision de Casos')">
           <q-item-section avatar>
             <q-icon name="send" class="text-white"/>
           </q-item-section>

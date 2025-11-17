@@ -316,6 +316,7 @@ export default {
           'Lugar de Acogida NNA',
           'Equipo Responsable',
           'Informes',
+          'Remision de Casos',
         ])
         this.permissions = all
           .filter(p => valid.has(p.name))

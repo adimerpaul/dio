@@ -149,6 +149,12 @@
           bordered
           :loading="detalle.loading"
           no-data-label="Sin casos para mostrar"
+          @rowClick="(row, index, event) => {
+            // console.log('Row clicked:', row)
+            // console.log('Index:', index)
+            // console.log('Event:', event)
+            this.$router.push('/casos/' + index.id)
+          }"
         >
           <template #body-cell-caso_fecha_hecho="props">
             <q-td :props="props">
