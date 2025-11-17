@@ -3,6 +3,7 @@
 use App\Http\Controllers\AcogimientoController;
 use App\Http\Controllers\CasoController;
 use App\Http\Controllers\DnaController;
+use App\Http\Controllers\RemisionCasoController;
 use App\Http\Controllers\SlamController;
 use App\Http\Controllers\SlamNotarialController;
 use App\Http\Controllers\SlimDocumentoController;
@@ -235,6 +236,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('slam-notariales', [SlamNotarialController::class, 'store']);
     Route::put('slam-notariales/{id}', [SlamNotarialController::class, 'update']);
     Route::delete('slam-notariales/{id}', [SlamNotarialController::class, 'destroy']);
+
+    Route::apiResource('remision-casos', RemisionCasoController::class);
 });
 Route::get('/slimsImprimir', [SlimController::class, 'imprimir']);
 

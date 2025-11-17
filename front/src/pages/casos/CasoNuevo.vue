@@ -682,17 +682,17 @@
             <!--            <div class="col-12 col-md-4"><q-input v-model="f.seguimiento_area_legal" dense outlined clearable label="Área legal (responsable)"/></div>-->
             <div class="col-12 col-md-4">
               <q-select v-model="f.psicologica_user_id" dense outlined emit-value map-options clearable
-                        :options="psicologos.map(u => ({ label: u.username, value: u.id }))"
+                        :options="psicologos.map(u => ({ label: u.name, value: u.id }))"
                         label="Área psicologica (responsable)"/>
             </div>
             <div class="col-12 col-md-4">
               <q-select v-model="f.trabajo_social_user_id" dense outlined emit-value map-options clearable
-                        :options="sociales.map(u => ({ label: u.username, value: u.id }))"
+                        :options="sociales.map(u => ({ label: u.name, value: u.id }))"
                         label="Área social (responsable)"/>
             </div>
             <div class="col-12 col-md-4">
               <q-select v-model="f.legal_user_id" dense outlined emit-value map-options clearable
-                        :options="abogados.map(u => ({ label: u.username, value: u.id }))"
+                        :options="abogados.map(u => ({ label: u.name, value: u.id }))"
                         label="Área legal (responsable)"/>
             </div>
           </div>

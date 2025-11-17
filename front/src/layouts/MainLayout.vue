@@ -504,6 +504,15 @@
             <q-item-label class="text-white">Informes</q-item-label>
           </q-item-section>
         </q-item>
+<!--        remision-casos-->
+        <q-item dense to="/remision-casos" exact clickable class="menu-item" active-class="menu-active" v-close-popup >
+          <q-item-section avatar>
+            <q-icon name="send" class="text-white"/>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label class="text-white">Remisión de Casos</q-item-label>
+          </q-item-section>
+        </q-item>
         <q-item dense to="/reportes" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Reportes')">
           <q-item-section avatar>
             <q-icon name="bar_chart" class="text-white"/>

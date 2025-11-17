@@ -69,6 +69,7 @@ const routes = [
 
       // http://localhost:9000/antecedentes-nna
       { path: '/antecedentes-nna',    component: () => import('pages/dnas/AntecedentesNna.vue'),      meta: { requiresAuth: true } },
+      { path: '/remision-casos',    component: () => import('pages/RemisionCasos/RemisionCasosPage.vue'),      meta: { requiresAuth: true, perm: 'Casos' } },
 
     ]
   },
