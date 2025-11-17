@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AcogimientoController;
 use App\Http\Controllers\CasoController;
+use App\Http\Controllers\DashboardCasoController;
 use App\Http\Controllers\DnaController;
 use App\Http\Controllers\RemisionCasoController;
 use App\Http\Controllers\SlamController;
@@ -32,6 +33,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/permissions', [App\Http\Controllers\PermissionController::class, 'index']);
     Route::get('/users/{user}/permissions', [App\Http\Controllers\UserController::class, 'getPermissions']);
     Route::put('/users/{user}/permissions', [App\Http\Controllers\UserController::class, 'syncPermissions']);
+
+
+    Route::get('dashboard-casos', [DashboardCasoController::class, 'index']);
+    Route::get('dashboard-casos-detalle', [DashboardCasoController::class, 'detalle']);
 
     Route::put('/casos/{caso}/codigos', [CasoController::class, 'updateCodigos']);
     Route::post('/casos',        [\App\Http\Controllers\CasoController::class, 'store']);
