@@ -13,6 +13,8 @@ const routes = [
       { path: '/slims/nuevo-penal', component: () => import('pages/slims/SlimNuevoPenal.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
       { path: '/slims/nuevo-familiar', component: () => import('pages/slims/SlimNuevoFamiliar.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
       { path: '/slims/nuevo-apoyo', component: () => import('pages/slims/SlimNuevoApoyo.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
+      // to="/slim/nuevo-hechos-fragancia"
+      { path: '/slims/nuevo-hechos-fragancia', component: () => import('pages/slims/SlimNuevoHechosFragancia.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
       { path: '/propremis/nuevo-infraccion-educativo', component: () => import('pages/propremis/PropremisNuevoInfraccionEducativo.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
       { path: '/talleres', component: () => import('pages/talleres/Talleres.vue'), meta: { requiresAuth: true, perm: 'Talleres' } },
 
@@ -49,6 +51,10 @@ const routes = [
       { path: '/dnas/nuevo-nna',    component: () => import('pages/dnas/DnaNuevoNna.vue'),      meta: { requiresAuth: true } },
       { path: '/dnas/nuevo-apoyo',  component: () => import('pages/dnas/DnaNuevoApoyo.vue'),    meta: { requiresAuth: true } },
       { path: '/dnas/:id',          component: () => import('pages/dnas/DnaShow.vue'),          meta: { requiresAuth: true } },
+      // to="/dnas/nuevo-hechos-fragancia"
+      // to="/dnas/nuevo-hechos-denuncia"
+      { path: '/dnas/nuevo-hechos-fragancia', component: () => import('pages/dnas/DnaNuevoHechosFragancia.vue'), meta: { requiresAuth: true } },
+      // { path: '/dnas/nuevo-hechos-denuncia', component: () => import('pages/dnas/DnaNuevoHechosDenuncia.vue'), meta: { requiresAuth: true } },
 
       // juventudes
       { path: '/juventudes/asistencias-familiares', component: () => import('pages/juventudes/JuventudesAsistenciaFamiliar.vue'), meta: { requiresAuth: true, perm: 'Juventudes' } },

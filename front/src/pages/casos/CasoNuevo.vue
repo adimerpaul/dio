@@ -1552,26 +1552,31 @@ export default {
       ]
     }
 
-    if (this.tipo === 'SLIM') {
+    if (this.tipo === 'SLIM' && this.titulo==='Nuevo Proceso Familiar') {
+      this.tipologias = [
+        'Asistencia familiar',
+        'Otros'
+      ]
+    }
+    if (this.tipo === 'SLIM' && (this.titulo==='Registrar Nuevo Caso Penal' || this.titulo==='Registrar Nuevo Caso Hechos de Fragancia')) {
       this.tipologias = [
         'Violencia Física',
-        'Violencia Feminicida',
         'Violencia Psicológica',
-        'Violencia Mediática',
-        'Violencia Simbólica y/o Encubierta',
-        'Violencia Contra la Dignidad, la Honra y el Nombre',
         'Violencia Sexual',
-        'Violencia Contra los Derechos Reproductivos',
-        'Violencia en Servicios de Salud',
-        'Violencia Patrimonial y Económica',
-        'Violencia Laboral',
-        'Violencia en el Sistema Educativo Plurinacional',
-        'Violencia en el Ejercicio Político y de Liderazgo de la Mujer',
-        'Violencia Institucional',
-        'Violencia en la Familia',
-        'Violencia Contra los Derechos y la Libertad Sexual',
-        'Tipologias Multiples',
+        'Violencia Económica/Patrimonial',
+        'Abandono',
+        'Extravío',
+        'Tipología Múltiple',
         'Otra'
+      ]
+    }
+    // "Apoyo Integral
+    if (this.tipo === 'SLIM' && this.titulo==='Nuevo Apoyo Integral') {
+      this.tipologias = [
+        'Informes psicológicos',
+        'Informes sociales',
+        'Informes psicosociales',
+        'Otros'
       ]
     }
     if (this.tipo === 'PROPREMI') {
@@ -1588,8 +1593,7 @@ export default {
       ]
     }
     console.log('Tipo:', this.tipo, 'Titulo:', this.titulo)
-    if (this.tipo === 'DNA' && this.titulo==='DNA Proceso Penal') {
-      console.log('entra a tipologias DNA Proceso Penal')
+    if (this.tipo === 'DNA' && (this.titulo==='DNA Proceso Penal'  || this.titulo==='DNA Nuevo Hechos de Fragancia')) {
       this.tipologias = [
         'Violacion',
         'Estupro',
