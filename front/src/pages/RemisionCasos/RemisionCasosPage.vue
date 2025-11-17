@@ -45,6 +45,11 @@
                 <q-item-section avatar><q-icon name="edit" /></q-item-section>
                 <q-item-section><q-item-label>Editar</q-item-label></q-item-section>
               </q-item>
+<!--              opcion de ver-->
+              <q-item clickable v-close-popup @click="verRemision(props.row)">
+                <q-item-section avatar><q-icon name="visibility" /></q-item-section>
+                <q-item-section><q-item-label>Ver</q-item-label></q-item-section>
+              </q-item>
 
               <q-item clickable v-close-popup @click="eliminar(props.row.id)">
                 <q-item-section avatar><q-icon name="delete" /></q-item-section>
@@ -189,6 +194,89 @@
         </q-card-section>
       </q-card>
     </q-dialog>
+<!--    dialogVer-->
+    <q-dialog v-model="dialogVer" persistent>
+      <q-card style="width: 500px; max-width: 90vw">
+        <q-card-section class="row items-center q-pb-none">
+          <div class="text-subtitle1">Ver remisión</div>
+          <q-space /><q-btn icon="close" flat round dense @click="dialogVer = false" />
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+<!--          <div><strong>N° Ingreso:</strong> {{ remision.codigo_ingreso }}</div>-->
+<!--          <div><strong>Fecha/Hora:</strong> {{ remision.fecha_hora }}</div>-->
+<!--          <div><strong>Objeto ingreso:</strong> {{ remision.objeto_ingreso }}</div>-->
+<!--          <div><strong>Cantidad / Hojas:</strong> {{ remision.cantidad }}</div>-->
+<!--          <div><strong>Remitente:</strong> {{ remision.user ? remision.user.name : (remision.remitente_otros || remision.remitente || '') }}</div>-->
+<!--          <div><strong>Organización:</strong> {{ remision.organizacion }}</div>-->
+<!--          <div><strong>Disposición / Proveído:</strong> {{ remision.disposicion }}</div>-->
+<!--          <div v-if="remision.archivo"><strong>Archivo adjunto:</strong> <a href="#" @click.prevent="verArchivo(remision)">Ver archivo</a></div>-->
+
+<!--          ver en from-->
+          <q-form>
+            <q-input
+              v-model="remision.codigo_ingreso"
+              label="N° Ingreso"
+              dense
+              outlined
+              readonly
+            />
+            <q-input
+              v-model="remision.fecha_hora"
+              label="Fecha/Hora"
+              dense
+              outlined
+              readonly
+              class="q-mt-sm"
+            />
+            <q-input
+              v-model="remision.objeto_ingreso"
+              label="Objeto ingreso"
+              dense
+              outlined
+              readonly
+              class="q-mt-sm"
+            />
+            <q-input
+              v-model="remision.cantidad"
+              label="Cantidad / Hojas"
+              dense
+              outlined
+              readonly
+              class="q-mt-sm"
+            />
+<!--            <q-input-->
+<!--              v-model="remision.user ? remision.user.name : (remision.remitente_otros || remision.remitente || '')"-->
+<!--              label="Remitente"-->
+<!--              dense-->
+<!--              outlined-->
+<!--              readonly-->
+<!--              class="q-mt-sm"-->
+<!--            />-->
+            <q-input
+              v-model="remision.organizacion"
+              label="Organización"
+              dense
+              outlined
+              readonly
+              class="q-mt-sm"
+            />
+            <q-input
+              v-model="remision.disposicion"
+              label="Disposición / Proveído"
+              dense
+              outlined
+              readonly
+              class="q-mt-sm"
+            />
+            <div v-if="remision.archivo" class="q-mt-sm">
+              <strong>Archivo adjunto:</strong>
+              <a href="#" @click.prevent="verArchivo(remision)">Ver archivo</a>
+            </div>
+          </q-form>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -199,6 +287,7 @@ export default {
     return {
       remisiones: [],
       remision: {},
+      dialogVer: false,
       dialog: false,
       accion: '',
       loading: false,
@@ -286,6 +375,10 @@ export default {
       this.archivoFile = null
       this.accion = 'Nueva'
       this.dialog = true
+    },
+    verRemision(row) {
+      this.dialogVer = true;
+      this.remision = { ...row };
     },
     editar (row) {
       this.remision = {
