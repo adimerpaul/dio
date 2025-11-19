@@ -48,21 +48,25 @@
     <!-- GRÁFICOS DONUT (Tipo / Tipología) -->
     <div class="row q-col-gutter-md q-mb-md">
       <!-- Si quieres recuperar "por área", descomentas este bloque y ajustas opciones -->
-      <!--
       <div class="col-12 col-md-4">
         <q-card flat bordered class="q-pa-md">
-          <div class="text-subtitle2 q-mb-sm">Casos por área</div>
+          <div class="text-subtitle2 q-mb-sm">
+            DNA / SLIM: Hechos de fragancia vs denuncia
+          </div>
           <apexchart
             type="donut"
             height="260"
-            :options="getDonutOptions('Casos por área', porArea.labels, 'area')"
-            :series="porArea.data"
+            :options="getDonutOptions(
+              'DNA / SLIM: fragancia vs denuncia',
+              porFragancia.labels,
+              'fragancia'
+            )"
+            :series="porFragancia.data"
           />
         </q-card>
       </div>
-      -->
 
-      <div class="col-12 col-md-6">
+      <div class="col-12 col-md-4">
         <q-card flat bordered class="q-pa-md">
           <div class="text-subtitle2 q-mb-sm">Casos por tipo (click para ver detalle)</div>
           <apexchart
@@ -74,7 +78,7 @@
         </q-card>
       </div>
 
-      <div class="col-12 col-md-6">
+      <div class="col-12 col-md-4">
         <q-card flat bordered class="q-pa-md">
           <div class="text-subtitle2 q-mb-sm">Casos por tipología (click para ver detalle)</div>
           <apexchart
@@ -192,6 +196,7 @@ export default {
       porTipologia: { labels: [], data: [] },
       porEdad: { labels: [], data: [] },
       seriesTiempo: { labels: [], data: [] },
+      porFragancia: { labels: [], data: [] },
       filterOptions: {
         areas: []
       },
@@ -330,12 +335,15 @@ export default {
 
         const data = res.data || {}
 
-        this.totales      = data.totales || this.totales
-        this.porArea      = data.por_area || this.porArea
-        this.porTipo      = data.por_tipo || this.porTipo
-        this.porTipologia = data.por_tipologia || this.porTipologia
-        this.porEdad      = data.por_edad || this.porEdad
-        this.seriesTiempo = data.series_tiempo || this.seriesTiempo
+        this.totales       = data.totales || this.totales
+        this.porArea       = data.por_area || this.porArea
+        this.porTipo       = data.por_tipo || this.porTipo
+        this.porTipologia  = data.por_tipologia || this.porTipologia
+        this.porEdad       = data.por_edad || this.porEdad
+        this.seriesTiempo  = data.series_tiempo || this.seriesTiempo
+
+        // <<< NUEVO
+        this.porFragancia  = data.por_fragancia || this.porFragancia
 
         this.filterOptions.areas = data.filtros?.areas || []
         this.rango = data.rango || this.rango
