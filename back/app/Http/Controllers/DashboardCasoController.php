@@ -157,6 +157,27 @@ class DashboardCasoController extends Controller
             ->orderBy('caso_tipologia')
             ->pluck('caso_tipologia');
 
+        $fraganciaBase = (clone $casos)
+            ->whereIn('tipo', ['DNA', 'SLIM']);
+
+        $porFraganciaRaw = (clone $fraganciaBase)
+            ->select(
+                DB::raw('CASE
+                    WHEN titulo = "Registrar Nuevo Caso Hechos de Fragancia"
+                        THEN "Hechos de fragancia"
+                    ELSE "Otros casos (por denuncia)"
+                 END as label'),
+                DB::raw('COUNT(*) as total')
+            )
+            ->groupBy('label')
+            ->orderByDesc('total')
+            ->get();
+
+        $porFragancia = [
+            'labels' => $porFraganciaRaw->pluck('label'),
+            'data'   => $porFraganciaRaw->pluck('total'),
+        ];
+
         return response()->json([
             'totales' => [
                 'casos'        => $totalCasos,
@@ -168,6 +189,7 @@ class DashboardCasoController extends Controller
             'por_tipologia' => $porTipologia,
             'por_edad'      => $porEdad,
             'series_tiempo' => $seriesTiempo,
+            'por_fragancia' => $porFragancia,
             'filtros'       => [
                 'areas'      => $areas,
                 'tipos'      => $tipos,
@@ -195,7 +217,7 @@ class DashboardCasoController extends Controller
             ? Carbon::parse($request->input('from'))->startOfDay()
             : (clone $to)->subMonths(5)->startOfMonth();
 
-        $groupBy = $request->input('group_by'); // 'tipo' o 'tipologia'
+        $groupBy = $request->input('group_by'); // 'tipo', 'tipologia' o 'fragancia'
         $value   = $request->input('value');
 
         if (!$groupBy || !$value) {
@@ -213,6 +235,19 @@ class DashboardCasoController extends Controller
             $casos->where('tipo', $value);
         } elseif ($groupBy === 'tipologia') {
             $casos->where('caso_tipologia', $value);
+        } elseif ($groupBy === 'fragancia') {
+            // SOLO DNA y SLIM
+            $casos->whereIn('tipo', ['DNA', 'SLIM']);
+
+            if ($value === 'Hechos de fragancia') {
+                $casos->where('titulo', 'Registrar Nuevo Caso Hechos de Fragancia');
+            } else {
+                // Otros (por denuncia)
+                $casos->where(function ($q) {
+                    $q->where('titulo', '!=', 'Registrar Nuevo Caso Hechos de Fragancia')
+                        ->orWhereNull('titulo');
+                });
+            }
         }
 
         $rows = $casos
