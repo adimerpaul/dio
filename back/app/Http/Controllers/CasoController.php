@@ -386,11 +386,11 @@ class CasoController extends Controller
     {
         $request->validate([
             'file' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:10240'], // 10 MB
-            'titulo' => ['nullable', 'string', 'max:255'],
+            'titulo' => ['required', 'string', 'max:255'], // <- AHORA requerido
             'descripcion' => ['nullable', 'string'],
         ]);
 
-        $disk = 'public';                // <- FORZAR PUBLIC
+        $disk = 'public';
         $dir = "caso/{$caso->id}/fotos";
 
         $file = $request->file('file');
@@ -447,32 +447,33 @@ class CasoController extends Controller
         $height = $img->height();
 
         $foto = Fotografia::create([
-            'caseable_id' => $caso->id,
+            'caseable_id'   => $caso->id,
             'caseable_type' => Caso::class,
-            'user_id' => $request->user()->id,
+            'user_id'       => $request->user()->id,
 
-            'titulo' => $request->string('titulo')->toString() ?: $nameNoExt,
-            'descripcion' => $request->get('descripcion'),
+            // usa el título que viene del front
+            'titulo'        => $request->string('titulo')->toString(),
+            'descripcion'   => $request->get('descripcion'),
 
             'original_name' => $originalName,
-            'stored_name' => $storedName,
-            'extension' => $storedExt,
-            'mime' => $mime,
-            'size_bytes' => $bytes,
+            'stored_name'   => $storedName,
+            'extension'     => $storedExt,
+            'mime'          => $mime,
+            'size_bytes'    => $bytes,
 
-            'disk' => $disk,
-            'path' => $path,
-            'url' => $url,
-
+            'disk'       => $disk,
+            'path'       => $path,
+            'url'        => $url,
             'thumb_path' => $thumbPath,
-            'thumb_url' => $thumbUrl,
+            'thumb_url'  => $thumbUrl,
 
-            'width' => $width,
+            'width'  => $width,
             'height' => $height,
         ]);
 
         return response()->json($foto->load('user:id,name,username'), 201);
     }
+
 
     /** DELETE /api/slims/fotografias/{fotografia} */
     public function fotoDestroy(Fotografia $fotografia)

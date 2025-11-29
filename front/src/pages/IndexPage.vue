@@ -173,7 +173,7 @@
 
 <script>
 import ApexCharts from 'vue3-apexcharts'
-
+import moment from 'moment'
 export default {
   name: 'IndexPage',
   components: { apexchart: ApexCharts },
@@ -181,8 +181,8 @@ export default {
     return {
       loading: false,
       filters: {
-        from: '',
-        to: '',
+        from: moment().format('YYYY-MM-DD'),
+        to: moment().format('YYYY-MM-DD'),
         area: null
       },
       rango: { from: null, to: null },
@@ -222,7 +222,9 @@ export default {
       return [
         { key: 'casos', label: 'Casos', value: this.totales.casos },
         { key: 'denunciante', label: 'Denunciantes', value: this.totales.denunciantes },
-        { key: 'denunciado', label: 'Denunciados', value: this.totales.denunciados }
+        { key: 'denunciado', label: 'Denunciados', value: this.totales.denunciados },
+        // cantidad_denunciantes_del_dia
+        // { key: 'denunciantes_dia', label: 'Denunciantes del día', value: this.totales.cantidad_denunciantes_del_dia }
       ]
     },
     rangoTexto () {

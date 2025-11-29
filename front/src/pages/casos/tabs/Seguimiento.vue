@@ -30,29 +30,67 @@
           <div class="val">{{ header.tipologia || '—' }}</div>
         </div>
         <div class="col-12 col-md-3">
-          <div class="lbl">Modalidad</div>
-          <div class="val">{{ header.modalidad || '—' }}</div>
-        </div>
-        <div class="col-12 col-md-3">
           <div class="lbl">Zona</div>
           <div class="val">{{ header.zona || '—' }}</div>
         </div>
         <div class="col-12 col-md-3">
-          <div class="lbl">Dirección</div>
-          <div class="val ellipsis">{{ header.direccion || '—' }}</div>
-        </div>
-
-        <div class="col-12 col-md-3">
           <div class="lbl">Denunciante</div>
           <div class="val">{{ header.denunciante || '—' }}</div>
+        </div>
+        <div class="col-12 col-md-3">
+          <div class="lbl">Direccion Denunciante</div>
+          <!--          <pre>{{caso.denunciantes}}</pre>-->
+          <!--          [-->
+          <!--          {-->
+          <!--          "id": 23,-->
+          <!--          "denunciante_nombres": "ABBB",-->
+          <!--          "denunciante_paterno": null,-->
+          <!--          "denunciante_materno": null,-->
+          <!--          "denunciante_documento": "Carnet de identidad",-->
+          <!--          "denunciante_nro": null,-->
+          <!--          "denunciante_sexo": null,-->
+          <!--          "denunciante_lugar_nacimiento": null,-->
+          <!--          "denunciante_fecha_nacimiento": null,-->
+          <!--          "denunciante_edad": null,-->
+          <!--          "denunciante_telefono": null,-->
+          <!--          "denunciante_residencia": null,-->
+          <!--          "denunciante_estado_civil": null,-->
+          <!--          "denunciante_relacion": null,-->
+          <!--          "denunciante_ingresos": null,-->
+          <!--          "denunciante_relacion_victima": null,-->
+          <!--          "denunciante_relacion_denunciado": null,-->
+          <!--          "denunciante_grado": null,-->
+          <!--          "denunciante_domicilio_actual": null,-->
+          <!--          "latitud": null,-->
+          <!--          "longitud": null,-->
+          <!--          "denunciante_idioma": null,-->
+          <!--          "denunciante_trabaja": 0,-->
+          <!--          "denunciante_ocupacion": null,-->
+          <!--          "denunciante_parentesco": null,-->
+          <!--          "denunciante_cargo": null,-->
+          <!--          "caso_id": 12-->
+          <!--          }-->
+          <!--          ]-->
+                  <div v-for="den in caso.denunciantes" :key="den.id">
+                    {{ den.denunciante_domicilio_actual || '' }}
+                  </div>
+          <!--          <div class="val">{{ header.modalidad || '—' }}</div>-->
         </div>
         <div class="col-12 col-md-3">
           <div class="lbl">Denunciado</div>
           <div class="val">{{ header.denunciado || '—' }}</div>
         </div>
         <div class="col-12 col-md-3">
+          <div class="lbl">Dirección Denunciado</div>
+          <div v-for="denu in caso.denunciados" :key="denu.id">
+            {{ denu.denunciado_domicilio_actual || '' }}
+          </div>
+        </div>
+        <div class="col-12 col-md-3">
           <div class="lbl">Fecha del hecho</div>
-          <div class="val">{{ header.fecha_hecho || '—' }}</div>
+          <div class="val">
+            {{ caso.caso_fecha_hecho }}
+          </div>
         </div>
         <div class="col-12 col-md-3">
           <div class="lbl">Registrado por</div>

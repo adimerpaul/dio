@@ -178,6 +178,12 @@ class DashboardCasoController extends Controller
             'data'   => $porFraganciaRaw->pluck('total'),
         ];
 
+        // ===== DENUNCIANTES DEL DÍA =====
+        $hoy = Carbon::now();
+        $cantidad_denunciantes_del_dia = CasoDenunciante::whereDate('created_at', $hoy->toDateString())
+            ->count();
+
+
         return response()->json([
             'totales' => [
                 'casos'        => $totalCasos,
@@ -185,6 +191,7 @@ class DashboardCasoController extends Controller
                 'denunciados'  => $totalDenunciados,
             ],
             'por_area'      => $porArea,
+            'cantidad_denunciantes_del_dia'      => $cantidad_denunciantes_del_dia,
             'por_tipo'      => $porTipo,
             'por_tipologia' => $porTipologia,
             'por_edad'      => $porEdad,

@@ -203,17 +203,8 @@
         </q-card-section>
 
         <q-card-section class="q-pt-none">
-<!--          <div><strong>N° Ingreso:</strong> {{ remision.codigo_ingreso }}</div>-->
-<!--          <div><strong>Fecha/Hora:</strong> {{ remision.fecha_hora }}</div>-->
-<!--          <div><strong>Objeto ingreso:</strong> {{ remision.objeto_ingreso }}</div>-->
-<!--          <div><strong>Cantidad / Hojas:</strong> {{ remision.cantidad }}</div>-->
-<!--          <div><strong>Remitente:</strong> {{ remision.user ? remision.user.name : (remision.remitente_otros || remision.remitente || '') }}</div>-->
-<!--          <div><strong>Organización:</strong> {{ remision.organizacion }}</div>-->
-<!--          <div><strong>Disposición / Proveído:</strong> {{ remision.disposicion }}</div>-->
-<!--          <div v-if="remision.archivo"><strong>Archivo adjunto:</strong> <a href="#" @click.prevent="verArchivo(remision)">Ver archivo</a></div>-->
-
-<!--          ver en from-->
           <q-form>
+<!--            <pre>{{remision}}</pre>-->
             <q-input
               v-model="remision.codigo_ingreso"
               label="N° Ingreso"
@@ -245,14 +236,14 @@
               readonly
               class="q-mt-sm"
             />
-<!--            <q-input-->
-<!--              v-model="remision.user ? remision.user.name : (remision.remitente_otros || remision.remitente || '')"-->
-<!--              label="Remitente"-->
-<!--              dense-->
-<!--              outlined-->
-<!--              readonly-->
-<!--              class="q-mt-sm"-->
-<!--            />-->
+            <q-input
+              v-model="remision.remitente"
+              label="Remitente"
+              dense
+              outlined
+              readonly
+              class="q-mt-sm"
+            />
             <q-input
               v-model="remision.organizacion"
               label="Organización"
@@ -269,6 +260,11 @@
               readonly
               class="q-mt-sm"
             />
+<!--            refereisna usuario con un div-->
+            <div class="q-mt-sm">
+              <strong>Referencia:</strong>
+              <div>{{ remision.user ? remision.user.name + ' (' + remision.user.role + ')' : '' }}</div>
+            </div>
             <div v-if="remision.archivo" class="q-mt-sm">
               <strong>Archivo adjunto:</strong>
               <a href="#" @click.prevent="verArchivo(remision)">Ver archivo</a>

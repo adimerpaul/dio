@@ -47,12 +47,14 @@ export default {
       const id = documento.id
       const base = this.$axios?.defaults?.baseURL || ''
       const url = `${base}/documentos/${id}/download`
-      this.open(url)
+      // this.open(url)
+      window.open(url, '_blank')
     },
     openFotografia(fotografia) {
+      console.log(fotografia)
       const base = this.$axios?.defaults?.baseURL || ''
       const url = `${base}/../storage/${fotografia.path}`
-      this.open(url)
+      window.open(url, '_blank')
     },
   }
 }
