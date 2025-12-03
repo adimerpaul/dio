@@ -84,13 +84,14 @@
               active-color="primary" indicator-color="primary" outside-arrows mobile-arrows>
         <q-tab name="info"         label="1 Información General"   icon="dashboard"       no-caps/>
         <q-tab name="seguimiento"  label="2 Seguimiento"           icon="track_changes"   no-caps/>
+        <template v-if="subtipo===undefined">
         <q-tab name="hoja"         label="3 Hoja de Ruta"          icon="report_problem"  no-caps />
-        <q-tab name="psico"        label="4 Área Psicológico"      icon="psychology"      no-caps v-if="role === 'Administrador' || role === 'Psicologo'"/>
-        <q-tab name="legal"        label="5 Área Legal"            icon="gavel"           no-caps v-if="role === 'Administrador' || role === 'Abogado'"/>
-        <q-tab name="social"       label="6 Área Social"           icon="people"          no-caps v-if="role === 'Administrador' || role === 'Social'"/>
-<!--        <q-tab name="apoyo"        label="7 Apoyo Integral"        icon="diversity_1"     no-caps v-if="role === 'Administrador' || role === 'Social'"/>-->
-        <q-tab name="docs"         label="7 Documentos General"    icon="folder"          no-caps/>
-        <q-tab name="fotos"        label="8 Fotografías"           icon="photo_library"   no-caps/>
+          <q-tab name="psico"        label="4 Área Psicológico"      icon="psychology"      no-caps v-if="role === 'Administrador' || role === 'Psicologo'"/>
+          <q-tab name="legal"        label="5 Área Legal"            icon="gavel"           no-caps v-if="role === 'Administrador' || role === 'Abogado'"/>
+          <q-tab name="social"       label="6 Área Social"           icon="people"          no-caps v-if="role === 'Administrador' || role === 'Social'"/>
+          <q-tab name="docs"         label="7 Documentos General"    icon="folder"          no-caps/>
+          <q-tab name="fotos"        label="8 Fotografías"           icon="photo_library"   no-caps/>
+        </template>
         <q-tab name="codigo"        label="9 Codigos"               icon="code"   no-caps/>
         <q-tab name="estados" label="10 Estado Caso"        icon="warning"         no-caps/>
       </q-tabs>
@@ -217,6 +218,7 @@ export default {
   },
   computed: {
     caseId () { return this.$route.params.id },
+    subtipo () { return this.$route.params.subtipo },
     role () { return this.$store.user?.role || '' },
     hasAnyWa () {
       const c = this.caso || {}

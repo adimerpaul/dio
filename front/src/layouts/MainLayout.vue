@@ -518,38 +518,84 @@
 <!--        •	LUGAR DE AGOGIDA NNA-->
 <!--        •	EQUIPO RESPONSABLE-->
 <!--        •	INFORMES-->
-        <q-item dense to="/antecedentes-nna" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Antecedentes NNA')">
-          <q-item-section avatar>
-            <q-icon name="history_edu" class="text-white"/>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label class="text-white">Antecedentes NNA(DNA)</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item dense to="/lugares-acogida-nna" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Lugar de Acogida NNA')">
-          <q-item-section avatar>
-            <q-icon name="home_work" class="text-white"/>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label class="text-white">Lugar de Acogida NNA</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item dense to="/equipos-responsables" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Equipo Responsable')">
-          <q-item-section avatar>
-            <q-icon name="groups" class="text-white"/>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label class="text-white">Equipo Responsable</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item dense to="/informes" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Informes')">
-          <q-item-section avatar>
-            <q-icon name="description" class="text-white"/>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label class="text-white">Informes</q-item-label>
-          </q-item-section>
-        </q-item>
+<!--        <q-item dense to="/antecedentes-nna" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Antecedentes NNA')">-->
+<!--          <q-item-section avatar>-->
+<!--            <q-icon name="history_edu" class="text-white"/>-->
+<!--          </q-item-section>-->
+<!--          <q-item-section>-->
+<!--            <q-item-label class="text-white">Antecedentes NNA(DNA)</q-item-label>-->
+<!--          </q-item-section>-->
+<!--        </q-item>-->
+<!--        <q-item dense to="/lugares-acogida-nna" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Lugar de Acogida NNA')">-->
+<!--          <q-item-section avatar>-->
+<!--            <q-icon name="home_work" class="text-white"/>-->
+<!--          </q-item-section>-->
+<!--          <q-item-section>-->
+<!--            <q-item-label class="text-white">Lugar de Acogida NNA</q-item-label>-->
+<!--          </q-item-section>-->
+<!--        </q-item>-->
+<!--        <q-item dense to="/equipos-responsables" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Equipo Responsable')">-->
+<!--          <q-item-section avatar>-->
+<!--            <q-icon name="groups" class="text-white"/>-->
+<!--          </q-item-section>-->
+<!--          <q-item-section>-->
+<!--            <q-item-label class="text-white">Equipo Responsable</q-item-label>-->
+<!--          </q-item-section>-->
+<!--        </q-item>-->
+<!--        <q-item dense to="/informes" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Informes')">-->
+<!--          <q-item-section avatar>-->
+<!--            <q-icon name="description" class="text-white"/>-->
+<!--          </q-item-section>-->
+<!--          <q-item-section>-->
+<!--            <q-item-label class="text-white">Informes</q-item-label>-->
+<!--          </q-item-section>-->
+<!--        </q-item>-->
+<!--        casos acogimiento-->
+<!--        <q-item dense to="/casos-acogimiento" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Antecedentes NNA') || hasPerm('Lugar de Acogida NNA') || hasPerm('Equipo Responsable') || hasPerm('Informes')">-->
+<!--          <q-item-section avatar>-->
+<!--            <q-icon name="home" class="text-white"/>-->
+<!--          </q-item-section>-->
+<!--          <q-item-section>-->
+<!--            <q-item-label class="text-white">CASOS ACOGIMIENTO</q-item-label>-->
+<!--          </q-item-section>-->
+<!--        </q-item>-->
+        <q-expansion-item dense expand-separator icon="card_travel" label="CASOS ACOGIMIENTO" active-class="menu-active" v-if="hasPerm('Remision de Casos')">
+          <q-list>
+<!--            ancedecentes, lugar de acogida, equipo responsable, informes de seguimiento-->
+            <q-item :inset-level="0.3" dense to="/antecedentes-nna" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Antecedentes NNA')">
+              <q-item-section avatar>
+                <q-icon name="history_edu" class="text-white"/>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label class="text-white">Antecedentes NNA (DNA)</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item :inset-level="0.3" dense to="/casos-acogimiento/lugares-acogida-nna" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Lugar de Acogida NNA')">
+              <q-item-section avatar>
+                <q-icon name="home_work" class="text-white"/>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label class="text-white">Lugar de Acogida NNA</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item :inset-level="0.3" dense to="/casos-acogimiento/equipos-responsables" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Equipo Responsable')">
+              <q-item-section avatar>
+                <q-icon name="groups" class="text-white"/>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label class="text-white">Equipo Responsable</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item :inset-level="0.3" dense to="/casos-acogimiento/informes" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Informes')">
+              <q-item-section avatar>
+                <q-icon name="description" class="text-white"/>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label class="text-white">Informes de seguimiento</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-expansion-item>
 <!--        remision-casos-->
         <q-item dense to="/remision-casos" exact clickable class="menu-item" active-class="menu-active" v-close-popup  v-if="hasPerm('Remision de Casos')">
           <q-item-section avatar>

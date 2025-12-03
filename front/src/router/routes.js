@@ -19,6 +19,7 @@ const routes = [
       { path: '/talleres', component: () => import('pages/talleres/Talleres.vue'), meta: { requiresAuth: true, perm: 'Talleres' } },
 
       { path: '/casos/:id', component: () => import('pages/casos/CasoShow.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
+      { path: '/casos/:id/:subtipo', component: () => import('pages/casos/CasoShow.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
       { path: '/slams', component: () => import('pages/slams/Slams.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
       // http://localhost:9001/slams/nuevo-notarial
       { path: '/slams/nuevo-notarial', component: () => import('pages/slams/SlamNotarialPage.vue'), meta: { requiresAuth: true, perm: 'Casos' } },

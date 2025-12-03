@@ -1,5 +1,5 @@
 <template>
-  <CasoTable tipo="DNA" tipologia="Acogimiento circunstancial" />
+  <CasoTable tipo="DNA" tipologia="Acogimiento circunstancial" subtipo="AntecedentesDna"  />
 </template>
 
 <script>
