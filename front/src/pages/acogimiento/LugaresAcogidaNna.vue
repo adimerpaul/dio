@@ -278,12 +278,10 @@ export default {
       return (this.meta.from || 0) + idx
     },
     goToDetalle (c) {
-      console.log(c)
-      // if (this.subtipo === 'AntecedentesDna') {
-      //   this.$router.push('/casos/' + c.id+'/dna')
-      // }else{
-      //   this.$router.push('/casos/' + c.id)
-      // }
+      this.$router.push({
+        name: 'lugar-acogida-nna',
+        params: { id: c.id } // id del caso
+      })
     },
     nombrePersona (p, rol = 'denunciante') {
       if (!p) return '—'

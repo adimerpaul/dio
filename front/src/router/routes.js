@@ -84,6 +84,12 @@ const routes = [
       // /casos-acogimiento/informes
 
       { path: '/casos-acogimiento/lugares-acogida-nna', component: () => import('pages/acogimiento/LugaresAcogidaNna.vue'), meta: { requiresAuth: true, perm: 'Acogimientos' } },
+      {
+        path: '/dna/casos/:id/lugar-acogida',
+        name: 'lugar-acogida-nna',
+        component: () => import('pages/acogimiento/LugarAcogidaNna.vue'),
+        meta: { requiresAuth: true }
+      }
       // { path: '/casos-acogimiento/equipos-responsables', component: () => import('pages/acogimiento/EquiposResponsables.vue'), meta: { requiresAuth: true, perm: 'Acogimientos' } },
       // { path: '/casos-acogimiento/informes', component: () => import('pages/acogimiento/InformesAcogimiento.vue'), meta: { requiresAuth: true, perm: 'Acogimientos' } }
 
