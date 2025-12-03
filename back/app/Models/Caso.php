@@ -134,6 +134,10 @@ class Caso extends Model implements AuditableContract
     public function documentos()     { return $this->morphMany(Documento::class,    'caseable'); }
     public function fotografias()    { return $this->morphMany(Fotografia::class,   'caseable'); }
     public function informesSociales(){ return $this->morphMany(InformesSocial::class,'caseable'); }
-    public function acogimientos()  { return $this->hasMany(Acogimiento::class);  }
+//    public function acogimientos()  { return $this->hasMany(Acogimiento::class);  }
     public function victimas(){ return $this->hasMany(Victima::class);  }
+    public function acogimientos()
+    {
+        return $this->hasMany(\App\Models\CasoAcogimiento::class, 'caso_id');
+    }
 }

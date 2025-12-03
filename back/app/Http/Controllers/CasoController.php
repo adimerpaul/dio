@@ -918,7 +918,8 @@ class CasoController extends Controller
             'user:id,name',
             'denunciantes',
             'denunciados',
-            'victimas'
+            'victimas',
+            'acogimientos'
         ]);
 
         $paginated = $query->paginate($perPage)->appends($request->query());

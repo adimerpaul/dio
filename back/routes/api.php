@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AcogimientoController;
+use App\Http\Controllers\CasoAcogimientoController;
 use App\Http\Controllers\CasoController;
 use App\Http\Controllers\DashboardCasoController;
 use App\Http\Controllers\DnaController;
@@ -243,6 +244,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('slam-notariales/{id}', [SlamNotarialController::class, 'destroy']);
 
     Route::apiResource('remision-casos', RemisionCasoController::class);
+    Route::get('/casos/{caso}/acogimiento', [CasoAcogimientoController::class, 'showByCaso']);
+    Route::post('/casos/{caso}/acogimiento', [CasoAcogimientoController::class, 'storeOrUpdate']);
 });
 Route::get('/slimsImprimir', [SlimController::class, 'imprimir']);
 
