@@ -860,6 +860,7 @@ class CasoController extends Controller
 
         if ($q !== '') {
             $like = "%{$q}%";
+//            error_log("Buscando casos con texto: {$q}");
 
             $query->where(function ($group) use ($like) {
                 // Campos directos del caso
@@ -884,6 +885,9 @@ class CasoController extends Controller
                             ->orWhere('denunciado_nro', 'like', $like)
                             ->orWhere('denunciado_documento', 'like', $like)
                             ->orWhere('denunciado_residencia', 'like', $like);
+                    })->orWhereHas('victimas', function ($s) use ($like) {
+                        $s->where('ci', 'like', $like)
+                            ->orWhere('nombres_apellidos', 'like', $like);
                     });
             });
         }
@@ -914,6 +918,7 @@ class CasoController extends Controller
             'user:id,name',
             'denunciantes',
             'denunciados',
+            'victimas'
         ]);
 
         $paginated = $query->paginate($perPage)->appends($request->query());
