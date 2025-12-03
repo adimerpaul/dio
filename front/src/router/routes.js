@@ -78,6 +78,15 @@ const routes = [
       { path: '/antecedentes-nna',    component: () => import('pages/dnas/AntecedentesNna.vue'),      meta: { requiresAuth: true } },
       { path: '/remision-casos',    component: () => import('pages/RemisionCasos/RemisionCasosPage.vue'),      meta: { requiresAuth: true, perm: 'Casos' } },
 
+
+      // /casos-acogimiento/lugares-acogida-nna
+      // /casos-acogimiento/equipos-responsables
+      // /casos-acogimiento/informes
+
+      { path: '/casos-acogimiento/lugares-acogida-nna', component: () => import('pages/acogimiento/LugaresAcogidaNna.vue'), meta: { requiresAuth: true, perm: 'Acogimientos' } },
+      // { path: '/casos-acogimiento/equipos-responsables', component: () => import('pages/acogimiento/EquiposResponsables.vue'), meta: { requiresAuth: true, perm: 'Acogimientos' } },
+      // { path: '/casos-acogimiento/informes', component: () => import('pages/acogimiento/InformesAcogimiento.vue'), meta: { requiresAuth: true, perm: 'Acogimientos' } }
+
     ]
   },
   { path: '/login', component: () => import('layouts/Login.vue') },
