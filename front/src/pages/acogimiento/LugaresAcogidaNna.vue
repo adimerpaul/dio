@@ -151,8 +151,25 @@
           </div>
         </td>
         <td>{{ fmt(c.numero_juzgado) }}</td>
-        <td>{{ fmt(c.tipo_acogida) }}</td>
-        <td>{{ fmt(c.cuidador_nombre) }}</td>
+        <td>
+          <q-chip
+            v-if="c.acogimientos.length"
+            dense
+            outlined
+            :color="tipoAcogidaConfig(c.acogimientos[0]?.tipo_de_acogida).chipColor"
+          >
+            <q-icon
+              name="check_circle"
+              size="16px"
+              class="q-mr-xs"
+              :color="tipoAcogidaConfig(c.acogimientos[0]?.tipo_de_acogida).iconColor"
+            />
+            <span :class="tipoAcogidaConfig(c.acogimientos[0]?.tipo_de_acogida).textClass">
+      {{ c.acogimientos[0]?.tipo_de_acogida || '—' }}
+    </span>
+          </q-chip>
+        </td>
+        <td>{{ c.acogimientos[0]?.tipo_de_acogida == 'ACOGIDA INSTITUCIONAL (AI)' ? c.acogimientos[0]?.centro_de_acogida : c.acogimientos[0]?.cuidadora_nombre_completo }}</td>
       </tr>
       </tbody>
 
@@ -229,6 +246,42 @@ export default {
     }
   },
   methods: {
+    tipoAcogidaConfig (tipo) {
+      const def = {
+        chipColor: 'grey-3',
+        iconColor: 'grey-8',
+        textClass: 'text-grey-8'
+      }
+
+      switch (tipo) {
+        case 'ACOGIDA INSTITUCIONAL (AI)':
+          return {
+            chipColor: 'blue-3',
+            iconColor: 'blue-10',
+            textClass: 'text-blue-10'
+          }
+        case 'ACOGIMIENTO CON FAMILIA AMPLIADA (AFA)':
+          return {
+            chipColor: 'green-3',
+            iconColor: 'green-10',
+            textClass: 'text-green-10'
+          }
+        case 'ACOGIMIENTO CON FAMILIA COMUNITARIA (AFC)':
+          return {
+            chipColor: 'pink-3',
+            iconColor: 'pink-9',
+            textClass: 'text-pink-9'
+          }
+        case 'RESTITUCIÓN DE FAMILIA ORIGEN (RFO)':
+          return {
+            chipColor: 'purple-3',
+            iconColor: 'purple-10',
+            textClass: 'text-purple-10'
+          }
+        default:
+          return def
+      }
+    },
     openDialogFormat(){
       this.dialogFormat=true;
     },
