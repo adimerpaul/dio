@@ -559,7 +559,7 @@
 <!--            <q-item-label class="text-white">CASOS ACOGIMIENTO</q-item-label>-->
 <!--          </q-item-section>-->
 <!--        </q-item>-->
-        <q-expansion-item dense expand-separator icon="card_travel" label="CASOS ACOGIMIENTO" active-class="menu-active" v-if="hasPerm('Remision de Casos')">
+        <q-expansion-item dense expand-separator icon="card_travel" label="CASOS ACOGIMIENTO" active-class="menu-active" v-if="hasPerm('Antecedentes NNA')">
           <q-list>
 <!--            ancedecentes, lugar de acogida, equipo responsable, informes de seguimiento-->
             <q-item :inset-level="0.3" dense to="/antecedentes-nna" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Antecedentes NNA')">
