@@ -77,6 +77,8 @@ const routes = [
       // http://localhost:9000/antecedentes-nna
       { path: '/antecedentes-nna',    component: () => import('pages/dnas/AntecedentesNna.vue'),      meta: { requiresAuth: true } },
       { path: '/remision-casos',    component: () => import('pages/RemisionCasos/RemisionCasosPage.vue'),      meta: { requiresAuth: true, perm: 'Casos' } },
+      // http://localhost:9000/buscar-caso
+      { path: '/buscar-caso',    component: () => import('pages/casos/BuscarCaso.vue'),      meta: { requiresAuth: true, perm: 'Casos' } },
 
 
       // /casos-acogimiento/lugares-acogida-nna

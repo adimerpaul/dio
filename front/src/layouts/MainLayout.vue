@@ -155,6 +155,15 @@
             <q-item-label class="text-white">Líneas de Tiempo</q-item-label>
           </q-item-section>
         </q-item>
+<!--        Buscar Caso-->
+        <q-item dense to="/buscar-caso" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Buscar Caso')">
+          <q-item-section avatar>
+            <q-icon name="search" class="text-white"/>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label class="text-white">Buscar Caso</q-item-label>
+          </q-item-section>
+        </q-item>
         <q-item dense to="/agenda" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Agenda')">
           <q-item-section avatar>
             <q-icon name="event" class="text-white"/>

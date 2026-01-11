@@ -317,6 +317,7 @@ export default {
           'Equipo Responsable',
           'Informes',
           'Remision de Casos',
+          'Buscar Caso'
         ])
         this.permissions = all
           .filter(p => valid.has(p.name))

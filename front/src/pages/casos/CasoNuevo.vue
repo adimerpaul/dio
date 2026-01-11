@@ -88,7 +88,19 @@
                              v-upper/>
                   </div>
                   <div class="col-6 col-md-3">
-                    <q-input v-model="v.ci" dense outlined clearable label="Numero de documento" v-upper/>
+                    <q-input v-model="v.ci" dense outlined clearable label="Numero de documento" v-upper>
+<!--                      templte a la derecha btn historial -->
+<!--                      <template v-slot:after>-->
+<!--                        <q-btn-->
+<!--                          dense-->
+<!--                          color="green"-->
+<!--                          icon="history"-->
+<!--                          @click="openHistorialDocumento(v.ci)"-->
+<!--                          :disabled="!v.ci"-->
+<!--                          title="Ver historial de este documento"-->
+<!--                        />-->
+<!--                      </template>-->
+                    </q-input>
                   </div>
                   <div class="col-6 col-md-3">
                     <q-input v-model="v.lugar_nacimiento" dense outlined clearable label="Lugar de nacimiento" v-upper/>
@@ -888,6 +900,72 @@
         <q-btn color="primary" icon="save" label="Actualizar" :loading="loading" @click="update"/>
       </div>
     </q-form>
+<!--    dialogHistorial: false,-->
+<!--    historialDocumentos: [],-->
+    <q-dialog v-model="dialogHistorial" persistent max-width="600px">
+      <q-card>
+        <q-card-section class="row items-center q-pa-xs">
+          <q-item class="full-width" dense>
+            <q-item-section avatar>
+              <q-icon name="history"/>
+            </q-item-section>
+            <q-item-section>
+              <div class="text-subtitle1 text-weight-medium">Historial </div>
+            </q-item-section>
+          </q-item>
+        </q-card-section>
+        <q-card-section>
+<!--          <pre>{{historialDocumentos.casos}}</pre>-->
+<!--          [-->
+<!--          {-->
+<!--          "id": 19,-->
+<!--          "caso": "SLAM 001/26",-->
+<!--          "tipo": "SLAM",-->
+<!--          "caso_numero": "001/26",-->
+<!--          "titulo": "Proceso Penal SLAM",-->
+<!--          "fecha_apertura": null,-->
+<!--          "creado": "2026-01-11 05:25",-->
+<!--          "participa_como": [-->
+<!--          "Víctima",-->
+<!--          "Denunciante"-->
+<!--          ]-->
+<!--          },-->
+<!--          {-->
+<!--          "id": 4,-->
+<!--          "caso": "SLIM 001/25",-->
+<!--          "tipo": "SLIM",-->
+<!--          "caso_numero": "001/25",-->
+<!--          "titulo": null,-->
+<!--          "fecha_apertura": null,-->
+<!--          "creado": "2025-11-09 17:27",-->
+<!--          "participa_como": [-->
+<!--          "Víctima",-->
+<!--          "Denunciante"-->
+<!--          ]-->
+<!--          }-->
+<!--          ]-->
+          <div v-if="historialDocumentos.casos === 0" class="text-grey-7">
+            No se encontraron documentos adjuntos en otros casos relacionados con este denunciante.
+          </div>
+          <q-item v-for="doc in historialDocumentos.casos" :key="doc.id" class="q-mb-sm" clickable
+                  @click="goToCaso(doc.id)">
+            <q-item-section>
+              <div class="text-subtitle2 text-weight-medium">{{ doc.caso }} - {{ doc.titulo || 'Sin título' }}</div>
+              <div class="text-caption text-grey-7">
+                Creado el: {{ doc.creado }} | Participa como: {{ doc.participa_como.join(', ') }}
+              </div>
+            </q-item-section>
+            <q-item-section side>
+              <q-icon name="arrow_forward_ios" class="text-grey-5"/>
+            </q-item-section>
+          </q-item>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Cerrar" color="primary" v-close-popup/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -1023,6 +1101,8 @@ export default {
   },
   data() {
     return {
+      dialogHistorial: false,
+      historialDocumentos: [],
       colegios: [
         'JUAN LECHÍN OQUENDO 2',
         'SOCAMANI',
@@ -1642,14 +1722,29 @@ export default {
         'Otros'
       ]
     }
+    // if (Registrar Nuevo Caso Hechos de Fragancia SLIM ALL)
+    // DNA Nuevo Hechos de Fragancia
+    if (
+      (this.tipo === 'SLIM' && this.titulo==='Registrar Nuevo Caso Hechos de Fragancia') ||
+      (this.tipo === 'DNA' && this.titulo==='DNA Nuevo Hechos de Fragancia')
+    ) {
+      this.$axios.get('/usuariosRoleAll').then(res => {
+        this.psicologos = res.data.psicologos
+        this.abogados = res.data.abogados
+        this.sociales = res.data.sociales
+      }).catch(() => {
+        this.$alert.error('No se pudo cargar los usuarios por rol')
+      })
+    }else{
+      this.$axios.get('/usuariosRole').then(res => {
+        this.psicologos = res.data.psicologos
+        this.abogados = res.data.abogados
+        this.sociales = res.data.sociales
+      }).catch(() => {
+        this.$alert.error('No se pudo cargar los usuarios por rol')
+      })
+    }
 
-    this.$axios.get('/usuariosRole').then(res => {
-      this.psicologos = res.data.psicologos
-      this.abogados = res.data.abogados
-      this.sociales = res.data.sociales
-    }).catch(() => {
-      this.$alert.error('No se pudo cargar los usuarios por rol')
-    })
     // ==== Inicializar Web Speech API ====
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
@@ -1708,6 +1803,27 @@ export default {
     }
   },
   methods: {
+    async openHistorialDocumento(ci) {
+      try {
+        if (!ci) return;
+
+        this.dialogHistorial = true;
+        this.historialDocumentos = [];
+        this.$q.loading.show({ message: 'Buscando historial...' });
+
+        const { data } = await this.$axios.get('/casosHistorialDocumentos', {
+          params: { ci }
+        });
+
+        this.historialDocumentos = data || [];
+      } catch (e) {
+        console.error(e);
+        this.$q.notify({ type: 'negative', message: 'No se pudo cargar el historial' });
+        this.dialogHistorial = false;
+      } finally {
+        this.$q.loading.hide();
+      }
+    },
     addDenunciado() {
       this.f.denunciados.push({
         denunciado_nombres: '',
