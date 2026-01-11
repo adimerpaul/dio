@@ -1222,6 +1222,7 @@ class CasoController extends Controller
             $request['user_id'] = $user->id;
             $request['fecha_apertura_caso'] = date('Y-m-d H:i:s');
             $request['area'] = $user->area;
+            $request['estado_caso'] = "Apertura Denuncia";
             $request['zona'] = $user->zona;
             if ($request->has('legal_user_id') && $request->legal_user_id) {
                 $request['fecha_derivacion_area_legal'] = date('Y-m-d H:i:s');
