@@ -365,12 +365,13 @@
               <div class="text-subtitle1 text-weight-medium">3) Ubicacion del denunciante</div>
             </q-item-section>
             <q-item-section side>
-              <q-badge color="blue-2" text-color="blue-10" outline rounded>Obligatorio *</q-badge>
+                <q-icon :name="mostrar3Show?'expand_more':'expand_less'" @click="mostrar3Show = !mostrar3Show" class="cursor-pointer"/>
+<!--              mostrar3Show-->
             </q-item-section>
           </q-item>
         </q-card-section>
         <q-separator/>
-        <q-card-section class="q-pa-xs">
+        <q-card-section class="q-pa-xs" id="denunciante-map-section" v-if="mostrar3Show">
           <div class="row q-col-gutter-md">
             <div class="col-10">
               <q-input v-model="f.denunciante_domicilio_actual" dense outlined clearable label="Domicilio actual"/>
@@ -567,12 +568,13 @@
               <div class="text-subtitle1 text-weight-medium">6) Ubicacion del denunciado</div>
             </q-item-section>
             <q-item-section side>
-              <q-badge color="blue-2" text-color="blue-10" outline rounded>Obligatorio *</q-badge>
+<!--              <q-badge color="blue-2" text-color="blue-10" outline rounded>Obligatorio *</q-badge>-->
+              <q-icon :name="mostrar6Show?'expand_more':'expand_less'" @click="mostrar6Show = !mostrar6Show" class="cursor-pointer"/>
             </q-item-section>
           </q-item>
         </q-card-section>
         <q-separator/>
-        <q-card-section class="q-pa-xs">
+        <q-card-section class="q-pa-xs" id="denunciado-map-section" v-if="mostrar6Show">
           <div class="row q-col-gutter-md">
             <div class="col-10">
               <q-input v-model="f.denunciado_domicilio_actual" dense outlined clearable label="Domicilio actual"/>
@@ -1114,6 +1116,8 @@ export default {
       disabled: false,
       dialogHistorial: false,
       historialDocumentos: [],
+      mostrar3Show: false,
+      mostrar6Show: false,
       colegios: [
         'JUAN LECHÍN OQUENDO 2',
         'SOCAMANI',

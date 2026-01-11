@@ -13,6 +13,7 @@
         flat
         color="primary"
         @click="toggleEdit"
+        v-if="$store.user.role === 'Abogado' || $store.user.role === 'Administrador'"
       />
       <q-btn
         v-if="editMode"

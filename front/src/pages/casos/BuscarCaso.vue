@@ -80,7 +80,7 @@
         <q-item-section>
           <div class="text-subtitle1">Casos encontrados:</div>
           <q-list bordered separator>
-            <q-item v-for="caso in casos" :key="caso.id" clickable>
+            <q-item v-for="caso in casos" :key="caso.id" clickable @click="irCaso(caso)">
               <q-item-section>
                 <div><strong>ID:</strong> {{ caso.id }}</div>
                 <div><strong>Caso:</strong> {{ caso.caso }}</div>
@@ -123,6 +123,9 @@ export default {
     this.searchQuery = '9081769'
   },
   methods: {
+    irCaso(caso) {
+      this.$router.push('/casos/' + caso.id);
+    },
     buscarCaso() {
       // const { data } = await this.$axios.get('/casosHistorialDocumentos', {
       //   params: { ci }

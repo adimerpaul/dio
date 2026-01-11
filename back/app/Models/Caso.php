@@ -96,6 +96,10 @@ class Caso extends Model implements AuditableContract
         'documento_papeleta_luz_agua',
         'codigo_file',
         'titulo',
+//        $table->string('etapa_procesal', 120)->nullable();
+//$table->string('etapa', 120)->nullable();
+        'etapa_procesal',
+        'etapa',
     ];
 
     /**

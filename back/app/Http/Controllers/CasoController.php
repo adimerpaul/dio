@@ -46,6 +46,10 @@ class CasoController extends Controller
                     ->orWhereHas('denunciantes', fn($s) => $s->where('denunciante_nro', $ci))
                     ->orWhereHas('denunciados', fn($s) => $s->where('denunciado_nro', $ci));
             })
+            ->orWhere(function ($q) use ($ci) {
+                $q->where('nurej', $ci)
+                  ->orWhere('cud', $ci);
+            })
             ->with([
                 // Cargar SOLO los relacionados al CI para poder detectar el rol fácil
                 'victimas' => fn($s) => $s->where('ci', $ci),

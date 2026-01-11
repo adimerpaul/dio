@@ -130,6 +130,10 @@ return new class extends Migration
 
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users');
+//            "caso.etapa_procesal"
+//"caso.etapa"
+            $table->string('etapa_procesal', 120)->nullable();
+            $table->string('etapa', 120)->nullable();
 
             $table->timestamps();
             $table->softDeletes();

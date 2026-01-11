@@ -25,6 +25,24 @@
         <template #prepend><q-icon name="edit" /></template>
       </q-input>
     </div>
+    <div class="col-12">
+    </div>
+<!--    Etapas-->
+    <div class="col-12 col-md-3">
+      <q-select v-model="caso.etapa_procesal"  outlined label="Etapa Procesal" :dense="$q.screen.lt.md"
+                :options="['Denuncia / Querella', 'Etapa Preparatoria', 'Etapa Intermedia', 'Jucio Oral','Etapa Impugnatoria/Recursos']"
+                @update:model-value="caso.etapa = ''"
+      >
+        <template #prepend><q-icon name="gavel" /></template>
+      </q-select>
+    </div>
+    <div class="col-12 col-md-3">
+      <q-select v-model="caso.etapa" :options="['Preliminar', 'Investigacion Formalizada', 'Actos Conclusivos', 'Archivado']" outlined label="Inputacion formal" :dense="$q.screen.lt.md"
+                v-if="caso.etapa_procesal === 'Etapa Preparatoria'"
+      >
+        <template #prepend><q-icon name="hourglass_empty" /></template>
+      </q-select>
+    </div>
     <div class="col-12 col-md-12">
       <div v-if="caso.respaldo">
         <q-icon name="attachment" />
@@ -138,6 +156,8 @@ export default {
           estado_caso_otro: this.caso.estado_caso_otro,
           respaldo: this.caso.respaldo,
           observaciones: this.caso.observaciones,
+          etapa_procesal: this.caso.etapa_procesal,
+          etapa: this.caso.etapa,
         })
         .then(() => {
           this.$q.notify({
