@@ -24,6 +24,230 @@ use Intervention\Image\ImageManager;
 
 class CasoController extends Controller
 {
+    public function historialDocumentos(Request $request)
+    {
+        $ci = trim((string)$request->query('ci', ''));
+        $ci = preg_replace('/\s+/', '', $ci);
+
+        if ($ci === '') {
+            return response()->json([
+                'ci' => $ci,
+                'casos_encontrados' => 0,
+                'casos' => [],
+                'data' => [],
+            ]);
+        }
+
+        // 1) Buscar casos relacionados a ese CI (en cualquier rol)
+        $casos = Caso::query()
+            ->where(function ($q) use ($ci) {
+                $q->whereHas('victimas', fn($s) => $s->where('ci', $ci))
+                    ->orWhereHas('menores', fn($s) => $s->where('ci', $ci))
+                    ->orWhereHas('denunciantes', fn($s) => $s->where('denunciante_nro', $ci))
+                    ->orWhereHas('denunciados', fn($s) => $s->where('denunciado_nro', $ci));
+            })
+            ->with([
+                // Cargar SOLO los relacionados al CI para poder detectar el rol fácil
+                'victimas' => fn($s) => $s->where('ci', $ci),
+                'menores'  => fn($s) => $s->where('ci', $ci),
+                'denunciantes' => fn($s) => $s->where('denunciante_nro', $ci),
+                'denunciados'  => fn($s) => $s->where('denunciado_nro', $ci),
+
+                // Archivos / módulos
+                'documentos.user:id,name',
+                'fotografias.user:id,name',
+                'psicologicas.user:id,name',
+                'informesSociales.user:id,name',
+                'informesLegales.user:id,name',
+            ])
+            ->orderByDesc('created_at')
+            ->get(['id', 'tipo', 'caso_numero', 'created_at', 'updated_at', 'fecha_apertura_caso', 'titulo']);
+
+        // 2) Lista de casos + cómo participa
+        $casosInfo = $casos->map(function ($caso) {
+
+            $participa = [];
+
+            // === Victima ===
+            if ($caso->victimas?->isNotEmpty()) {
+                foreach ($caso->victimas as $v) {
+                    $participa[] = [
+                        'rol' => 'Víctima',
+                        'nombre' => $v->nombres_apellidos ?? trim(($v->nombres ?? '') . ' ' . ($v->paterno ?? '') . ' ' . ($v->materno ?? '')),
+                        'ci' => $v->ci ?? $ci,
+                    ];
+                }
+            }
+
+            // === Menor ===
+            if ($caso->menores?->isNotEmpty()) {
+                foreach ($caso->menores as $m) {
+                    $participa[] = [
+                        'rol' => 'Menor',
+                        'nombre' => $m->nombres_apellidos ?? trim(($m->nombres ?? '') . ' ' . ($m->paterno ?? '') . ' ' . ($m->materno ?? '')),
+                        'ci' => $m->ci ?? $ci,
+                    ];
+                }
+            }
+
+            // === Denunciante ===
+            if ($caso->denunciantes?->isNotEmpty()) {
+                foreach ($caso->denunciantes as $d) {
+                    $participa[] = [
+                        'rol' => 'Denunciante',
+                        'nombre' => trim(($d->denunciante_nombres ?? '') . ' ' . ($d->denunciante_paterno ?? '') . ' ' . ($d->denunciante_materno ?? '')),
+                        'ci' => $d->denunciante_nro ?? $ci,
+                    ];
+                }
+            }
+
+            // === Denunciado ===
+            if ($caso->denunciados?->isNotEmpty()) {
+                foreach ($caso->denunciados as $d) {
+                    $participa[] = [
+                        'rol' => 'Denunciado',
+                        'nombre' => trim(($d->denunciado_nombres ?? '') . ' ' . ($d->denunciado_paterno ?? '') . ' ' . ($d->denunciado_materno ?? '')),
+                        'ci' => $d->denunciado_nro ?? $ci,
+                    ];
+                }
+            }
+
+            $casoLabel = trim(($caso->tipo ?: 'CASO') . ' ' . ($caso->caso_numero ?: "#{$caso->id}"));
+
+            return [
+                'id' => $caso->id,
+                'caso' => $casoLabel,
+                'tipo' => $caso->tipo,
+                'caso_numero' => $caso->caso_numero,
+                'titulo' => $caso->titulo,
+                'fecha_apertura' => optional($caso->fecha_apertura_caso)->format('Y-m-d'),
+                'creado' => optional($caso->created_at)->format('Y-m-d H:i'),
+
+                // antes: participa_como => ['Víctima', 'Denunciado']
+                // ahora:
+                'participa' => $participa,
+            ];
+        })->values();
+
+        // 3) Construir historial “items”
+        $items = collect();
+
+        foreach ($casos as $caso) {
+            $casoLabel = trim(($caso->tipo ?: 'CASO') . ' ' . ($caso->caso_numero ?: "#{$caso->id}"));
+
+            foreach (($caso->documentos ?? []) as $d) {
+                $items->push([
+                    'tipo' => 'Documento',
+                    'nombre' => $d->titulo ?: ($d->original_name ?: 'Documento'),
+                    'fecha_subida' => optional($d->created_at)->format('Y-m-d H:i'),
+                    'url' => $d->url,
+                    'caso_id' => $caso->id,
+                    'caso' => $casoLabel,
+                    'usuario' => optional($d->user)->name,
+                    'extra' => ['categoria' => $d->categoria ?? null],
+                ]);
+            }
+
+            foreach (($caso->fotografias ?? []) as $f) {
+                $items->push([
+                    'tipo' => 'Fotografía',
+                    'nombre' => $f->titulo ?: ($f->original_name ?: 'Fotografía'),
+                    'fecha_subida' => optional($f->created_at)->format('Y-m-d H:i'),
+                    'url' => $f->url ?: $f->thumb_url,
+                    'caso_id' => $caso->id,
+                    'caso' => $casoLabel,
+                    'usuario' => optional($f->user)->name,
+                    'extra' => ['descripcion' => $f->descripcion ?? null],
+                ]);
+            }
+
+            foreach (($caso->psicologicas ?? []) as $p) {
+                $items->push([
+                    'tipo' => 'Sesión Psicológica',
+                    'nombre' => $p->titulo ?: 'Sesión',
+                    'fecha_subida' => optional($p->fecha)->format('Y-m-d') ?: optional($p->created_at)->format('Y-m-d H:i'),
+                    'url' => $p->archivo ?? null,
+                    'caso_id' => $caso->id,
+                    'caso' => $casoLabel,
+                    'usuario' => optional($p->user)->name,
+                    'extra' => ['pdf' => url("/api/sesiones-psicologicas/{$p->id}/pdf")],
+                ]);
+            }
+
+            foreach (($caso->informesSociales ?? []) as $s) {
+                $items->push([
+                    'tipo' => 'Informe Social',
+                    'nombre' => $s->titulo ?: 'Informe Social',
+                    'fecha_subida' => optional($s->fecha)->format('Y-m-d') ?: optional($s->created_at)->format('Y-m-d H:i'),
+                    'url' => $s->archivo ?? null,
+                    'caso_id' => $caso->id,
+                    'caso' => $casoLabel,
+                    'usuario' => optional($s->user)->name,
+                    'extra' => ['pdf' => url("/api/informesSocial/{$s->id}/pdf")],
+                ]);
+            }
+
+            foreach (($caso->informesLegales ?? []) as $l) {
+                $items->push([
+                    'tipo' => 'Informe Legal',
+                    'nombre' => $l->titulo ?: 'Informe Legal',
+                    'fecha_subida' => optional($l->fecha)->format('Y-m-d') ?: optional($l->created_at)->format('Y-m-d H:i'),
+                    'url' => $l->archivo ?? null,
+                    'caso_id' => $caso->id,
+                    'caso' => $casoLabel,
+                    'usuario' => optional($l->user)->name,
+                    'extra' => ['pdf' => url("/api/informes/{$l->id}/pdf")],
+                ]);
+            }
+
+            if (!empty($caso->codigo_file)) {
+                $items->push([
+                    'tipo' => 'Código File',
+                    'nombre' => 'Código File',
+                    'fecha_subida' => optional($caso->updated_at)->format('Y-m-d H:i'),
+                    'url' => $caso->codigo_file,
+                    'caso_id' => $caso->id,
+                    'caso' => $casoLabel,
+                    'usuario' => null,
+                    'extra' => null,
+                ]);
+            }
+
+            if (!empty($caso->respaldo)) {
+                $items->push([
+                    'tipo' => 'Respaldo',
+                    'nombre' => 'Respaldo',
+                    'fecha_subida' => optional($caso->updated_at)->format('Y-m-d H:i'),
+                    'url' => $caso->respaldo,
+                    'caso_id' => $caso->id,
+                    'caso' => $casoLabel,
+                    'usuario' => null,
+                    'extra' => null,
+                ]);
+            }
+        }
+
+        // 4) Ordenar por fecha (desc)
+        $items = $items->sortByDesc(function ($x) {
+            return $x['fecha_subida'] ?? '0000-00-00 00:00';
+        })->values();
+
+        // (Opcional) agrupado por caso
+        $grouped = $items->groupBy('caso_id')->map(function ($rows) {
+            return $rows->values();
+        });
+
+        return response()->json([
+            'ci' => $ci,
+            'casos_encontrados' => $casos->count(),
+            'casos' => $casosInfo,
+            'data' => $items,
+            'data_grouped' => $grouped, // si no lo quieres, elimínalo
+        ]);
+    }
+
+
+
     function uploadCodigoFile(Request $request, Caso $caso){
         $request->validate([
             'file' => ['required', 'file', 'max:51200'], // 50 MB

@@ -30,6 +30,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/updatePassword/{user}', [App\Http\Controllers\UserController::class, 'updatePassword']);
     Route::post('/{user}/avatar', [App\Http\Controllers\UserController::class, 'updateAvatar']);
     Route::get('/usuariosRole', [App\Http\Controllers\UserController::class, 'usuariosRole']);
+    Route::get('/usuariosRoleAll', [App\Http\Controllers\UserController::class, 'usuariosRoleAll']);
+
+//    this.$axios.post('/casos/historialDocumentos', {
+    Route::get('/casosHistorialDocumentos', [CasoController::class, 'historialDocumentos']);
 
     Route::get('/permissions', [App\Http\Controllers\PermissionController::class, 'index']);
     Route::get('/users/{user}/permissions', [App\Http\Controllers\UserController::class, 'getPermissions']);
