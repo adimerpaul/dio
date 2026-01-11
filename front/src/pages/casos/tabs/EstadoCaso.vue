@@ -79,12 +79,16 @@ export default {
       file: null,
       loading: false,
       estado_casos:[
-        "Concluido",
-        "Con Representacion",
-        "Con Sentencia",
+        "Apertura Denuncia",
+        "Notificacion",
+        "Respuesta",
+        "En Audiencia",
         "En Jugado",
         "En Fiscalia",
-        "Archivo",
+        "Con Sentencia",
+        "Con Representacion",
+        "Concluido",
+        "Archivado",
         "Otros",
       ]
     };

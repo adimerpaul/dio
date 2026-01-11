@@ -7,6 +7,16 @@
       <div class="col-12 col-md-4">
         <div class="text-h6 text-weight-bold">
           {{caso?.tipo}} {{ caso?.caso_numero || '...' }}
+<!--          ({{caso?.estado_caso}}) q-chip-->
+          <q-chip
+            v-if="caso?.estado_caso"
+            :color="caso?.estado_caso === 'Apertura Denuncia' ? 'green' : caso?.estado_caso === 'Cerrado' ? 'red' : 'grey'"
+            text-color="white"
+            size="sm"
+            class="q-ml-sm"
+          >
+            {{ caso?.estado_caso }}
+          </q-chip>
           <q-btn flat icon="arrow_back" @click="$router.back()" class="q-mr-sm"/>
         </div>
           <div class="text-subtitle2 text-black-7">

@@ -12,7 +12,9 @@
     </div>
     <div class="" v-else-if="accion==='modificar'">
       <div class="text-right">
-        <q-btn color="primary" icon="save" label="Modificar Cambios" :loading="loading" @click="update" no-caps dense/>
+<!--        btn cambiar estado de sidabled-->
+        <q-btn flat color="primary" :icon="disabled ? 'lock_open' : 'lock'" :label="disabled ? 'Habilitar edición' : 'Deshabilitar edición'" @click="disabled = !disabled" no-caps dense v-if="disabled"/>
+        <q-btn color="primary" icon="save" label="Guardar Cambios" :loading="loading" @click="update" no-caps dense v-if="disabled===false"/>
       </div>
     </div>
     <q-form class="q-mt-xs" @submit.prevent="save">
@@ -76,19 +78,22 @@
                 <div class="row q-col-gutter-md">
                   <div class="col-12 col-md-6">
                     <q-input v-model="v.nombres_apellidos" dense outlined clearable label="Nombres y apellidos *"
+                             :disable="disabled"
                              v-upper/>
                   </div>
                   <div class="col-6 col-md-3">
                     <q-select v-model="v.tipo_documento" dense outlined emit-value map-options clearable
                               :options="documentos" label="Documento"
+                              :disable="disabled"
                               @update:model-value="val => { if (val !== 'Otro') v.tipo_documento_otro = '' }"/>
                   </div>
                   <div class="col-6 col-md-3" v-if="v.tipo_documento==='Otro'">
                     <q-input v-model="v.tipo_documento_otro" dense outlined clearable label="Especifique otro documento"
+                             :disable="disabled"
                              v-upper/>
                   </div>
                   <div class="col-6 col-md-3">
-                    <q-input v-model="v.ci" dense outlined clearable label="Numero de documento" v-upper>
+                    <q-input v-model="v.ci" dense outlined clearable label="Numero de documento" v-upper :disable="disabled">
 <!--                      templte a la derecha btn historial -->
 <!--                      <template v-slot:after>-->
 <!--                        <q-btn-->
@@ -103,21 +108,21 @@
                     </q-input>
                   </div>
                   <div class="col-6 col-md-3">
-                    <q-input v-model="v.lugar_nacimiento" dense outlined clearable label="Lugar de nacimiento" v-upper/>
+                    <q-input v-model="v.lugar_nacimiento" dense outlined clearable label="Lugar de nacimiento" v-upper :disable="disabled"/>
                   </div>
                   <div class="col-6 col-md-3">
                     <q-input v-model="v.fecha_nacimiento" type="date" dense outlined label="Fecha de nacimiento"
-                             @update:model-value="(val) => onBirthChange(val, v,'victima')"/>
+                             @update:model-value="(val) => onBirthChange(val, v,'victima')" :disable="disabled"/>
                   </div>
                   <div class="col-6 col-md-3">
-                    <q-input v-model.number="v.edad" dense outlined type="number" label="Edad" v-upper/>
+                    <q-input v-model.number="v.edad" dense outlined type="number" label="Edad" v-upper :disable="disabled"/>
                   </div>
                   <div class="col-6 col-md-3" v-if="tipo==='DNA'">
-                    <q-toggle v-model.number="v.gestante" dense :true-value="1" :false-value="0" label="¿Gestante?"/>
+                    <q-toggle v-model.number="v.gestante" dense :true-value="1" :false-value="0" label="¿Gestante?" :disable="disabled"/>
                   </div>
                   <div class="col-6 col-md-3">
                     <q-select v-model="v.sexo" dense outlined emit-value map-options clearable
-                              :options="sexos" label="Sexo"/>
+                              :options="sexos" label="Sexo" :disable="disabled"/>
                   </div>
                   <template v-if="tipo==='DNA' || tipo==='PROPREMI'">
 
@@ -125,7 +130,7 @@
                   <template v-else>
                     <div class="col-6 col-md-3">
                       <q-select v-model="v.estado_civil" dense outlined emit-value map-options clearable
-                                :options="estadosCiviles" label="Estado civil"/>
+                                :options="estadosCiviles" label="Estado civil" :disable="disabled"/>
                     </div>
                   </template>
                   <template v-if="tipo==='DNA' || tipo==='PROPREMI'">
@@ -133,11 +138,11 @@
                   </template>
                   <template v-else>
                     <div class="col-12 col-md-4">
-                      <q-input v-model="v.ocupacion" dense outlined clearable label="Ocupación" v-upper/>
+                      <q-input v-model="v.ocupacion" dense outlined clearable label="Ocupación" v-upper :disable="disabled"/>
                     </div>
                   </template>
                   <div class="col-12 col-md-4" v-if="tipo==='SLAM' || tipo==='UMADIS'">
-                    <q-input v-model="v.ingreso_economico" dense outlined clearable label="Ingresos Económicos" v-upper/>
+                    <q-input v-model="v.ingreso_economico" dense outlined clearable label="Ingresos Económicos" v-upper :disable="disabled"/>
                   </div>
                   <template v-if="tipo==='DNA' || tipo==='PROPREMI'">
 
@@ -145,54 +150,54 @@
                   <template v-else>
                     <div class="col-12 col-md-4">
                       <q-select v-model="v.idioma" dense outlined emit-value map-options clearable
-                                :options="idiomas" label="Idioma"/>
+                                :options="idiomas" label="Idioma" :disable="disabled"/>
                     </div>
                   </template>
                   <div class="col-12 col-md-8">
-                    <q-input v-model="v.domicilio" dense outlined clearable label="Domicilio" v-upper/>
+                    <q-input v-model="v.domicilio" dense outlined clearable label="Domicilio" v-upper :disable="disabled"/>
                   </div>
                   <div class="col-12 col-md-4">
-                    <q-input v-model="v.telefono" dense outlined clearable label="Teléfono/Celular" v-upper/>
+                    <q-input v-model="v.telefono" dense outlined clearable label="Teléfono/Celular" v-upper :disable="disabled"/>
                   </div>
                   <div class="col-6 col-md-2" v-if="tipo==='DNA'">
-                    <q-toggle v-model.number="v.estudia" dense :true-value="1" :false-value="0" label="¿Estudia?"/>
+                    <q-toggle v-model.number="v.estudia" dense :true-value="1" :false-value="0" label="¿Estudia?" :disable="disabled"/>
                   </div>
                   <div class="col-12 col-md-4" v-if="v.estudia ===1 && tipo==='DNA'">
                     <q-select v-model="v.lugar_estudio" dense outlined emit-value map-options clearable
-                              :options="colegios" label="UE / Colegio"/>
+                              :options="colegios" label="UE / Colegio" :disable="disabled"/>
                   </div>
                   <div class="col-12 col-md-4" v-if="tipo==='PROPREMI'">
                     <q-select v-model="v.lugar_estudio" dense outlined emit-value map-options clearable
-                              :options="colegios" label="UE / Colegio"/>
+                              :options="colegios" label="UE / Colegio" :disable="disabled"/>
                   </div>
                   <div class="col-12 col-md-4" v-if="tipo==='JUVENTUDES'">
                     <q-input v-model="v.lugar_estudio" dense outlined emit-value map-options clearable
-                              :options="colegios" label="U.E./Colegio/Universidad"/>
+                              :options="colegios" label="U.E./Colegio/Universidad" :disable="disabled" />
                   </div>
                   <div class="col-12 col-md-4" v-if="tipo==='JUVENTUDES'">
                     <q-input v-model="v.grado_curso" dense outlined emit-value map-options clearable
-                             label="Curso/Grado Actual"/>
+                             label="Curso/Grado Actual" :disable="disabled"/>
                   </div>
                   <div class="col-12 col-md-4" v-if="tipo==='PROPREMI' || tipo==='DNA' ">
                     <q-select v-model="v.grado_curso" dense outlined emit-value map-options clearable
-                              :options="cursos" label="Grado o curso"/>
+                              :options="cursos" label="Grado o curso" :disable="disabled"/>
                   </div>
                   <div class="col-12 col-md-4" v-if="tipo==='PROPREMI' || tipo==='DNA'  || tipo==='JUVENTUDES'">
-                    <q-toggle v-model="v.trabaja" dense :true-value="1" :false-value="0" label="¿Trabaja actualmente?"/>
+                    <q-toggle v-model="v.trabaja" dense :true-value="1" :false-value="0" label="¿Trabaja actualmente?" :disable="disabled"/>
                     <!--                    <pre>{{v}}</pre>-->
                   </div>
                   <div class="col-12 col-md-6" v-if="tipo==='UMADIS'">
                     <q-select v-model="v.tipo_discapacidad" dense outlined emit-value map-options clearable
-                              :options="tiposDiscapacidad" label="Tipo de discapacidad"/>
+                              :options="tiposDiscapacidad" label="Tipo de discapacidad" :disable="disabled"/>
                   </div>
                   <div class="col-12 col-md-6" v-if="tipo==='UMADIS'">
 <!--                    <q-select v-model="v.grado_discapacidad" dense outlined emit-value map-options clearable-->
 <!--                              :options="gradosDiscapacidad" label="Grado de discapacidad"/>-->
-                    <q-input v-model="v.grado_discapacidad" dense outlined clearable label="Grado de discapacidad" v-upper/>
+                    <q-input v-model="v.grado_discapacidad" dense outlined clearable label="Grado de discapacidad" v-upper :disable="disabled"/>
                   </div>
 
                   <div class="col-12 col-md-6" v-if="v.trabaja===1">
-                    <q-input v-model="v.lugar_trabajo" dense outlined clearable label="Lugar de trabajo" v-upper/>
+                    <q-input v-model="v.lugar_trabajo" dense outlined clearable label="Lugar de trabajo" v-upper :disable="disabled"/>
                   </div>
                 </div>
               </q-card-section>
@@ -203,6 +208,7 @@
           <div class="col-12" v-else>
             <q-toggle v-model="copiar" @update:model-value="copyVictimaToDenunciante" dense
                       :true-value="true" :false-value="false" title="Copiar datos de esta víctima al denunciante"
+                      :disable="disabled"
             >
               <div class="text-subtitle2 text-bold" style="font-size: 17px">
                 Victima es igual que denunciante?
@@ -257,28 +263,32 @@
                     <div class="row q-col-gutter-md">
                       <div class="col-12 col-md-6">
                         <q-input v-model="d.denunciante_nombres" dense outlined clearable label="Nombres y apellidos *"
-                                 v-upper/>
+                                 v-upper :disable="disabled"
+                        />
                       </div>
                       <div class="col-6 col-md-3">
                         <q-select v-model="d.denunciante_documento" dense outlined emit-value map-options clearable
-                                  :options="documentos" label="Documento"
+                                  :options="documentos" label="Documento" :disable="disabled"
                                   @update:model-value="val => { if (val !== 'Otro') d.denunciante_documento_otro = '' }"/>
                       </div>
                       <div class="col-6 col-md-3" v-if="d.denunciante_documento==='Otro'">
                         <q-input v-model="d.denunciante_documento_otro" dense outlined clearable
+                                 :disable="disabled"
                                  label="Especifique otro documento" v-upper/>
                       </div>
                       <div class="col-6 col-md-3">
                         <q-input v-model="d.denunciante_nro" dense outlined clearable label="Numero de documento"
+                                 :disable="disabled"
                                  v-upper/>
                       </div>
                       <div class="col-6 col-md-3">
                         <q-input v-model="d.denunciante_lugar_nacimiento" dense outlined clearable
+                                 :disable="disabled"
                                  label="Lugar de nacimiento" v-upper/>
                       </div>
                       <div class="col-6 col-md-3">
                         <q-input v-model="d.denunciante_fecha_nacimiento" type="date" dense outlined
-                                 label="Fecha de nacimiento"
+                                 label="Fecha de nacimiento" :disable="disabled"
                                  @update:model-value="(val) => onBirthChange(val, d, 'denunciante')"/>
                       </div>
                       <div class="col-6 col-md-3">
@@ -290,51 +300,51 @@
                       </div>
                       <div class="col-6 col-md-3">
                         <q-select v-model="d.denunciante_estado_civil" dense outlined emit-value map-options clearable
-                                  :options="estadosCiviles" label="Estado civil"/>
+                                  :options="estadosCiviles" label="Estado civil" :disable="disabled"/>
                       </div>
                       <div class="col-12 col-md-4">
                         <!--                      <q-input v-model="d.denunciante_grado" dense outlined clearable label="Grado de Instrucción"/>-->
                         <q-select v-model="d.denunciante_grado" dense outlined emit-value map-options clearable
-                                  :options="gradosInstruccion" label="Grado de Instrucción"/>
+                                  :options="gradosInstruccion" label="Grado de Instrucción" :disable="disabled"/>
                       </div>
                       <div class="col-12 col-md-4">
-                        <q-input v-model="d.denunciante_ocupacion" dense outlined clearable label="Ocupación" v-upper/>
+                        <q-input v-model="d.denunciante_ocupacion" dense outlined clearable label="Ocupación" v-upper :disable="disabled"/>
                       </div>
                       <template v-if="tipo==='DNA' || tipo==='JUVENTUDES' || tipo==='SLAM' || tipo==='SLIM' || tipo==='UMADIS'">
                         <div class="col-12 col-md-4">
                           <q-input v-model="d.denunciante_cargo" dense outlined clearable label="Lugar de trabajo"
-                                   v-upper/>
+                                   v-upper :disable="disabled"/>
                         </div>
                       </template>
                       <template v-else>
                         <div class="col-12 col-md-4">
                           <q-input v-model="d.denunciante_cargo" dense outlined clearable label="Institucion / Cargo"
-                                   v-upper/>
+                                   v-upper :disable="disabled"/>
                         </div>
                       </template>
                       <div class="col-12 col-md-4">
                         <q-input v-model.number="d.denunciante_ingresos" dense outlined type="text"
-                                 label="Ingresos Económicos" v-upper/>
+                                 label="Ingresos Económicos" v-upper :disable="disabled"/>
                       </div>
                       <div class="col-12 col-md-4">
                         <q-select v-model="d.denunciante_idioma" dense outlined emit-value map-options clearable
-                                  :options="idiomas" label="Idioma"/>
+                                  :options="idiomas" label="Idioma" :disable="disabled"/>
                       </div>
                       <div class="col-12 col-md-8">
                         <q-input v-model="d.denunciante_domicilio_actual" dense outlined clearable label="Domicilio"
-                                 v-upper/>
+                                 v-upper :disable="disabled"/>
                       </div>
                       <div class="col-12 col-md-4">
                         <q-input v-model="d.denunciante_telefono" dense outlined clearable label="Teléfono/Celular"
-                                 v-upper/>
+                                 v-upper :disable="disabled"/>
                       </div>
                       <div class="col-12 col-md-4">
                         <q-input v-model="d.denunciante_relacion_victima" dense outlined clearable
-                                 label="Parentesco o Relación con la Víctima" v-upper/>
+                                 label="Parentesco o Relación con la Víctima" v-upper :disable="disabled"/>
                       </div>
                       <div class="col-12 col-md-4">
                         <q-input v-model="d.denunciante_relacion_denunciado" dense outlined clearable
-                                 label="Parentesco o Relación con el Denunciado" v-upper/>
+                                 label="Parentesco o Relación con el Denunciado" v-upper :disable="disabled"/>
                       </div>
                     </div>
                   </q-card-section>
@@ -1101,6 +1111,7 @@ export default {
   },
   data() {
     return {
+      disabled: false,
       dialogHistorial: false,
       historialDocumentos: [],
       colegios: [
@@ -1545,6 +1556,8 @@ export default {
     }
   },
   mounted() {
+    // para crear disabled: false, y para modificar disabled: true
+    this.disabled = this.accion === 'modificar'
     // orderna colegios
     this.colegios.sort()
     // if caso
@@ -2069,6 +2082,7 @@ export default {
         const res = await this.$axios.put(`/casos/${this.casoId}`, this.f)
         this.$alert.success('Caso actualizado')
         this.$emit('refresh')
+        this.disabled = true
       } catch (e) {
         this.$alert.error(e?.response?.data?.message || 'No se pudo actualizar el caso')
       } finally {
