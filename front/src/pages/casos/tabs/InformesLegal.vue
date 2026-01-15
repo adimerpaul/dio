@@ -104,6 +104,7 @@
             </div>
             <div class="col-6 col-md-2">
               <q-select v-model="form.area" :options="areas" dense outlined label="Área" :readonly="mode==='view'" emit-value map-options/>
+<!--              <pre>{{form}}</pre>-->
             </div>
             <div class="col-6 col-md-2">
               <q-input v-model="form.numero" dense outlined label="Nro" :readonly="mode==='view'"/>
@@ -193,7 +194,7 @@ export default {
       rows:{ data:[], total:0, last_page:1 },
 
       dialog:false, mode:'create',
-      form:{ id:null, fecha:'', titulo:'', area:'psicologico', numero:'', contenido_html:'' },
+      form:{ id:null, fecha:'', titulo:'', area:'legal', numero:'', contenido_html:'' },
 
       plantilla: 'dirigido_mp',
       plantillasOptions: [
@@ -269,7 +270,7 @@ export default {
     },
     openCreate(){
       this.mode='create'
-      this.form = { id:null, fecha:this.today(), titulo:'', area:'psicologico', numero:'', contenido_html:'' }
+      this.form = { id:null, fecha:this.today(), titulo:'', area:'legal', numero:'', contenido_html:'' }
       this.dialog = true
       this.$nextTick(()=> this.applyTemplate(this.plantilla))
     },

@@ -790,17 +790,21 @@ class CasoController extends Controller
         switch ($user->role) {
             case 'Psicologo':
                 $q->where('psicologica_user_id', $user->id)
-                    ->whereDoesntHave('psicologicas'); // sin la primera sesión
+//                    ->whereDoesntHave('psicologicas'); // sin la primera sesión
+//            fecha_aceptacion_area_legal
+                    ->whereNull('fecha_aceptacion_area_psicologica');
                 break;
 
             case 'Abogado':
                 $q->where('legal_user_id', $user->id)
-                    ->whereDoesntHave('informesLegales'); // sin el primer informe legal
+//                    ->whereDoesntHave('informesLegales');
+                    ->whereNull('fecha_aceptacion_area_legal');
                 break;
 
             case 'Social':
                 $q->where('trabajo_social_user_id', $user->id)
-                    ->whereDoesntHave('informesSociales'); // sin el primer informe social
+//                    ->whereDoesntHave('informesSociales'); // sin el primer informe social
+                    ->whereNull('fecha_aceptacion_area_social');
                 break;
 
             default:

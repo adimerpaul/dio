@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->string('titulo')->nullable();
             $table->string('numero', 50)->nullable(); // correlativo interno
             $table->longText('contenido_html');
+            $table->string('archivo')->nullable();
 
             $table->timestamps();
             $table->softDeletes();

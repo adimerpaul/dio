@@ -854,93 +854,6 @@ async function fetchPendientesCount () {
   pendingLoading.value = true
   try {
     const { data } = await proxy.$axios.get('/casos-pendientes-resumen')
-    // {
-    //   "pendientes": [
-    //   {
-    //     "id": 12,
-    //     "area": "ADMIN",
-    //     "zona": "CENTRAL",
-    //     "numero_apoyo_integral": null,
-    //     "tipo": "DNA",
-    //     "principal": "principal",
-    //     "caso_numero": "011\/25",
-    //     "caso_fecha_hecho": "2025-09-04",
-    //     "caso_lugar_hecho": null,
-    //     "caso_zona": null,
-    //     "caso_direccion": "aaaaa",
-    //     "caso_descripcion": null,
-    //     "caso_tipologia": "ASISTENCIA FAMILIAR",
-    //     "caso_modalidad": null,
-    //     "violencia_fisica": null,
-    //     "violencia_psicologica": null,
-    //     "violencia_sexual": null,
-    //     "violencia_economica": null,
-    //     "violencia_patrimonial": null,
-    //     "violencia_simbolica": null,
-    //     "violencia_institucional": null,
-    //     "psicologica_user_id": 3,
-    //     "trabajo_social_user_id": 5,
-    //     "legal_user_id": 4,
-    //     "documento_fotocopia_carnet_denunciante": "1",
-    //     "documento_fotocopia_carnet_denunciado": "1",
-    //     "documento_placas_fotograficas_domicilio_denunciante": "1",
-    //     "documento_croquis_direccion_denunciado": "1",
-    //     "documento_placas_fotograficas_domicilio_denunciado": "0",
-    //     "documento_ciudadania_digital": "0",
-    //     "documento_otros": null,
-    //     "documento_otros_detalle": null,
-    //     "fecha_apertura_caso": "2025-09-23",
-    //     "fecha_derivacion_psicologica": null,
-    //     "fecha_informe_area_social": null,
-    //     "fecha_informe_area_psicologica": null,
-    //     "fecha_informe_trabajo_social": null,
-    //     "fecha_derivacion_area_legal": null,
-    //     "user_id": 1
-    //   },
-    //   {
-    //     "id": 17,
-    //     "area": "ADMIN",
-    //     "zona": "CENTRAL",
-    //     "numero_apoyo_integral": null,
-    //     "tipo": "PROPREMI",
-    //     "principal": "asdas",
-    //     "caso_numero": "003\/25",
-    //     "caso_fecha_hecho": "2025-09-27",
-    //     "caso_lugar_hecho": "asdsa",
-    //     "caso_zona": null,
-    //     "caso_direccion": null,
-    //     "caso_descripcion": null,
-    //     "caso_tipologia": null,
-    //     "caso_modalidad": null,
-    //     "violencia_fisica": false,
-    //     "violencia_psicologica": false,
-    //     "violencia_sexual": true,
-    //     "violencia_economica": false,
-    //     "violencia_patrimonial": "0",
-    //     "violencia_simbolica": "0",
-    //     "violencia_institucional": "1",
-    //     "psicologica_user_id": 3,
-    //     "trabajo_social_user_id": 5,
-    //     "legal_user_id": 10,
-    //     "documento_fotocopia_carnet_denunciante": "0",
-    //     "documento_fotocopia_carnet_denunciado": "1",
-    //     "documento_placas_fotograficas_domicilio_denunciante": "1",
-    //     "documento_croquis_direccion_denunciado": "0",
-    //     "documento_placas_fotograficas_domicilio_denunciado": null,
-    //     "documento_ciudadania_digital": null,
-    //     "documento_otros": null,
-    //     "documento_otros_detalle": null,
-    //     "fecha_apertura_caso": "2025-09-24",
-    //     "fecha_derivacion_psicologica": null,
-    //     "fecha_informe_area_social": null,
-    //     "fecha_informe_area_psicologica": null,
-    //     "fecha_informe_trabajo_social": null,
-    //     "fecha_derivacion_area_legal": null,
-    //     "user_id": 1
-    //   }
-    // ]
-    // }
-    // console.log(data)
     pending.value = data
     pendingCount.value = data.length
   } catch (e) {
@@ -951,8 +864,10 @@ async function fetchPendientesCount () {
 }
 
 function irPendientes (p) {
-  // proxy.$router.push({ path: '/slims', query: { only_pendientes: 1 } })
-  proxy.$router.push(`/${p.tipo.toLowerCase()}/`)
+  console.log(p)
+  const tipo = p.tipo.toLowerCase()
+  const ruta = tipo.endsWith('s') ? tipo : `${tipo}s`
+  proxy.$router.push(`/${ruta}`)
 }
 
 onMounted(() => { fetchPendientesCount() })
