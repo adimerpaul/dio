@@ -383,6 +383,7 @@
               <div class="text-caption text-grey-7 q-mb-xs">Ubicación (denunciante)</div>
               <MapPicker v-model="denunciantePos" :center="oruroCenter"
                          :address="f.denunciante_domicilio_actual"
+                          label="Ubicación Denunciante"
                          country="bo"
                          ref="denunMap"
               />
@@ -516,15 +517,15 @@
 <!--                  <div class="col-12 col-md-4">-->
 <!--                    <q-input v-model="v.denunciado_cargo" dense outlined clearable label="Institucion / Cargo" v-upper/>-->
 <!--                  </div>-->
-                  <template v-if="tipo==='DNA' || tipo==='JUVENTUDES'">
+                  <template v-if="tipo==='PROPREMI'">
                     <div class="col-12 col-md-4">
-                      <q-input v-model="v.denunciado_cargo" dense outlined clearable label="Lugar de trabajo"
+                      <q-input v-model="v.denunciado_cargo" dense outlined clearable label="Institucion / Cargo"
                                v-upper/>
                     </div>
                   </template>
                   <template v-else>
                     <div class="col-12 col-md-4">
-                      <q-input v-model="v.denunciado_cargo" dense outlined clearable label="Institucion / Cargo"
+                      <q-input v-model="v.denunciado_cargo" dense outlined clearable label="Lugar de trabajo"
                                v-upper/>
                     </div>
                   </template>
@@ -583,9 +584,10 @@
               <q-btn label="Buscar" @click="$refs.denunciadoMap?.geocodeAndFly(f.denunciado_domicilio_actual)"/>
             </div>
             <div class="col-12">
-              <div class="text-caption text-grey-7 q-mb-xs">Ubicación (denunciante)</div>
+              <div class="text-caption text-grey-7 q-mb-xs">Ubicación (denunciado)</div>
               <MapPicker v-model="denunciadoPos" :center="oruroCenter"
                          :address="f.denunciado_domicilio_actual"
+                         label="Ubicación Denunciado"
                          country="bo"
                          ref="denunciadoMap"
               />
@@ -1668,7 +1670,7 @@ export default {
       ]
     }
     // "Apoyo Integral
-    if (this.tipo === 'SLIM' && this.titulo==='Nuevo Apoyo Integral') {
+    if (this.tipo === 'SLIM' && this.titulo==='Apoyo Integral') {
       this.tipologias = [
         'Informes psicológicos',
         'Informes sociales',

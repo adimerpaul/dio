@@ -17,7 +17,9 @@
             dense
             outlined
             clearable
+            v-if="$store.user?.role == 'Administrador'"
           />
+<!--          <pre>{{$store.user}}</pre>-->
         </div>
         <div class="col-12 col-sm-auto">
           <q-btn

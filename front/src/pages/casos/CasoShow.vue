@@ -4,7 +4,7 @@
     <!-- Header -->
     <div class="row items-center q-mb-md">
 <!--      <a href="myscan://open">Escanear ahora</a>-->
-      <div class="col-12 col-md-4">
+      <div class="col-12 col-md-12">
         <div class="text-h6 text-weight-bold">
           {{caso?.tipo}} {{ caso?.caso_numero || '...' }}
 <!--          ({{caso?.estado_caso}}) q-chip-->
@@ -16,6 +16,16 @@
             class="q-ml-sm"
           >
             {{ caso?.estado_caso }}
+          </q-chip>
+<!--          <pre>{{ caso?.etapa_procesal }}</pre>-->
+          <q-chip
+            v-if="caso?.etapa_procesal"
+            color="blue"
+            text-color="white"
+            size="sm"
+            class="q-ml-sm"
+          >
+            {{ caso?.etapa_procesal }}
           </q-chip>
           <q-btn flat icon="arrow_back" @click="$router.back()" class="q-mr-sm"/>
         </div>

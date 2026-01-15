@@ -25,7 +25,7 @@
             <q-btn no-caps color="info" :href="`https://www.google.com/maps/search/?api=1&query=${localValue.latitud},${localValue.longitud}`" target="_blank" label="Abrir en Google Maps" icon="open_in_new" style="width: 220px"/>
           </div>
           <div class="col-6 col-md-6">
-            <q-btn no-caps color="info" :href="`${$url}/mapa?lat=${localValue.latitud}&lng=${localValue.longitud}`" target="_blank" label="Imprimir" icon="print" style="width: 220px"/>
+            <q-btn no-caps color="info" :href="`${$url}/mapa?lat=${localValue.latitud}&lng=${localValue.longitud}&label=${label}`" target="_blank" label="Imprimir" icon="print" style="width: 220px"/>
           </div>
         </div>
       </div>
@@ -173,7 +173,8 @@ const props = defineProps({
   address: { type: String, default: '' },          // <--- NUEVO
   country: { type: String, default: 'bo' },        // <--- opcional: sesgar búsqueda por país
   minAddressLen: { type: Number, default: 6 },     // <--- evitar geocodificar textos muy cortos
-  debounceMs: { type: Number, default: 600 }       // <--- para no pegarle a la API por cada tecla
+  debounceMs: { type: Number, default: 600 },       // <--- para no pegarle a la API por cada tecla
+  label: { type: String, default: 'Seleccionar ubicación' }
 })
 
 const emit = defineEmits(['update:modelValue','geocode:ok','geocode:error'])

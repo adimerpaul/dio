@@ -12,10 +12,10 @@
         <div class="row items-center q-gutter-sm">
           <div class="text-subtitle1 text-weight-medium" style="line-height:.95">
             Panel <br>
-            <q-chip v-if="$store.user?.area" color="grey-3" text-color="black" size="10px" dense>
+            <q-chip v-if="$store.user?.area && $store.user?.role != 'Administrador'" color="grey-3" text-color="black" size="10px" dense>
               {{ $store.user?.area }}
             </q-chip>
-            <q-chip v-if="$store.user?.zona" color="grey-3" text-color="black" size="10px" dense>
+            <q-chip v-if="$store.user?.zona && $store.user?.role != 'Administrador'" color="grey-3" text-color="black" size="10px" dense>
               {{ $store.user?.zona }}
             </q-chip>
           </div>
@@ -174,15 +174,7 @@
         </q-item>
         <q-expansion-item dense expand-separator icon="add_circle" label="Nuevo SLIM" active-class="menu-active" v-if="hasPerm('Crear SLIM')">
           <q-list>
-            <q-item :inset-level="0.3" dense to="/slims/nuevo-hechos-fragancia" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
-              <q-item-section avatar>
-                <q-icon name="gavel" class="text-white"/>
-              </q-item-section>
-              <q-item-section>
-                <q-item-label class="text-white">Nuevo Hechos en Fragancia</q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item :inset-level="0.3" dense  v-close-popup>
+            <q-item  dense  v-close-popup>
               <q-expansion-item  dense expand-separator icon="gavel" label="Nuevo Hechos por Denuncia" active-class="menu-active">
                 <q-list>
                   <q-item :inset-level="0.6" dense to="/slims/nuevo-penal" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
@@ -219,6 +211,14 @@
                   </q-item>
                 </q-list>
               </q-expansion-item >
+            </q-item>
+            <q-item :inset-level="0.3" dense to="/slims/nuevo-hechos-fragancia" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
+              <q-item-section avatar>
+                <q-icon name="gavel" class="text-white"/>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label class="text-white">Nuevo Hechos en Fragancia</q-item-label>
+              </q-item-section>
             </q-item>
           </q-list>
 <!--          <q-list>-->
@@ -266,15 +266,7 @@
         </q-item>
         <q-expansion-item dense expand-separator icon="gavel" label="Nuevo DNA" active-class="menu-active" v-if="hasPerm('Crear DNA')">
           <q-list>
-            <q-item :inset-level="0.3" dense to="/dnas/nuevo-hechos-fragancia" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
-              <q-item-section avatar>
-                <q-icon name="gavel" class="text-white"/>
-              </q-item-section>
-              <q-item-section>
-                <q-item-label class="text-white">Nuevo Hechos en Fragancia</q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item :inset-level="0.3" dense  v-close-popup>
+            <q-item dense  v-close-popup>
               <q-expansion-item  dense expand-separator icon="gavel" label="Nuevo Hechos por Denuncia" active-class="menu-active">
                 <q-list>
                   <q-item :inset-level="0.6" dense to="/dnas/nuevo-penal" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
@@ -311,6 +303,14 @@
                   </q-item>
                 </q-list>
               </q-expansion-item >
+            </q-item>
+            <q-item :inset-level="0.3" dense to="/dnas/nuevo-hechos-fragancia" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
+              <q-item-section avatar>
+                <q-icon name="gavel" class="text-white"/>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label class="text-white">Nuevo Hechos en Fragancia</q-item-label>
+              </q-item-section>
             </q-item>
           </q-list>
         </q-expansion-item>

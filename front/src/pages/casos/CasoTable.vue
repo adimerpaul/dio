@@ -49,7 +49,7 @@
     <!-- Tabla -->
     <q-markup-table flat bordered dense>
       <thead>
-      <tr>
+      <tr class="bg-primary text-white">
         <th style="width: 60px">#</th>
         <th>Nº</th>
         <th>Fecha</th>
@@ -161,14 +161,16 @@
       />
     </div>
   </q-page>
-  <q-dialog v-model="dialogFormat" persistent maximized>
-    <q-card>
-      <q-card-section>
+  <q-dialog v-model="dialogFormat" persistent maximized >
+    <q-card class="q-pa-md">
+      <q-card-section class="row items-center">
         <div class="text-h6">Visualizar Casos/Estado</div>
+        <q-space />
+        <q-btn icon="close" flat round dense @click="dialogFormat = false" />
       </q-card-section>
-      <q-markup-table flat bordered dense>
+      <q-markup-table flat bordered dense separator="cell">
         <thead>
-        <tr>
+        <tr class="bg-primary text-white">
           <th style="width: 60px">#</th>
           <th>Nº</th>
           <th>Fecha</th>
@@ -269,8 +271,8 @@
         </tbody>
       </q-markup-table>
 
-      <q-card-actions align="right">
-        <q-btn flat label="Cerrar" color="primary" v-close-popup />
+      <q-card-actions align="center" class="q-pt-md">
+        <q-btn  label="Cerrar" color="grey-7" v-close-popup dense no-caps icon="close"/>
       </q-card-actions>
     </q-card>
   </q-dialog>
