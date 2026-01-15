@@ -43,7 +43,11 @@
         }
     </style>
 </head>
-<body>
+<body style="padding: 20px">
+<div style="text-align: right;font-size: 10px;font-weight: bold">{{ date('d/m/Y H:i') }}</div>
+<div style="text-align: center;font-size: 40px;font-weight: bold; margin-top: 4px">
+    {{(($label) ?? 'Ubicación')}}
+</div>
 <div class="wrap">
     <div id="map"></div>
 

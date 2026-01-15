@@ -29,6 +29,11 @@ class DashboardCasoController extends Controller
         // -------- FILTRO SOLO POR ÁREA ----------
         if ($request->filled('area')) {
             $casos->where('area', $request->area);
+        }else{
+            $user = $request->user();
+            if($user->role != 'Administrador' && $user->area){
+                $casos->where('area', $user->area);
+            }
         }
 
         $baseCasos = clone $casos;

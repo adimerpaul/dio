@@ -521,6 +521,10 @@ class CasoController extends Controller
         if ($user?->role === 'Abogado') {
             $query->where('legal_user_id', $user->id);
         }
+        if ($user?->role === 'Auxiliar' || $user?->role === 'Asistente') {
+            $query->where('area', $user->area)
+                    ->where('zona', $user->zona);
+        }
 
         // Relaciones mínimas necesarias
         $query->with([

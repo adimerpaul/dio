@@ -21,14 +21,16 @@ class AgendaController extends Controller
         if ($request->filled('end'))   $query->where('start', '<=', $request->get('end'));
 
         // Filtro por profesional
-        if ($request->filled('user_id')) {
-            $query->where('user_id', $request->get('user_id'));
-        } else {
-            // Si el rol es Psicologo, limitar a sus propios eventos por defecto
-            if ($user->role === 'Psicologo') {
-                $query->where('user_id', $user->id);
-            }
-        }
+//        if ($request->filled('user_id')) {
+//            $query->where('user_id', $request->get('user_id'));
+//        } else {
+//            // Si el rol es Psicologo, limitar a sus propios eventos por defecto
+//            if ($user->role === 'Psicologo') {
+//                $query->where('user_id', $user->id);
+//            }
+//        }
+        $user = $request->user();
+        $query->where('user_id', $user->id);
 
         // Filtro por estado
         if ($request->filled('status')) {

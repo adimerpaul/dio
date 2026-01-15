@@ -22,6 +22,7 @@ class MapaController extends Controller{
             'LNG' => $LNG,
             'HAS' => $HAS,
             'PIN' => $pin,
+            'label' => $request->query('label', 'Ubicación'),
         ]);
     }
 }
