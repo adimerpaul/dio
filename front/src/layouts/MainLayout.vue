@@ -864,7 +864,8 @@ async function fetchPendientesCount () {
 }
 
 function irPendientes (p) {
-  console.log(p)
+  // console.log(p)
+  // proxy.$store.casoSelect = p
   const tipo = p.tipo.toLowerCase()
   const ruta = tipo.endsWith('s') ? tipo : `${tipo}s`
   proxy.$router.push(`/${ruta}`)

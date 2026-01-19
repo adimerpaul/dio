@@ -1230,7 +1230,7 @@ class CasoController extends Controller
         DB::beginTransaction();
         try {
             $user = $request->user();
-            $request['caso_numero'] = $this->numeroCaso($request->tipo);
+            $request['caso_numero'] = $this->numeroCaso($request->tipo,$user);
             $request['user_id'] = $user->id;
             $request['fecha_apertura_caso'] = date('Y-m-d H:i:s');
             $request['area'] = $user->area;
@@ -1283,10 +1283,14 @@ class CasoController extends Controller
         }
     }
 
-    function numeroCaso($tipo)
+    function numeroCaso($tipo,$user)
     {
         $year = date('Y');
-        $count = Caso::where('tipo', $tipo)->whereYear('created_at', $year)->count() + 1;
+        $count = Caso::where('tipo', $tipo)
+                ->where('zona', $user->zona)
+                ->where('area', $user->area)
+                ->whereYear('created_at', $year)
+                ->count() + 1;
         $numero = str_pad($count, 3, '0', STR_PAD_LEFT) . '/' . substr($year, -2);
         return $numero;
     }
