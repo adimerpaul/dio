@@ -2,6 +2,7 @@
   <q-page class="q-pa-md">
     <!-- Toolbar -->
 <!--    <pre>{{subtipo}}</pre>-->
+<!--    <pre>{{$store.casoSelect}}</pre>-->
     <div class="row items-center q-col-gutter-md q-mb-md">
       <div class="col-12 col-md">
         <q-input
@@ -67,7 +68,7 @@
       </tr>
       </thead>
       <tbody v-if="!loading && casos.length">
-      <tr v-for="(c, idx) in casos" :key="c.id" @click="goToDetalle(c)" class="cursor-pointer">
+      <tr v-for="(c, idx) in casos" :key="c.id" @click="goToDetalle(c)" :class="'cursor-pointer ' + ($store.casoSelect.id === c.id ? 'bg-red-3' : '')">
         <td>{{ rowIndex(idx) }}</td>
         <td class="text-no-wrap">{{ tipo }} {{ c.caso_numero || '—' }}</td>
         <td class="text-no-wrap">{{ $filters.date?.(c.fecha_apertura_caso) ?? c.fecha_apertura_caso }}</td>

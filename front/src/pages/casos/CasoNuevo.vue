@@ -15,7 +15,7 @@
 <!--        btn cambiar estado de sidabled-->
         <q-btn
           flat color="primary" :icon="disabled ? 'lock_open' : 'lock'" :label="disabled ? 'Habilitar edición' : 'Deshabilitar edición'" @click="disabled = !disabled" no-caps dense
-          v-if="disabled && ($store.user.role==='Asistentes' || $store.user.role==='Administradores' || $store.user.role==='Axuliares')"
+          v-if="disabled && ($store.user.role==='Asistentes' || $store.user.role==='Administrador' || $store.user.role==='Axuliares')"
         />
         <q-btn color="primary" icon="save" label="Guardar Cambios" :loading="loading" @click="update" no-caps dense v-if="disabled===false"/>
       </div>

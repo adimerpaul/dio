@@ -1,287 +1,327 @@
 {{-- resources/views/pdf/dna/pdf.blade.php --}}
+@php
+    function d($v, $def=''){ return ($v !== null && $v !== '') ? $v : $def; }
+    function fdate($v){ return $v ? \Carbon\Carbon::parse($v)->format('d/m/Y') : ''; }
+    function chk($cond){ return $cond ? 'X' : ''; }
+
+    // 1 registro "principal" para denunciado/denunciante (formulario DNA es 1)
+    $den = $caso->denunciantes[0] ?? null;
+    $denu = $caso->denunciados[0] ?? null;
+
+    $nombreDen = $den ? trim(($den->denunciante_nombres ?? '').' '.($den->denunciante_paterno ?? '').' '.($den->denunciante_materno ?? '')) : '';
+    $nombreDenu = $denu ? trim(($denu->denunciado_nombres ?? '').' '.($denu->denunciado_paterno ?? '').' '.($denu->denunciado_materno ?? '')) : '';
+
+    // "Principal" del formato (en la imagen es texto grande a mano: ASISTENCIA FAMILIAR)
+    $principal = d($caso->principal, d($caso->caso_tipologia, d($caso->titulo, d($caso->tipo))));
+@endphp
+
     <!doctype html>
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <title>Registro de Atención y/o Denuncia</title>
+    <title>DNA — Registro de Atención y/o Denuncia</title>
     <style>
-        @page { margin: 16mm 14mm 18mm 14mm; }
-        * { font-family: DejaVu Sans, sans-serif; color:#222; }
-        body { font-size: 12px; }
-        .w-100 { width:100%; }
-        .mb-2 { margin-bottom:8px; }
-        .mb-3 { margin-bottom:12px; }
-        .mb-4 { margin-bottom:16px; }
-        .mb-6 { margin-bottom:22px; }
-        .text-center { text-align:center; }
-        .text-right { text-align:right; }
+        @page { margin: 18px 18px 22px 18px; }
+        * { font-family: "DejaVu Sans", sans-serif; font-size: 10px; line-height: 1.15; color:#000; }
+        .b { font-weight: 700; }
         .upper { text-transform: uppercase; }
-        .small { font-size: 11px; }
-        .xs { font-size: 10px; }
-        .b { font-weight:700; }
-        .muted { color:#555; }
-        .table { width:100%; border-collapse: collapse; }
-        .table td, .table th { border:1px solid #444; padding:5px 6px; vertical-align: top; }
-        .table th { background:#f6f6f6; }
-        .no-border td, .no-border th { border:none; }
-        .label { font-weight:700; white-space:nowrap; }
-        .box { display:inline-block; width:12px; height:12px; border:1px solid #444; text-align:center; line-height:12px; font-weight:700; }
-        .hr { height:1px; background:#555; }
-        .section { font-weight:700; margin: 8px 0 6px; }
-        .page-break { page-break-before: always; }
+        .center { text-align:center; }
+        .right { text-align:right; }
+        .xs { font-size: 9px; }
+        .xxs { font-size: 8px; }
+        .muted { color:#111; }
+        .box { border:1px solid #000; }
+        table { width:100%; border-collapse: collapse; }
+        td, th { border:1px solid #000; padding:4px 5px; vertical-align: top; }
+        .no-b td, .no-b th { border:none; padding:0; }
+        .tight td, .tight th { padding:3px 4px; }
+        .h40 { height:40px; }
+        .h60 { height:60px; }
+        .h90 { height:90px; }
+        .h140 { height:140px; }
+        .chkbox { display:inline-block; width:12px; height:12px; border:1px solid #000; line-height:12px; text-align:center; font-size:10px; }
+        .section { background:#f2f2f2; font-weight:700; }
+        .avoid { page-break-inside: avoid; }
+        table.tbl th, table.tbl td { border:1px solid #000; padding:2px 3px; }
+        table.tbl th { background:#fff; }
+
     </style>
 </head>
 <body>
-@php
-    // Helpers seguros
-    $v = fn($x) => (isset($x) && $x !== '' && $x !== null) ? $x : '—';
-    $x = fn($b) => ($b===1 || $b===true || $b==='1' || $b==='SI' || $b==='Si' || $b==='si') ? 'X' : '';
-    $fmtDate = function($d) {
-        try { return $d ? \Illuminate\Support\Carbon::parse($d)->format('d/m/Y') : '—'; }
-        catch (\Throwable $e) { return $d ?: '—'; }
-    };
 
-    // Tomamos primeros elementos cuando el diseño pide solo 1 registro
-    $denunciante = ($caso->denunciantes[0] ?? null);
-    $denunciado  = ($caso->denunciados[0] ?? null);
-
-    // Domicilio/Teléfono generales (se usa del denunciante si existe)
-    $domicilio = $denunciante->denunciante_domicilio_actual ?? null;
-    $telefono  = $denunciante->denunciante_telefono ?? null;
-
-    // Nombre completo helpers
-    $nombreDenunciante = $denunciante
-        ? trim(($denunciante->denunciante_nombres ?? '').' '.($denunciante->denunciante_paterno ?? '').' '.($denunciante->denunciante_materno ?? ''))
-        : null;
-
-    $nombreDenunciado = $denunciado
-        ? trim(($denunciado->denunciado_nombres ?? '').' '.($denunciado->denunciado_paterno ?? '').' '.($denunciado->denunciado_materno ?? ''))
-        : null;
-@endphp
-
-{{-- ====== CABECERA ====== --}}
-<table class="table mb-3">
+{{-- ===== HEADER +SID ===== --}}
+<table class="tight">
     <tr>
-        <th style="width:36%; text-align:center;">
+        <td class="center" style="width:22%;">
             <div class="b">+SID</div>
-            <div class="small">Sistema de Información<br>de Defensorías</div>
-        </th>
-        <th style="width:44%; text-align:center;">
-            <div class="b upper" style="font-size:14px;">Registro de Atención y/o Denuncia</div>
-        </th>
-        <th style="width:20%;">
-            <div><span class="label">Fecha:</span> {{ $fmtDate($caso->fecha_apertura_caso ?? now()) }}</div>
-            <div><span class="label">Código:</span> {{ $v($caso->caso_numero ?? $caso->id) }}</div>
-            <div><span class="label">Nº Atención:</span> {{ $v($caso->id) }}</div>
-        </th>
+            <div class="xxs">Sistema</div>
+            <div class="xxs">de Información</div>
+            <div class="xxs">de Defensorías</div>
+        </td>
+        <td class="center b" style="width:56%; font-size:12px;">
+            Registro de Atención y/o Denuncia
+        </td>
+        <td style="width:22%;">
+            <div><span class="b">Fecha:</span> {{ fdate($caso->fecha_apertura_caso ?? now()) }}</div>
+            <div><span class="b">Código:</span> {{ d($caso->caso_numero, $caso->id) }}</div>
+            <div><span class="b">No Atención:</span> {{ d($caso->id) }}</div>
+        </td>
     </tr>
 </table>
 
-{{-- ====== 1. DATOS GENERALES ====== --}}
-<div class="section upper">1.- Datos Generales</div>
-<table class="table mb-3">
+{{-- ===== 1. DATOS GENERALES ===== --}}
+<table class="tight" style="margin-top:6px;">
     <tr>
-        <th style="width:14%;">Principal :</th>
-        <td>{{ $v($caso->principal ?? $caso->tipo) }}</td>
-    </tr>
-    <tr>
-        <th>Lugar del hecho :</th>
-        <td>{{ $v($caso->caso_lugar_hecho) }}</td>
-    </tr>
-    <tr>
-        <th>Fecha del hecho :</th>
-        <td>{{ $fmtDate($caso->caso_fecha_hecho ?? '') }}</td>
+        <td class="section" style="width:100%;">1.- DATOS GENERALES</td>
     </tr>
 </table>
 
-{{-- ====== MENORES (mismo bloque/estilo) ====== --}}
-<table class="table mb-3">
+<table class="tight avoid">
     <tr>
-        <th style="width:4%;">N°</th>
-        <th style="width:24%;">Nombres y Apellidos<br><span class="xs">(del menor)</span></th>
-        <th style="width:7%;">Gestante</th>
-        <th style="width:10%;">Edad</th>
-        <th style="width:8%;">Sexo</th>
-        <th style="width:8%;">C. Nac</th>
-        <th style="width:8%;">Estudia</th>
-        <th style="width:11%;">Último curso</th>
-        <th style="width:20%;">Tipo de trabajo</th>
+        <td style="width:18%;" class="b">PRINCIPAL :</td>
+        <td style="width:82%;">{{ $principal }}</td>
     </tr>
-    @forelse($caso->menores as $i => $m)
+</table>
+
+{{-- ===== 2. MENORES ===== --}}
+<table class="tight" style="margin-top:6px;">
+    <tr>
+        <td class="section">2.- (Menores) Nombres y Apellidos (del menor)</td>
+    </tr>
+</table>
+
+<table class="tbl tiny tight avoid">
+    {{-- Encabezado 2 niveles (como formulario) --}}
+    <tr class="center b">
+        <th rowspan="2" style="width:4%;">N°</th>
+        <th rowspan="2" style="width:28%;">Nombres y<br>Apellidos</th>
+
+        <th colspan="2" style="width:10%;">GESTANTE</th>
+        <th colspan="2" style="width:10%;">EDAD</th>
+        <th colspan="2" style="width:8%;">SEXO</th>
+        <th colspan="2" style="width:8%;">C. Nac</th>
+        <th colspan="2" style="width:10%;">ESTUDIA</th>
+
+        <th rowspan="2" style="width:12%;">ÚLTIMO<br>CURSO</th>
+        <th rowspan="2" style="width:10%;">TIPO DE<br>TRABAJO</th>
+    </tr>
+    <tr class="center b">
+        <th style="width:5%;">SI</th>
+        <th style="width:5%;">NO</th>
+
+        <th style="width:5%;">AÑOS</th>
+        <th style="width:5%;">MESES</th>
+
+        <th style="width:4%;">F</th>
+        <th style="width:4%;">M</th>
+
+        <th style="width:4%;">SI</th>
+        <th style="width:4%;">NO</th>
+
+        <th style="width:5%;">SI</th>
+        <th style="width:5%;">NO</th>
+    </tr>
+
+    @forelse($caso->victimas as $i => $v)
         @php
-            // Soporte flexible de campos posibles
-            $nomMenor = $m->nombre ?? trim(($m->nombres ?? '').' '.($m->paterno ?? '').' '.($m->materno ?? ''));
-            $edadA = $m->edad_anios ?? $m->edad ?? null;
-            $edadM = $m->edad_meses ?? null;
-            $sexo  = $m->sexo ?? null;
+            $nom = d($v->nombres_apellidos);
+            $sexo = strtoupper(d($v->sexo));
+            $edadA = d($v->edad);
+            $edadM = d($v->edad_meses); // si no existe quedará vacío
+
+            $gestante = (int) d($v->gestante, 0) === 1;
+            $estudia  = (int) d($v->estudia, 0) === 1;
+
+            // En tu modelo Victima NO existe cert_nac: queda vacío
+            $cert = (int) d($v->cert_nac, null); // null -> no marca nada
         @endphp
-        <tr>
-            <td class="text-center">{{ $i+1 }}</td>
-            <td>{{ $v($nomMenor) }}</td>
-            <td class="text-center">
-                <span class="box">{{ $x($m->gestante_si ?? 0) }}</span> <span class="xs">SI</span>
-                <span class="box">{{ $x(isset($m->gestante_no) ? $m->gestante_no : (empty($m->gestante_si) ? 1:0)) }}</span> <span class="xs">NO</span>
-            </td>
-            <td>
-                <div><span class="xs">AÑOS:</span> {{ $v($edadA) }}</div>
-                <div><span class="xs">MESES:</span> {{ $v($edadM) }}</div>
-            </td>
-            <td class="text-center">
-                <span class="box">{{ ($sexo==='M') ? 'X' : '' }}</span> <span class="xs">M</span>
-                <span class="box">{{ ($sexo==='F') ? 'X' : '' }}</span> <span class="xs">F</span>
-            </td>
-            <td class="text-center">
-                <span class="box">{{ $x($m->cert_nac ?? 0) }}</span> <span class="xs">SI</span>
-                <span class="box">{{ $x(isset($m->cert_nac_no) ? $m->cert_nac_no : (empty($m->cert_nac) ? 1:0)) }}</span> <span class="xs">NO</span>
-            </td>
-            <td class="text-center">
-                <span class="box">{{ $x($m->estudia ?? 0) }}</span> <span class="xs">SI</span>
-                <span class="box">{{ $x(isset($m->estudia_no) ? $m->estudia_no : (empty($m->estudia) ? 1:0)) }}</span> <span class="xs">NO</span>
-            </td>
-            <td>{{ $v($m->ultimo_curso ?? '') }}</td>
-            <td>{{ $v($m->tipo_trabajo ?? '') }}</td>
+
+        <tr class="center">
+            <td>{{ $i+1 }}</td>
+            <td class="clip" style="text-align:left;">{{ $nom }}</td>
+
+            {{-- GESTANTE --}}
+            <td>{{ chk($gestante) }}</td>
+            <td>{{ chk(!$gestante) }}</td>
+
+            {{-- EDAD --}}
+            <td>{{ $edadA }}</td>
+            <td>{{ $edadM }}</td>
+
+            {{-- SEXO --}}
+            <td>{{ chk($sexo === 'F') }}</td>
+            <td>{{ chk($sexo === 'M') }}</td>
+
+            {{-- C. NAC --}}
+            <td>{{ chk($cert === 1) }}</td>
+            <td>{{ chk($cert === 0) }}</td>
+
+            {{-- ESTUDIA --}}
+            <td>{{ chk($estudia) }}</td>
+            <td>{{ chk(!$estudia) }}</td>
+
+            {{-- ÚLTIMO CURSO --}}
+            <td style="text-align:left;">{{ d($v->grado_curso) }}</td>
+
+            {{-- TIPO DE TRABAJO --}}
+            <td style="text-align:left;">{{ d($v->lugar_trabajo) }}</td>
         </tr>
     @empty
-        <tr><td colspan="9" class="text-center muted">— Sin menores registrados —</td></tr>
+        <tr>
+            <td class="center">1</td>
+            <td colspan="13" class="center muted">— Sin víctimas registradas —</td>
+        </tr>
     @endforelse
 </table>
 
-<table class="table mb-4">
+<table class="tight avoid">
     <tr>
-        <th style="width:12%;">Domicilio:</th>
-        <td style="width:58%">{{ $v($domicilio) }}</td>
-        <th style="width:12%;">Teléfono:</th>
-        <td style="width:18%">{{ $v($telefono) }}</td>
+        <td style="width:15%;" class="b">Domicilio:</td>
+        <td style="width:55%;">{{ d($den?->denunciante_domicilio_actual) }}</td>
+        <td style="width:15%;" class="b">Teléfono:</td>
+        <td style="width:15%;">{{ d($den?->denunciante_telefono) }}</td>
     </tr>
 </table>
 
-{{-- ====== 3. DATOS DEL GRUPO FAMILIAR ====== --}}
-<div class="section upper">3.- Datos del Grupo Familiar</div>
-<table class="table mb-4">
-    <tr>
-        <th style="width:6%;">N°</th>
-        <th style="width:34%;">Nombres y Apellidos</th>
-        <th style="width:14%;">Parentesco</th>
-        <th style="width:10%;">Edad</th>
-        <th style="width:10%;">Sexo</th>
-        <th style="width:14%;">G. Instrucción</th>
-        <th style="width:12%;">Ocupación</th>
+{{-- ===== 3. DATOS DEL GRUPO FAMILIAR ===== --}}
+<table class="tight" style="margin-top:6px;">
+    <tr><td class="section">3.- DATOS DEL GRUPO FAMILIAR</td></tr>
+</table>
+
+<table class="tight avoid">
+    <tr class="center b">
+        <td style="width:5%;">N°</td>
+        <td style="width:35%;">Nombres y Apellidos</td>
+        <td style="width:18%;">Parentesco</td>
+        <td style="width:10%;">Edad</td>
+        <td style="width:10%;">Sexo</td>
+        <td style="width:12%;">G. Instrucción</td>
+        <td style="width:10%;">Ocupación</td>
     </tr>
+
     @forelse($caso->familiares as $i => $f)
         @php
-            $nombreFam = $f->familiar_nombre_completo
-                ?? trim(($f->familiar_nombres ?? '').' '.($f->familiar_paterno ?? '').' '.($f->familiar_materno ?? ''));
+            $nombreFam = d($f->familiar_nombre_completo,
+                trim(d($f->familiar_nombres).' '.d($f->familiar_paterno).' '.d($f->familiar_materno))
+            );
         @endphp
         <tr>
-            <td class="text-center">{{ $i+1 }}</td>
-            <td>{{ $v($nombreFam) }}</td>
-            <td>{{ $v($f->familiar_parentesco ?? '') }}</td>
-            <td>{{ $v($f->familiar_edad ?? '') }}</td>
-            <td>{{ $v($f->familiar_sexo ?? '') }}</td>
-            <td>{{ $v($f->familiar_grado ?? '') }}</td>
-            <td>{{ $v($f->familiar_ocupacion ?? '') }}</td>
+            <td class="center">{{ $i+1 }}</td>
+            <td>{{ $nombreFam }}</td>
+            <td>{{ d($f->familiar_parentesco) }}</td>
+            <td class="center">{{ d($f->familiar_edad) }}</td>
+            <td class="center">{{ d($f->familiar_sexo) }}</td>
+            <td>{{ d($f->familiar_grado) }}</td>
+            <td>{{ d($f->familiar_ocupacion) }}</td>
         </tr>
     @empty
-        <tr><td colspan="7" class="text-center muted">— Sin familiares registrados —</td></tr>
+        <tr><td class="center">1</td><td colspan="6" class="center muted">— Sin grupo familiar registrado —</td></tr>
     @endforelse
 </table>
 
-{{-- ====== 5. DATOS DEL DENUNCIADO (primer denunciado para mantener el formato) ====== --}}
-<div class="section upper">5.- Datos del Denunciado</div>
-<table class="table mb-4">
-    <tr>
-        <th style="width:24%;">Nombres y Apellidos</th>
-        <td style="width:40%">{{ $v($nombreDenunciado) }}</td>
-        <th style="width:8%;">Sexo</th>
-        <td style="width:8%">{{ $v($denunciado->denunciado_sexo ?? '') }}</td>
-        <th style="width:8%;">Edad</th>
-        <td style="width:12%">{{ $v($denunciado->denunciado_edad ?? '') }}</td>
-    </tr>
-    <tr>
-        <th>Parentesco o tipo de relación</th>
-        <td>{{ $v($denunciado->denunciado_relacion ?? '') }}</td>
-        <th>C.I.</th>
-        <td colspan="3">{{ $v(($denunciado->denunciado_documento ?? '').' '.($denunciado->denunciado_nro ?? '')) }}</td>
-    </tr>
-    <tr>
-        <th>Domicilio (zona/comunidad)</th>
-        <td>{{ $v($denunciado->denunciado_domicilio_actual ?? '') }}</td>
-        <th>Teléfono</th>
-        <td>{{ $v($denunciado->denunciado_telefono ?? '') }}</td>
-        <th>Lugar de Trabajo</th>
-        <td>{{ $v($denunciado->denunciado_lugar_trabajo ?? '') }}</td>
-    </tr>
-    <tr>
-        <th>Ocupación</th>
-        <td colspan="5">{{ $v($denunciado->denunciado_ocupacion ?? '') }}</td>
-    </tr>
+{{-- ===== 5. DATOS DEL DENUNCIADO ===== --}}
+<table class="tight" style="margin-top:6px;">
+    <tr><td class="section">5.- DATOS DEL DENUNCIADO <span class="xxs">(Especificar la institución si corresponde)</span></td></tr>
 </table>
 
-{{-- ====== DATOS DEL DENUNCIANTE (primer denunciante para mantener el formato) ====== --}}
-<div class="section upper">Datos del Denunciante</div>
-<table class="table mb-4">
+<table class="tight avoid">
     <tr>
-        <th style="width:24%;">Nombre y Apellido</th>
-        <td style="width:40%">{{ $v($nombreDenunciante) }}</td>
-        <th style="width:8%;">Sexo</th>
-        <td style="width:8%">{{ $v($denunciante->denunciante_sexo ?? '') }}</td>
-        <th style="width:8%;">Edad</th>
-        <td style="width:12%">{{ $v($denunciante->denunciante_edad ?? '') }}</td>
+        <td style="width:18%;" class="b">Nombres y Apellidos</td>
+        <td style="width:52%;">{{ d($nombreDenu) }}</td>
+        <td style="width:10%;" class="b">Sexo:</td>
+        <td style="width:20%;">{{ d($denu?->denunciado_sexo) }}</td>
     </tr>
     <tr>
-        <th>C.I.</th>
-        <td>{{ $v(($denunciante->denunciante_documento ?? '').' '.($denunciante->denunciante_nro ?? '')) }}</td>
-        <th>Domicilio</th>
-        <td colspan="3">{{ $v($denunciante->denunciante_domicilio_actual ?? '') }}</td>
+        <td class="b">Parentesco o tipo de relación</td>
+        <td>{{ d($denu?->denunciado_relacion) }}</td>
+        <td class="b">C.I.</td>
+        <td>{{ d($denu?->denunciado_nro) }}</td>
     </tr>
     <tr>
-        <th>Teléfono</th>
-        <td>{{ $v($denunciante->denunciante_telefono ?? '') }}</td>
-        <th>Lugar de Trabajo</th>
-        <td>{{ $v($denunciante->denunciante_lugar_trabajo ?? '') }}</td>
-        <th>Ocupación</th>
-        <td>{{ $v($denunciante->denunciante_ocupacion ?? '') }}</td>
+        <td class="b">Domicilio (zona/comunidad)</td>
+        <td>{{ d($denu?->denunciado_domicilio_actual) }}</td>
+        <td class="b">Teléfono</td>
+        <td>{{ d($denu?->denunciado_telefono) }}</td>
     </tr>
-</table>
-
-{{-- ====== 6. DESCRIPCIÓN DE LA DENUNCIA ====== --}}
-<div class="section upper">6.- Descripción de la denuncia</div>
-<table class="table mb-6">
     <tr>
-        <td style="height:160px;">
-            {!! nl2br(e($caso->caso_descripcion ?? '')) !!}
+        <td class="b">Lugar de Trabajo</td>
+        <td>{{ d($denu?->denunciado_prox) }}</td>
+        <td class="b">Ocupación</td>
+        <td>
+            {{ d($denu?->denunciado_ocupacion) }}
+            @if(d($denu?->denunciado_ocupacion_exacto))
+                <span class="xxs">— {{ d($denu?->denunciado_ocupacion_exacto) }}</span>
+            @endif
         </td>
     </tr>
 </table>
 
-{{-- ====== FIRMAS ====== --}}
-<table class="table no-border">
+{{-- ===== DATOS DEL DENUNCIANTE ===== --}}
+<table class="tight" style="margin-top:6px;">
+    <tr><td class="section">DATOS DEL DENUNCIANTE <span class="xxs">(Especificar la institución si corresponde)</span></td></tr>
+</table>
+
+<table class="tight avoid">
     <tr>
-        <td style="width:50%; padding-right:20px;">
-            <div class="hr"></div>
-            <div class="small">DENUNCIANTE:</div>
-            <div class="small">Nombre: ..............................................................</div>
-            <div class="small">Firma / huella digital</div>
-            <div class="small">C.I.: ..................................................................</div>
-        </td>
-        <td style="width:50%; padding-left:20px;">
-            <div class="hr"></div>
-            <div class="small">Firma</div>
-            <div class="small">Asistente Legal del D.N.A</div>
+        <td style="width:18%;" class="b">Nombre y Apellido</td>
+        <td style="width:52%;">{{ d($nombreDen) }}</td>
+        <td style="width:10%;" class="b">Sexo:</td>
+        <td style="width:20%;">{{ d($den?->denunciante_sexo) }}</td>
+    </tr>
+    <tr>
+        <td class="b">Parentesco o tipo de relación</td>
+        <td>{{ d($den?->denunciante_relacion) }}</td>
+        <td class="b">C.I.</td>
+        <td>{{ d($den?->denunciante_nro) }}</td>
+    </tr>
+    <tr>
+        <td class="b">Domicilio</td>
+        <td>{{ d($den?->denunciante_domicilio_actual) }}</td>
+        <td class="b">Teléfono</td>
+        <td>{{ d($den?->denunciante_telefono) }}</td>
+    </tr>
+    <tr>
+        <td class="b">Lugar de Trabajo</td>
+        <td>{{ d($den?->denunciante_cargo) }}</td>
+        <td class="b">Ocupación</td>
+        <td>{{ d($den?->denunciante_ocupacion) }}</td>
+    </tr>
+</table>
+
+{{-- ===== 6. DESCRIPCIÓN DE LA DENUNCIA ===== --}}
+<table class="tight" style="margin-top:6px;">
+    <tr><td class="section">6.- DESCRIPCIÓN DE LA DENUNCIA</td></tr>
+</table>
+
+<table class="tight avoid">
+    <tr>
+        <td class="h140">
+            {!! nl2br(e(d($caso->caso_descripcion))) !!}
         </td>
     </tr>
 </table>
 
-<table class="table no-border" style="margin-top:26px;">
+{{-- ===== FIRMAS (como tu imagen) ===== --}}
+<table class="tight avoid" style="margin-top:8px;">
     <tr>
-        <td style="width:50%; padding-right:20px;">
-            <div class="small b">ABOGADO ASIGNADO AL CASO:</div>
-            <div class="hr"></div>
-            <div class="small">Dr. (a)</div>
+        <td style="width:50%; height:80px;">
+            <div class="b">DENUNCIANTE:</div>
+            <div class="xxs" style="margin-top:10px;">NOMBRE: ............................................................</div>
+            <div class="xxs" style="margin-top:10px;" class="center">Firma / huella digital</div>
+            <div class="xxs" style="margin-top:10px;">C.I.: ..................................................................</div>
         </td>
-        <td style="width:50%; padding-left:20px;">
-            <div class="hr"></div>
-            <div class="small">Firma del Abogado</div>
+        <td style="width:50%; height:80px;" class="center">
+            <div style="margin-top:45px;" class="xxs">Firma</div>
+            <div class="xxs">Asistente Legal del D.N.A</div>
+        </td>
+    </tr>
+    <tr>
+        <td style="width:50%; height:75px;">
+            <div class="b">ABOGADO ASIGNADO AL CASO :</div>
+            <div class="xxs" style="margin-top:25px;">Dr. (a)</div>
+        </td>
+        <td style="width:50%; height:75px;" class="center">
+            <div style="margin-top:40px;" class="xxs">Firma del Abogado</div>
         </td>
     </tr>
 </table>
