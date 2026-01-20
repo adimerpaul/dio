@@ -1235,7 +1235,15 @@ class CasoController extends Controller
             $request['fecha_apertura_caso'] = date('Y-m-d H:i:s');
             $request['area'] = $user->area;
             $request['estado_caso'] = "Apertura Denuncia";
-            $request['etapa_procesal'] = "Denuncia / Querella";
+            $titulo = $request->titulo;
+            error_log('Titulo caso: '.$titulo);
+            if ($titulo == 'Registrar Nuevo Caso Penal'
+                || $titulo == 'DNA Proceso Penal'
+                || $titulo == 'Proceso Penal SLAM'
+                || $titulo == 'Nuevo Caso Penal UMADIS') {
+                $request['etapa_procesal'] = "Denuncia / Querella";
+            }
+
             $request['zona'] = $user->zona;
             if ($request->has('legal_user_id') && $request->legal_user_id) {
                 $request['fecha_derivacion_area_legal'] = date('Y-m-d H:i:s');

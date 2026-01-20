@@ -110,14 +110,14 @@
 
         <td style="width:40%;">
             <div class="casebox">CASO: {{ d($caso->caso_numero) }}</div>
-            <div class="mt6">
-                <div class="muted">Provincia:</div>
-                <span class="line">{{ d($caso->provincia) }}</span>
-            </div>
-            <div class="mt6">
-                <div class="muted">Municipio:</div>
-                <span class="line">{{ d($caso->municipio) }}</span>
-            </div>
+{{--            <div class="mt6">--}}
+{{--                <div class="muted">Provincia:</div>--}}
+{{--                <span class="line">{{ d($caso->provincia) }}</span>--}}
+{{--            </div>--}}
+{{--            <div class="mt6">--}}
+{{--                <div class="muted">Municipio:</div>--}}
+{{--                <span class="line">{{ d($caso->municipio) }}</span>--}}
+{{--            </div>--}}
         </td>
     </tr>
 </table>
@@ -130,18 +130,18 @@
 
     <table class="form tight avoid">
         <tr>
-            <td style="width:34%;">
-                <div class="cell-label">2.1 Identificación — Nombre(s)</div>
+            <td style="width:34%;" colspan="3">
+                <div class="cell-label">2.1 Identificación — Nombre Completo</div>
                 <span class="line">{{ d($den->denunciante_nombres) }}</span>
             </td>
-            <td style="width:33%;">
-                <div class="cell-label">Ap. Paterno</div>
-                <span class="line">{{ d($den->denunciante_paterno) }}</span>
-            </td>
-            <td style="width:33%;">
-                <div class="cell-label">Ap. Materno</div>
-                <span class="line">{{ d($den->denunciante_materno) }}</span>
-            </td>
+{{--            <td style="width:33%;">--}}
+{{--                <div class="cell-label">Ap. Paterno</div>--}}
+{{--                <span class="line">{{ d($den->denunciante_paterno) }}</span>--}}
+{{--            </td>--}}
+{{--            <td style="width:33%;">--}}
+{{--                <div class="cell-label">Ap. Materno</div>--}}
+{{--                <span class="line">{{ d($den->denunciante_materno) }}</span>--}}
+{{--            </td>--}}
         </tr>
 
         <tr>
@@ -288,18 +288,18 @@
 
     <table class="form tight avoid">
         <tr>
-            <td style="width:34%;">
+            <td style="width:34%;" colspan="3">
                 <div class="cell-label">4.1 Identificación — Nombre(s)</div>
                 <span class="line">{{ d($denu->denunciado_nombres) }}</span>
             </td>
-            <td style="width:33%;">
-                <div class="cell-label">Ap. Paterno</div>
-                <span class="line">{{ d($denu->denunciado_paterno) }}</span>
-            </td>
-            <td style="width:33%;">
-                <div class="cell-label">Ap. Materno</div>
-                <span class="line">{{ d($denu->denunciado_materno) }}</span>
-            </td>
+{{--            <td style="width:33%;">--}}
+{{--                <div class="cell-label">Ap. Paterno</div>--}}
+{{--                <span class="line">{{ d($denu->denunciado_paterno) }}</span>--}}
+{{--            </td>--}}
+{{--            <td style="width:33%;">--}}
+{{--                <div class="cell-label">Ap. Materno</div>--}}
+{{--                <span class="line">{{ d($denu->denunciado_materno) }}</span>--}}
+{{--            </td>--}}
         </tr>
 
         <tr>
@@ -345,8 +345,10 @@
                 <span class="line">{{ d($denu->denunciado_edad) }}</span>
             </td>
             <td style="width:55%;" colspan="2">
-                <div class="cell-label">4.7 Residencia Habitual</div>
-                <span class="line">{{ d($denu->denunciado_residencia) }}</span>
+{{--                <div class="cell-label">4.7 Residencia Habitual</div>--}}
+{{--                <span class="line">{{ d($denu->denunciado_residencia) }}</span>--}}
+                <div class="cell-label">DIRECCIÓN ACTUAL</div>
+                <span class="line">{{ d($denu->denunciado_domicilio_actual) }}</span>
             </td>
         </tr>
 
@@ -373,16 +375,16 @@
         <tr>
             <td colspan="3">
                 <div class="cell-label">4.11 Relación con la Denunciante</div>
-                <span class="line">{{ d($denu->denunciado_relacion) }}</span>
+                <span class="line">{{ d($denu->denunciado_relacion_denunciado) }}</span>
             </td>
         </tr>
 
-        <tr>
-            <td colspan="3">
-                <div class="cell-label">DIRECCIÓN ACTUAL</div>
-                <span class="line">{{ d($denu->denunciado_domicilio_actual) }}</span>
-            </td>
-        </tr>
+{{--        <tr>--}}
+{{--            <td colspan="3">--}}
+{{--                <div class="cell-label">DIRECCIÓN ACTUAL</div>--}}
+{{--                <span class="line">{{ d($denu->denunciado_domicilio_actual) }}</span>--}}
+{{--            </td>--}}
+{{--        </tr>--}}
 
         <tr>
             <td style="width:35%;">
