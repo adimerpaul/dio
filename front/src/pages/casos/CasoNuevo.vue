@@ -15,7 +15,7 @@
 <!--        btn cambiar estado de sidabled-->
         <q-btn
           flat color="primary" :icon="disabled ? 'lock_open' : 'lock'" :label="disabled ? 'Habilitar edición' : 'Deshabilitar edición'" @click="disabled = !disabled" no-caps dense
-          v-if="disabled && ($store.user.role==='Asistentes' || $store.user.role==='Administrador' || $store.user.role==='Axuliares')"
+          v-if="disabled && ($store.user.role==='Asistente' || $store.user.role==='Administrador' || $store.user.role==='Auxiliar')"
         />
         <q-btn color="primary" icon="save" label="Guardar Cambios" :loading="loading" @click="update" no-caps dense v-if="disabled===false"/>
       </div>
@@ -490,21 +490,23 @@
                              v-upper/>
                   </div>
                   <div class="col-6 col-md-3">
-                    <q-input v-model="v.ci" dense outlined clearable label="Numero de documento" v-upper/>
+                    <q-input v-model="v.denunciado_nro" dense outlined clearable label="Numero de documento" v-upper/>
+<!--                    <pre>{{v}}</pre>-->
                   </div>
                   <div class="col-6 col-md-3">
-                    <q-input v-model="v.lugar_nacimiento" dense outlined clearable label="Lugar de nacimiento" v-upper/>
+                    <q-input v-model="v.denunciado_lugar_nacimiento" dense outlined clearable label="Lugar de nacimiento" v-upper/>
                   </div>
                   <div class="col-6 col-md-3">
-                    <q-input v-model="v.fecha_nacimiento" type="date" dense outlined label="Fecha de nacimiento"
-                             @update:model-value="(val) => onBirthChange(val, v,'victima')"/>
+                    <q-input v-model="v.denunciado_fecha_nacimiento" type="date" dense outlined label="Fecha de nacimiento"
+                             @update:model-value="(val) => onBirthChange(val, v,'denunciado')"/>
                   </div>
                   <div class="col-6 col-md-3">
-                    <q-input v-model.number="v.edad" dense outlined type="number" label="Edad" v-upper/>
+                    <q-input v-model.number="v.denunciado_edad" dense outlined type="number" label="Edad" v-upper/>
                   </div>
                   <div class="col-6 col-md-3">
-                    <q-select v-model="v.sexo" dense outlined emit-value map-options clearable
+                    <q-select v-model="v.denunciado_sexo" dense outlined emit-value map-options clearable
                               :options="sexos" label="Sexo"/>
+<!--                    <pre>{{v}}</pre>-->
                   </div>
                   <div class="col-6 col-md-3">
                     <q-select v-model="v.denunciado_estado_civil" dense outlined emit-value map-options clearable
@@ -528,7 +530,7 @@
                   </template>
                   <template v-else>
                     <div class="col-12 col-md-4">
-                      <q-input v-model="v.denunciado_cargo" dense outlined clearable label="Lugar de trabajo"
+                      <q-input v-model="v.denunciado_trabaja" dense outlined clearable label="Lugar de trabajo"
                                v-upper/>
                     </div>
                   </template>
@@ -552,7 +554,7 @@
                              label="Parentesco o Relación con la Víctima" v-upper/>
                   </div>
                   <div class="col-12 col-md-4">
-                    <q-input v-model="v.denunciado_relacion_denunciante" dense outlined clearable
+                    <q-input v-model="v.denunciado_relacion_denunciado" dense outlined clearable
                              label="Parentesco o Relación con el Denunciante" v-upper/>
                   </div>
                 </div>
@@ -2013,6 +2015,11 @@ export default {
       } else if (tipo === 'denunciante') {
         const nacimiento = moment(val)
         v.denunciante_edad = hoy.diff(nacimiento, 'years')
+      }
+      // else denunciados
+      else if (tipo === 'denunciado') {
+        const nacimiento = moment(val)
+        v.denunciado_edad = hoy.diff(nacimiento, 'years')
       }
     },
     toggleRecognition(field) {

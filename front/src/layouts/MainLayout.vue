@@ -46,7 +46,24 @@
                   <q-item-section>
                     <q-item-label>
                       <div>
-                        <strong>{{ p.tipo }} {{ p.caso_numero }}</strong> - {{ p.caso_fecha_hecho }}
+                        <strong>{{ p.tipo }} {{ p.caso_numero }}</strong> -
+<!--                        `fecha_derivacion_area_legal` datetime DEFAULT NULL,-->
+<!--                        `fecha_derivacion_area_psicologica` datetime DEFAULT NULL,-->
+<!--                        `fecha_derivacion_area_social` datetime DEFAULT NULL,-->
+                        <template v-if="$store.user?.role == 'Abogado'">
+                          Derivado el {{ p.fecha_derivacion_area_legal }}
+                        </template>
+                        <template v-else-if="$store.user?.role == 'Psicologo'">
+                          Derivado el {{ p.fecha_derivacion_area_psicologica }}
+                        </template>
+                        <template v-else-if="$store.user?.role == 'Social'">
+                          Derivado el {{ p.fecha_derivacion_area_social }}
+                        </template>
+<!--                        <pre>{{$store.user}}</pre>-->
+<!--                        <pre>{{p.fecha_derivacion_area_legal}}</pre>-->
+<!--                        <pre>{{p.fecha_derivacion_area_psicologica}}</pre>-->
+<!--                        <pre>{{p.fecha_derivacion_area_social}}</pre>-->
+<!--                        {{ p }}-->
                       </div>
                       <div class="text-caption">
                         {{ p.caso_direccion || 'Sin dirección' }}
