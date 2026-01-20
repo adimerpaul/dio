@@ -251,6 +251,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/casos/{caso}/acogimiento', [CasoAcogimientoController::class, 'showByCaso']);
     Route::post('/casos/{caso}/acogimiento', [CasoAcogimientoController::class, 'storeOrUpdate']);
 });
+Route::get('/casos/{caso}/print-registro-domiciliario', [CasoController::class, 'printRegistroDomiciliario']);
 Route::get('/slimsImprimir', [SlimController::class, 'imprimir']);
 
 Route::get('/casos/{caso}/pdf/hoja-ruta', [CasoController::class, 'pdfHojaRuta']);

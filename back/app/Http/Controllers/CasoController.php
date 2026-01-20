@@ -950,6 +950,34 @@ class CasoController extends Controller
             'items' => $items,
         ]);
     }
+    public function printRegistroDomiciliario(Request $request, Caso $caso)
+    {
+        // Cargar el caso con TODO lo que necesitas (widgets/relaciones)
+        $caso = Caso::with([
+            'denunciados',
+            'denunciantes',
+            'familiares',
+            'menores',
+            'psicologica_user:id,name',
+            'trabajo_social_user:id,name',
+            'legal_user:id,name',
+            'user:id,name',
+//            'problematicas',
+            'documentos',
+            'fotografias',
+            'victimas',
+            'acogimientos',
+            'psicologicas',
+            'informesLegales',
+            'informesSociales',
+        ])->findOrFail($caso->id);
+
+        // Formulario ES SOLO del denunciado
+        // (si no existe, igual mostramos "—" en el view)
+        return view('casos.printRegistroDomiciliario', [
+            'caso' => $caso
+        ]);
+    }
 
 
     public function pdfHojaRuta(Request $request, Caso $caso)
