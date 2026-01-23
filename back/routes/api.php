@@ -255,6 +255,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('mis-remision-casos/{id}/marcar-leido', [RemisionCasoController::class, 'marcarLeido']);
 //    this.$axios.get('/mis-casos-de-turno')
     Route::get('/mis-casos-de-turno', [CasoController::class, 'misCasosDeTurno']);
+//    await this.$axios.post(`/casos/${this.caseId}/devolver-psicologico`);
+    Route::post('/casos/{caso}/devolver-psicologico', [CasoController::class, 'devolverPsicologico']);
+//    await this.$axios.post(`/casos/${this.caseId}/devolver-social`);
+    Route::post('/casos/{caso}/devolver-social', [CasoController::class, 'devolverSocial']);
 
 });
 Route::get('/casos/{caso}/print-registro-domiciliario', [CasoController::class, 'printRegistroDomiciliario']);

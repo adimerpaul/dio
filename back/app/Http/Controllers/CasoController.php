@@ -24,6 +24,18 @@ use Intervention\Image\ImageManager;
 
 class CasoController extends Controller
 {
+    function devolverSocial(Request $request, $casoId){
+        $caso = Caso::findOrFail($casoId);
+        $caso->fecha_devolucion_area_social = date('Y-m-d H:i:s');
+        $caso->save();
+        return response()->json($caso);
+    }
+    function devolverPsicologico(Request $request, $casoId){
+        $caso = Caso::findOrFail($casoId);
+        $caso->fecha_devolucion_area_psicologica = date('Y-m-d H:i:s');
+        $caso->save();
+        return response()->json($caso);
+    }
     function misCasosDeTurno(Request $request)
     {
         $user = $request->user();
@@ -1137,6 +1149,8 @@ class CasoController extends Controller
         $perPage = (int)$request->get('per_page', 10);
         $perPage = max(5, min($perPage, 100));
         $tipo = trim((string)$request->get('tipo', ''));
+//        only_pendientes
+        $onlyPendientes = (bool)$request->get('only_pendientes', false);
 
         $query = Caso::query()
             ->orderByDesc('created_at')
@@ -1149,7 +1163,6 @@ class CasoController extends Controller
         if ($q !== '') {
             $like = "%{$q}%";
 //            error_log("Buscando casos con texto: {$q}");
-
             $query->where(function ($group) use ($like) {
                 // Campos directos del caso
                 $group->where(function ($s) use ($like) {
@@ -1200,6 +1213,26 @@ class CasoController extends Controller
         }
         if ($user->role === 'Auxiliar') {
             $query->where('zona', $user->zona);
+        }
+//        $onlyPendientes
+        if ($onlyPendientes) {
+            switch ($user->role) {
+                case 'Psicologo':
+                    $query->whereNull('fecha_aceptacion_area_psicologica');
+                    break;
+
+                case 'Abogado':
+                    $query->whereNull('fecha_aceptacion_area_legal');
+                    break;
+
+                case 'Social':
+                    $query->whereNull('fecha_aceptacion_area_social');
+                    break;
+
+                default:
+                    // otros roles no aplican filtro
+                    break;
+            }
         }
 
         $query->with([

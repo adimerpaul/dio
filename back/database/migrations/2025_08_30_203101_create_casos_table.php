@@ -135,6 +135,10 @@ return new class extends Migration
             $table->string('etapa_procesal', 120)->nullable();
             $table->string('etapa', 120)->nullable();
 
+
+            $table->dateTime('fecha_devolucion_area_psicologica')->nullable();
+            $table->dateTime('fecha_devolucion_area_social')->nullable();
+
             $table->timestamps();
             $table->softDeletes();
         });
