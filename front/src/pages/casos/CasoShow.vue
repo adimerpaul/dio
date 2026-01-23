@@ -326,6 +326,8 @@ export default {
           await this.$axios.post(`/casos/${this.caseId}/aceptar-social`);
           this.$q.notify({ type: 'positive', message: 'Caso social aceptado exitosamente.' });
           this.fetchCaso();
+          const { data } = await this.$axios.get('/casos-pendientes-resumen')
+          this.$store.pending = data
         } catch (e) {
           this.$alert.error(e?.response?.data?.message || 'No se pudo aceptar el caso social');
         }
@@ -347,6 +349,8 @@ export default {
           await this.$axios.post(`/casos/${this.caseId}/aceptar-psicologico`);
           this.$q.notify({ type: 'positive', message: 'Caso psicológico aceptado exitosamente.' });
           this.fetchCaso();
+          const { data } = await this.$axios.get('/casos-pendientes-resumen')
+          this.$store.pending = data
         } catch (e) {
           this.$alert.error(e?.response?.data?.message || 'No se pudo aceptar el caso psicológico');
         }
@@ -368,6 +372,8 @@ export default {
           await this.$axios.post(`/casos/${this.caseId}/aceptar-legal`);
           this.$q.notify({ type: 'positive', message: 'Caso legal aceptado exitosamente.' });
           this.fetchCaso();
+          const { data } = await this.$axios.get('/casos-pendientes-resumen')
+          this.$store.pending = data
         } catch (e) {
           this.$alert.error(e?.response?.data?.message || 'No se pudo aceptar el caso legal');
         }

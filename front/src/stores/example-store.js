@@ -7,6 +7,7 @@ export const useCounterStore = defineStore('counter', {
     isLogged: !!!localStorage.getItem('TokenDio'),
     permissions: [],
     casoSelect: {},
+    pending: []
   }),
 
   getters: {

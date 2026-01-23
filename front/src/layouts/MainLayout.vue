@@ -26,23 +26,25 @@
         <!-- Perfil -->
         <div class="row flex-center">
           <!-- Badge de pendientes -->
-<!--          <pre>{{pendingCount}}</pre>-->
+<!--          <pre>{{$store.pending.length}}</pre>-->
           <q-btn
             flat round dense
-            :icon="pendingCount > 0 ? 'notifications_active' : 'notifications_none'"
-            :color="pendingCount > 0 ? 'negative' : 'grey-7'"
+            :icon="$store.pending.length > 0 ? 'notifications_active' : 'notifications_none'"
+            :color="$store.pending.length > 0 ? 'negative' : 'grey-7'"
             :loading="pendingLoading"
             aria-label="Pendientes"
           >
-            <q-badge v-if="pendingCount > 0" color="red" text-color="white" floating>
-              {{ pendingCount }}
+            <q-badge v-if="$store.pending.length > 0" color="red" text-color="white" floating>
+              {{ $store.pending.length }}
             </q-badge>
-            <q-tooltip v-if="pendingCount > 0">
-              Tienes {{ pendingCount }} pendiente(s)
+            <q-tooltip v-if="$store.pending.length > 0">
+              Tienes {{ $store.pending.length }} pendiente(s)
             </q-tooltip>
             <q-menu>
+<!--              <pre>{{$store.pending}}</pre>-->
               <q-list style="min-width: 250px">
-                <q-item v-if="pending" v-for="(p,i) in pending" :key="i" clickable @click="irPendientes(p)" v-close-popup>
+<!--                <pre>{{$store.pending}}</pre>-->
+                <q-item v-if="$store.pending" v-for="(p,i) in $store.pending" :key="i" clickable @click="irPendientes(p)" v-close-popup>
                   <q-item-section>
                     <q-item-label>
                       <div>
@@ -71,7 +73,7 @@
                     </q-item-label>
                   </q-item-section>
                 </q-item>
-                <q-item v-if="!pendingCount && !pendingLoading">
+                <q-item v-if="!$store.pending.length" clickable>
                   <q-item-section>
                     <q-item-label>
                       No tienes pendientes
@@ -730,8 +732,8 @@ const norm = (s) => (s ?? '')
 
 /* ---------- UI header ---------- */
 const leftDrawerOpen = ref(false)
-const pendingCount   = ref(0)
-const pending   = ref({})
+// const $store.pending.count()   = ref(0)
+// const pending   = ref({})
 const pendingLoading = ref(false)
 
 /* ---------- Super Admin SOLO por ÁREA ---------- */
@@ -871,8 +873,8 @@ async function fetchPendientesCount () {
   pendingLoading.value = true
   try {
     const { data } = await proxy.$axios.get('/casos-pendientes-resumen')
-    pending.value = data
-    pendingCount.value = data.length
+    proxy.$store.pending = data
+    // $store.pending.count() = data.length
   } catch (e) {
     // opcional
   } finally {
@@ -881,7 +883,7 @@ async function fetchPendientesCount () {
 }
 
 function irPendientes (p) {
-  // console.log(p)
+  console.log(p)
   proxy.$store.casoSelect = p
   const tipo = p.tipo.toLowerCase()
   const ruta = tipo.endsWith('s') ? tipo : `${tipo}s`

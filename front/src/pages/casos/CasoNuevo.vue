@@ -377,7 +377,7 @@
         <q-card-section class="q-pa-xs" id="denunciante-map-section" v-if="mostrar3Show">
           <div class="row q-col-gutter-md">
             <div class="col-10">
-              <q-input v-model="f.denunciante_domicilio_actual" dense outlined clearable label="Domicilio actual"/>
+              <q-input v-model="f.denunciante_domicilio_actual" dense outlined clearable label="Direccion"/>
             </div>
             <div class="col-2">
               <q-btn label="Buscar" @click="$refs.denunMap?.geocodeAndFly(f.denunciante_domicilio_actual)"/>
@@ -426,7 +426,9 @@
                   <!--                  familiar_estado_civil familiar_ocupacion familiar_telefono-->
 
                   <div class="col-12 col-md-2">
-                    <q-input v-model="fam.familiar_estado_civil" dense outlined clearable label="Estado Civil" v-upper/>
+<!--                    <q-input v-model="fam.familiar_estado_civil" dense outlined clearable label="Estado Civil" v-upper/>-->
+                    <q-select v-model="fam.familiar_estado_civil" dense outlined emit-value map-options clearable
+                              :options="estadosCiviles" label="Estado civil"/>
                   </div>
                   <div class="col-12 col-md-2">
                     <q-input v-model="fam.familiar_ocupacion" dense outlined clearable label="Ocupación" v-upper/>
@@ -583,7 +585,7 @@
         <q-card-section class="q-pa-xs" id="denunciado-map-section" v-if="mostrar6Show">
           <div class="row q-col-gutter-md">
             <div class="col-10">
-              <q-input v-model="f.denunciado_domicilio_actual" dense outlined clearable label="Domicilio actual"/>
+              <q-input v-model="f.denunciado_domicilio_actual" dense outlined clearable label="Direccion"/>
             </div>
             <div class="col-2">
               <q-btn label="Buscar" @click="$refs.denunciadoMap?.geocodeAndFly(f.denunciado_domicilio_actual)"/>
@@ -708,6 +710,11 @@
 
         <q-card-section>
           <div class="row q-col-gutter-md">
+            <div class="col-12 col-md-4">
+              <q-select v-model="f.legal_user_id" dense outlined emit-value map-options clearable
+                        :options="abogados.map(u => ({ label: u.name, value: u.id }))"
+                        label="Área legal (responsable)"/>
+            </div>
             <!--            <div class="col-12 col-md-4"><q-input v-model="f.seguimiento_area" dense outlined clearable label="Área psicologica (responsable)"/></div>-->
             <!--            <div class="col-12 col-md-4"><q-input v-model="f.seguimiento_area_social" dense outlined clearable label="Área social (responsable)"/></div>-->
             <!--            <div class="col-12 col-md-4"><q-input v-model="f.seguimiento_area_legal" dense outlined clearable label="Área legal (responsable)"/></div>-->
@@ -721,11 +728,6 @@
               <q-select v-model="f.trabajo_social_user_id" dense outlined emit-value map-options clearable
                         :options="sociales.map(u => ({ label: u.name, value: u.id }))"
                         label="Área social (responsable)"/>
-            </div>
-            <div class="col-12 col-md-4">
-              <q-select v-model="f.legal_user_id" dense outlined emit-value map-options clearable
-                        :options="abogados.map(u => ({ label: u.name, value: u.id }))"
-                        label="Área legal (responsable)"/>
             </div>
           </div>
         </q-card-section>
