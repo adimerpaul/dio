@@ -99,6 +99,15 @@
         <div v-if="role === 'Social' && caso?.trabajo_social_user_id === $store.user?.id && !caso?.fecha_aceptacion_area_social">
           <q-btn color="red" icon="check_circle" label="Aceptar Caso Social" @click="aceptarCasoSocial()" no-caps size="10px"/>
         </div>
+<!--        'fecha_devolucion_area_psicologica',-->
+<!--&lt;!&ndash;        'fecha_devolucion_area_social',&ndash;&gt; boton color verde-->
+<!--        <pre>{{caso}}</pre>-->
+        <div  v-if="role === 'Psicologo' && caso?.psicologica_user_id === $store.user?.id && caso?.fecha_devolucion_area_psicologica == null">
+          <q-btn color="green" icon="check_circle" label="Devolucion Caso Psicológico" @click="devolverCasoPsicolico()" no-caps size="10px"/>
+        </div>
+        <div  v-if="role === 'Social' && caso?.trabajo_social_user_id === $store.user?.id && caso?.fecha_devolucion_area_social == null">
+          <q-btn color="green" icon="check_circle" label="Devolucion Caso Social" @click="devolverCasoSocial()" no-caps size="10px"/>
+        </div>
       </div>
     </div>
 
@@ -309,6 +318,48 @@ export default {
   methods: {
     formatYmdHis(ymdhis) {
       return moment(ymdhis).format('DD/MM/YYYY HH:mm:ss');
+    },
+    devolverCasoPsicolico(){
+      this.$q.dialog({
+        title: 'Confirmar devolución',
+        html: true,
+        message: 'Confirma que deseas <b>DEVOLVER </b> el CASO: <b>' + (this.caso?.tipo || '')+' '+(this.caso?.caso_numero || '') + '</b><br><br>'+
+          '<span style="font-weight: bold">Denunciante: </span>' +(this.caso?.denunciantes[0]?.denunciante_nombres || '') + ' ' + (this.caso?.denunciantes[0]?.denunciante_paterno || '') + ' ' + (this.caso?.denunciantes[0]?.denunciante_materno || '') +'<br>'+
+          '<span style="font-weight: bold">Tipologia: </span>' + (this.caso?.caso_tipologia || '') +
+          '',
+        persistent: true,
+        ok: { label: 'Devolver Caso', color: 'positive' },
+        cancel: { label: 'Cancelar', color: 'red' }
+      }).onOk(async () => {
+        try {
+          await this.$axios.post(`/casos/${this.caseId}/devolver-psicologico`);
+          this.$q.notify({ type: 'positive', message: 'Caso psicológico devuelto exitosamente.' });
+          this.fetchCaso();
+        } catch (e) {
+          this.$alert.error(e?.response?.data?.message || 'No se pudo devolver el caso psicológico');
+        }
+      });
+    },
+    devolverCasoSocial(){
+      this.$q.dialog({
+        title: 'Confirmar devolución',
+        html: true,
+        message: 'Confirma que deseas <b>DEVOLVER </b> el CASO: <b>' + (this.caso?.tipo || '')+' '+(this.caso?.caso_numero || '') + '</b><br><br>'+
+          '<span style="font-weight: bold">Denunciante: </span>' +(this.caso?.denunciantes[0]?.denunciante_nombres || '') + ' ' + (this.caso?.denunciantes[0]?.denunciante_paterno || '') + ' ' + (this.caso?.denunciantes[0]?.denunciante_materno || '') +'<br>'+
+          '<span style="font-weight: bold">Tipologia: </span>' + (this.caso?.caso_tipologia || '') +
+          '',
+        persistent: true,
+        ok: { label: 'Devolver Caso', color: 'positive' },
+        cancel: { label: 'Cancelar', color: 'red' }
+      }).onOk(async () => {
+        try {
+          await this.$axios.post(`/casos/${this.caseId}/devolver-social`);
+          this.$q.notify({ type: 'positive', message: 'Caso social devuelto exitosamente.' });
+          this.fetchCaso();
+        } catch (e) {
+          this.$alert.error(e?.response?.data?.message || 'No se pudo devolver el caso social');
+        }
+      });
     },
     aceptarCasoSocial(){
       this.$q.dialog({
