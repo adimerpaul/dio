@@ -1,79 +1,155 @@
 <template>
-  <q-table
-    :rows="remisiones"
-    :columns="columns"
-    row-key="id"
-    dense
-    wrap-cells
-    flat
-    bordered
-    :rows-per-page-options="[0]"
-    title="Remisiones de caso"
-    :filter="filter"
-  >
-    <template #top-right>
+<!--  <q-table-->
+<!--    :rows="remisiones"-->
+<!--    :columns="columns"-->
+<!--    row-key="id"-->
+<!--    dense-->
+<!--    wrap-cells-->
+<!--    flat-->
+<!--    bordered-->
+<!--    :rows-per-page-options="[0]"-->
+<!--    title="Remisiones de caso"-->
+<!--    :filter="filter"-->
+<!--  >-->
+<!--    <template #top-right>-->
+<!--&lt;!&ndash;      <q-btn&ndash;&gt;-->
+<!--&lt;!&ndash;        color="positive"&ndash;&gt;-->
+<!--&lt;!&ndash;        label="Nuevo"&ndash;&gt;-->
+<!--&lt;!&ndash;        no-caps&ndash;&gt;-->
+<!--&lt;!&ndash;        icon="add_circle_outline"&ndash;&gt;-->
+<!--&lt;!&ndash;        class="q-mr-sm"&ndash;&gt;-->
+<!--&lt;!&ndash;        :loading="loading"&ndash;&gt;-->
+<!--&lt;!&ndash;        @click="nuevo"&ndash;&gt;-->
+<!--&lt;!&ndash;      />&ndash;&gt;-->
 <!--      <q-btn-->
-<!--        color="positive"-->
-<!--        label="Nuevo"-->
+<!--        color="primary"-->
+<!--        label="Actualizar"-->
 <!--        no-caps-->
-<!--        icon="add_circle_outline"-->
+<!--        icon="refresh"-->
 <!--        class="q-mr-sm"-->
 <!--        :loading="loading"-->
-<!--        @click="nuevo"-->
+<!--        @click="getRemisiones"-->
 <!--      />-->
+<!--      <q-input v-model="filter" label="Buscar" dense outlined>-->
+<!--        <template #append><q-icon name="search" /></template>-->
+<!--      </q-input>-->
+<!--    </template>-->
+
+<!--    &lt;!&ndash; Columna de acciones &ndash;&gt;-->
+<!--    <template #body-cell-actions="props">-->
+<!--      <q-td :props="props">-->
+<!--        <q-btn-dropdown label="Opciones" no-caps size="10px" dense color="primary">-->
+<!--          <q-list>-->
+<!--&lt;!&ndash;            <q-item clickable v-close-popup @click="editar(props.row)">&ndash;&gt;-->
+<!--&lt;!&ndash;              <q-item-section avatar><q-icon name="edit" /></q-item-section>&ndash;&gt;-->
+<!--&lt;!&ndash;              <q-item-section><q-item-label>Editar</q-item-label></q-item-section>&ndash;&gt;-->
+<!--&lt;!&ndash;            </q-item>&ndash;&gt;-->
+<!--            &lt;!&ndash;              opcion de ver&ndash;&gt;-->
+<!--            <q-item clickable v-close-popup @click="verRemision(props.row)">-->
+<!--              <q-item-section avatar><q-icon name="visibility" /></q-item-section>-->
+<!--              <q-item-section><q-item-label>Ver</q-item-label></q-item-section>-->
+<!--            </q-item>-->
+
+<!--&lt;!&ndash;            <q-item clickable v-close-popup @click="eliminar(props.row.id)">&ndash;&gt;-->
+<!--&lt;!&ndash;              <q-item-section avatar><q-icon name="delete" /></q-item-section>&ndash;&gt;-->
+<!--&lt;!&ndash;              <q-item-section><q-item-label>Eliminar</q-item-label></q-item-section>&ndash;&gt;-->
+<!--&lt;!&ndash;            </q-item>&ndash;&gt;-->
+
+<!--            <q-item clickable v-close-popup @click="imprimir(props.row)">-->
+<!--              <q-item-section avatar><q-icon name="print" /></q-item-section>-->
+<!--              <q-item-section><q-item-label>Imprimir hoja</q-item-label></q-item-section>-->
+<!--            </q-item>-->
+
+<!--            <q-item-->
+<!--              v-if="props.row.archivo"-->
+<!--              clickable-->
+<!--              v-close-popup-->
+<!--              @click="verArchivo(props.row)"-->
+<!--            >-->
+<!--              <q-item-section avatar><q-icon name="attach_file" /></q-item-section>-->
+<!--              <q-item-section><q-item-label>Ver archivo</q-item-label></q-item-section>-->
+<!--            </q-item>-->
+<!--          </q-list>-->
+<!--        </q-btn-dropdown>-->
+<!--      </q-td>-->
+<!--    </template>-->
+<!--  </q-table>-->
+  <div class="q-pa-md">
+    <div class="text-h6">
+      Mis Remisiones
+    </div>
+    <div class="text-right">
+<!--      btn actulizar-->
       <q-btn
         color="primary"
         label="Actualizar"
         no-caps
         icon="refresh"
-        class="q-mr-sm"
+        class="q-mr-sm q-mt-sm"
         :loading="loading"
         @click="getRemisiones"
       />
-      <q-input v-model="filter" label="Buscar" dense outlined>
-        <template #append><q-icon name="search" /></template>
-      </q-input>
-    </template>
+    </div>
+    <q-markup-table dense flat bordered wrap-cells>
+      <thead>
+      <tr class="bg-primary text-white">
+        <th>Acciones</th>
+        <th>N° Ingreso</th>
+        <th>Fecha/Hora</th>
+        <th>Objeto ingreso</th>
+        <th>Hojas</th>
+        <th>Remitente</th>
+        <th>Disposición</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr v-for="row in remisiones" :key="row.id" :class="{'bg-red-4': row.fechaleido == null}">
+        <td>
+          <q-btn-dropdown label="Opciones" no-caps size="10px" dense color="primary">
+            <q-list>
+              <q-item clickable v-close-popup @click="verRemision(row)">
+                <q-item-section avatar><q-icon name="visibility" /></q-item-section>
+                <q-item-section><q-item-label>Ver</q-item-label></q-item-section>
+              </q-item>
 
-    <!-- Columna de acciones -->
-    <template #body-cell-actions="props">
-      <q-td :props="props">
-        <q-btn-dropdown label="Opciones" no-caps size="10px" dense color="primary">
-          <q-list>
-            <q-item clickable v-close-popup @click="editar(props.row)">
-              <q-item-section avatar><q-icon name="edit" /></q-item-section>
-              <q-item-section><q-item-label>Editar</q-item-label></q-item-section>
-            </q-item>
-            <!--              opcion de ver-->
-            <q-item clickable v-close-popup @click="verRemision(props.row)">
-              <q-item-section avatar><q-icon name="visibility" /></q-item-section>
-              <q-item-section><q-item-label>Ver</q-item-label></q-item-section>
-            </q-item>
+              <q-item clickable v-close-popup @click="imprimir(row)">
+                <q-item-section avatar><q-icon name="print" /></q-item-section>
+                <q-item-section><q-item-label>Imprimir hoja</q-item-label></q-item-section>
+              </q-item>
 
-<!--            <q-item clickable v-close-popup @click="eliminar(props.row.id)">-->
-<!--              <q-item-section avatar><q-icon name="delete" /></q-item-section>-->
-<!--              <q-item-section><q-item-label>Eliminar</q-item-label></q-item-section>-->
-<!--            </q-item>-->
-
-            <q-item clickable v-close-popup @click="imprimir(props.row)">
-              <q-item-section avatar><q-icon name="print" /></q-item-section>
-              <q-item-section><q-item-label>Imprimir hoja</q-item-label></q-item-section>
-            </q-item>
-
-            <q-item
-              v-if="props.row.archivo"
-              clickable
-              v-close-popup
-              @click="verArchivo(props.row)"
-            >
-              <q-item-section avatar><q-icon name="attach_file" /></q-item-section>
-              <q-item-section><q-item-label>Ver archivo</q-item-label></q-item-section>
-            </q-item>
-          </q-list>
-        </q-btn-dropdown>
-      </q-td>
-    </template>
-  </q-table>
+              <q-item
+                v-if="row.archivo"
+                clickable
+                v-close-popup
+                @click="verArchivo(row)"
+              >
+                <q-item-section avatar><q-icon name="attach_file" /></q-item-section>
+                <q-item-section><q-item-label>Ver archivo</q-item-label></q-item-section>
+              </q-item>
+<!--              leer caso-->
+              <q-item
+                v-if="row.fechaleido == null"
+                clickable
+                v-close-popup
+                @click="leerCaso(row)"
+              >
+                <q-item-section avatar><q-icon name="mark_email_read" /></q-item-section>
+                <q-item-section><q-item-label>Marcar como leído</q-item-label></q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
+        </td>
+        <td>{{ row.codigo_ingreso }}</td>
+        <td>{{ row.fecha_hora }}</td>
+        <td>{{ row.objeto_ingreso }}</td>
+        <td class="text-center">{{ row.cantidad }}</td>
+        <td>{{ row.user ? row.user.name : (row.remitente_otros || row.remitente || '') }}</td>
+        <td>{{ row.disposicion }}</td>
+      </tr>
+      </tbody>
+    </q-markup-table>
+<!--    <pre>{{remisiones}}</pre>-->
+  </div>
 
   <!-- Dialogo Crear / Editar -->
   <q-dialog v-model="dialog" persistent>
@@ -480,6 +556,23 @@ export default {
       const base = this.$axios.defaults.baseURL.replace('/api/', '')
       const url = `${base}/../storage/${row.archivo}`
       window.open(url, '_blank')
+    },
+    leerCaso(row) {
+      this.$alert
+        ? this.$alert.dialog('¿Desea marcar esta remisión como leída?')
+          .onOk(async () => {
+            this.loading = true
+            try {
+              await this.$axios.post(`mis-remision-casos/${row.id}/marcar-leido`)
+              this.$alert.success('Remisión marcada como leída')
+              this.getRemisiones()
+            } catch (e) {
+              this.$alert.error(e.response?.data?.message || 'No se pudo marcar como leído')
+            } finally {
+              this.loading = false
+            }
+          })
+        : console.log('Confirm leer caso', row.id)
     },
 
     // --- Imprimir hoja de ruta ---
