@@ -7,7 +7,7 @@
     <style>
         @page { size:A4 portrait; margin: 10mm 10mm 12mm 10mm; }
         * { box-sizing: border-box; font-family: DejaVu Sans, Arial, sans-serif; color:#111; }
-        body { margin:0; font-size:11px; }
+        body { margin:30px; font-size:11px; }
 
         .top {
             display:grid;
@@ -46,7 +46,7 @@
         .label { font-weight:700; }
         .dashedLine {
             border: 1px dashed #111;
-            height: 28px;
+            /*height: 28px;*/
             padding: 4px 6px;
             display:flex;
             align-items:center;
@@ -97,17 +97,74 @@
 <body>
 @php
     // Usar directamente el JSON padre ($caso) -> denunciados[0]
-    $d = $caso->denunciados->first();
+    $denunciado = $caso->denunciados->first();
+//            'denunciado_nombres',
+//        'denunciado_paterno',
+//        'denunciado_materno',
+//        'denunciado_documento',
+//        'denunciado_documento_otro',
+//        'denunciado_nro',
+//        'denunciado_sexo',
+//        'denunciado_lugar_nacimiento',
+//        'denunciado_fecha_nacimiento',
+//        'denunciado_edad',
+//        'denunciado_telefono',
+//        'denunciado_residencia',
+//        'denunciado_estado_civil',
+//        'denunciado_relacion',
+//        'denunciado_grado',
+//        'denunciado_trabaja',
+//        'denunciado_prox',
+//        'denunciado_ocupacion',
+//        'denunciado_ocupacion_exacto',
+//        'denunciado_idioma',
+//        'denunciado_fijo',
+//        'denunciado_movil',
+//        'denunciado_domicilio_actual',
+//        'denunciado_latitud',
+//        'denunciado_longitud',
+//        'caso_id',
+//        'denunciado_ingresos',
+//        'denunciado_relacion_victima',
+//        'denunciado_relacion_denunciado',
+    $de = $caso->denunciantes->first();
+//            'denunciante_nombres',
+//        'denunciante_paterno',
+//        'denunciante_materno',
+//        'denunciante_documento',
+//        'denunciante_nro',
+//        'denunciante_sexo',
+//        'denunciante_lugar_nacimiento',
+//        'denunciante_fecha_nacimiento',
+//        'denunciante_edad',
+//        'denunciante_telefono',
+//        'denunciante_residencia',
+//        'denunciante_estado_civil',
+//        'denunciante_relacion',
+//        'denunciante_grado',
+//        'denunciante_domicilio_actual',
+//        'latitud',
+//        'longitud',
+//        'caso_id',
+//        'denunciante_idioma',
+//        'denunciante_trabaja',
+//        'denunciante_ocupacion',
+//        'denunciante_ingresos',
+//        'denunciante_relacion_victima',
+//        'denunciante_relacion_denunciado',
+//        'denunciante_cargo'
 @endphp
 
 <div class="sheet">
 
     <div class="top">
-        <div class="logoBox">
-            TRIBUNAL<br>DEPARTAMENTAL<br>DE ORURO
-            {{-- Si tienes logo:
-            <img src="{{ asset('img/slim/logo_oruro.png') }}" style="max-height:62px;max-width:100%;" />
-            --}}
+        <div style="text-align: center;">
+            <div>
+                <img src="{{ asset('images/logo1.jpeg') }}" style="max-height:62px;max-width:100%;" />
+            </div>
+            <div style="text-align: center">
+                TRIBUNAL<br>DEPARTAMENTAL<br>DE ORURO
+            </div>
         </div>
 
         <div class="titleBox">
@@ -124,9 +181,15 @@
             </div>
         </div>
 
-        <div class="logoBox">
-            ESTADO<br>PLURINACIONAL<br>DE BOLIVIA
-            {{-- <img src="{{ asset('img/slim/escudo.png') }}" style="max-height:62px;max-width:100%;" /> --}}
+        <div style="text-align: center;">
+{{--            ESTADO<br>PLURINACIONAL<br>DE BOLIVIA--}}
+{{--            --}}{{-- <img src="{{ asset('img/slim/escudo.png') }}" style="max-height:62px;max-width:100%;" /> --}}
+            <div>
+                <img src="{{ asset('images/logo2.jpeg') }}" style="max-height:62px;max-width:100%;" />
+            </div>
+            <span style="font-size:10px; text-align:center;">
+                ESTADO<br>PLURINACIONAL<br>DE BOLIVIA
+            </span>
         </div>
     </div>
 
@@ -137,57 +200,34 @@
         </div>
     </div>
 
-    {{-- Tipo persona (solo UI, puedes cambiar a fijo si quieres) --}}
-    <div class="checks" style="margin-top:4px;">
-        <div class="chk"><span class="box"></span> Víctima</div>
-        <div class="chk"><span class="box">X</span> Denunciado</div>
-        <div class="chk"><span class="box"></span> Testigo</div>
-    </div>
-
-    <div class="sectionTitle">Datos de Identificación (Denunciado)</div>
+    <div class="sectionTitle">Datos de Identificación (Denunciate)</div>
 
     <div class="grid3">
         <div class="field">
             <div class="cap">Nombres</div>
-            <div class="val">{{ $d?->denunciado_nombres ?: '—' }}</div>
-        </div>
-        <div class="field">
-            <div class="cap">Apellido Paterno</div>
-            <div class="val">{{ $d?->denunciado_paterno ?: '—' }}</div>
-        </div>
-        <div class="field">
-            <div class="cap">Apellido Materno</div>
-            <div class="val">{{ $d?->denunciado_materno ?: '—' }}</div>
+            <div class="val">
+                {{$de?->denunciante_nombres}}
+            </div>
         </div>
     </div>
 
     <div class="sectionTitle">Documento de Identidad</div>
 
-    {{-- checks (solo visual; si quieres marcar automático según texto, también se puede) --}}
-    <div class="checks" style="margin-bottom: 6px;">
-        <div class="chk"><span class="box">{{ ($d && str_contains(strtolower($d->denunciado_documento ?? ''),'carnet')) ? 'X' : '' }}</span> C.I.</div>
-        <div class="chk"><span class="box">{{ ($d && str_contains(strtolower($d->denunciado_documento ?? ''),'pasaporte')) ? 'X' : '' }}</span> Pasaporte</div>
-        <div class="chk"><span class="box"></span> Libreta S.M.</div>
-        <div class="chk"><span class="box"></span> Certif. Nacimiento</div>
-        <div class="chk"><span class="box"></span> Libreta de Familia</div>
-        <div class="chk"><span class="box"></span> RU</div>
-    </div>
-
     <div class="grid2">
         <div class="field">
             <div class="cap">Tipo</div>
-            <div class="val">{{ $d?->denunciado_documento ?: '—' }}</div>
+            <div class="val">{{ $de->denunciante_documento ?: '—' }}</div>
         </div>
         <div class="field">
             <div class="cap">Número</div>
-            <div class="val">{{ $d?->denunciado_nro ?: '—' }}</div>
+            <div class="val">{{ $de?->denunciante_nro ?: '—' }}</div>
         </div>
     </div>
 
     <div class="sectionTitle">Dirección (Descripción completa de la dirección)</div>
 
     <div class="dashedLine">
-        {{ $d?->denunciado_domicilio_actual ?: ($caso->caso_direccion ?: '—') }}
+        {{ $de?->denunciante_domicilio_actual ?: ($caso->caso_direccion ?: '—') }}
     </div>
 
     <div class="checks" style="margin-top:6px;">
@@ -200,15 +240,15 @@
     <div class="grid4" style="margin-top: 6px;">
         <div class="field">
             <div class="cap">Distrito</div>
-            <div class="val">—</div>
+            <div class="val"></div>
         </div>
         <div class="field">
             <div class="cap">Urbanización</div>
-            <div class="val">—</div>
+            <div class="val"></div>
         </div>
         <div class="field">
             <div class="cap">Barrio</div>
-            <div class="val">—</div>
+            <div class="val"></div>
         </div>
         <div class="field">
             <div class="cap">Ciudad</div>
@@ -224,13 +264,103 @@
         <div class="field">
             <div class="cap">Teléfono de Contacto</div>
             <div class="val">
-                {{ $d?->denunciado_telefono ?: ($d?->denunciado_movil ?: ($d?->denunciado_fijo ?: '—')) }}
+                {{ $de?->denunciante_telefono}}
             </div>
         </div>
         <div class="field">
             <div class="cap">Nombre laboral / Comercial / Abogado</div>
             <div class="val">
-                {{ $d?->denunciado_ocupacion_exacto ?: ($d?->denunciado_ocupacion ?: '—') }}
+                {{ $caso->legal_user? $caso->legal_user->name : '—' }}
+            </div>
+        </div>
+    </div>
+
+    <div class="croquisTitle">Croquis de ubicación domiciliaria</div>
+    <div class="croquisWrap">
+        <table class="croquisGrid" aria-label="Croquis">
+            @for($r=0; $r<22; $r++)
+                <tr>
+                    @for($c=0; $c<18; $c++)
+                        <td></td>
+                    @endfor
+                </tr>
+            @endfor
+        </table>
+    </div>
+{{--    salto de linea--}}
+    <div style="page-break-after: always;"></div>
+    <br><br>
+    <div class="sectionTitle">Datos de Identificación (Denunciado)</div>
+
+    <div class="grid3">
+        <div class="field">
+            <div class="cap">Nombres</div>
+            <div class="val">
+                {{$denunciado?->denunciado_nombres}}
+            </div>
+        </div>
+    </div>
+
+    <div class="sectionTitle">Documento de Identidad</div>
+
+    <div class="grid2">
+        <div class="field">
+            <div class="cap">Tipo</div>
+            <div class="val">{{ $denunciado->denunciado_documento ?: '—' }}</div>
+        </div>
+        <div class="field">
+            <div class="cap">Número</div>
+            <div class="val">{{ $denunciado->denunciado_nro ?: '—' }}</div>
+        </div>
+    </div>
+
+    <div class="sectionTitle">Dirección (Descripción completa de la dirección)</div>
+
+    <div class="dashedLine">
+{{--        {{ $d?->denunciado_domicilio_actual ?: ($caso->caso_direccion ?: '—') }}--}}
+    </div>
+
+    <div class="checks" style="margin-top:6px;">
+        <div class="chk"><span class="box"></span> Domicilio</div>
+        <div class="chk"><span class="box"></span> Laboral</div>
+        <div class="chk"><span class="box"></span> Comercial</div>
+        <div class="chk"><span class="box"></span> Procesal</div>
+    </div>
+
+    <div class="grid4" style="margin-top: 6px;">
+        <div class="field">
+            <div class="cap">Distrito</div>
+            <div class="val"></div>
+        </div>
+        <div class="field">
+            <div class="cap">Urbanización</div>
+            <div class="val"></div>
+        </div>
+        <div class="field">
+            <div class="cap">Barrio</div>
+            <div class="val"></div>
+        </div>
+        <div class="field">
+            <div class="cap">Ciudad</div>
+            <div class="val">Oruro</div>
+        </div>
+    </div>
+
+    <div class="grid3" style="margin-top: 6px;">
+        <div class="field">
+            <div class="cap">Departamento</div>
+            <div class="val">Oruro</div>
+        </div>
+        <div class="field">
+            <div class="cap">Teléfono de Contacto</div>
+            <div class="val">
+                {{ $denunciado?->denunciado_telefono}}
+            </div>
+        </div>
+        <div class="field">
+            <div class="cap">Nombre laboral / Comercial / Abogado</div>
+            <div class="val">
+{{--                {{ $caso->legal_user? $caso->legal_user->name : '—' }}--}}
             </div>
         </div>
     </div>
