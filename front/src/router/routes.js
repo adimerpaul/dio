@@ -82,6 +82,8 @@ const routes = [
 
       { path: '/remision-casos/interno', component: () => import('pages/RemisionCasos/RemisionCasosInterno.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
       { path: '/remision-casos/externo', component: () => import('pages/RemisionCasos/RemisionCasosExterno.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
+      // to="/mis-remisiones"
+      { path: '/mis-remisiones', component: () => import('pages/RemisionCasos/MisRemisiones.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
 
 
       // /casos-acogimiento/lugares-acogida-nna

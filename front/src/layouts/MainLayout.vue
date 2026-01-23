@@ -653,6 +653,15 @@
             </q-item>
           </q-list>
         </q-expansion-item>
+<!--        mis remisiones-->
+        <q-item dense to="/mis-remisiones" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Remision de Casos')">
+          <q-item-section avatar>
+            <q-icon name="inbox" class="text-white"/>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label class="text-white">Mis Remisiones</q-item-label>
+          </q-item-section>
+        </q-item>
         <q-item dense to="/reportes" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Reportes')">
           <q-item-section avatar>
             <q-icon name="bar_chart" class="text-white"/>
