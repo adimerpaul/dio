@@ -625,14 +625,34 @@
           </q-list>
         </q-expansion-item>
 <!--        remision-casos-->
-        <q-item dense to="/remision-casos" exact clickable class="menu-item" active-class="menu-active" v-close-popup  v-if="hasPerm('Remision de Casos')">
-          <q-item-section avatar>
-            <q-icon name="send" class="text-white"/>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label class="text-white">Remisión de Casos</q-item-label>
-          </q-item-section>
-        </q-item>
+<!--        <q-item dense to="/remision-casos" exact clickable class="menu-item" active-class="menu-active" v-close-popup  v-if="hasPerm('Remision de Casos')">-->
+<!--          <q-item-section avatar>-->
+<!--            <q-icon name="send" class="text-white"/>-->
+<!--          </q-item-section>-->
+<!--          <q-item-section>-->
+<!--            <q-item-label class="text-white">Remisión de Casos</q-item-label>-->
+<!--          </q-item-section>-->
+<!--&lt;!&ndash;        </q-item>&ndash;&gt; SUB MENU INTERNO Y EXTERNO-->
+        <q-expansion-item dense expand-separator icon="send" label="REMISIÓN DE CASOS" active-class="menu-active" v-if="hasPerm('Remision de Casos')">
+          <q-list>
+            <q-item :inset-level="0.3" dense to="/remision-casos/interno" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
+              <q-item-section avatar>
+                <q-icon name="send_to_mobile" class="text-white"/>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label class="text-white">Remisión Interna</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item :inset-level="0.3" dense to="/remision-casos/externo" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
+              <q-item-section avatar>
+                <q-icon name="send_to_mobile" class="text-white"/>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label class="text-white">Remisión Externa</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-expansion-item>
         <q-item dense to="/reportes" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Reportes')">
           <q-item-section avatar>
             <q-icon name="bar_chart" class="text-white"/>

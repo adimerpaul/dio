@@ -1,284 +1,302 @@
 <template>
-  <q-page class="q-pa-md">
-    <q-table
-      :rows="remisiones"
-      :columns="columns"
-      row-key="id"
-      dense
-      wrap-cells
-      flat
-      bordered
-      :rows-per-page-options="[0]"
-      title="Remisiones de caso"
-      :filter="filter"
-    >
-      <template #top-right>
-        <q-btn
-          color="positive"
-          label="Nuevo"
-          no-caps
-          icon="add_circle_outline"
-          class="q-mr-sm"
-          :loading="loading"
-          @click="nuevo"
-        />
-        <q-btn
-          color="primary"
-          label="Actualizar"
-          no-caps
-          icon="refresh"
-          class="q-mr-sm"
-          :loading="loading"
-          @click="getRemisiones"
-        />
-        <q-input v-model="filter" label="Buscar" dense outlined>
-          <template #append><q-icon name="search" /></template>
-        </q-input>
-      </template>
+  <q-table
+    :rows="remisiones"
+    :columns="columns"
+    row-key="id"
+    dense
+    wrap-cells
+    flat
+    bordered
+    :rows-per-page-options="[0]"
+    title="Remisiones de caso"
+    :filter="filter"
+  >
+    <template #top-right>
+      <q-btn
+        color="positive"
+        label="Nuevo"
+        no-caps
+        icon="add_circle_outline"
+        class="q-mr-sm"
+        :loading="loading"
+        @click="nuevo"
+      />
+      <q-btn
+        color="primary"
+        label="Actualizar"
+        no-caps
+        icon="refresh"
+        class="q-mr-sm"
+        :loading="loading"
+        @click="getRemisiones"
+      />
+      <q-input v-model="filter" label="Buscar" dense outlined>
+        <template #append><q-icon name="search" /></template>
+      </q-input>
+    </template>
 
-      <!-- Columna de acciones -->
-      <template #body-cell-actions="props">
-        <q-td :props="props">
-          <q-btn-dropdown label="Opciones" no-caps size="10px" dense color="primary">
-            <q-list>
-              <q-item clickable v-close-popup @click="editar(props.row)">
-                <q-item-section avatar><q-icon name="edit" /></q-item-section>
-                <q-item-section><q-item-label>Editar</q-item-label></q-item-section>
-              </q-item>
-<!--              opcion de ver-->
-              <q-item clickable v-close-popup @click="verRemision(props.row)">
-                <q-item-section avatar><q-icon name="visibility" /></q-item-section>
-                <q-item-section><q-item-label>Ver</q-item-label></q-item-section>
-              </q-item>
+    <!-- Columna de acciones -->
+    <template #body-cell-actions="props">
+      <q-td :props="props">
+        <q-btn-dropdown label="Opciones" no-caps size="10px" dense color="primary">
+          <q-list>
+            <q-item clickable v-close-popup @click="editar(props.row)">
+              <q-item-section avatar><q-icon name="edit" /></q-item-section>
+              <q-item-section><q-item-label>Editar</q-item-label></q-item-section>
+            </q-item>
+            <!--              opcion de ver-->
+            <q-item clickable v-close-popup @click="verRemision(props.row)">
+              <q-item-section avatar><q-icon name="visibility" /></q-item-section>
+              <q-item-section><q-item-label>Ver</q-item-label></q-item-section>
+            </q-item>
 
-              <q-item clickable v-close-popup @click="eliminar(props.row.id)">
-                <q-item-section avatar><q-icon name="delete" /></q-item-section>
-                <q-item-section><q-item-label>Eliminar</q-item-label></q-item-section>
-              </q-item>
+            <q-item clickable v-close-popup @click="eliminar(props.row.id)">
+              <q-item-section avatar><q-icon name="delete" /></q-item-section>
+              <q-item-section><q-item-label>Eliminar</q-item-label></q-item-section>
+            </q-item>
 
-              <q-item clickable v-close-popup @click="imprimir(props.row)">
-                <q-item-section avatar><q-icon name="print" /></q-item-section>
-                <q-item-section><q-item-label>Imprimir hoja</q-item-label></q-item-section>
-              </q-item>
+            <q-item clickable v-close-popup @click="imprimir(props.row)">
+              <q-item-section avatar><q-icon name="print" /></q-item-section>
+              <q-item-section><q-item-label>Imprimir hoja</q-item-label></q-item-section>
+            </q-item>
 
-              <q-item
-                v-if="props.row.archivo"
-                clickable
-                v-close-popup
-                @click="verArchivo(props.row)"
-              >
-                <q-item-section avatar><q-icon name="attach_file" /></q-item-section>
-                <q-item-section><q-item-label>Ver archivo</q-item-label></q-item-section>
-              </q-item>
-            </q-list>
-          </q-btn-dropdown>
-        </q-td>
-      </template>
-    </q-table>
-
-    <!-- Dialogo Crear / Editar -->
-    <q-dialog v-model="dialog" persistent>
-      <q-card style="width: 500px; max-width: 90vw">
-        <q-card-section class="row items-center q-pb-none">
-          <div class="text-subtitle1">{{ accion }} remisión</div>
-          <q-space /><q-btn icon="close" flat round dense @click="dialog = false" />
-        </q-card-section>
-
-        <q-card-section class="q-pt-none">
-          <q-form @submit.prevent="guardar">
-            <!-- Objeto / Cantidad -->
-            <q-select
-              v-model="remision.objeto_ingreso"
-              label="Objeto"
-              :options="['Sobre', 'Hojas', 'Carpetas']"
-              dense
-              outlined
-            />
-            <q-input
-              v-model.number="remision.cantidad"
-              label="Cantidad / Hojas"
-              type="number"
-              dense
-              outlined
-              class="q-mt-sm"
-            />
-
-            <!-- REMITENTE (texto libre) -->
-            <q-input
-              v-model="remision.remitente"
-              label="Remitente"
-              dense
-              outlined
-              class="q-mt-sm"
-            />
-
-            <!-- ORGANIZACIÓN -->
-            <q-select
-              v-model="remision.organizacion"
-              label="Organización"
-              dense
-              :options="organizaciones"
-              outlined
-              class="q-mt-sm"
-            />
-
-            <!-- REMITENTE OTROS (opcional) -->
-            <q-input
-              v-if="remision.organizacion === 'Otros'"
-              v-model="remision.remitente_otros"
-              label="Remitente otros (si corresponde)"
-              dense
-              outlined
-              class="q-mt-sm"
-            />
-
-            <!-- USUARIO REFERENCIA -->
-            <q-select
-              v-model="remision.user_id"
-              :options="usuarios"
-              option-value="id"
-              :option-label="u => `${u.name} (${u.role})`"
-              emit-value
-              map-options
-              label="Referencia (usuario)"
-              dense
-              outlined
-              class="q-mt-sm"
-            />
-
-            <!-- ARCHIVO ADJUNTO (OPCIONAL) -->
-            <q-file
-              v-model="archivoFile"
-              label="Archivo adjunto (opcional)"
-              outlined
-              dense
-              class="q-mt-sm"
-              :clearable="true"
-              accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-              use-chips
+            <q-item
+              v-if="props.row.archivo"
+              clickable
+              v-close-popup
+              @click="verArchivo(props.row)"
             >
-              <template #append>
-                <q-icon name="attach_file" />
-              </template>
-            </q-file>
+              <q-item-section avatar><q-icon name="attach_file" /></q-item-section>
+              <q-item-section><q-item-label>Ver archivo</q-item-label></q-item-section>
+            </q-item>
+          </q-list>
+        </q-btn-dropdown>
+      </q-td>
+    </template>
+  </q-table>
 
-            <!-- DISPOSICIÓN -->
-            <q-select
-              v-model="remision.disposicion"
-              :options="dispociciones"
-              label="Disposición / Proveído"
-              dense
-              outlined
-              class="q-mt-sm"
-            />
+  <!-- Dialogo Crear / Editar -->
+  <q-dialog v-model="dialog" persistent>
+    <q-card style="width: 500px; max-width: 90vw">
+      <q-card-section class="row items-center q-pb-none">
+        <div class="text-subtitle1">{{ accion }} remisión</div>
+        <q-space /><q-btn icon="close" flat round dense @click="dialog = false" />
+      </q-card-section>
 
-            <div class="text-right q-mt-md">
-              <q-btn
-                flat
-                color="negative"
-                label="Cancelar"
-                no-caps
-                @click="dialog = false"
-                :loading="loading"
-              />
-              <q-btn
-                color="primary"
-                label="Guardar"
-                no-caps
-                type="submit"
-                class="q-ml-sm"
-                :loading="loading"
-              />
-            </div>
-          </q-form>
-        </q-card-section>
-      </q-card>
-    </q-dialog>
-<!--    dialogVer-->
-    <q-dialog v-model="dialogVer" persistent>
-      <q-card style="width: 500px; max-width: 90vw">
-        <q-card-section class="row items-center q-pb-none">
-          <div class="text-subtitle1">Ver remisión</div>
-          <q-space /><q-btn icon="close" flat round dense @click="dialogVer = false" />
-        </q-card-section>
+      <q-card-section class="q-pt-none">
+        <q-form @submit.prevent="guardar">
+          <!-- Objeto / Cantidad -->
+          <q-select
+            clearable
+            v-model="remision.objeto_ingreso"
+            label="Objeto"
+            :options="['Sobre', 'Hojas', 'Carpetas']"
+            dense
+            outlined
+          />
+          <q-input
+            v-model.number="remision.cantidad"
+            label="Cantidad / Hojas"
+            type="number"
+            dense
+            outlined
+            class="q-mt-sm"
+          />
 
-        <q-card-section class="q-pt-none">
-          <q-form>
-<!--            <pre>{{remision}}</pre>-->
-            <q-input
-              v-model="remision.codigo_ingreso"
-              label="N° Ingreso"
-              dense
-              outlined
-              readonly
+          <!-- REMITENTE (texto libre) -->
+          <q-input
+            v-model="remision.remitente"
+            label="Remitente"
+            dense
+            outlined
+            class="q-mt-sm"
+          />
+
+<!--          &lt;!&ndash; ORGANIZACIÓN &ndash;&gt; solo para externo-->
+          <q-select
+            v-if="interoExterno === 'EXTERNO'"
+            clearable
+            v-model="remision.organizacion"
+            label="Organización"
+            dense
+            :options="organizaciones"
+            outlined
+            class="q-mt-sm"
+          />
+
+          <!-- REMITENTE OTROS (opcional) -->
+          <q-input
+            v-if="remision.organizacion === 'Otros'"
+            v-model="remision.remitente_otros"
+            label="Remitente otros (si corresponde)"
+            dense
+            outlined
+            class="q-mt-sm"
+          />
+
+          <!-- USUARIO REFERENCIA -->
+          <q-select
+            clearable
+            v-model="remision.user_id"
+            :options="usuarios"
+            option-value="id"
+            :option-label="u => `${u.name} (${u.role})`"
+            emit-value
+            map-options
+            label="Remitido A"
+            dense
+            outlined
+            class="q-mt-sm"
+          />
+
+          <!-- ARCHIVO ADJUNTO (OPCIONAL) -->
+          <q-file
+            v-model="archivoFile"
+            label="Archivo adjunto (opcional)"
+            outlined
+            dense
+            class="q-mt-sm"
+            :clearable="true"
+            accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+            use-chips
+          >
+            <template #append>
+              <q-icon name="attach_file" />
+            </template>
+          </q-file>
+
+          <!-- DISPOSICIÓN -->
+          <q-select
+            clearable
+            v-model="remision.disposicion"
+            :options="dispociciones"
+            label="Disposición / Proveído"
+            dense
+            outlined
+            class="q-mt-sm"
+          />
+<!--          descipcion-->
+          <q-input
+            v-model="remision.descripcion"
+            label="Descripción"
+            type="textarea"
+            dense
+            outlined
+            class="q-mt-sm"
+          />
+
+          <div class="text-right q-mt-md">
+            <q-btn
+              flat
+              color="negative"
+              label="Cancelar"
+              no-caps
+              @click="dialog = false"
+              :loading="loading"
             />
-            <q-input
-              v-model="remision.fecha_hora"
-              label="Fecha/Hora"
-              dense
-              outlined
-              readonly
-              class="q-mt-sm"
+            <q-btn
+              color="primary"
+              label="Guardar"
+              no-caps
+              type="submit"
+              class="q-ml-sm"
+              :loading="loading"
             />
-            <q-input
-              v-model="remision.objeto_ingreso"
-              label="Objeto ingreso"
-              dense
-              outlined
-              readonly
-              class="q-mt-sm"
-            />
-            <q-input
-              v-model="remision.cantidad"
-              label="Cantidad / Hojas"
-              dense
-              outlined
-              readonly
-              class="q-mt-sm"
-            />
-            <q-input
-              v-model="remision.remitente"
-              label="Remitente"
-              dense
-              outlined
-              readonly
-              class="q-mt-sm"
-            />
-            <q-input
-              v-model="remision.organizacion"
-              label="Organización"
-              dense
-              outlined
-              readonly
-              class="q-mt-sm"
-            />
-            <q-input
-              v-model="remision.disposicion"
-              label="Disposición / Proveído"
-              dense
-              outlined
-              readonly
-              class="q-mt-sm"
-            />
-<!--            refereisna usuario con un div-->
-            <div class="q-mt-sm">
-              <strong>Referencia:</strong>
-              <div>{{ remision.user ? remision.user.name + ' (' + remision.user.role + ')' : '' }}</div>
-            </div>
-            <div v-if="remision.archivo" class="q-mt-sm">
-              <strong>Archivo adjunto:</strong>
-              <a href="#" @click.prevent="verArchivo(remision)">Ver archivo</a>
-            </div>
-          </q-form>
-        </q-card-section>
-      </q-card>
-    </q-dialog>
-  </q-page>
+          </div>
+        </q-form>
+      </q-card-section>
+    </q-card>
+  </q-dialog>
+  <!--    dialogVer-->
+  <q-dialog v-model="dialogVer" persistent>
+    <q-card style="width: 500px; max-width: 90vw">
+      <q-card-section class="row items-center q-pb-none">
+        <div class="text-subtitle1">Ver remisión</div>
+        <q-space /><q-btn icon="close" flat round dense @click="dialogVer = false" />
+      </q-card-section>
+
+      <q-card-section class="q-pt-none">
+        <q-form>
+          <!--            <pre>{{remision}}</pre>-->
+          <q-input
+            v-model="remision.codigo_ingreso"
+            label="N° Ingreso"
+            dense
+            outlined
+            readonly
+          />
+          <q-input
+            v-model="remision.fecha_hora"
+            label="Fecha/Hora"
+            dense
+            outlined
+            readonly
+            class="q-mt-sm"
+          />
+          <q-input
+            v-model="remision.objeto_ingreso"
+            label="Objeto ingreso"
+            dense
+            outlined
+            readonly
+            class="q-mt-sm"
+          />
+          <q-input
+            v-model="remision.cantidad"
+            label="Cantidad / Hojas"
+            dense
+            outlined
+            readonly
+            class="q-mt-sm"
+          />
+          <q-input
+            v-model="remision.remitente"
+            label="Remitente"
+            dense
+            outlined
+            readonly
+            class="q-mt-sm"
+          />
+          <q-input
+            v-model="remision.organizacion"
+            label="Organización"
+            dense
+            outlined
+            readonly
+            class="q-mt-sm"
+          />
+          <q-input
+            v-model="remision.disposicion"
+            label="Disposición / Proveído"
+            dense
+            outlined
+            readonly
+            class="q-mt-sm"
+          />
+          <!--            refereisna usuario con un div-->
+          <div class="q-mt-sm">
+            <strong>Referencia:</strong>
+            <div>{{ remision.user ? remision.user.name + ' (' + remision.user.role + ')' : '' }}</div>
+          </div>
+          <div v-if="remision.archivo" class="q-mt-sm">
+            <strong>Archivo adjunto:</strong>
+            <a href="#" @click.prevent="verArchivo(remision)">Ver archivo</a>
+          </div>
+        </q-form>
+      </q-card-section>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script>
 export default {
   name: 'RemisionCasosPage',
+  props: {
+    interoExterno: {
+      type: String,
+      default: 'EXTERNO' // o 'EXTERNO'
+    }
+  },
   data () {
     return {
       remisiones: [],
@@ -337,7 +355,11 @@ export default {
     async getRemisiones () {
       this.loading = true
       try {
-        const res = await this.$axios.get('remision-casos')
+        const res = await this.$axios.get('remision-casos', {
+          params: {
+            interoExterno: this.interoExterno // 'INTERNO' o 'EXTERNO'
+          }
+        })
         this.remisiones = res.data
       } catch (e) {
         this.$alert && this.$alert.error(e.response?.data?.message || 'Error cargando remisiones')
@@ -368,6 +390,8 @@ export default {
         archivo: null,
         estado: 'ACTIVO'
       }
+      console.log('user store:', this.$store.user)
+      this.remision.remitente = this.$store.user.name || ''
       this.archivoFile = null
       this.accion = 'Nueva'
       this.dialog = true
@@ -414,6 +438,8 @@ export default {
             formData.append(key, value)
           }
         })
+        // formData. interno_externo
+        formData.append('interno_externo', this.interoExterno)
 
         // Archivo (si el usuario seleccionó uno)
         if (this.archivoFile) {

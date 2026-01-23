@@ -80,6 +80,9 @@ const routes = [
       // http://localhost:9000/buscar-caso
       { path: '/buscar-caso',    component: () => import('pages/casos/BuscarCaso.vue'),      meta: { requiresAuth: true, perm: 'Casos' } },
 
+      { path: '/remision-casos/interno', component: () => import('pages/RemisionCasos/RemisionCasosInterno.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
+      { path: '/remision-casos/externo', component: () => import('pages/RemisionCasos/RemisionCasosExterno.vue'), meta: { requiresAuth: true, perm: 'Casos' } },
+
 
       // /casos-acogimiento/lugares-acogida-nna
       // /casos-acogimiento/equipos-responsables
