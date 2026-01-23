@@ -29,6 +29,9 @@ return new class extends Migration
             $table->string('estado')->nullable();
             $table->string('interno_externo')->nullable();
             $table->text('descripcion')->nullable();
+            $table->string('area')->nullable();
+            $table->string('zona')->nullable();
+            $table->dateTime('fechaleido')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users');
             $table->softDeletes();

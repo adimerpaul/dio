@@ -8,6 +8,15 @@ use Illuminate\Support\Facades\Storage;
 
 class RemisionCasoController extends Controller
 {
+    function marcarLeido(Request $request, $remisionCasoId)
+    {
+        $remisionCaso = RemisionCaso::findOrFail($remisionCasoId);
+//        error_log('Marcando como leído remisionCaso ID: ' . $remisionCaso->id);
+        $remisionCaso->fechaleido = now();
+        $remisionCaso->save();
+//        error_log('RemisionCaso marcado como leído en: ' . $remisionCaso->fechaleido);
+        return response()->json(['message' => 'Marcado como leído']);
+    }
     function misRemisionCasos(Request $request)
     {
         $userId = $request->user()->id;
@@ -21,10 +30,21 @@ class RemisionCasoController extends Controller
     {
         // Para poder usar row.user en el front
         $interoExterno = $request->query('interoExterno');
-        error_log('Intero Externo: ' . $interoExterno);
+//        error_log('Intero Externo: ' . $interoExterno);
+        if ($interoExterno == 'EXTERNO') {
+            return RemisionCaso::with('user:id,name,role')
+                ->orderBy('id', 'desc')
+                ->where('interno_externo', 'EXTERNO')
+                ->get();
+        }
+        $user = $request->user();
+        $zona = $user->zona;
+        $area = $user->area;
         return RemisionCaso::with('user:id,name,role')
             ->orderBy('id', 'desc')
-            ->where('interno_externo', $interoExterno)
+            ->where('interno_externo', 'INTERNO')
+            ->where('zona', $zona)
+            ->where('area', $area)
             ->get();
     }
 
@@ -34,8 +54,12 @@ class RemisionCasoController extends Controller
         $codigo = (RemisionCaso::max('codigo_ingreso') ?? 0) + 1;
 
         $data = $request->all();
+        $user = $request->user();
         $data['codigo_ingreso'] = $codigo;
         $data['fecha_hora'] = now();
+
+        $data['area'] = $user->area ?? 'Sin área';
+        $data['zona'] = $user->zona ?? 'Sin zona';
 
         // Si viene archivo, lo guardamos
         if ($request->hasFile('archivo')) {
