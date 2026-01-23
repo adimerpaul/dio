@@ -12,7 +12,7 @@
         <div class="col-12 col-md-6">
           <q-input
             v-model="searchQuery"
-            label="Ingrese el CI nombre completo del caso"
+            label="Ingrese el Numero de caso ,CI nombre completo del caso, NUREJ, CUD"
             outlined
             dense
             clearable
