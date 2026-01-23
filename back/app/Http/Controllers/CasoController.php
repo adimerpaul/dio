@@ -24,6 +24,30 @@ use Intervention\Image\ImageManager;
 
 class CasoController extends Controller
 {
+    function misCasosDeTurno(Request $request)
+    {
+        $user = $request->user();
+        $area = $user->area;
+        $zona = $user->zona;
+
+        $query = Caso::query()
+            ->where(function ($q) use ($user) {
+                if ($user->role === 'Psicologo') {
+                    $q->where('psicologica_user_id', $user->id);
+                } elseif ($user->role === 'Social') {
+                    $q->where('trabajo_social_user_id', $user->id);
+                } elseif ($user->role === 'Abogado') {
+                    $q->where('legal_user_id', $user->id);
+                }
+            })
+            ->where('tipo','<>',$area)
+//            ->where('zona','<>',$zona)
+            ->orderByDesc('created_at')
+            ->with(['user:id,name', 'denunciantes:id,denunciante_nombres,denunciante_paterno,denunciante_materno,denunciante_nro,caso_id'])
+            ->get();
+
+        return $query;
+    }
     public function historialDocumentos(Request $request)
     {
         $ci = trim((string)$request->query('ci', ''));
