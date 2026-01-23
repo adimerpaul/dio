@@ -1130,7 +1130,10 @@ class CasoController extends Controller
                 // Campos directos del caso
                 $group->where(function ($s) use ($like) {
                     $s->where('caso_numero', 'like', $like)
+                        ->orWhereRaw('CONCAT_WS(" ", tipo, caso_numero) LIKE ?', [$like])
                         ->orWhere('caso_tipologia', 'like', $like)
+                        ->orWhere('cud', 'like', $like)
+                        ->orWhere('nurej', 'like', $like)
                         ->orWhere('caso_zona', 'like', $like)
                         ->orWhere('caso_direccion', 'like', $like)
                         ->orWhere('caso_descripcion', 'like', $like)
