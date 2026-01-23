@@ -261,6 +261,17 @@ class DashboardCasoController extends Controller
                 });
             }
         }
+        $user = $request->user();
+        if($user->role != 'Administrador'){
+            $area = $user->area;
+            $zona = $user->zona;
+            if($area){
+                $casos->where('area', $area);
+            }
+            if($zona) {
+                $casos->where('zona', $zona);
+            }
+        }
 
         $rows = $casos
             ->select(
