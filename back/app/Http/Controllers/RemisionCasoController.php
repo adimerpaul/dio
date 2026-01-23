@@ -8,6 +8,14 @@ use Illuminate\Support\Facades\Storage;
 
 class RemisionCasoController extends Controller
 {
+    function misRemisionCasos(Request $request)
+    {
+        $userId = $request->user()->id;
+        return RemisionCaso::with('user:id,name,role')
+            ->where('user_id', $userId)
+            ->orderBy('id', 'desc')
+            ->get();
+    }
     // LISTA
     public function index(Request $request)
     {

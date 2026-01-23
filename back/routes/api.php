@@ -248,6 +248,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('slam-notariales/{id}', [SlamNotarialController::class, 'destroy']);
 
     Route::apiResource('remision-casos', RemisionCasoController::class);
+//    mis-remision-casos
+    Route::get('mis-remision-casos', [RemisionCasoController::class, 'misRemisionCasos']);
     Route::get('/casos/{caso}/acogimiento', [CasoAcogimientoController::class, 'showByCaso']);
     Route::post('/casos/{caso}/acogimiento', [CasoAcogimientoController::class, 'storeOrUpdate']);
 });
