@@ -27,6 +27,8 @@ return new class extends Migration
             $table->string('disposicion')->nullable();
             $table->string('archivo')->nullable();
             $table->string('estado')->nullable();
+            $table->string('interno_externo')->nullable();
+            $table->text('descripcion')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users');
             $table->softDeletes();

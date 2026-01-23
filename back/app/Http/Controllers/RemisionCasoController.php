@@ -9,11 +9,14 @@ use Illuminate\Support\Facades\Storage;
 class RemisionCasoController extends Controller
 {
     // LISTA
-    public function index()
+    public function index(Request $request)
     {
         // Para poder usar row.user en el front
+        $interoExterno = $request->query('interoExterno');
+        error_log('Intero Externo: ' . $interoExterno);
         return RemisionCaso::with('user:id,name,role')
             ->orderBy('id', 'desc')
+            ->where('interno_externo', $interoExterno)
             ->get();
     }
 
