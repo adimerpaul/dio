@@ -73,6 +73,7 @@ const routes = [
 
       // reportes
       { path: '/reportes', component: () => import('pages/reportes/Reportes.vue'), meta: { requiresAuth: true, perm: 'Reportes' } },
+      { path: '/casos-turno', component: () => import('pages/casos-turno/CasosTurno.vue'), meta: { requiresAuth: true, perm: 'CasosTurno' } },
 
       // http://localhost:9000/antecedentes-nna
       { path: '/antecedentes-nna',    component: () => import('pages/dnas/AntecedentesNna.vue'),      meta: { requiresAuth: true } },

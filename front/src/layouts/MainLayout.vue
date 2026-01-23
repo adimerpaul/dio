@@ -624,15 +624,16 @@
             </q-item>
           </q-list>
         </q-expansion-item>
-<!--        remision-casos-->
-<!--        <q-item dense to="/remision-casos" exact clickable class="menu-item" active-class="menu-active" v-close-popup  v-if="hasPerm('Remision de Casos')">-->
-<!--          <q-item-section avatar>-->
-<!--            <q-icon name="send" class="text-white"/>-->
-<!--          </q-item-section>-->
-<!--          <q-item-section>-->
-<!--            <q-item-label class="text-white">Remisión de Casos</q-item-label>-->
-<!--          </q-item-section>-->
-<!--&lt;!&ndash;        </q-item>&ndash;&gt; SUB MENU INTERNO Y EXTERNO-->
+<!--        casos de turno-->
+        <q-item dense to="/casos-turno" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="hasPerm('Casos de Turno')">
+          <q-item-section avatar>
+            <q-icon name="local_hospital" class="text-white"/>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label class="text-white">Casos de Turno</q-item-label>
+          </q-item-section>
+        </q-item>
+
         <q-expansion-item dense expand-separator icon="send" label="REMISIÓN DE CASOS" active-class="menu-active" v-if="hasPerm('Remision de Casos')">
           <q-list>
             <q-item :inset-level="0.3" dense to="/remision-casos/interno" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
