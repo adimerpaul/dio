@@ -715,6 +715,7 @@
               <q-select v-model="f.psicologica_user_id" dense outlined emit-value map-options clearable
                         :options="psicologos.map(u => ({ label: u.name, value: u.id }))"
                         label="Área psicologica (responsable)"/>
+<!--              <pre>{{f.psicologica_user_id}}</pre>-->
             </div>
             <div class="col-12 col-md-4">
               <q-select v-model="f.trabajo_social_user_id" dense outlined emit-value map-options clearable

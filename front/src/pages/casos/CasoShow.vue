@@ -81,6 +81,10 @@
             <q-item clickable @click="printPdfHojaRuta('denunciado')" v-close-popup >
               <q-item-section>Ubicacion (Denunciado)</q-item-section>
             </q-item>
+<!--            print-registro-domiciliario-->
+            <q-item clickable @click="printPdfHojaRuta('registro-domiciliario')" v-close-popup >
+              <q-item-section>Registro Domiciliario</q-item-section>
+            </q-item>
           </q-list>
         </q-btn-dropdown>
         <q-space/>
@@ -462,6 +466,12 @@ export default {
       window.open(url, '_blank')
     },
     printPdfHojaRuta (tipo = 'denunciante') {
+      if (tipo === 'registro-domiciliario') {
+        // Route::get('/casos/{caso}/print-registro-domiciliario', [CasoController::class, 'printRegistroDomiciliario']);
+        const url = this.$axios.defaults.baseURL + `/casos/${this.caseId}/print-registro-domiciliario`
+        window.open(url, '_blank')
+        return
+      }
       const url = this.$axios.defaults.baseURL + `/casos/${this.caseId}/pdf/hoja-ruta?tipo=${tipo}`
       window.open(url, '_blank')
     },
