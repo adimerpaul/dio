@@ -24,6 +24,37 @@ use Intervention\Image\ImageManager;
 
 class CasoController extends Controller
 {
+    //    this.$axios.get(`/casos/${this.caseId}/antecedentes-denunciado`).then(({data})=>{
+//        this.antecedentesDenunciado = data;
+//        this.antecedentesDenunciadoDialog = true;
+    function antecedentesDenunciado(Request $request, $casoId)
+    {
+        $caso = Caso::findOrFail($casoId);
+        $denunciados = $caso->denunciados;
+        $antecedentesID = [];
+        foreach ($denunciados as $denunciado) {
+            $ci = $denunciado->denunciado_nro;
+            error_log("Buscando antecedentes para denunciado CI: {$ci}");
+
+            $casosAntecedentes = Caso::whereHas('denunciados', function ($q) use ($ci, $casoId) {
+                $q->where('denunciado_nro', $ci);
+            })->with(['denunciados'])->get();
+            error_log("Encontrados " . $casosAntecedentes->count() . " casos para denunciado CI: {$ci}");
+
+            if ($casosAntecedentes->isNotEmpty()) {
+                foreach ($casosAntecedentes as $c) {
+//                    if ($c->id !== $caso->id && !in_array($c->id, $antecedentesID)) {
+                        $antecedentesID[] = $c->id;
+//                    }
+                }
+            }
+        }
+        $antecedentes = Caso::whereIn('id', $antecedentesID)
+            ->with(['denunciados'])
+            ->orderByDesc('created_at')
+            ->get();
+        return response()->json($antecedentes);
+    }
     function devolverSocial(Request $request, $casoId){
         $caso = Caso::findOrFail($casoId);
         $caso->fecha_devolucion_area_social = date('Y-m-d H:i:s');

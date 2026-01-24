@@ -260,6 +260,8 @@ Route::middleware('auth:sanctum')->group(function () {
 //    await this.$axios.post(`/casos/${this.caseId}/devolver-social`);
     Route::post('/casos/{caso}/devolver-social', [CasoController::class, 'devolverSocial']);
 
+    Route::get('/casos/{caso}/antecedentes-denunciado', [CasoController::class, 'antecedentesDenunciado']);
+
 });
 Route::get('/casos/{caso}/print-registro-domiciliario', [CasoController::class, 'printRegistroDomiciliario']);
 Route::get('/slimsImprimir', [SlimController::class, 'imprimir']);
