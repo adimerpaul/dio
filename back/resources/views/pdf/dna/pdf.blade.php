@@ -194,8 +194,8 @@
         <td style="width:35%;">Nombres y Apellidos</td>
         <td style="width:18%;">Parentesco</td>
         <td style="width:10%;">Edad</td>
-        <td style="width:10%;">Sexo</td>
-        <td style="width:12%;">G. Instrucción</td>
+{{--        <td style="width:10%;">Sexo</td>--}}
+{{--        <td style="width:12%;">G. Instrucción</td>--}}
         <td style="width:10%;">Ocupación</td>
     </tr>
 
@@ -210,8 +210,8 @@
             <td>{{ $nombreFam }}</td>
             <td>{{ d($f->familiar_parentesco) }}</td>
             <td class="center">{{ d($f->familiar_edad) }}</td>
-            <td class="center">{{ d($f->familiar_sexo) }}</td>
-            <td>{{ d($f->familiar_grado) }}</td>
+{{--            <td class="center">{{ d($f->familiar_sexo) }}</td>--}}
+{{--            <td>{{ d($f->familiar_grado) }}</td>--}}
             <td>{{ d($f->familiar_ocupacion) }}</td>
         </tr>
     @empty

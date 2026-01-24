@@ -132,7 +132,7 @@ class CasoController extends Controller
                 'informesLegales.user:id,name',
             ])
             ->orderByDesc('created_at')
-            ->get(['id', 'tipo', 'caso_numero', 'created_at', 'updated_at', 'fecha_apertura_caso', 'titulo']);
+            ->get();
 
         // 2) Lista de casos + cómo participa
         $casosInfo = $casos->map(function ($caso) {
@@ -191,6 +191,7 @@ class CasoController extends Controller
                 'tipo' => $caso->tipo,
                 'caso_numero' => $caso->caso_numero,
                 'titulo' => $caso->titulo,
+                'zona' => $caso->zona,
                 'fecha_apertura' => optional($caso->fecha_apertura_caso)->format('Y-m-d'),
                 'creado' => optional($caso->created_at)->format('Y-m-d H:i'),
 
@@ -1187,6 +1188,8 @@ class CasoController extends Controller
         $fragancia = trim((string)$request->get('fragancia', ''));
 //        only_pendientes
         $onlyPendientes = (bool)$request->get('only_pendientes', false);
+//        estado_caso
+        $estadoCaso = trim((string)$request->get('estado_caso', ''));
 
         $query = Caso::query()
             ->orderByDesc('created_at')
@@ -1273,6 +1276,10 @@ class CasoController extends Controller
 //        fragancia
         if ($fragancia == 1) {
             $query->whereIn('titulo', ['Registrar Nuevo Caso Hechos de Fragancia', 'DNA Nuevo Hechos de Fragancia']);
+        }
+//        if $estadoCaso
+        if ($estadoCaso !== '') {
+            $query->where('estado_caso', $estadoCaso);
         }
 
         $query->with([

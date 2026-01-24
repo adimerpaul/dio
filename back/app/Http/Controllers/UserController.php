@@ -9,6 +9,25 @@ use Intervention\Image\Drivers\Gd\Driver;
 use Spatie\Permission\Models\Permission;
 
 class UserController extends Controller{
+    function usersRemision(Request $request){
+
+        $interoExterno = $request->input('interoExterno');
+        if ($interoExterno === 'INTERNO') {
+            $user = $request->user();
+            $area = $user->area;
+            $zona = $user->zona;
+            $users = User::where('area', $area)
+                ->where('zona', $zona)
+                ->with('permissions:id,name')
+                ->get();
+        } elseif ($interoExterno === 'EXTERNO') {
+            $users = User::where('id', '!=', 0)
+                ->with('permissions:id,name')
+                ->orderBy('id', 'desc')
+                ->get();
+        }
+        return response()->json($users);
+    }
     function usuariosRoleAll(Request $request){
         $psicologos = User::where('role', 'Psicologo')->get();
         $abogados = User::where('role', 'Abogado')->get();
