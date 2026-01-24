@@ -27,7 +27,7 @@
     <div class="col-12 col-md-3">
       <q-select
         v-model="casoNew.estado_caso"
-        :options="estado_casos"
+        :options="$estado_casos"
         outlined
         label="Estado del Caso"
         dense
@@ -101,25 +101,15 @@ export default {
       casoNew: {},
       file: null,
       loading: false,
-      estado_casos:[
-        "Apertura Denuncia",
-        // "Notificacion",
-        // "Respuesta",
-        // "En Audiencia",
-        // "En Jugado",
-        // "En Fiscalia",
-        // "Con Sentencia",
-        // "Con Representacion",
-        // "Concluido",
-        // "Archivado",
-        // "Otros",
-        "En Seguimiento",
-        "En Proceso",
-        "Concluido",
-        "Archivado",
-        "Con Representacion",
-        "Otros",
-      ]
+      // estado_casos:[
+      //   "Apertura Denuncia",
+      //   "En Seguimiento",
+      //   "En Proceso",
+      //   "Concluido",
+      //   "Archivado",
+      //   "Con Representacion",
+      //   "Otros",
+      // ]
     };
   },
   mounted() {

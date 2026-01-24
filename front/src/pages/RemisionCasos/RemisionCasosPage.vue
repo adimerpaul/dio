@@ -369,7 +369,11 @@ export default {
     },
     async getUsuarios () {
       try {
-        const res = await this.$axios.get('users')
+        const res = await this.$axios.get('usersRemision',{
+          params: {
+            interoExterno: this.interoExterno // 'INTERNO' o 'EXTERNO'
+          }
+        })
         this.usuarios = res.data
       } catch (e) {
         console.error(e)

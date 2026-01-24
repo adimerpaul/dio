@@ -10,16 +10,16 @@
           <!--        <q-btn dense no-caps color="primary" label="Buscar" @click="searchAddress" icon="search" style="width:100%"/>-->
           <!--      </div>-->
           <div class="col-12 col-md-6">
-            <q-input v-model.number="localValue.latitud" dense outlined label="Latitud" />
+            <q-input v-model.number="localValue.latitud" dense outlined label="Latitud" :disable="props.disabled" />
           </div>
           <div class="col-12 col-md-6">
-            <q-input v-model.number="localValue.longitud" dense outlined label="Longitud" />
+            <q-input v-model.number="localValue.longitud" dense outlined label="Longitud" :disable="props.disabled" />
           </div>
           <div class="col-6 col-md-6">
-            <q-btn no-caps color="primary" label="Ir" @click="flyToLatLng" icon="place" style="width: 220px" />
+            <q-btn no-caps color="primary" label="Ir" @click="flyToLatLng" icon="place" style="width: 220px" :disable="props.disabled || !hasLatLng"/>
           </div>
           <div class="col-6 col-md-6">
-            <q-btn no-caps color="primary" label="Mi ubicación" @click="locateMe" icon="my_location" style="width: 220px"/>
+            <q-btn no-caps color="primary" label="Mi ubicación" @click="locateMe" icon="my_location" style="width: 220px" :disable="props.disabled"/>
           </div>
           <div class="col-6 col-md-6">
             <q-btn no-caps color="info" :href="`https://www.google.com/maps/search/?api=1&query=${localValue.latitud},${localValue.longitud}`" target="_blank" label="Abrir en Google Maps" icon="open_in_new" style="width: 220px"/>
@@ -87,11 +87,14 @@
           <l-marker
             v-if="hasLatLng"
             :lat-lng="[Number(localValue.latitud), Number(localValue.longitud)]"
-            :draggable="true"
+            :draggable="!props.disabled"
             @moveend="onDragEnd"
           >
             <l-popup>
-              <div>Lat: {{ toFix(localValue.latitud) }}<br/>Lng: {{ toFix(localValue.longitud) }}</div>
+              <div>
+                <strong>Lat:</strong> {{ toFix(localValue.latitud) }}<br/>
+                <strong>Lng:</strong> {{ toFix(localValue.longitud) }}
+              </div>
             </l-popup>
           </l-marker>
         </l-map>
@@ -174,7 +177,8 @@ const props = defineProps({
   country: { type: String, default: 'bo' },        // <--- opcional: sesgar búsqueda por país
   minAddressLen: { type: Number, default: 6 },     // <--- evitar geocodificar textos muy cortos
   debounceMs: { type: Number, default: 600 },       // <--- para no pegarle a la API por cada tecla
-  label: { type: String, default: 'Seleccionar ubicación' }
+  label: { type: String, default: 'Seleccionar ubicación' },
+  disabled: { type: Boolean, default: false }
 })
 
 const emit = defineEmits(['update:modelValue','geocode:ok','geocode:error'])
@@ -290,16 +294,20 @@ function toFix (v, n = 6) {
 }
 
 function onMapClick(e) {
+  // disabled
+  if (props.disabled) return
   const { lat, lng } = e.latlng
   localValue.value.latitud = Number(lat.toFixed(7))
   localValue.value.longitud = Number(lng.toFixed(7))
 }
 function onDragEnd(e) {
+  if (props.disabled) return
   const { lat, lng } = e.target.getLatLng()
   localValue.value.latitud = Number(lat.toFixed(7))
   localValue.value.longitud = Number(lng.toFixed(7))
 }
 function flyToLatLng() {
+  if (props.disabled) return
   if (!hasLatLng.value) return
   const leaflet = mapRef.value?.leafletObject
   leaflet && leaflet.flyTo([Number(localValue.value.latitud), Number(localValue.value.longitud)], Math.max(zoom.value, 15))

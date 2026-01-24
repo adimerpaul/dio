@@ -18,6 +18,15 @@ export default boot(({ app, router }) => {
   app.config.globalProperties.$axios = axios.create({ baseURL: import.meta.env.VITE_API_BACK })
   // console.log(import.meta.env.VITE_API_BACK)
   app.config.globalProperties.$alert = Alert
+  app.config.globalProperties.$estado_casos= [
+    "Apertura Denuncia",
+    "En Seguimiento",
+    "En Proceso",
+    "Concluido",
+    "Archivado",
+    "Con Representacion",
+    "Otros"
+  ]
   app.config.globalProperties.$store = useCounterStore()
   app.config.globalProperties.$url = import.meta.env.VITE_API_BACK
   app.config.globalProperties.$version = import.meta.env.VITE_VERSION

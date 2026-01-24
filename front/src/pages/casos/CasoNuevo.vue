@@ -53,7 +53,7 @@
 
         <q-card-section class="q-pa-xs">
           <div class="row items-center q-gutter-sm q-mb-sm">
-            <q-btn dense no-caps color="primary" icon="add" label="Añadir víctima" @click="addVictima" size="10px"/>
+            <q-btn dense no-caps color="primary" icon="add" label="Añadir víctima" @click="addVictima" size="10px" v-if="!disabled"/>
             <!--            <q-btn dense no-caps color="negative" icon="remove" label="Quitar última" :disable="f.victimas.length<=1" @click="removeVictima"/>-->
             <div class="text-caption text-grey-7 q-ml-sm">Total: {{ f.victimas.length }}</div>
           </div>
@@ -242,7 +242,7 @@
             <q-card-section class="q-pa-xs">
               <div class="row items-center q-gutter-sm q-mb-sm">
                 <q-btn dense no-caps color="primary" icon="add" label="Añadir denunciante" @click="addDenunciante"
-                       size="10px"/>
+                       size="10px" v-if="!disabled"/>
                 <div class="text-caption text-grey-7 q-ml-sm">Total: {{ f.denunciantes.length }}</div>
               </div>
               <template v-for="(d, id) in f.denunciantes" :key="id">
@@ -378,10 +378,10 @@
         <q-card-section class="q-pa-xs" id="denunciante-map-section" v-if="mostrar3Show">
           <div class="row q-col-gutter-md">
             <div class="col-10">
-              <q-input v-model="f.denunciante_domicilio_actual" dense outlined clearable label="Direccion"/>
+              <q-input v-model="f.denunciante_domicilio_actual" dense outlined clearable label="Direccion" :disable="disabled"/>
             </div>
             <div class="col-2">
-              <q-btn label="Buscar" @click="$refs.denunMap?.geocodeAndFly(f.denunciante_domicilio_actual)"/>
+              <q-btn label="Buscar" @click="$refs.denunMap?.geocodeAndFly(f.denunciante_domicilio_actual)" :disable="disabled"/>
             </div>
             <div class="col-12">
               <div class="text-caption text-grey-7 q-mb-xs">Ubicación (denunciante)</div>
@@ -390,6 +390,7 @@
                           label="Ubicación Denunciante"
                          country="bo"
                          ref="denunMap"
+                         :disabled="disabled"
               />
             </div>
           </div>
@@ -404,6 +405,7 @@
           <q-card>
             <q-card-section>
               <q-btn size="10px" label="Agregar familiar" color="primary" icon="add"
+                     v-if="!disabled"
                      @click="f.familiares.push({ nombre_completo: '', edad: null, parentesco: '', celular: '' })"
                      class="q-mb-md" no-caps/>
               <template v-for="(fam, index) in f.familiares" :key="index">
@@ -438,7 +440,9 @@
                     <q-input v-model="fam.familiar_telefono" dense outlined clearable label="Teléfono/Celular" v-upper/>
                   </div>
                   <div class="col-12 col-md-1">
-                    <q-btn color="negative" icon="delete" dense flat @click="f.familiares.splice(index, 1)"/>
+                    <q-btn color="negative" icon="delete" dense flat @click="f.familiares.splice(index, 1)"
+                           v-if="!disabled"
+                    />
                   </div>
                 </div>
               </template>
@@ -457,7 +461,7 @@
         <q-card-section>
           <div class="row items-center q-gutter-sm q-mb-sm">
             <q-btn dense no-caps color="primary" icon="add" label="Añadir denunciado" @click="addDenunciado"
-                   size="10px"/>
+                   size="10px" v-if="!disabled"/>
             <div class="text-caption text-grey-7 q-ml-sm">Total: {{ f.denunciados.length }}</div>
           </div>
           <template v-for="(v, idx) in f.denunciados" :key="idx">
@@ -472,6 +476,7 @@
                   </q-item-section>
                   <q-item-section side>
                     <q-btn dense flat color="negative" icon="delete" :disable="f.denunciados.length<=1"
+                           v-if="!disabled"
                            @click="removeDenunciadoAt(idx)"/>
                   </q-item-section>
                 </q-item>
@@ -552,31 +557,37 @@
                   <template v-else>
                     <div class="col-12 col-md-4">
                       <q-input v-model="v.denunciado_trabaja" dense outlined clearable label="Lugar de trabajo"
-                               v-upper/>
+                               v-upper :disable="disabled"/>
                     </div>
                   </template>
                   <div class="col-12 col-md-4">
                     <q-input v-model="v.denunciado_ingresos" dense outlined clearable label="Ingresos Económicos"
-                             v-upper/>
+                             v-upper :disable="disabled"/>
                   </div>
                   <div class="col-12 col-md-4">
                     <q-select v-model="v.denunciado_idioma" dense outlined emit-value map-options clearable
-                              :options="idiomas" label="Idioma"/>
+                              :options="idiomas" label="Idioma" :disable="disabled"/>
                   </div>
                   <div class="col-12 col-md-8">
                     <q-input v-model="v.denunciado_domicilio_actual" dense outlined clearable label="Domicilio"
-                             v-upper/>
+                             v-upper :disable="disabled"/>
                   </div>
                   <div class="col-12 col-md-4">
-                    <q-input v-model="v.denunciado_telefono" dense outlined clearable label="Teléfono/Celular" v-upper/>
+                    <q-input v-model="v.denunciado_telefono" dense outlined clearable label="Teléfono/Celular" v-upper
+                             :disable="disabled"
+                    />
                   </div>
                   <div class="col-12 col-md-4">
                     <q-input v-model="v.denunciado_relacion_victima" dense outlined clearable
-                             label="Parentesco o Relación con la Víctima" v-upper/>
+                             label="Parentesco o Relación con la Víctima" v-upper
+                             :disable="disabled"
+                    />
                   </div>
                   <div class="col-12 col-md-4">
                     <q-input v-model="v.denunciado_relacion_denunciado" dense outlined clearable
-                             label="Parentesco o Relación con el Denunciante" v-upper/>
+                             label="Parentesco o Relación con el Denunciante" v-upper
+                             :disable="disabled"
+                    />
                   </div>
                 </div>
               </q-card-section>
@@ -604,10 +615,10 @@
         <q-card-section class="q-pa-xs" id="denunciado-map-section" v-if="mostrar6Show">
           <div class="row q-col-gutter-md">
             <div class="col-10">
-              <q-input v-model="f.denunciado_domicilio_actual" dense outlined clearable label="Direccion"/>
+              <q-input v-model="f.denunciado_domicilio_actual" dense outlined clearable label="Direccion" :disable="disabled"/>
             </div>
             <div class="col-2">
-              <q-btn label="Buscar" @click="$refs.denunciadoMap?.geocodeAndFly(f.denunciado_domicilio_actual)"/>
+              <q-btn label="Buscar" @click="$refs.denunciadoMap?.geocodeAndFly(f.denunciado_domicilio_actual)" :disable="disabled"/>
             </div>
             <div class="col-12">
               <div class="text-caption text-grey-7 q-mb-xs">Ubicación (denunciado)</div>
@@ -616,6 +627,7 @@
                          label="Ubicación Denunciado"
                          country="bo"
                          ref="denunciadoMap"
+                          :disabled="disabled"
               />
             </div>
           </div>
@@ -885,11 +897,11 @@
               </div>
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_croquis_direccion_denunciado" label="Croquis dirección denunciado"
-                            true-value="1" false-value="0" :disable="false"/>
+                            true-value="1" false-value="0" :disable="disabled"/>
               </div>
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_contrato_pago" label="Papeleta / Contrato de pago del denunciado" true-value="1" false-value="0"
-                            :disable="false"
+                            :disable="disabled"
                 />
               </div>
               <div class="col-12 col-md-2">
@@ -920,19 +932,19 @@
               </div>
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_croquis_direccion_denunciado" label="Croquis dirección denunciado"
-                            true-value="1" false-value="0" disable="disable"/>
+                            true-value="1" false-value="0" :disable="disabled"/>
               </div>
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_placas_fotograficas_domicilio_denunciado"
-                            label="Placas fotográficas domicilio denunciado" true-value="1" false-value="0" disable="disable"/>
+                            label="Placas fotográficas domicilio denunciado" true-value="1" false-value="0" :disable="disabled"/>
               </div>
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_croquis_direccion_denunciante" label="Croquis dirección denunciante"
-                            true-value="1" false-value="0" disable="disable"/>
+                            true-value="1" false-value="0" :disable="disabled"/>
               </div>
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_ciudadania_digital" label="Ciudadanía digital" true-value="1"
-                            false-value="0" disable="disable"/>
+                            false-value="0" :disable="disabled"/>
               </div>
             </template>
           </div>

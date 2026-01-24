@@ -84,6 +84,9 @@
               <q-item-section>
                 <div><strong>ID:</strong> {{ caso.id }}</div>
                 <div><strong>Caso:</strong> {{ caso.caso }}</div>
+<!--                zona-->
+                <div><strong>Zona:</strong> {{ caso.zona }}</div>
+                <div><strong>Número de Caso:</strong> {{ caso.caso_numero }}</div>
                 <div><strong>Título:</strong> {{ caso.titulo || 'N/A' }}</div>
                 <div><strong>Creado:</strong> {{ caso.creado }}</div>
                 <div>

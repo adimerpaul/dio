@@ -3,8 +3,8 @@
     <!-- Toolbar -->
 <!--    <pre>{{subtipo}}</pre>-->
 <!--    <pre>{{$store.casoSelect}}</pre>-->
-    <div class="row items-center q-col-gutter-md q-mb-md">
-      <div class="col-12 col-md">
+    <div class="row">
+      <div class="col-12 col-md-2">
         <q-input
           v-model="search"
           outlined dense debounce="400"
@@ -18,7 +18,7 @@
         </q-input>
       </div>
 
-      <div class="col-auto">
+      <div class="col-12 col-md-2">
         <q-toggle
           v-model="onlyPendientes"
           color="primary"
@@ -26,24 +26,30 @@
           @update:model-value="goFirstPage"
         />
       </div>
-      <div class="col-auto">
+      <div class="col-12 col-md-2">
 <!--        check fragancia-->
         <q-checkbox v-model="fragancia" label="Fragancia" @update:model-value="goFirstPage"/>
       </div>
-
-      <div class="col-auto">
+      <div class="col-12 col-md-2">
         <q-select
-          v-model="perPage"
-          :options="[10, 20, 50]"
-          dense outlined style="width: 120px"
-          label="Por página"
+          v-model="estado_caso"
+          :options="$estado_casos"
+          outlined
+          label="Estado del Caso"
+          dense
+          clearable
+          :disable="!['Abogado','Administrador'].includes($store.user.role)"
           @update:model-value="goFirstPage"
-        />
+        >
+        </q-select>
       </div>
-      <div class="col-auto row items-center">
+      <div class="col-12 col-md-2 flex flex-center ">
         <q-btn color="primary" icon="refresh" label="Actualizar" no-caps
                @click="fetchCasos()" :loading="loading" class="q-mr-sm" size="10px"/>
-        <q-btn v-if="isSLIM" color="green" icon="visibility" no-caps size="10px"
+
+      </div>
+      <div class="col-12 col-md-2 flex flex-center ">
+        <q-btn v-if="isSLIM" color="green" icon="visibility" no-caps size="9px"
                :labelx="showExtra ? 'Ocultar columnas extra' : 'Visualizar Casos/Estado'"
                label="Visualizar Casos/Estado"
                @click="openDialogFormat"/>
@@ -153,6 +159,15 @@
       </tbody>
 
     </q-markup-table>
+    <div class="col-12 col-md-2">
+      <q-select
+        v-model="perPage"
+        :options="[10, 20, 50]"
+        dense outlined style="width: 120px"
+        label="Por página"
+        @update:model-value="goFirstPage"
+      />
+    </div>
 
     <!-- Paginación -->
     <div class="row items-center justify-between q-mt-md">
@@ -302,6 +317,7 @@ export default {
   },
   data () {
     return {
+      estado_caso: null,
       fragancia: false,
       dialogFormat: false,
       casos: [],
@@ -370,7 +386,8 @@ export default {
           tipo: this.tipo,
           page: this.page,
           per_page: this.perPage,
-          only_pendientes: this.onlyPendientes ? 1 : 0
+          only_pendientes: this.onlyPendientes ? 1 : 0,
+          estado_caso: this.estado_caso || ''
         }
       })
         .then(res => {
