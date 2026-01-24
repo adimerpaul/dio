@@ -91,22 +91,26 @@
         <q-btn flat color="primary" icon="refresh" @click="fetchCaso" :loading="loading"/>
         <q-btn flat color="negative" icon="delete" label="Eliminar Caso" @click="eliminarCaso()" v-if="role === 'Administrador'" no-caps/>
         <div v-if="role === 'Abogado' && caso?.legal_user_id === $store.user?.id && !caso?.fecha_aceptacion_area_legal">
-          <q-btn color="red" icon="check_circle" label="Aceptar Caso Legal" @click="aceptarCasoLegal()" no-caps size="10px"/>
+          <q-btn color="red" icon="check_circle" label="Aceptar Caso Legal" @click="aceptarCasoLegal()" no-caps size="10px" :loading="loading"/>
         </div>
         <div v-if="role === 'Psicologo' && caso?.psicologica_user_id === $store.user?.id && !caso?.fecha_aceptacion_area_psicologica">
-          <q-btn color="red" icon="check_circle" label="Aceptar Caso Psicológico" @click="aceptarCasoPsicolico()" no-caps size="10px"/>
+          <q-btn color="red" icon="check_circle" label="Aceptar Caso Psicológico" @click="aceptarCasoPsicolico()" no-caps size="10px" :loading="loading"/>
         </div>
         <div v-if="role === 'Social' && caso?.trabajo_social_user_id === $store.user?.id && !caso?.fecha_aceptacion_area_social">
-          <q-btn color="red" icon="check_circle" label="Aceptar Caso Social" @click="aceptarCasoSocial()" no-caps size="10px"/>
+          <q-btn color="red" icon="check_circle" label="Aceptar Caso Social" @click="aceptarCasoSocial()" no-caps size="10px" :loading="loading"/>
         </div>
 <!--        'fecha_devolucion_area_psicologica',-->
 <!--&lt;!&ndash;        'fecha_devolucion_area_social',&ndash;&gt; boton color verde-->
 <!--        <pre>{{caso}}</pre>-->
         <div  v-if="role === 'Psicologo' && caso?.psicologica_user_id === $store.user?.id && caso?.fecha_devolucion_area_psicologica == null">
-          <q-btn color="green" icon="check_circle" label="Devolucion Caso Psicológico" @click="devolverCasoPsicolico()" no-caps size="10px"/>
+          <q-btn color="green" icon="check_circle" label="Devolucion Caso Psicológico" @click="devolverCasoPsicolico()" no-caps size="10px" :loading="loading"/>
         </div>
         <div  v-if="role === 'Social' && caso?.trabajo_social_user_id === $store.user?.id && caso?.fecha_devolucion_area_social == null">
-          <q-btn color="green" icon="check_circle" label="Devolucion Caso Social" @click="devolverCasoSocial()" no-caps size="10px"/>
+          <q-btn color="green" icon="check_circle" label="Devolucion Caso Social" @click="devolverCasoSocial()" no-caps size="10px" :loading="loading"/>
+        </div>
+<!--        btn verificar antecedentes-->
+        <div>
+          <q-btn color="grey" icon="verified" label="Verificar Antecedentes" @click="antecendetesDenunciado" no-caps size="10px" :loading="loading"/>
         </div>
       </div>
     </div>
@@ -199,6 +203,329 @@
         <EstadoCaso :case-id="caseId" :caso="caso" @refresh="fetchCaso"/>
       </q-tab-panel>
     </q-tab-panels>
+    <q-dialog v-model="antecedentesDenunciadoDialog" >
+      <q-card style="min-width: 70vw; max-width: 90vw;">
+        <q-card-section class="row items-center bg-primary text-white">
+          Antecedentes del Denunciado
+<!--          btn imprmimir-->
+          <q-space/>
+          <q-btn icon="print" flat round dense @click="printantecedentesAll()"/>
+          <q-btn icon="close" flat round dense @click="antecedentesDenunciadoDialog = false"/>
+        </q-card-section>
+<!--        <q-card-section>-->
+<!--          <div class="text-h6">Antecedentes del Denunciado</div>-->
+<!--        </q-card-section>-->
+<!--        <q-separator/>-->
+        <q-card-section>
+<!--          <pre>{{antecedentesDenunciado}}</pre>-->
+          <q-markup-table dense flat bordered>
+            <thead>
+              <tr>
+<!--                <th>Opciones</th>-->
+                <th>Caso ID</th>
+                <th>Denunciado</th>
+                <th>Número de Caso</th>
+                <th>Área</th>
+                <th>Fecha de Hecho</th>
+                <th>Descripción del Caso</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in antecedentesDenunciado" :key="item.id">
+<!--                btn imprimir-->
+                <td>{{item.id || '—'}}</td>
+                <td>
+<!--                  <pre>{{item}}</pre>-->
+
+<!--                  {-->
+<!--                  "id": 17,-->
+<!--                  "area": "SLIM",-->
+<!--                  "zona": "CENTRAL",-->
+<!--                  "nurej": null,-->
+<!--                  "numero_juzgado": null,-->
+<!--                  "numero_juzgado_padre": null,-->
+<!--                  "responsable_fiscalia": null,-->
+<!--                  "estado_caso": null,-->
+<!--                  "estado_caso_otro": null,-->
+<!--                  "respaldo": null,-->
+<!--                  "observaciones": null,-->
+<!--                  "archivo_caso": null,-->
+<!--                  "cud": null,-->
+<!--                  "numero_apoyo_integral": null,-->
+<!--                  "tipo": "SLIM",-->
+<!--                  "principal": null,-->
+<!--                  "caso_numero": "004/25",-->
+<!--                  "caso_fecha_hecho": null,-->
+<!--                  "caso_lugar_hecho": null,-->
+<!--                  "caso_zona": null,-->
+<!--                  "caso_direccion": null,-->
+<!--                  "caso_descripcion": "en dia 5 de diciembre el sr. pedro abuso sexualmente de la sra monica , identificando violencia fisica",-->
+<!--                  "caso_tipologia": "Tipología Múltiple",-->
+<!--                  "caso_modalidad": null,-->
+<!--                  "violencia_fisica": true,-->
+<!--                  "violencia_psicologica": true,-->
+<!--                  "violencia_sexual": true,-->
+<!--                  "violencia_economica": false,-->
+<!--                  "violencia_patrimonial": null,-->
+<!--                  "violencia_simbolica": null,-->
+<!--                  "violencia_institucional": null,-->
+<!--                  "violencia_cibernetica": false,-->
+<!--                  "psicologica_user_id": 7,-->
+<!--                  "trabajo_social_user_id": 20,-->
+<!--                  "legal_user_id": 8,-->
+<!--                  "documento_fotocopia_carnet_denunciante": "0",-->
+<!--                  "documento_fotocopia_carnet_denunciado": "0",-->
+<!--                  "documento_placas_fotograficas_domicilio_denunciante": "0",-->
+<!--                  "documento_croquis_direccion_denunciado": "0",-->
+<!--                  "documento_croquis_direccion_denunciante": "0",-->
+<!--                  "documento_placas_fotograficas_domicilio_denunciado": "0",-->
+<!--                  "documento_ciudadania_digital": "0",-->
+<!--                  "documento_otros": null,-->
+<!--                  "documento_otros_detalle": null,-->
+<!--                  "documento_certificado_nacimiento": "0",-->
+<!--                  "documento_certificado_matrimonio": "0",-->
+<!--                  "documento_tres_testigos": "0",-->
+<!--                  "documento_contrato_pago": "0",-->
+<!--                  "documento_libreta_notas": "0",-->
+<!--                  "documento_numero_cuenta": null,-->
+<!--                  "documento_fotocopia_ci_victima": "0",-->
+<!--                  "documento_fotocopia_ci_denunciante": "0",-->
+<!--                  "documento_nota_director": "0",-->
+<!--                  "documento_nota_distrital": "0",-->
+<!--                  "documento_nota_defensor_pueblo": "0",-->
+<!--                  "documento_diploma_bachiller": "0",-->
+<!--                  "documento_comprobante_universidades": "0",-->
+<!--                  "documento_fotocopia_ci_padres": "0",-->
+<!--                  "fecha_apertura_caso": "2025-12-05 07:11:17",-->
+<!--                  "fecha_derivacion_psicologica": null,-->
+<!--                  "fecha_informe_area_social": null,-->
+<!--                  "fecha_informe_area_psicologica": null,-->
+<!--                  "fecha_informe_trabajo_social": null,-->
+<!--                  "fecha_derivacion_area_legal": "2025-12-05 07:11:17",-->
+<!--                  "fecha_derivacion_area_psicologica": "2025-12-05 07:11:17",-->
+<!--                  "fecha_aceptacion_area_psicologica": null,-->
+<!--                  "fecha_derivacion_area_social": "2025-12-05 07:11:17",-->
+<!--                  "fecha_aceptacion_area_social": null,-->
+<!--                  "user_id": 6,-->
+<!--                  "documento_persona_fisica": "0",-->
+<!--                  "documento_carnet_discapacidad": "0",-->
+<!--                  "documento_carnet_padres": "0",-->
+<!--                  "documento_certificado_medico": "0",-->
+<!--                  "documento_papeleta_luz_agua": "0",-->
+<!--                  "fecha_aceptacion_area_legal": "2026-01-18 17:37:40",-->
+<!--                  "ingreso_economico": null,-->
+<!--                  "violencia_otros": false,-->
+<!--                  "violencia_abandono": false,-->
+<!--                  "codigo_file": null,-->
+<!--                  "titulo": "Registrar Nuevo Caso Hechos de Fragancia",-->
+<!--                  "etapa_procesal": null,-->
+<!--                  "etapa": null,-->
+<!--                  "fecha_devolucion_area_psicologica": null,-->
+<!--                  "fecha_devolucion_area_social": null,-->
+<!--                  "denunciados": [-->
+<!--                  {-->
+<!--                  "id": 75,-->
+<!--                  "denunciado_nombres": "PEDRO VILLALOBOS",-->
+<!--                  "denunciado_paterno": null,-->
+<!--                  "denunciado_materno": null,-->
+<!--                  "denunciado_documento": "Carnet de identidad",-->
+<!--                  "denunciado_documento_otro": null,-->
+<!--                  "denunciado_nro": "12345678",-->
+<!--                  "denunciado_sexo": null,-->
+<!--                  "denunciado_lugar_nacimiento": null,-->
+<!--                  "denunciado_fecha_nacimiento": null,-->
+<!--                  "denunciado_edad": null,-->
+<!--                  "denunciado_telefono": null,-->
+<!--                  "denunciado_residencia": null,-->
+<!--                  "denunciado_estado_civil": null,-->
+<!--                  "denunciado_relacion": null,-->
+<!--                  "denunciado_grado": null,-->
+<!--                  "denunciado_trabaja": null,-->
+<!--                  "denunciado_prox": null,-->
+<!--                  "denunciado_ocupacion": null,-->
+<!--                  "denunciado_ocupacion_exacto": null,-->
+<!--                  "denunciado_idioma": null,-->
+<!--                  "denunciado_fijo": null,-->
+<!--                  "denunciado_movil": null,-->
+<!--                  "denunciado_domicilio_actual": null,-->
+<!--                  "denunciado_ingresos": null,-->
+<!--                  "denunciado_relacion_victima": null,-->
+<!--                  "denunciado_relacion_denunciado": null,-->
+<!--                  "denunciado_latitud": null,-->
+<!--                  "denunciado_longitud": null,-->
+<!--                  "denunciado_cargo": null,-->
+<!--                  "caso_id": 17-->
+<!--                  }-->
+<!--                  ]-->
+<!--                  }-->
+                  <div v-for="denunciado in item.denunciados" :key="denunciado.id">
+                    {{denunciado.denunciado_nombres}} - {{denunciado.denunciado_nro}}
+                  </div>
+                </td>
+                <td>{{item.caso_numero || '—'}}</td>
+                <td>{{item.area || '—'}}</td>
+                <td>{{(item.caso_fecha_hecho) || '—'}}</td>
+                <td>{{item.caso_descripcion || '—'}}</td>
+              </tr>
+            </tbody>
+          </q-markup-table>
+<!--          <pre>{{antecedentesDenunciado}}</pre>-->
+<!--          [-->
+<!--          {-->
+<!--          "id": 17,-->
+<!--          "area": "SLIM",-->
+<!--          "zona": "CENTRAL",-->
+<!--          "nurej": null,-->
+<!--          "numero_juzgado": null,-->
+<!--          "numero_juzgado_padre": null,-->
+<!--          "responsable_fiscalia": null,-->
+<!--          "estado_caso": null,-->
+<!--          "estado_caso_otro": null,-->
+<!--          "respaldo": null,-->
+<!--          "observaciones": null,-->
+<!--          "archivo_caso": null,-->
+<!--          "cud": null,-->
+<!--          "numero_apoyo_integral": null,-->
+<!--          "tipo": "SLIM",-->
+<!--          "principal": null,-->
+<!--          "caso_numero": "004/25",-->
+<!--          "caso_fecha_hecho": null,-->
+<!--          "caso_lugar_hecho": null,-->
+<!--          "caso_zona": null,-->
+<!--          "caso_direccion": null,-->
+<!--          "caso_descripcion": "en dia 5 de diciembre el sr. pedro abuso sexualmente de la sra monica , identificando violencia fisica",-->
+<!--          "caso_tipologia": "Tipología Múltiple",-->
+<!--          "caso_modalidad": null,-->
+<!--          "violencia_fisica": true,-->
+<!--          "violencia_psicologica": true,-->
+<!--          "violencia_sexual": true,-->
+<!--          "violencia_economica": false,-->
+<!--          "violencia_patrimonial": null,-->
+<!--          "violencia_simbolica": null,-->
+<!--          "violencia_institucional": null,-->
+<!--          "violencia_cibernetica": false,-->
+<!--          "psicologica_user_id": 7,-->
+<!--          "trabajo_social_user_id": 20,-->
+<!--          "legal_user_id": 8,-->
+<!--          "documento_fotocopia_carnet_denunciante": "0",-->
+<!--          "documento_fotocopia_carnet_denunciado": "0",-->
+<!--          "documento_placas_fotograficas_domicilio_denunciante": "0",-->
+<!--          "documento_croquis_direccion_denunciado": "0",-->
+<!--          "documento_croquis_direccion_denunciante": "0",-->
+<!--          "documento_placas_fotograficas_domicilio_denunciado": "0",-->
+<!--          "documento_ciudadania_digital": "0",-->
+<!--          "documento_otros": null,-->
+<!--          "documento_otros_detalle": null,-->
+<!--          "documento_certificado_nacimiento": "0",-->
+<!--          "documento_certificado_matrimonio": "0",-->
+<!--          "documento_tres_testigos": "0",-->
+<!--          "documento_contrato_pago": "0",-->
+<!--          "documento_libreta_notas": "0",-->
+<!--          "documento_numero_cuenta": null,-->
+<!--          "documento_fotocopia_ci_victima": "0",-->
+<!--          "documento_fotocopia_ci_denunciante": "0",-->
+<!--          "documento_nota_director": "0",-->
+<!--          "documento_nota_distrital": "0",-->
+<!--          "documento_nota_defensor_pueblo": "0",-->
+<!--          "documento_diploma_bachiller": "0",-->
+<!--          "documento_comprobante_universidades": "0",-->
+<!--          "documento_fotocopia_ci_padres": "0",-->
+<!--          "fecha_apertura_caso": "2025-12-05 07:11:17",-->
+<!--          "fecha_derivacion_psicologica": null,-->
+<!--          "fecha_informe_area_social": null,-->
+<!--          "fecha_informe_area_psicologica": null,-->
+<!--          "fecha_informe_trabajo_social": null,-->
+<!--          "fecha_derivacion_area_legal": "2025-12-05 07:11:17",-->
+<!--          "fecha_derivacion_area_psicologica": "2025-12-05 07:11:17",-->
+<!--          "fecha_aceptacion_area_psicologica": null,-->
+<!--          "fecha_derivacion_area_social": "2025-12-05 07:11:17",-->
+<!--          "fecha_aceptacion_area_social": null,-->
+<!--          "user_id": 6,-->
+<!--          "documento_persona_fisica": "0",-->
+<!--          "documento_carnet_discapacidad": "0",-->
+<!--          "documento_carnet_padres": "0",-->
+<!--          "documento_certificado_medico": "0",-->
+<!--          "documento_papeleta_luz_agua": "0",-->
+<!--          "fecha_aceptacion_area_legal": "2026-01-18 17:37:40",-->
+<!--          "ingreso_economico": null,-->
+<!--          "violencia_otros": false,-->
+<!--          "violencia_abandono": false,-->
+<!--          "codigo_file": null,-->
+<!--          "titulo": "Registrar Nuevo Caso Hechos de Fragancia",-->
+<!--          "etapa_procesal": null,-->
+<!--          "etapa": null,-->
+<!--          "fecha_devolucion_area_psicologica": null,-->
+<!--          "fecha_devolucion_area_social": null,-->
+<!--          "denunciados": [-->
+<!--          {-->
+<!--          "id": 75,-->
+<!--          "denunciado_nombres": "PEDRO VILLALOBOS",-->
+<!--          "denunciado_paterno": null,-->
+<!--          "denunciado_materno": null,-->
+<!--          "denunciado_documento": "Carnet de identidad",-->
+<!--          "denunciado_documento_otro": null,-->
+<!--          "denunciado_nro": "12345678",-->
+<!--          "denunciado_sexo": null,-->
+<!--          "denunciado_lugar_nacimiento": null,-->
+<!--          "denunciado_fecha_nacimiento": null,-->
+<!--          "denunciado_edad": null,-->
+<!--          "denunciado_telefono": null,-->
+<!--          "denunciado_residencia": null,-->
+<!--          "denunciado_estado_civil": null,-->
+<!--          "denunciado_relacion": null,-->
+<!--          "denunciado_grado": null,-->
+<!--          "denunciado_trabaja": null,-->
+<!--          "denunciado_prox": null,-->
+<!--          "denunciado_ocupacion": null,-->
+<!--          "denunciado_ocupacion_exacto": null,-->
+<!--          "denunciado_idioma": null,-->
+<!--          "denunciado_fijo": null,-->
+<!--          "denunciado_movil": null,-->
+<!--          "denunciado_domicilio_actual": null,-->
+<!--          "denunciado_ingresos": null,-->
+<!--          "denunciado_relacion_victima": null,-->
+<!--          "denunciado_relacion_denunciado": null,-->
+<!--          "denunciado_latitud": null,-->
+<!--          "denunciado_longitud": null,-->
+<!--          "denunciado_cargo": null,-->
+<!--          "caso_id": 17-->
+<!--          }-->
+<!--          ]-->
+<!--          },-->
+<!--          {-->
+<!--          "id": 4,-->
+<!--          "area": "SLIM",-->
+<!--          "zona": "CENTRAL",-->
+<!--          "nurej": "7373782829",-->
+<!--          "numero_juzgado": "JUZGADO DE LA NIÑEZ Y ADOLESCENCIA N° 2",-->
+<!--          "numero_juzgado_padre": "Juzgado Tribunal Sala",-->
+<!--          "responsable_fiscalia": "Abg. Juan Perez",-->
+<!--          "estado_caso": "Archivado",-->
+<!--          "estado_caso_otro": null,-->
+<!--          "respaldo": "/storage/caso_respaldo/user_1/1763028961_Criterios diagnósticos  TCA 2025.pptx",-->
+<!--          "observaciones": "el estado se encuentra en apertura en juzgado",-->
+<!--          "archivo_caso": null,-->
+<!--          "cud": "7272883993",-->
+<!--          "numero_apoyo_integral": null,-->
+<!--          "tipo": "SLIM",-->
+<!--          "principal": null,-->
+<!--          "caso_numero": "001/25",-->
+<!--          "caso_fecha_hecho": "2025-03-03",-->
+<!--          "caso_lugar_hecho": "casa amigo",-->
+<!--          "caso_zona": null,-->
+<!--          "caso_direccion": null,-->
+<!--          "caso_descripcion": "En sabado 3 de marzo la señorita fue a la avenida civica",-->
+<!--          "caso_tipologia": "Violencia Sexual",-->
+<!--          "caso_modalidad": null,-->
+<!--          "violencia_fisica": false,-->
+<!--          "violencia_psicologica": false,-->
+<!--          "violencia_sexual": true,-->
+<!--          "violencia_economica": false,-->
+<!--          "violencia_patrimonial": null,-->
+<!--          "violencia_simbolica": null,-->
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -223,6 +550,9 @@ import Codigo from "pages/casos/tabs/Codigo.vue";
 import moment from "moment";
 import CasoNuevo from "pages/casos/CasoNuevo.vue";
 import EstadoCaso from "pages/casos/tabs/EstadoCaso.vue";
+
+import jsPDF from 'jspdf'
+import autoTable from 'jspdf-autotable'
 export default {
   name: 'CasoDetalle',
   components: {
@@ -247,6 +577,8 @@ export default {
       defaultCountryCallingCode: '591',
       now: moment(),
       cronometroTimer: null,
+      antecedentesDenunciado: [],
+      antecedentesDenunciadoDialog : false,
     }
   },
   computed: {
@@ -316,6 +648,44 @@ export default {
     if (this.cronometroTimer) clearInterval(this.cronometroTimer);
   },
   methods: {
+    printantecedentesAll () {
+      try {
+        const doc = new jsPDF()
+        const title = `Antecedentes del Denunciado - Caso ID ${this.caseId}`
+        doc.setFontSize(16)
+        doc.text(title, 14, 20)
+        const columns = [
+          { header: 'Caso ID', dataKey: 'id' },
+          { header: 'Denunciado', dataKey: 'denunciados' },
+          { header: 'Número de Caso', dataKey: 'caso_numero' },
+          { header: 'Área', dataKey: 'area' },
+          { header: 'Fecha de Hecho', dataKey: 'caso_fecha_hecho' },
+          { header: 'Descripción del Caso', dataKey: 'caso_descripcion' },
+        ]
+        const rows = this.antecedentesDenunciado.map(item => ({
+          id: item.id || '—',
+          denunciados: item.denunciados.map(d => d.denunciado_nombres + ' - ' + d.denunciado_nro).join(', '),
+          caso_numero: item.caso_numero || '—',
+          area: item.area || '—',
+          caso_fecha_hecho: item.caso_fecha_hecho || '—',
+          caso_descripcion: item.caso_descripcion || '—',
+        }))
+        autoTable(doc, {
+          startY: 30,
+          head: [columns.map(col => col.header)],
+          body: rows.map(row => columns.map(col => row[col.dataKey])),
+          styles: { fontSize: 8 },
+          headStyles: { fillColor: [41, 128, 185], textColor: 255 },
+          margin: { top: 30 },
+        })
+        // Abrir para imprimir / guardar
+        doc.output('dataurlnewwindow') // abre en nueva pestaña
+        // doc.save(`antecedentes_${this.caseId}.pdf`) // si prefieres descargar
+      } catch (e) {
+        console.error(e)
+        this.$q.notify({ type: 'negative', message: 'No se pudo generar el PDF de antecedentes' })
+      }
+    },
     formatYmdHis(ymdhis) {
       return moment(ymdhis).format('DD/MM/YYYY HH:mm:ss');
     },
@@ -338,6 +708,18 @@ export default {
         } catch (e) {
           this.$alert.error(e?.response?.data?.message || 'No se pudo devolver el caso psicológico');
         }
+      });
+    },
+    antecendetesDenunciado(){
+      this.loading = true;
+      this.$axios.get(`/casos/${this.caseId}/antecedentes-denunciado`).then((res)=>{
+        console.log(res.data);
+        this.antecedentesDenunciado = res.data;
+        this.antecedentesDenunciadoDialog = true;
+      }).catch((e)=>{
+        this.$alert.error(e?.response?.data?.message || 'No se pudo obtener los antecedentes del denunciado');
+      }).finally(()=>{
+        this.loading = false;
       });
     },
     devolverCasoSocial(){
