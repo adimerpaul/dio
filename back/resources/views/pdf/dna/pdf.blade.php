@@ -232,8 +232,8 @@
         <td style="width:20%;">{{ d($denu?->denunciado_sexo) }}</td>
     </tr>
     <tr>
-        <td class="b">Parentesco o tipo de relación</td>
-        <td>{{ d($denu?->denunciado_relacion) }}</td>
+        <td class="b">Parentesco o tipo de relación </td>
+        <td>{{ d($denu?->denunciado_relacion_victima) }}</td>
         <td class="b">C.I.</td>
         <td>{{ d($denu?->denunciado_nro) }}</td>
     </tr>
@@ -270,7 +270,7 @@
     </tr>
     <tr>
         <td class="b">Parentesco o tipo de relación</td>
-        <td>{{ d($den?->denunciante_relacion) }}</td>
+        <td>{{ d($den?->denunciante_relacion_victima) }}</td>
         <td class="b">C.I.</td>
         <td>{{ d($den?->denunciante_nro) }}</td>
     </tr>
@@ -318,7 +318,10 @@
     <tr>
         <td style="width:50%; height:75px;">
             <div class="b">ABOGADO ASIGNADO AL CASO :</div>
-            <div class="xxs" style="margin-top:25px;">Dr. (a)</div>
+            <div class="xxs" style="margin-top:25px;">
+{{--                Dr. (a)--}}
+                {{$caso->legal_user? $caso->legal_user->name : '............................................................'}}
+            </div>
         </td>
         <td style="width:50%; height:75px;" class="center">
             <div style="margin-top:40px;" class="xxs">Firma del Abogado</div>

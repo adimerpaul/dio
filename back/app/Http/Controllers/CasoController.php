@@ -392,6 +392,7 @@ class CasoController extends Controller
                 'titulo' => $request->string('titulo')->toString() ?: $file->getClientOriginalName(),
                 'contenido_html' => "<p>Archivo adjunto: <a href=\"{$url}\" target=\"_blank\" rel=\"noopener\">{$file->getClientOriginalName()}</a></p>",
                 'archivo' => $url,
+                'fecha' => date('Y-m-d'),
             ]);
         } elseif ($tipo == 'social') {
             $informe = InformesSocial::create([
@@ -407,6 +408,7 @@ class CasoController extends Controller
             $informe = InformeLegal::create([
                 'caseable_id' => $caseId,
                 'caseable_type' => Caso::class,
+                'fecha' => date('Y-m-d'),
                 'user_id' => $request->user()->id,
                 'titulo' => $request->string('titulo')->toString() ?: $file->getClientOriginalName(),
                 'contenido_html' => "<p>Archivo adjunto: <a href=\"{$url}\" target=\"_blank\" rel=\"noopener\">{$file->getClientOriginalName()}</a></p>",
