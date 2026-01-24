@@ -368,14 +368,7 @@
               </q-item-section>
             </q-item>
 <!--            Nuevo apoyo Notarial-->
-            <q-item :inset-level="0.3" dense to="/slams/nuevo-notarial" exact clickable class="menu-item" active-class="menu-active" v-close-popup>
-              <q-item-section avatar>
-                <q-icon name="gavel" class="text-white"/>
-              </q-item-section>
-              <q-item-section>
-                <q-item-label class="text-white">Nuevo Apoyo Notarial</q-item-label>
-              </q-item-section>
-            </q-item>
+<!--            <q-item :inset-level="0.3" dense to="/slams/nuevo-notarial" exact clickable class="menu-item" active-class="menu-active" v-close-popup> slo administradore y psicologia-->
 
 <!--            <q-item :inset-level="0.3" dense to="/slams/nuevofisica" exact clickable class="menu-item" active-class="menu-active" v-close-popup>-->
 <!--              <q-item-section avatar>-->
@@ -401,6 +394,14 @@
           </q-item-section>
           <q-item-section>
             <q-item-label class="text-white">SLAM (Casos)</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item dense to="/slams/nuevo-notarial" exact clickable class="menu-item" active-class="menu-active" v-close-popup v-if="$store.user?.role == 'Administrador' || $store.user?.role == 'Psicologo'">
+          <q-item-section avatar>
+            <q-icon name="gavel" class="text-white"/>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label class="text-white">Nuevo Apoyo Notarial SLAM</q-item-label>
           </q-item-section>
         </q-item>
         <q-expansion-item dense expand-separator icon="add_circle" label="Nuevo UMADIS" active-class="menu-active" v-if="hasPerm('Crear UMADIS')">

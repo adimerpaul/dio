@@ -84,17 +84,23 @@
 
 <table class="tbl mb4 avoid">
     <tr class="center b">
-        <td style="width:26%;">Nombre(s)</td>
-        <td style="width:22%;">Ap. Paterno</td>
-        <td style="width:22%;">Ap. Materno</td>
-        <td style="width:30%;"> </td>
+        <td style="width:70%;">Nombre Completo</td>
+{{--        <td style="width:22%;">Ap. Paterno</td>--}}
+{{--        <td style="width:22%;">Ap. Materno</td>--}}
+        <td style="width:30%;">Carnet</td>
     </tr>
-    <tr>
-        <td>{{ d(optional($caso->denunciantes[0] ?? null)->denunciante_nombres) }}</td>
-        <td>{{ d(optional($caso->denunciantes[0] ?? null)->denunciante_paterno) }}</td>
-        <td>{{ d(optional($caso->denunciantes[0] ?? null)->denunciante_materno) }}</td>
-        <td></td>
-    </tr>
+{{--    <tr>--}}
+{{--        <td>{{ d(optional($caso->denunciantes[0] ?? null)->denunciante_nombres) }}</td>--}}
+{{--        <td>{{ d(optional($caso->denunciantes[0] ?? null)->denunciante_paterno) }}</td>--}}
+{{--        <td>{{ d(optional($caso->denunciantes[0] ?? null)->denunciante_materno) }}</td>--}}
+{{--        <td></td>--}}
+{{--    </tr>--}}
+    @foreach($caso->denunciantes as $denunciante)
+        <tr>
+            <td>{{ d($denunciante->denunciante_nombre_completo, trim(d($denunciante->denunciante_nombres).' '.d($denunciante->denunciante_paterno).' '.d($denunciante->denunciante_materno))) }}</td>
+            <td>{{ d($denunciante->denunciante_nro) }}</td>
+        </tr>
+    @endforeach
 </table>
 
 <div class="b upper mb4">2. DOCUMENTOS DE IDENTIDAD</div>
@@ -103,17 +109,26 @@
         <td style="width:8%;">Día</td>
         <td style="width:8%;">Mes</td>
         <td style="width:12%;">Año</td>
-        <td style="width:18%;">N° de C.I.</td>
-        <td style="width:18%;"> </td>
+{{--        <td style="width:18%;">N° de C.I.</td>--}}
+{{--        <td style="width:18%;"> </td>--}}
         <td style="width:36%;">Lugar</td>
     </tr>
-    <tr class="center">
-        <td>{{ dda(optional($caso->denunciantes[0] ?? null)->denunciante_fecha_nacimiento) }}</td>
-        <td>{{ mm(optional($caso->denunciantes[0] ?? null)->denunciante_fecha_nacimiento) }}</td>
-        <td>{{ yy(optional($caso->denunciantes[0] ?? null)->denunciante_fecha_nacimiento) }}</td>
-        <td colspan="2">{{ d(optional($caso->denunciantes[0] ?? null)->denunciante_nro) }}</td>
-        <td style="text-align:left;">{{ d(optional($caso->denunciantes[0] ?? null)->denunciante_lugar_nacimiento) }}</td>
-    </tr>
+{{--    <tr class="center">--}}
+{{--        <td>{{ dda(optional($caso->denunciantes[0] ?? null)->denunciante_fecha_nacimiento) }}</td>--}}
+{{--        <td>{{ mm(optional($caso->denunciantes[0] ?? null)->denunciante_fecha_nacimiento) }}</td>--}}
+{{--        <td>{{ yy(optional($caso->denunciantes[0] ?? null)->denunciante_fecha_nacimiento) }}</td>--}}
+{{--        <td colspan="2">{{ d(optional($caso->denunciantes[0] ?? null)->denunciante_nro) }}</td>--}}
+{{--        <td style="text-align:left;">{{ d(optional($caso->denunciantes[0] ?? null)->denunciante_lugar_nacimiento) }}</td>--}}
+{{--    </tr>--}}
+    @foreach($caso->denunciantes as $denunciante)
+        <tr class="center">
+            <td>{{ dda($denunciante->denunciante_fecha_nacimiento) }}</td>
+            <td>{{ mm($denunciante->denunciante_fecha_nacimiento) }}</td>
+            <td>{{ yy($denunciante->denunciante_fecha_nacimiento) }}</td>
+{{--            <td colspan="2">{{ d($denunciante->denunciante_nro) }}</td>--}}
+            <td style="text-align:left;">{{ d($denunciante->denunciante_lugar_nacimiento) }}</td>
+        </tr>
+    @endforeach
 </table>
 
 <table class="tbl mb4 avoid">
@@ -122,11 +137,18 @@
         <td style="width:58%;">2.4 Domicilio</td>
         <td style="width:30%;">2.5 Estado civil</td>
     </tr>
-    <tr>
-        <td class="center">{{ d(optional($caso->denunciantes[0] ?? null)->denunciante_edad) }}</td>
-        <td>{{ d(optional($caso->denunciantes[0] ?? null)->denunciante_domicilio_actual) }}</td>
-        <td class="center">{{ d(optional($caso->denunciantes[0] ?? null)->denunciante_estado_civil) }}</td>
-    </tr>
+{{--    <tr>--}}
+{{--        <td class="center">{{ d(optional($caso->denunciantes[0] ?? null)->denunciante_edad) }}</td>--}}
+{{--        <td>{{ d(optional($caso->denunciantes[0] ?? null)->denunciante_domicilio_actual) }}</td>--}}
+{{--        <td class="center">{{ d(optional($caso->denunciantes[0] ?? null)->denunciante_estado_civil) }}</td>--}}
+{{--    </tr>--}}
+    @foreach($caso->denunciantes as $denunciante)
+        <tr>
+            <td class="center">{{ d($denunciante->denunciante_edad) }}</td>
+            <td>{{ d($denunciante->denunciante_domicilio_actual) }}</td>
+            <td class="center">{{ d($denunciante->denunciante_estado_civil) }}</td>
+        </tr>
+    @endforeach
 </table>
 
 <table class="tbl mb4 avoid">
@@ -134,14 +156,26 @@
         <td style="width:50%;">2.6 Ocupación</td>
         <td style="width:50%;">2.7 Ingresos económicos</td>
     </tr>
-    <tr>
-        <td>
-            {{ d(optional($caso->denunciantes[0] ?? null)->denunciante_ocupacion) }}
-        </td>
-        <td>
-            {{ d(optional($caso)->ingreso_economico) }}
-        </td>
-    </tr>
+{{--    <tr>--}}
+{{--        <td>--}}
+{{--            {{ d(optional($caso->denunciantes[0] ?? null)->denunciante_ocupacion) }}--}}
+{{--        </td>--}}
+{{--        <td>--}}
+{{--            {{ d(optional($caso)->ingreso_economico) }}--}}
+{{--        </td>--}}
+{{--    </tr>--}}
+    @foreach($caso->denunciantes as $denunciante)
+        <tr>
+            <td>
+                {{ d($denunciante->denunciante_ocupacion) }}
+            </td>
+            @if ($loop->first)
+                <td rowspan="{{ $caso->denunciantes->count() }}">
+                    {{ d($caso->ingreso_economico) }}
+                </td>
+            @endif
+        </tr>
+    @endforeach
 </table>
 
 <table class="tbl mb8 avoid">
@@ -150,12 +184,25 @@
         <td style="width:55%;">2.9 Teléfonos de referencia</td>
     </tr>
     <tr>
+{{--        <td>--}}
+{{--            @php $idi = strtolower(d(optional($caso->denunciantes[0] ?? null)->denunciante_idioma)); @endphp--}}
+{{--            <div>Castellano <span class="box">{{ x(str_contains($idi,'cast')) }}</span></div>--}}
+{{--            <div>Quechua <span class="box">{{ x(str_contains($idi,'que')) }}</span></div>--}}
+{{--            <div>Aymara <span class="box">{{ x(str_contains($idi,'aym')) }}</span></div>--}}
+{{--            <div>Otros: {{ (!str_contains($idi,'cast') && !str_contains($idi,'que') && !str_contains($idi,'aym')) ? d(optional($caso->denunciantes[0] ?? null)->denunciante_idioma) : '' }}</div>--}}
+{{--        </td>--}}
         <td>
-            @php $idi = strtolower(d(optional($caso->denunciantes[0] ?? null)->denunciante_idioma)); @endphp
-            <div>Castellano <span class="box">{{ x(str_contains($idi,'cast')) }}</span></div>
-            <div>Quechua <span class="box">{{ x(str_contains($idi,'que')) }}</span></div>
-            <div>Aymara <span class="box">{{ x(str_contains($idi,'aym')) }}</span></div>
-            <div>Otros: {{ (!str_contains($idi,'cast') && !str_contains($idi,'que') && !str_contains($idi,'aym')) ? d(optional($caso->denunciantes[0] ?? null)->denunciante_idioma) : '' }}</div>
+            @foreach($caso->denunciantes as $denunciante)
+                @php $idi = strtolower(d($denunciante->denunciante_idioma)); @endphp
+                <div>
+                    {{ d($denunciante->denunciante_nombre_completo, trim(d($denunciante->denunciante_nombres).' '.d($denunciante->denunciante_paterno).' '.d($denunciante->denunciante_materno))) }}:
+                    Castellano <span class="box">{{ x(str_contains($idi,'cast')) }}</span>
+                    Quechua <span class="box">{{ x(str_contains($idi,'que')) }}</span>
+                    Aymara <span class="box">{{ x(str_contains($idi,'aym')) }}</span>
+                    Otros: {{ (!str_contains($idi,'cast') && !str_contains($idi,'que') && !str_contains($idi,'aym')) ? d($denunciante->denunciante_idioma) : '' }}
+                </div>
+            @endforeach
+
         </td>
         <td>
             <table class="tbl">
@@ -201,17 +248,23 @@
 <div class="b upper mb4">4. DATOS DEL DENUNCIADO/A</div>
 <table class="tbl mb4 avoid">
     <tr class="center b">
-        <td style="width:40%;">Nombre(s)</td>
-        <td style="width:20%;">Ap. Paterno</td>
-        <td style="width:20%;">Ap. Materno</td>
-        <td style="width:20%;"> </td>
+        <td style="width:70%;">Nombre Completo</td>
+{{--        <td style="width:20%;">Ap. Paterno</td>--}}
+{{--        <td style="width:20%;">Ap. Materno</td>--}}
+        <td style="width:30%;"> Carnet</td>
     </tr>
-    <tr>
-        <td>{{ d(optional($caso->denunciados[0] ?? null)->denunciado_nombres) }}</td>
-        <td>{{ d(optional($caso->denunciados[0] ?? null)->denunciado_paterno) }}</td>
-        <td>{{ d(optional($caso->denunciados[0] ?? null)->denunciado_materno) }}</td>
-        <td></td>
-    </tr>
+{{--    <tr>--}}
+{{--        <td>{{ d(optional($caso->denunciados[0] ?? null)->denunciado_nombres) }}</td>--}}
+{{--        <td>{{ d(optional($caso->denunciados[0] ?? null)->denunciado_paterno) }}</td>--}}
+{{--        <td>{{ d(optional($caso->denunciados[0] ?? null)->denunciado_materno) }}</td>--}}
+{{--        <td></td>--}}
+{{--    </tr>--}}
+    @foreach($caso->denunciados as $denunciado)
+        <tr>
+            <td>{{ d($denunciado->denunciado_nombre_completo, trim(d($denunciado->denunciado_nombres).' '.d($denunciado->denunciado_paterno).' '.d($denunciado->denunciado_materno))) }}</td>
+            <td>{{ d($denunciado->denunciado_nro) }}</td>
+        </tr>
+    @endforeach
 </table>
 
 <table class="tbl mb4 avoid">

@@ -177,7 +177,7 @@ export default {
         isEdit: false,
         currentId: null
       },
-      solicitadoOpts: ['DIRECTOR', 'SECRETARIA', 'PERSONAL UE'],
+      solicitadoOpts: ['SOLICITUD PROPIA','DIRECTOR', 'SECRETARIA', 'PERSONAL UE'],
       colorOptions: [
         { label: 'Azul', value: '#1976D2' },
         { label: 'Verde', value: '#2E7D32' },

@@ -15,7 +15,7 @@ use App\Http\Controllers\SlimPsicologicaController;
 use App\Http\Controllers\TallerController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SlimController;
-// ... (tus otros use ya existentes)
+use App\Http\Controllers\AutorizacionesTrabajoController;
 
 Route::post('/login', [App\Http\Controllers\UserController::class, 'login']);
 
@@ -56,6 +56,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/casos/{caso}/aceptar-social', [\App\Http\Controllers\CasoController::class, 'aceptarSocial']);
 //    await this.$axios.post(`/casos/${this.caseId}/aceptar-psicologico`);
     Route::post('/casos/{caso}/aceptar-psicologico', [\App\Http\Controllers\CasoController::class, 'aceptarPsicologico']);
+
+    Route::get('autorizaciones-trabajo', [AutorizacionesTrabajoController::class, 'index']);
+    Route::post('autorizaciones-trabajo', [AutorizacionesTrabajoController::class, 'store']);
+    Route::put('autorizaciones-trabajo/{id}', [AutorizacionesTrabajoController::class, 'update']);
+    Route::delete('autorizaciones-trabajo/{id}', [AutorizacionesTrabajoController::class, 'destroy']);
 
     Route::post('/casos/{caso}/upload_respaldo', [\App\Http\Controllers\CasoController::class, 'uploadRespaldo']);
 

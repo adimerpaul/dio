@@ -714,10 +714,10 @@
               <div class="col-6 col-md-3">
                 <q-toggle v-model="f.violencia_psicologica" label="Psicológica" :disable="disabled"/>
               </div>
-              <div class="col-6 col-md-3">
+              <div class="col-6 col-md-3" v-if="tipo!=='SLAM'">
                 <q-toggle v-model="f.violencia_sexual" label="Sexual" :disable="disabled"/>
               </div>
-              <div class="col-6 col-md-3">
+              <div class="col-6 col-md-3" v-if="tipo!=='SLAM'">
                 <q-toggle v-model="f.violencia_economica" label="Económica/Patrimonial" :disable="disabled"/>
               </div>
               <div class="col-6 col-md-3" v-if="tipo==='DNA' || tipo==='PROPREMI' || tipo==='SLIM' || tipo==='UMADIS'">
@@ -1674,8 +1674,8 @@ export default {
       this.tipologias = [
         'Violencia Física',
         'Violencia Psicológica',
-        'Violencia Sexual',
-        'Violencia Económica/Patrimonial',
+        // 'Violencia Sexual',
+        // 'Violencia Económica/Patrimonial',
         'Abandono',
         'Extravío',
         'Tipología Múltiple',
@@ -1694,6 +1694,9 @@ export default {
         'Informes psicológicos',
         'Informes sociales',
         'Informes psicosociales',
+        'Abandono',
+        'Extravío',
+        "Abandono y Extravío",
         'Otros'
       ]
     }

@@ -63,6 +63,8 @@ const routes = [
       { path: '/juventudes/actividades-talleres', component: () => import('pages/juventudes/JuventudesActividadesTalleres.vue'), meta: { requiresAuth: true, perm: 'Juventudes' } },
       // JUVENTUDES
       { path: '/juventudes', component: () => import('pages/juventudes/Juventudes.vue'), meta: { requiresAuth: true, perm: 'Juventudes' } },
+      // http://localhost:9000/juventudes/permisos-trabajo
+      { path: '/juventudes/permisos-trabajo', component: () => import('pages/juventudes/AutorizacionTrabajoPage.vue'), meta: { requiresAuth: true, perm: 'Juventudes' } },
 
       { path: '/lineas-tiempo', component: () => import('pages/lineastiempo/LineasTiempo.vue'), meta: { requiresAuth: true, perm: 'Lineas de Tiempo' } },
       { path: '/kpis', component: () => import('pages/kpis/Kpis.vue'), meta: { requiresAuth: true, perm: 'Kpis' } },
