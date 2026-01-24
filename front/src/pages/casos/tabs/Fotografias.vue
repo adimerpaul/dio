@@ -38,6 +38,7 @@
           </q-card-actions>
         </q-card>
       </div>
+      </template>
     </div>
 
     <!-- Diálogo para título + archivo -->

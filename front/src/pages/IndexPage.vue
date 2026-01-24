@@ -134,6 +134,14 @@
             Total: {{ detalle.rows.length }} registro(s)
           </div>
         </div>
+<!--        btn imprimir-->
+        <q-btn
+          dense
+          flat
+          icon="print"
+          round
+          @click="imprimirDetalle()"
+        />
         <q-btn
           dense
           flat
@@ -176,6 +184,8 @@
 <script>
 import ApexCharts from 'vue3-apexcharts'
 import moment from 'moment'
+import jsPDF from 'jspdf'
+import autoTable from 'jspdf-autotable'
 export default {
   name: 'IndexPage',
   components: { apexchart: ApexCharts },
@@ -215,7 +225,17 @@ export default {
         { name: 'caso_numero', label: 'N° Caso', field: 'caso_numero', align: 'left' },
         { name: 'caso_fecha_hecho', label: 'Fecha hecho', field: 'caso_fecha_hecho', align: 'left' },
         { name: 'caso_lugar_hecho', label: 'Lugar', field: 'caso_lugar_hecho', align: 'left' },
-        { name: 'principal', label: 'Principal', field: 'principal', align: 'left' }
+        // { name: 'principal', label: 'Principal', field: 'principal', align: 'left' }
+        // fecha_apertura_caso
+        { name: 'fecha_apertura_caso', label: 'Fecha apertura', field: 'fecha_apertura_caso', align: 'left' },
+        // user
+        // zona
+        { name: 'zona', label: 'Zona', field: 'zona', align: 'left' },
+
+        { name: 'denunciantes', label: 'Denunciantes', field: (row) => row.denunciantes?.map(d => d.denunciante_nombres).join(', ') || '—', align: 'left' },
+        { name: 'denunciados', label: 'Denunciados', field: (row) => row.denunciados?.map(d => d.denunciado_nombres).join(', ') || '—', align: 'left' },
+        { name: 'user', label: 'Usuario', field: (row) => row.user?.name || '—', align: 'left' },
+        // denunciados
       ]
     }
   },
@@ -272,6 +292,105 @@ export default {
     this.fetchDashboard()
   },
   methods: {
+    imprimirDetalle () {
+      if (!this.detalle?.rows?.length) {
+        this.$q.notify({ type: 'warning', message: 'No hay detalle para imprimir' })
+        return
+      }
+
+      const doc = new jsPDF('l', 'mm', 'a4')
+
+      const fmt = (v) => v ? moment(v).format('DD/MM/YYYY') : '—'
+      const safe = (v) => (v === null || v === undefined || v === '') ? '—' : String(v)
+
+      // ===== Header =====
+      const title = 'Reporte de Casos'
+      const subtitle = safe(this.detalle.titulo || 'Detalle')
+      const rango = `Rango: ${this.filters.from}  →  ${this.filters.to}`
+      const area = this.filters.area ? `Área: ${this.filters.area}` : 'Área: Todas'
+      const generado = `Generado: ${moment().format('DD/MM/YYYY HH:mm')}`
+
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(14)
+      doc.text(title, 10, 14)
+
+      doc.setFont('helvetica', 'normal')
+      doc.setFontSize(10)
+      doc.text(subtitle, 10, 20)
+      doc.text(rango, 10, 25)
+      doc.text(area, 10, 30)
+      doc.text(generado, 10, 35)
+
+      const head = [[
+        'ID', 'Área', 'Tipo', 'Tipología', 'N° Caso',
+        'Fecha hecho', 'Fecha apertura', 'Usuario', 'Zona',
+        'Denunciantes', 'Denunciados'
+      ]]
+
+      const body = this.detalle.rows.map(r => ([
+        safe(r.id),
+        safe(r.area),
+        safe(r.tipo),
+        safe(r.caso_tipologia),
+        safe(r.caso_numero),
+        fmt(r.caso_fecha_hecho),
+        r.fecha_apertura_caso ? moment(r.fecha_apertura_caso).format('DD/MM/YYYY') : '—',
+        safe(r.user?.name),
+        safe(r.zona),
+        (r.denunciantes?.map(d => d.denunciante_nombres).filter(Boolean).join(', ') || '—'),
+        (r.denunciados?.map(d => d.denunciado_nombres).filter(Boolean).join(', ') || '—')
+      ]))
+
+      // ===== FULL WIDTH =====
+      const pageWidth = doc.internal.pageSize.getWidth()
+      const marginX = 8
+      const usableWidth = pageWidth - (marginX * 2)
+
+      autoTable(doc, {
+        head,
+        body,
+        startY: 40,
+        theme: 'grid',
+
+        // clave para ocupar todo el ancho
+        margin: { left: marginX, right: marginX },
+        tableWidth: usableWidth,     // <--- FULL WIDTH
+        styles: {
+          font: 'helvetica',
+          fontSize: 8,
+          cellPadding: 2,
+          overflow: 'linebreak',
+          valign: 'top',
+          cellWidth: 'auto'          // <--- deja que distribuya ancho
+        },
+
+        headStyles: {
+          fontStyle: 'bold',
+          fontSize: 8
+        },
+
+        // Si quieres que algunas columnas sean más anchas (sin fijar todo):
+        // (no uses números en todas, solo en 1–2 claves)
+        columnStyles: {
+          9: { cellWidth: 55 },      // Denunciantes (más ancho)
+          10:{ cellWidth: 55 }       // Denunciados (más ancho)
+        },
+
+        didDrawPage: () => {
+          const pageCount = doc.getNumberOfPages()
+          const pageHeight = doc.internal.pageSize.getHeight()
+
+          doc.setFontSize(9)
+          doc.text(
+            `Página ${doc.internal.getCurrentPageInfo().pageNumber} de ${pageCount}`,
+            marginX,
+            pageHeight - 6
+          )
+        }
+      })
+
+      doc.save(`casos_${this.filters.from}_${this.filters.to}.pdf`)
+    },
     formatDate (val) {
       if (!val) return ''
       // viene como 'YYYY-MM-DD' probablemente
