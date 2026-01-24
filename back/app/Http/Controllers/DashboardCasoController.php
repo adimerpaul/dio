@@ -274,17 +274,18 @@ class DashboardCasoController extends Controller
         }
 
         $rows = $casos
-            ->select(
-                'id',
-                'area',
-                'tipo',
-                'caso_tipologia',
-                'caso_numero',
-                'caso_fecha_hecho',
-                'caso_lugar_hecho',
-                'principal'
-            )
+//            ->select(
+//                'id',
+//                'area',
+//                'tipo',
+//                'caso_tipologia',
+//                'caso_numero',
+//                'caso_fecha_hecho',
+//                'caso_lugar_hecho',
+//                'principal'
+//            )
             ->orderByDesc('caso_fecha_hecho')
+            ->with('user','denunciantes','denunciados')
             ->limit(200)
             ->get();
 
