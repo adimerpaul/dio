@@ -139,6 +139,9 @@ return new class extends Migration
             $table->dateTime('fecha_devolucion_area_psicologica')->nullable();
             $table->dateTime('fecha_devolucion_area_social')->nullable();
 
+            $table->dateTime('fecha_juzgado')->nullable();
+            $table->dateTime('fecha_fiscalia')->nullable();
+
             $table->timestamps();
             $table->softDeletes();
         });

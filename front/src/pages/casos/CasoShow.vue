@@ -27,6 +27,25 @@
           >
             {{ caso?.etapa_procesal }}
           </q-chip>
+<!--          nurej y cud-->
+          <q-chip
+            v-if="caso?.nurej"
+            color="grey-8"
+            text-color="white"
+            size="sm"
+            class="q-ml-sm"
+          >
+            NUREJ: {{ caso?.nurej }}
+          </q-chip>
+          <q-chip
+            v-if="caso?.cud"
+            color="grey-8"
+            text-color="white"
+            size="sm"
+            class="q-ml-sm"
+          >
+            CUD: {{ caso?.cud }}
+          </q-chip>
           <q-btn flat icon="arrow_back" @click="$router.back()" class="q-mr-sm"/>
         </div>
           <div class="text-subtitle2 text-black-7">
@@ -119,20 +138,35 @@
 
     <!-- Tabs -->
     <q-card flat bordered class="q-mb-md">
-      <q-tabs v-model="tab" class="text-primary" dense align="left"
-              active-color="primary" indicator-color="primary" outside-arrows mobile-arrows>
-        <q-tab name="info"         label="1 Información General"   icon="dashboard"       no-caps/>
-        <q-tab name="seguimiento"  label="2 Seguimiento"           icon="track_changes"   no-caps/>
-        <template v-if="subtipo===undefined">
-        <q-tab name="hoja"         label="3 Hoja de Ruta"          icon="report_problem"  no-caps />
-          <q-tab name="psico"        label="4 Área Psicológico"      icon="psychology"      no-caps v-if="role === 'Administrador' || role === 'Psicologo'"/>
-          <q-tab name="legal"        label="5 Área Legal"            icon="gavel"           no-caps v-if="role === 'Administrador' || role === 'Abogado'"/>
-          <q-tab name="social"       label="6 Área Social"           icon="people"          no-caps v-if="role === 'Administrador' || role === 'Social'"/>
-          <q-tab name="docs"         label="7 Documentos General"    icon="folder"          no-caps/>
-          <q-tab name="fotos"        label="8 Fotografías"           icon="photo_library"   no-caps/>
+      <q-tabs
+        v-model="tab"
+        class="tabs-slim"
+        dense
+        align="left"
+        active-color="primary"
+        indicator-color="transparent"
+        outside-arrows
+        mobile-arrows
+      >
+        <q-tab name="info"        label="1 Información General" icon="dashboard" no-caps active-class="tab-active" />
+        <q-tab name="seguimiento" label="2 Seguimiento"         icon="track_changes" no-caps active-class="tab-active" />
+        <q-tab name="codigo"      label="3 Codigos"             icon="code" no-caps active-class="tab-active" />
+        <q-tab name="estados"     label="4 Estado Caso"         icon="warning" no-caps active-class="tab-active" />
+
+        <template v-if="subtipo === undefined">
+          <q-tab name="hoja"   label="5 Hoja de Ruta" icon="report_problem" no-caps active-class="tab-active" />
+          <q-tab name="psico"  label="6 Área Psicológico" icon="psychology" no-caps
+                 v-if="role === 'Administrador' || role === 'Psicologo'"
+                 active-class="tab-active" />
+          <q-tab name="legal"  label="7 Área Legal" icon="gavel" no-caps
+                 v-if="role === 'Administrador' || role === 'Abogado'"
+                 active-class="tab-active" />
+          <q-tab name="social" label="8 Área Social" icon="people" no-caps
+                 v-if="role === 'Administrador' || role === 'Social'"
+                 active-class="tab-active" />
+          <q-tab name="docs"   label="9 Documentos General" icon="folder" no-caps active-class="tab-active" />
+          <q-tab name="fotos"  label="10 Fotografías" icon="photo_library" no-caps active-class="tab-active" />
         </template>
-        <q-tab name="codigo"        label="9 Codigos"               icon="code"   no-caps/>
-        <q-tab name="estados" label="10 Estado Caso"        icon="warning"         no-caps/>
       </q-tabs>
     </q-card>
 <!--    <pre>{{role}}</pre>-->

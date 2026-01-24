@@ -258,7 +258,7 @@ export default {
           numero_juzgado_padre: this.form.numero_juzgado_padre,
         }
         await this.$axios.put(`casos/${this.caso.id}/codigos`, payload)
-        this.$emit('actualizado') // notificar al padre
+        this.$emit('refresh') // notificar al padre
         this.editMode = false
         this.$q.notify({ type: 'positive', message: 'Códigos actualizados correctamente.' })
       } catch (error) {

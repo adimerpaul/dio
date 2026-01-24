@@ -143,6 +143,19 @@
             icon="check_circle"
             :color="caso.fecha_devolucion_area_social ? 'primary' : 'grey-5'"
           />
+<!--          //            ALTER TABLE casos ADD COLUMN fecha_juzgado DATETIME NULL, ADD COLUMN fecha_fiscalia DATETIME NULL;-->
+          <q-timeline-entry
+            title="Envío a fiscalía"
+            :subtitle="format(caso.fecha_fiscalia)"
+            icon="gavel"
+            :color="caso.fecha_fiscalia ? 'primary' : 'grey-5'"
+          />
+          <q-timeline-entry
+            title="Envío a juzgado"
+            :subtitle="format(caso.fecha_juzgado)"
+            icon="gavel"
+            :color="caso.fecha_juzgado ? 'primary' : 'grey-5'"
+          />
 
         </q-timeline>
       </q-card-section>

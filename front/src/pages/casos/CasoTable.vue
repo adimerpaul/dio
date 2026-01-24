@@ -26,6 +26,10 @@
           @update:model-value="goFirstPage"
         />
       </div>
+      <div class="col-auto">
+<!--        check fragancia-->
+        <q-checkbox v-model="fragancia" label="Fragancia" @update:model-value="goFirstPage"/>
+      </div>
 
       <div class="col-auto">
         <q-select
@@ -54,7 +58,7 @@
         <th style="width: 60px">#</th>
         <th>Nº</th>
         <th>Fecha</th>
-        <th>Victima</th>
+<!--        <th>Victima</th>-->
         <th>Denunciante</th>
         <th>Denunciado</th>
         <th>Tipología</th>
@@ -64,7 +68,9 @@
         <th class="col-extra">CUD</th>
         <th class="col-extra">Juzgado</th>
         <th>Estado del caso</th>
+        <th>Observaciones</th>
         <th>Alerta</th>
+        <th>Dias</th>
       </tr>
       </thead>
       <tbody v-if="!loading && casos.length">
@@ -74,12 +80,12 @@
         <td class="text-no-wrap">{{ $filters.date?.(c.fecha_apertura_caso) ?? c.fecha_apertura_caso }}</td>
 
         <!-- Denunciante -->
-        <td>
-          <div class="text-weight-medium">{{ c.victimas?.[0].nombres_apellidos }}</div>
-          <div class="text-caption text-grey-7" v-if="c.victimas?.[0]?.ci">
-            CI: {{ c.victimas?.[0]?.ci }}
-          </div>
-        </td>
+<!--        <td>-->
+<!--          <div class="text-weight-medium">{{ c.victimas?.[0].nombres_apellidos }}</div>-->
+<!--          <div class="text-caption text-grey-7" v-if="c.victimas?.[0]?.ci">-->
+<!--            CI: {{ c.victimas?.[0]?.ci }}-->
+<!--          </div>-->
+<!--        </td>-->
         <td>
           <div class="text-weight-medium">{{ nombrePersona(c.denunciantes?.[0], 'denunciante') }}</div>
           <div class="text-caption text-grey-7" v-if="c.denunciantes?.[0]?.denunciante_nro">
@@ -107,7 +113,10 @@
           {{ fmt(c.numero_juzgado) }}
         </td>
         <td>{{ c.estado_caso || '—' }}</td>
-
+        <td class="ellipsis-2-lines">{{ fmt(c.observaciones) }}</td>
+        <td>
+          {{AniosMesesdiasAgo(c.fecha_apertura_caso)}} Dias
+        </td>
         <!-- Alerta -->
         <td>
           <template v-if="c.mi_estado?.me_asignado">
@@ -280,6 +289,7 @@
 </template>
 
 <script>
+import moment from 'moment';
 export default {
   name: 'CasoTable',
   props: {
@@ -292,6 +302,7 @@ export default {
   },
   data () {
     return {
+      fragancia: false,
       dialogFormat: false,
       casos: [],
       loading: false,
@@ -331,6 +342,18 @@ export default {
     }
   },
   methods: {
+    AniosMesesdiasAgo(fecha) {
+      // a;os meses dias con moments
+      if (!fecha) return '—';
+      const fechaApertura = moment(fecha);
+      const hoy = moment();
+      const anios = hoy.diff(fechaApertura, 'years');
+      fechaApertura.add(anios, 'years');
+      const meses = hoy.diff(fechaApertura, 'months');
+      fechaApertura.add(meses, 'months');
+      const dias = hoy.diff(fechaApertura, 'days');
+      return (anios > 0 ? anios + ' a ' : '') + (meses > 0 ? meses + ' m ' : '') + dias + ' d';
+    },
     openDialogFormat(){
       this.dialogFormat=true;
     },
@@ -342,6 +365,7 @@ export default {
       this.$axios.get('/casos', {
         params: {
           q: this.search || '',
+          fragancia: this.fragancia ? 1 : 0,
           tipologia: this.tipologia || '',
           tipo: this.tipo,
           page: this.page,

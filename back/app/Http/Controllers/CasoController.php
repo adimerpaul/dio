@@ -439,9 +439,11 @@ class CasoController extends Controller
 //        'responsable_fiscalia',
         if ($request->has('numero_juzgado')) {
             $caso->numero_juzgado = $request->input('numero_juzgado');
+            $caso->fecha_juzgado = date('Y-m-d H:i:s');
         }
         if ($request->has('responsable_fiscalia')) {
             $caso->responsable_fiscalia = $request->input('responsable_fiscalia');
+            $caso->fecha_fiscalia = date('Y-m-d H:i:s');
         }
 //        numero_juzgado_padre
         if ($request->has('numero_juzgado_padre')) {
@@ -1182,6 +1184,7 @@ class CasoController extends Controller
         $perPage = (int)$request->get('per_page', 10);
         $perPage = max(5, min($perPage, 100));
         $tipo = trim((string)$request->get('tipo', ''));
+        $fragancia = trim((string)$request->get('fragancia', ''));
 //        only_pendientes
         $onlyPendientes = (bool)$request->get('only_pendientes', false);
 
@@ -1266,6 +1269,10 @@ class CasoController extends Controller
                     // otros roles no aplican filtro
                     break;
             }
+        }
+//        fragancia
+        if ($fragancia == 1) {
+            $query->whereIn('titulo', ['Registrar Nuevo Caso Hechos de Fragancia', 'DNA Nuevo Hechos de Fragancia']);
         }
 
         $query->with([
