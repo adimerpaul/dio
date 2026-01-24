@@ -7,7 +7,9 @@
       <td>{{ documento.user?.name || '—' }}</td>
       <td>
         <a @click="openDocumento(documento)"
-           v-if="documento.url">
+           v-if="documento.url"
+           class="cursor-pointer" style="color: #1976d2; text-decoration: underline;"
+        >
           Ver archivo
         </a>
         <span v-else>—</span>
@@ -22,7 +24,10 @@
       <td>{{ foto.user?.name || '—' }}</td>
       <td>
         <a @click="openFotografia(foto)"
-           v-if="foto.url">
+           v-if="foto.url"
+           style="color: #1976d2; text-decoration: underline;"
+           class="cursor-pointer"
+        >
           Ver archivo
         </a>
         <span v-else>—</span>

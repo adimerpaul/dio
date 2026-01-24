@@ -20,7 +20,8 @@
     <q-separator />
 
     <div class="row q-col-gutter-md q-mt-sm">
-      <div v-for="f in caso.fotografias" :key="f.id" class="col-6 col-sm-4 col-md-3">
+      <template v-for="it in caso.documentos" :key="it.id">
+      <div v-if="it.user_id === $store.user.id" class="col-6 col-sm-4 col-md-3">
         <q-card flat bordered>
           <q-img
             :src="toPublicUrl(f.thumb_url || f.url)"

@@ -32,35 +32,37 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="it in caso.documentos" :key="it.id">
-        <td>#{{ it.id }}</td>
-        <td>
-          <q-btn-dropdown dense color="primary" size="sm" label="Opciones" no-caps>
-            <q-item clickable v-close-popup @click="viewDoc(it)">
-              <q-item-section avatar><q-icon name="visibility"/></q-item-section>
-              <q-item-section>Ver</q-item-section>
-            </q-item>
-            <q-item clickable v-close-popup @click="downloadDoc(it)">
-              <q-item-section avatar><q-icon name="download"/></q-item-section>
-              <q-item-section>Descargar</q-item-section>
-            </q-item>
-            <q-separator/>
-            <q-item clickable v-close-popup @click="editMeta(it)">
-              <q-item-section avatar><q-icon name="edit"/></q-item-section>
-              <q-item-section>Editar</q-item-section>
-            </q-item>
-            <q-item clickable v-close-popup @click="removeDoc(it)">
-              <q-item-section avatar><q-icon name="delete" color="negative"/></q-item-section>
-              <q-item-section class="text-negative">Eliminar</q-item-section>
-            </q-item>
-          </q-btn-dropdown>
-        </td>
-        <td class="text-weight-medium">{{ it.titulo }}</td>
-<!--        <td>{{ it.categoria || '—' }}</td>-->
-        <td>{{ it.size_human }}</td>
-        <td>{{ it.mime || it.extension }}</td>
-        <td>{{ it.user?.name || it.user?.username || '—' }}</td>
-      </tr>
+      <template v-for="it in caso.documentos" :key="it.id">
+        <tr  v-if="it.user_id === $store.user.id">
+          <td>#{{ it.id }}</td>
+          <td>
+            <q-btn-dropdown dense color="primary" size="sm" label="Opciones" no-caps>
+              <q-item clickable v-close-popup @click="viewDoc(it)">
+                <q-item-section avatar><q-icon name="visibility"/></q-item-section>
+                <q-item-section>Ver</q-item-section>
+              </q-item>
+              <q-item clickable v-close-popup @click="downloadDoc(it)">
+                <q-item-section avatar><q-icon name="download"/></q-item-section>
+                <q-item-section>Descargar</q-item-section>
+              </q-item>
+              <q-separator/>
+              <q-item clickable v-close-popup @click="editMeta(it)">
+                <q-item-section avatar><q-icon name="edit"/></q-item-section>
+                <q-item-section>Editar</q-item-section>
+              </q-item>
+              <q-item clickable v-close-popup @click="removeDoc(it)">
+                <q-item-section avatar><q-icon name="delete" color="negative"/></q-item-section>
+                <q-item-section class="text-negative">Eliminar</q-item-section>
+              </q-item>
+            </q-btn-dropdown>
+          </td>
+          <td class="text-weight-medium">{{ it.titulo }}</td>
+          <!--        <td>{{ it.categoria || '—' }}</td>-->
+          <td>{{ it.size_human }}</td>
+          <td>{{ it.mime || it.extension }}</td>
+          <td>{{ it.user?.name || it.user?.username || '—' }}</td>
+        </tr>
+      </template>
       <tr v-if="!caso.documentos.length && !loading">
         <td colspan="7" class="text-center text-grey">Sin registros</td>
       </tr>

@@ -292,7 +292,8 @@
                       <div class="col-6 col-md-3">
                         <q-input v-model="d.denunciante_fecha_nacimiento" type="date" dense outlined
                                  label="Fecha de nacimiento" :disable="disabled"
-                                 @update:model-value="(val) => onBirthChange(val, d, 'denunciante')"/>
+                                 @update:model-value="(val) => onBirthChange(val, d, 'denunciante')"
+                        />
                       </div>
                       <div class="col-6 col-md-3">
                         <q-input v-model.number="d.denunciante_edad" dense outlined type="number" label="Edad"/>
@@ -480,46 +481,64 @@
                 <div class="row q-col-gutter-md">
                   <div class="col-12 col-md-6">
                     <q-input v-model="v.denunciado_nombres" dense outlined clearable label="Nombres y apellidos *"
-                             v-upper/>
+                             v-upper :disable="disabled"/>
                   </div>
                   <div class="col-6 col-md-3">
                     <q-select v-model="v.denunciado_documento" dense outlined emit-value map-options clearable
                               :options="documentos" label="Documento"
-                              @update:model-value="val => { if (val !== 'Otro') v.tipo_documento_otro = '' }"/>
+                              @update:model-value="val => { if (val !== 'Otro') v.tipo_documento_otro = '' }"
+                              :disable="disabled"
+                    />
                   </div>
                   <div class="col-6 col-md-3" v-if="v.denunciado_documento==='Otro'">
                     <q-input v-model="v.tipo_documento_otro" dense outlined clearable label="Especifique otro documento"
-                             v-upper/>
+                             v-upper :disable="disabled"/>
                   </div>
                   <div class="col-6 col-md-3">
-                    <q-input v-model="v.denunciado_nro" dense outlined clearable label="Numero de documento" v-upper/>
+                    <q-input v-model="v.denunciado_nro" dense outlined clearable label="Numero de documento" v-upper
+                             :disable="disabled"
+                    />
 <!--                    <pre>{{v}}</pre>-->
                   </div>
                   <div class="col-6 col-md-3">
-                    <q-input v-model="v.denunciado_lugar_nacimiento" dense outlined clearable label="Lugar de nacimiento" v-upper/>
+                    <q-input v-model="v.denunciado_lugar_nacimiento" dense outlined clearable label="Lugar de nacimiento" v-upper
+                             :disable="disabled"
+                    />
                   </div>
                   <div class="col-6 col-md-3">
                     <q-input v-model="v.denunciado_fecha_nacimiento" type="date" dense outlined label="Fecha de nacimiento"
-                             @update:model-value="(val) => onBirthChange(val, v,'denunciado')"/>
+                             @update:model-value="(val) => onBirthChange(val, v,'denunciado')"
+                             :disable="disabled"
+                    />
                   </div>
                   <div class="col-6 col-md-3">
-                    <q-input v-model.number="v.denunciado_edad" dense outlined type="number" label="Edad" v-upper/>
+                    <q-input v-model.number="v.denunciado_edad" dense outlined type="number" label="Edad" v-upper
+                             :disable="disabled"
+                    />
                   </div>
                   <div class="col-6 col-md-3">
                     <q-select v-model="v.denunciado_sexo" dense outlined emit-value map-options clearable
-                              :options="sexos" label="Sexo"/>
+                              :options="sexos" label="Sexo"
+                              :disable="disabled"
+                    />
 <!--                    <pre>{{v}}</pre>-->
                   </div>
                   <div class="col-6 col-md-3">
                     <q-select v-model="v.denunciado_estado_civil" dense outlined emit-value map-options clearable
-                              :options="estadosCiviles" label="Estado civil"/>
+                              :options="estadosCiviles" label="Estado civil"
+                              :disable="disabled"
+                    />
                   </div>
                   <div class="col-12 col-md-4">
                     <q-select v-model="v.denunciado_grado" dense outlined emit-value map-options clearable
-                              :options="gradosInstruccion" label="Grado de Instrucción"/>
+                              :options="gradosInstruccion" label="Grado de Instrucción"
+                              :disable="disabled"
+                    />
                   </div>
                   <div class="col-12 col-md-4">
-                    <q-input v-model="v.denunciado_ocupacion" dense outlined clearable label="Ocupación" v-upper/>
+                    <q-input v-model="v.denunciado_ocupacion" dense outlined clearable label="Ocupación" v-upper
+                             :disable="disabled"
+                    />
                   </div>
 <!--                  <div class="col-12 col-md-4">-->
 <!--                    <q-input v-model="v.denunciado_cargo" dense outlined clearable label="Institucion / Cargo" v-upper/>-->
@@ -624,6 +643,7 @@
                 counter
                 maxlength="3000"
                 :rows="5"
+                :disable="disabled"
               >
                 <template v-slot:append>
                   <q-btn
@@ -638,13 +658,13 @@
               </q-input>
             </div>
             <div class="col-12 col-md-3">
-              <q-input v-model="f.caso_fecha_hecho" type="date" dense outlined label="Fecha del hecho"/>
+              <q-input v-model="f.caso_fecha_hecho" type="date" dense outlined label="Fecha del hecho" :disable="disabled"/>
             </div>
             <!--            <div class="col-6 col-md-3">-->
             <!--              <q-input v-model="f.denunciante_relacion" dense outlined clearable label="Relación con el denunciante"/>-->
             <!--            </div>-->
             <div class="col-12 col-md-6">
-              <q-input v-model="f.caso_lugar_hecho" dense outlined clearable label="Lugar del hecho"/>
+              <q-input v-model="f.caso_lugar_hecho" dense outlined clearable label="Lugar del hecho" v-upper :disable="disabled"/>
             </div>
             <div class="col-12 col-md-4">
 <!--              <pre>-->
@@ -654,7 +674,9 @@
 <!--                {{titulo}}-->
 <!--              </pre>-->
               <q-select v-model="f.caso_tipologia" dense outlined emit-value map-options clearable
-                        :options="tipologias" label="Tipología"/>
+                        :options="tipologias" label="Tipología"
+                        :disable="disabled"
+              />
             </div>
           </div>
         </q-card-section>
@@ -675,25 +697,25 @@
           <q-card-section>
             <div class="row q-col-gutter-md">
               <div class="col-6 col-md-3">
-                <q-toggle v-model="f.violencia_fisica" label="Física"/>
+                <q-toggle v-model="f.violencia_fisica" label="Física" :disable="disabled"/>
               </div>
               <div class="col-6 col-md-3">
-                <q-toggle v-model="f.violencia_psicologica" label="Psicológica"/>
+                <q-toggle v-model="f.violencia_psicologica" label="Psicológica" :disable="disabled"/>
               </div>
               <div class="col-6 col-md-3">
-                <q-toggle v-model="f.violencia_sexual" label="Sexual"/>
+                <q-toggle v-model="f.violencia_sexual" label="Sexual" :disable="disabled"/>
               </div>
               <div class="col-6 col-md-3">
-                <q-toggle v-model="f.violencia_economica" label="Económica/Patrimonial"/>
+                <q-toggle v-model="f.violencia_economica" label="Económica/Patrimonial" :disable="disabled"/>
               </div>
               <div class="col-6 col-md-3" v-if="tipo==='DNA' || tipo==='PROPREMI' || tipo==='SLIM' || tipo==='UMADIS'">
-                <q-toggle v-model="f.violencia_cibernetica" label="Cibernética"/>
+                <q-toggle v-model="f.violencia_cibernetica" label="Cibernética" :disable="disabled"/>
               </div>
               <div class="col-6 col-md-3" v-if="tipo==='DNA'">
-                <q-toggle v-model="f.violencia_abandono" label="Abandono"/>
+                <q-toggle v-model="f.violencia_abandono" label="Abandono" :disable="disabled"/>
               </div>
               <div class="col-6 col-md-3" v-if="tipo==='DNA'">
-                <q-toggle v-model="f.violencia_otros" label="Otros"/>
+                <q-toggle v-model="f.violencia_otros" label="Otros" :disable="disabled"/>
               </div>
             </div>
           </q-card-section>
@@ -713,6 +735,7 @@
             <div class="col-12 col-md-4">
               <q-select v-model="f.legal_user_id" dense outlined emit-value map-options clearable
                         :options="abogados.map(u => ({ label: u.name, value: u.id }))"
+                        :disable="!['Auxiliar','Abogado','Asistente','Administrador'].includes($store.user.role)"
                         label="Área legal (responsable)"/>
             </div>
             <!--            <div class="col-12 col-md-4"><q-input v-model="f.seguimiento_area" dense outlined clearable label="Área psicologica (responsable)"/></div>-->
@@ -721,12 +744,14 @@
             <div class="col-12 col-md-4">
               <q-select v-model="f.psicologica_user_id" dense outlined emit-value map-options clearable
                         :options="psicologos.map(u => ({ label: u.name, value: u.id }))"
+                        :disable="!['Auxiliar','Abogado','Asistente','Administrador'].includes($store.user.role)"
                         label="Área psicologica (responsable)"/>
 <!--              <pre>{{f.psicologica_user_id}}</pre>-->
             </div>
             <div class="col-12 col-md-4">
               <q-select v-model="f.trabajo_social_user_id" dense outlined emit-value map-options clearable
                         :options="sociales.map(u => ({ label: u.name, value: u.id }))"
+                        :disable="!['Auxiliar','Abogado','Asistente','Administrador'].includes($store.user.role)"
                         label="Área social (responsable)"/>
             </div>
           </div>
@@ -747,15 +772,15 @@
             <template v-if="tipo ==='UMADIS'">
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_persona_fisica" label="Presencia física de la persona a evaluar"
-                            true-value="1" false-value="0"/>
+                            true-value="1" false-value="0" :disable="disabled"/>
               </div>
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_carnet_discapacidad" label="Cédula de Identidad de la persona con discapacidad"
-                            true-value="1" false-value="0"/>
+                            true-value="1" false-value="0" :disable="disabled"/>
               </div>
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_carnet_padres" label="Cédula de Identidad del padre, madre y/o tutor"
-                            true-value="1" false-value="0"/>
+                            true-value="1" false-value="0" :disable="disabled"/>
               </div>
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_certificado_medico" label="Certificado médico actualizado" true-value="1"
@@ -763,7 +788,7 @@
               </div>
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_croquis_direccion_denunciante" label="Croquis del domicilio actualizado"
-                            true-value="1" false-value="0"/>
+                            true-value="1" false-value="0" :disable="disabled"/>
               </div>
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_papeleta_luz_agua" label="Papeleta de luz y agua" true-value="1"
@@ -773,27 +798,27 @@
             <template v-else-if="tipo ==='SLAM'">
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_fotocopia_ci_denunciante" label="Fotocopia CI denunciante"
-                            true-value="1" false-value="0"/>
+                            true-value="1" false-value="0" :disable="disabled"/>
               </div>
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_fotocopia_carnet_denunciado" label="Fotocopia CI denunciado"
-                            true-value="1" false-value="0"/>
+                            true-value="1" false-value="0" :disable="disabled"/>
               </div>
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_placas_fotograficas_domicilio_denunciante"
-                            label="Placas fotográficas domicilio denunciante" true-value="1" false-value="0"/>
+                            label="Placas fotográficas domicilio denunciante" true-value="1" false-value="0" :disable="disabled"/>
               </div>
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_placas_fotograficas_domicilio_denunciado"
-                            label="Placas fotográficas domicilio denunciado" true-value="1" false-value="0"/>
+                            label="Placas fotográficas domicilio denunciado" true-value="1" false-value="0" :disable="disabled"/>
               </div>
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_croquis_direccion_denunciado" label="Croquis dirección denunciado"
-                            true-value="1" false-value="0"/>
+                            true-value="1" false-value="0" :disable="disabled"/>
               </div>
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_croquis_direccion_denunciante"
-                            label="Croquis dirección denunciante" true-value="1" false-value="0"/>
+                            label="Croquis dirección denunciante" true-value="1" false-value="0" :disable="disabled"/>
               </div>
             </template>
             <template v-else-if="tipo ==='PROPREMI'">
@@ -803,13 +828,13 @@
               </div>
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_fotocopia_ci_denunciante" label="Fotocopia CI denunciante"
-                            true-value="1" false-value="0"/>
+                            true-value="1" false-value="0" :disable="disabled"/>
               </div>
               <div class="col-12 col-md-2">
-                <q-checkbox v-model="f.documento_nota_director" label="Nota director" true-value="1" false-value="0"/>
+                <q-checkbox v-model="f.documento_nota_director" label="Nota director" true-value="1" false-value="0" :disable="disabled"/>
               </div>
               <div class="col-12 col-md-2">
-                <q-checkbox v-model="f.documento_nota_distrital" label="Nota distrital" true-value="1" false-value="0"/>
+                <q-checkbox v-model="f.documento_nota_distrital" label="Nota distrital" true-value="1" false-value="0" :disable="disabled"/>
               </div>
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_nota_defensor_pueblo" label="Nota defensor del pueblo" true-value="1"
@@ -819,7 +844,7 @@
             <template v-else-if="tipo ==='JUVENTUDES'">
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_certificado_nacimiento" label="Certificado de nacimiento del joven"
-                            true-value="1" false-value="0"/>
+                            true-value="1" false-value="0" :disable="disabled"/>
               </div>
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_fotocopia_ci_victima" label="Fotocopia CI del joven" true-value="1"
@@ -835,7 +860,7 @@
               </div>
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_comprobante_universidades" label="Comprobante/Matricula Universidad"
-                            true-value="1" false-value="0"/>
+                            true-value="1" false-value="0" :disable="disabled"/>
               </div>
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_fotocopia_ci_padres" label="Fotocopia CI de los padres" true-value="1"
@@ -849,63 +874,65 @@
             <template v-else-if="tipo ==='DNA' && titulo==='DNA Nuevo Familiar'">
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_certificado_nacimiento" label="Certificado de nacimiento hijos original"
-                            true-value="1" false-value="0"/>
+                            true-value="1" false-value="0" :disable="disabled"/>
               </div>
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_certificado_matrimonio" label="Certificado de matrimonio Original"
-                            true-value="1" false-value="0"/>
+                            true-value="1" false-value="0" :disable="disabled"/>
               </div>
               <div class="col-12 col-md-2">
-                <q-checkbox v-model="f.documento_tres_testigos" label="Tres testigos con fotocopia de CI" true-value="1" false-value="0"/>
+                <q-checkbox v-model="f.documento_tres_testigos" label="Tres testigos con fotocopia de CI" true-value="1" false-value="0" :disable="disabled"/>
               </div>
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_croquis_direccion_denunciado" label="Croquis dirección denunciado"
-                            true-value="1" false-value="0"/>
+                            true-value="1" false-value="0" :disable="false"/>
               </div>
               <div class="col-12 col-md-2">
-                <q-checkbox v-model="f.documento_contrato_pago" label="Papeleta / Contrato de pago del denunciado" true-value="1" false-value="0"/>
+                <q-checkbox v-model="f.documento_contrato_pago" label="Papeleta / Contrato de pago del denunciado" true-value="1" false-value="0"
+                            :disable="false"
+                />
               </div>
               <div class="col-12 col-md-2">
-                <q-checkbox v-model="f.documento_libreta_notas" label="Prueba o libreta de notas de los hijos" true-value="1" false-value="0"/>
+                <q-checkbox v-model="f.documento_libreta_notas" label="Prueba o libreta de notas de los hijos" true-value="1" false-value="0" :disable="disabled"/>
               </div>
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_fotocopia_carnet_denunciante" label="Fotocopia CI denunciante"
-                            true-value="1" false-value="0"/>
+                            true-value="1" false-value="0" :disable="disabled"/>
               </div>
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_fotocopia_carnet_denunciado" label="Fotocopia CI denunciado"
-                            true-value="1" false-value="0"/>
+                            true-value="1" false-value="0" :disable="disabled"/>
               </div>
             </template>
 
             <template v-else>
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_fotocopia_carnet_denunciante" label="Fotocopia CI denunciante"
-                            true-value="1" false-value="0"/>
+                            true-value="1" false-value="0" :disable="disabled"/>
               </div>
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_fotocopia_carnet_denunciado" label="Fotocopia CI denunciado"
-                            true-value="1" false-value="0"/>
+                            true-value="1" false-value="0" :disable="disabled"/>
               </div>
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_placas_fotograficas_domicilio_denunciante"
-                            label="Placas fotográficas domicilio denunciante" true-value="1" false-value="0"/>
+                            label="Placas fotográficas domicilio denunciante" true-value="1" false-value="0" :disable="disabled"/>
               </div>
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_croquis_direccion_denunciado" label="Croquis dirección denunciado"
-                            true-value="1" false-value="0"/>
+                            true-value="1" false-value="0" disable="disable"/>
               </div>
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_placas_fotograficas_domicilio_denunciado"
-                            label="Placas fotográficas domicilio denunciado" true-value="1" false-value="0"/>
+                            label="Placas fotográficas domicilio denunciado" true-value="1" false-value="0" disable="disable"/>
               </div>
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_croquis_direccion_denunciante" label="Croquis dirección denunciante"
-                            true-value="1" false-value="0"/>
+                            true-value="1" false-value="0" disable="disable"/>
               </div>
               <div class="col-12 col-md-2">
                 <q-checkbox v-model="f.documento_ciudadania_digital" label="Ciudadanía digital" true-value="1"
-                            false-value="0"/>
+                            false-value="0" disable="disable"/>
               </div>
             </template>
           </div>

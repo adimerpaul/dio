@@ -171,7 +171,7 @@
               <td>{{ informe.fecha || '—' }}</td>
               <td>{{ informe.user?.name || '—' }}</td>
               <td>
-                <a @click="openSocialInforme(informe)">
+                <a @click="openSocialInforme(informe)" class="cursor-pointer" style="color: #1976d2; text-decoration: underline;">
                   Ver archivo
                 </a>
               </td>
@@ -225,7 +225,7 @@
               <td>{{ sesion.fecha || '—' }}</td>
               <td>{{ sesion.user?.name || '—' }}</td>
               <td>
-                <a @click="clickSeguimiento($event,{ tipo: 'Sesión', modulo: 'Psicológico', uid: 'psi-' + sesion.id })">
+                <a @click="clickSeguimiento($event,{ tipo: 'Sesión', modulo: 'Psicológico', uid: 'psi-' + sesion.id })" class="cursor-pointer" style="color: #1976d2; text-decoration: underline;">
                   Ver archivo
                 </a>
               </td>
@@ -296,7 +296,7 @@
               <td>{{ informe.fecha || '—' }}</td>
               <td>{{ informe.user?.name || '—' }}</td>
               <td>
-                <a @click="clickSeguimiento($event,{ tipo: 'Informe', modulo: 'Legal', uid: 'leg-' + informe.id })">
+                <a @click="clickSeguimiento($event,{ tipo: 'Informe', modulo: 'Legal', uid: 'leg-' + informe.id })" class="cursor-pointer" style="color: #1976d2; text-decoration: underline;">
                   Ver archivo
                 </a>
               </td>

@@ -11,6 +11,7 @@
       <q-select v-model="casoNew.etapa_procesal"  outlined label="Etapa Procesal" dense
                 :options="['Denuncia / Querella', 'Etapa Preparatoria', 'Etapa Intermedia', 'Jucio Oral','Etapa Impugnatoria/Recursos']"
                 @update:model-value="casoNew.etapa = ''"
+                :disable="!['Abogado','Administrador'].includes($store.user.role)"
       >
         <template #prepend><q-icon name="gavel" /></template>
       </q-select>
@@ -30,6 +31,7 @@
         outlined
         label="Estado del Caso"
         dense
+        :disable="!['Abogado','Administrador'].includes($store.user.role)"
       >
         <template #prepend><q-icon name="folder_open" /></template>
       </q-select>
@@ -58,6 +60,7 @@
         counter
         :hide-upload-button="true"
         @update:model-value="onFileChange"
+        :disable="!['Abogado','Administrador'].includes($store.user.role)"
       />
     </div>
     <div class="col-12">
@@ -67,6 +70,7 @@
         label="Observaciones"
         type="textarea"
         dense
+        :disable="!['Abogado','Administrador'].includes($store.user.role)"
       >
         <template #prepend><q-icon name="notes" /></template>
       </q-input>

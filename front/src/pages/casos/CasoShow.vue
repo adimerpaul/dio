@@ -69,7 +69,9 @@
             </q-item>
           </q-list>
         </q-btn-dropdown>
-        <q-btn-dropdown flat color="secondary" icon="print" label="Imprimir PDF">
+        <q-btn-dropdown flat color="secondary" icon="print" label="Imprimir PDF"
+                        v-if="role === 'Administrador' || role === 'Auxiliar' || role === 'Asistente' || role === 'Abogado'"
+        >
           <q-list>
             <q-item clickable @click="printPdf" v-close-popup >
               <q-item-section>Ficha del Caso</q-item-section>
@@ -224,6 +226,7 @@
 <!--                <th>Opciones</th>-->
                 <th>Caso ID</th>
                 <th>Denunciado</th>
+                <th>Tipologia</th>
                 <th>Número de Caso</th>
                 <th>Área</th>
                 <th>Fecha de Hecho</th>
@@ -362,6 +365,7 @@
                     {{denunciado.denunciado_nombres}} - {{denunciado.denunciado_nro}}
                   </div>
                 </td>
+                <td>{{item.caso_tipologia || '—'}}</td>
                 <td>{{item.caso_numero || '—'}}</td>
                 <td>{{item.area || '—'}}</td>
                 <td>{{(item.caso_fecha_hecho) || '—'}}</td>
